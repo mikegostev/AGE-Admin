@@ -9,6 +9,7 @@ import uk.ac.ebi.age.model.SemanticModel;
 import uk.ac.ebi.age.model.impl.ModelFactoryImpl;
 import uk.ac.ebi.age.model.impl.SemanticModelImpl;
 import uk.ac.ebi.age.storage.AgeStorageAdm;
+import uk.ac.ebi.age.storage.exeption.ModelStoreException;
 
 public class SemanticUploader implements UploadCommandListener
 {
@@ -30,6 +31,11 @@ public class SemanticUploader implements UploadCommandListener
    storAdm.updateSemanticModel(model);
   }
   catch(ModelException e)
+  {
+   // TODO Auto-generated catch block
+   e.printStackTrace();
+  }
+  catch(ModelStoreException e)
   {
    // TODO Auto-generated catch block
    e.printStackTrace();
