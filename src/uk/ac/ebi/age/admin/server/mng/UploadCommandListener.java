@@ -6,6 +6,6 @@ import uk.ac.ebi.age.admin.server.user.Session;
 public interface UploadCommandListener
 {
 
- void processUpload(UploadRequest upReq, Session sess);
+ boolean processUpload(UploadRequest upReq, Session sess);
 
 }

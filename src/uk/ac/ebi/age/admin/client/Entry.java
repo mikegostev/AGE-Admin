@@ -6,9 +6,6 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.types.Encoding;
-import com.smartgwt.client.widgets.IButton;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.ButtonItem;
 import com.smartgwt.client.widgets.form.fields.FormItem;
@@ -70,32 +67,92 @@ public class Entry implements EntryPoint
   } );
   
   
-  final DynamicForm form1 = new DynamicForm();
+//  final DynamicForm formModel = new DynamicForm();
+//  
+//  FormItem cmd = new HiddenItem("Command");
+//  cmd.setValue("SetModel");
+//  
+//  
+//  ButtonItem sBt = new ButtonItem("Upload");
+//  sBt.addClickHandler( new ClickHandler()
+//  {
+//   
+//   @Override
+//   public void onClick(ClickEvent event)
+//   {
+//    formModel.submit();
+//   }
+//  });
+//
+//// 
+////  IButton bt1 = new IButton("Submit");
+////  bt1.addClickHandler( new ClickHandler()
+////  {
+////   
+////   @Override
+////   public void onClick(ClickEvent event)
+////   {
+////    formModel.submitForm();
+////   }
+////  });
+//  formModel.setFields( new UploadItem("file1", "Upload file"), cmd, sBt );
+//  
+//  formModel.setAction("upload");
+//  formModel.setEncoding(Encoding.MULTIPART);
+//
+//  rootPanel.addMember( formModel );
+////  rootPanel.addMember( bt1 );
+  
+  
+  final DynamicForm submModel = new DynamicForm();
   
   FormItem cmd = new HiddenItem("Command");
-  cmd.setValue("SetModel");
+  cmd.setValue("Submission");
   
-  form1.setFields( new UploadItem("file1", "Upload file"), cmd );
-  form1.setAction("upload");
-  form1.setEncoding(Encoding.MULTIPART);
   
-  rootPanel.addMember( form1 );
  
-  IButton bt1 = new IButton("Submit");
-  bt1.addClickHandler( new ClickHandler()
+  ButtonItem bt2 = new ButtonItem("Submit");
+  bt2.addClickHandler( new com.smartgwt.client.widgets.form.fields.events.ClickHandler()
   {
    
    @Override
-   public void onClick(ClickEvent event)
+   public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event)
    {
-    form1.submitForm();
+    submModel.submitForm();
    }
   });
+
+  submModel.setFields( new UploadItem("file1", "Upload submission"), cmd, bt2 );
+  submModel.setAction("upload");
+  submModel.setEncoding(Encoding.MULTIPART);
+
+  rootPanel.addMember( submModel );
+
+  final DynamicForm submModel2 = new DynamicForm();
   
-  rootPanel.addMember( bt1 );
+  cmd = new HiddenItem("Command");
+  cmd.setValue("SetModel");
   
   
  
+  ButtonItem bt3 = new ButtonItem("Submit");
+  bt3.addClickHandler( new com.smartgwt.client.widgets.form.fields.events.ClickHandler()
+  {
+   
+   @Override
+   public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event)
+   {
+    submModel2.submitForm();
+   }
+  });
+
+  submModel2.setFields( new UploadItem("file1", "Upload model"), cmd, bt3 );
+  submModel2.setAction("upload");
+  submModel2.setEncoding(Encoding.MULTIPART);
+
+  rootPanel.addMember( submModel2 );
+
+  
   rootPanel.draw();
  }
 }

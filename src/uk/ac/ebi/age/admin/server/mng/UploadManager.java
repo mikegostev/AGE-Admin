@@ -1,5 +1,6 @@
 package uk.ac.ebi.age.admin.server.mng;
 
+import java.io.File;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -15,8 +16,13 @@ public class UploadManager
   UploadCommandListener lsnr = lsnrs.get(upReq.getCommand());
   
   if( lsnr != null )
-   lsnr.processUpload(upReq,sess);
-  
+  {
+   if( lsnr.processUpload(upReq,sess) && upReq.getFiles() != null )
+   {
+    for( File f : upReq.getFiles() )
+     f.delete();
+   }
+  }
  }
 
  public void addUploadCommandListener( String cmd, UploadCommandListener ls )

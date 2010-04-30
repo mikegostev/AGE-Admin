@@ -6,8 +6,8 @@ import uk.ac.ebi.age.admin.server.service.UploadRequest;
 import uk.ac.ebi.age.admin.server.user.Session;
 import uk.ac.ebi.age.model.ModelException;
 import uk.ac.ebi.age.model.SemanticModel;
-import uk.ac.ebi.age.model.impl.ModelFactoryImpl;
-import uk.ac.ebi.age.model.impl.SemanticModelImpl;
+import uk.ac.ebi.age.model.impl.v1.ModelFactoryImpl;
+import uk.ac.ebi.age.model.impl.v1.SemanticModelImpl;
 import uk.ac.ebi.age.storage.AgeStorageAdm;
 import uk.ac.ebi.age.storage.exeption.ModelStoreException;
 
@@ -21,7 +21,7 @@ public class SemanticUploader implements UploadCommandListener
  }
  
  @Override
- public void processUpload(UploadRequest upReq, Session sess)
+ public boolean processUpload(UploadRequest upReq, Session sess)
  {
   File f = upReq.getFiles().get(0);
   
@@ -40,6 +40,8 @@ public class SemanticUploader implements UploadCommandListener
    // TODO Auto-generated catch block
    e.printStackTrace();
   }
+  
+  return true;
  }
 
 }

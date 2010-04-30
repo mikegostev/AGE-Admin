@@ -144,8 +144,15 @@ public class SessionPoolImpl implements SessionPool, Runnable
    message.setLength(0);
 
    for(int i = 0; i < digest.length; i++)
-    message.append(digest[i]);
-
+   {
+    String byteHex = Integer.toHexString(digest[i]);
+    
+    if( byteHex .length() < 2 )
+     message.append('0').append(byteHex.charAt(0));
+    else
+     message.append(byteHex.substring(byteHex.length()-2));
+   }
+   
    return "K" + message;
   }
   catch(NoSuchAlgorithmException ex)
