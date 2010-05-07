@@ -14,7 +14,7 @@ import com.smartgwt.client.widgets.form.fields.PasswordItem;
 import com.smartgwt.client.widgets.form.fields.StaticTextItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.form.fields.UploadItem;
-import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.layout.HLayout;
 
 public class Entry implements EntryPoint
 {
@@ -22,11 +22,19 @@ public class Entry implements EntryPoint
  @Override
  public void onModuleLoad()
  {
-  VLayout rootPanel = new VLayout();
+  HLayout rootPanel = new HLayout();
   
-  rootPanel.setWidth(600);
+  rootPanel.setAutoWidth();
+  rootPanel.setLayoutLeftMargin(15);
+  rootPanel.setLayoutTopMargin(15);
+  rootPanel.setMembersMargin(15);
   
   DynamicForm loginForm = new DynamicForm();
+  loginForm.setPadding(15);
+  loginForm.setGroupTitle("Login");
+  loginForm.setIsGroup(true);
+  loginForm.setWidth(350);
+  loginForm.setHeight(200);
   
   ButtonItem lgBt = new ButtonItem("Login");
   final StaticTextItem stat = new StaticTextItem("loginstat");
@@ -105,7 +113,12 @@ public class Entry implements EntryPoint
   
   
   final DynamicForm submModel = new DynamicForm();
-  
+  submModel.setPadding(15);
+  submModel.setGroupTitle("Submit data");
+  submModel.setIsGroup(true);
+  submModel.setWidth(350);
+  submModel.setHeight(200);
+
   FormItem cmd = new HiddenItem("Command");
   cmd.setValue("Submission");
   
@@ -122,14 +135,22 @@ public class Entry implements EntryPoint
    }
   });
 
-  submModel.setFields( new UploadItem("file1", "Upload submission"), cmd, bt2 );
+  UploadItem upl = new UploadItem("file1", "Upload submission");
+  upl.setHeight(50);
+  
+  submModel.setFields( upl, cmd, bt2 );
   submModel.setAction("upload");
   submModel.setEncoding(Encoding.MULTIPART);
 
   rootPanel.addMember( submModel );
 
   final DynamicForm submModel2 = new DynamicForm();
-  
+  submModel2.setPadding(15);
+  submModel2.setGroupTitle("Submit model");
+  submModel2.setIsGroup(true);
+  submModel2.setWidth(350);
+  submModel2.setHeight(200);
+
   cmd = new HiddenItem("Command");
   cmd.setValue("SetModel");
   
