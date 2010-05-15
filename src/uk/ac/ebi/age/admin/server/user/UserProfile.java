@@ -89,4 +89,10 @@ public class UserProfile implements SubmissionContext
  {
   return true;
  }
+
+ @Override
+ public boolean isCustomQualifierAllowed()
+ {
+  return true;
+ }
 }
