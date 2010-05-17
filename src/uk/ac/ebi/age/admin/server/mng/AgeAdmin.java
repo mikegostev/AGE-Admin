@@ -147,7 +147,7 @@ public class AgeAdmin
 
  private AgeObjectRestrictionImprint convertRestrictionToImprint(AgeRestriction rstr)
  {
-  // TODO Auto-generated method stub
+  rstr.g
   throw new dev.NotImplementedYetException();
  }
 }
