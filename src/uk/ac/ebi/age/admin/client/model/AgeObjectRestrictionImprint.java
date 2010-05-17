@@ -15,7 +15,7 @@ public class AgeObjectRestrictionImprint
  }
  
  
- private AgeRelationImprint relation;
+ private AgeRelationClassImprint relation;
  
  private int minCardinality;
  private int maxCardinality;
@@ -25,12 +25,12 @@ public class AgeObjectRestrictionImprint
  private AgeObjectRestrictionImprint filler;
 
  
- public AgeRelationImprint getRelation()
+ public AgeRelationClassImprint getRelation()
  {
   return relation;
  }
 
- public void setRelation(AgeRelationImprint relation)
+ public void setRelation(AgeRelationClassImprint relation)
  {
   this.relation = relation;
  }
