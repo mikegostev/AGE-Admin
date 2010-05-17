@@ -38,4 +38,9 @@ public class TestUserDataBase implements UserDatabase
   return profileMap.get(userName);
  }
 
+ @Override
+ public void shutdown()
+ {
+ }
+
 }

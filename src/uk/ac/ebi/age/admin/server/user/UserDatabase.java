@@ -7,4 +7,6 @@ public interface UserDatabase
 
  UserProfile getUserProfile(String userName);
 
+ void shutdown();
+
 }
