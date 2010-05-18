@@ -3,7 +3,9 @@ package uk.ac.ebi.age.admin.client.model;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class AgeRelationClassImprint
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public class AgeRelationClassImprint implements IsSerializable
 {
  private String name;
  private String id;

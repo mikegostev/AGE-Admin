@@ -1,6 +1,8 @@
 package uk.ac.ebi.age.admin.client.model;
 
-public class AgeQualifierRestrictionImprint
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public class AgeQualifierRestrictionImprint implements IsSerializable
 {
 
 }

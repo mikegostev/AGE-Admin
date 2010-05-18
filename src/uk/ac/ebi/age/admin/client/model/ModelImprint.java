@@ -2,7 +2,9 @@ package uk.ac.ebi.age.admin.client.model;
 
 import java.util.Collection;
 
-public class ModelImprint
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public class ModelImprint  implements IsSerializable
 {
  private AgeClassImprint rootClass;
  private Collection<AgeClassImprint> classes;

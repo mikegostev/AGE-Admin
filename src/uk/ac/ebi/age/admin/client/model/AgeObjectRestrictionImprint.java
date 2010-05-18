@@ -1,6 +1,8 @@
 package uk.ac.ebi.age.admin.client.model;
 
-public class AgeObjectRestrictionImprint
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public class AgeObjectRestrictionImprint implements IsSerializable
 {
  public enum Type
  {
