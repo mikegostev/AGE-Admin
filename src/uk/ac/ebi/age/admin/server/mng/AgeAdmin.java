@@ -22,6 +22,7 @@ import uk.ac.ebi.age.model.AgeAttributeClass;
 import uk.ac.ebi.age.model.AgeClass;
 import uk.ac.ebi.age.model.AgeRelationClass;
 import uk.ac.ebi.age.model.AgeRestriction;
+import uk.ac.ebi.age.model.AllValuesFromRestriction;
 import uk.ac.ebi.age.model.SemanticModel;
 import uk.ac.ebi.age.model.SomeValuesFromRestriction;
 import uk.ac.ebi.age.storage.AgeStorageAdm;
@@ -218,27 +219,41 @@ public class AgeAdmin
  
  private void convertObjectRestrictions(AgeClass rootAgeClass, Map<AgeAbstractClass, Object> clMap)
  {
-  if( rootAgeClass.getSubClasses() == null )
+  if(rootAgeClass.getSubClasses() == null)
    return;
-  
-  for( AgeClass cls : rootAgeClass.getSubClasses() )
-  {
-   if( cls.getObjectRestrictions() == null )
-    continue;
-   
-   for(AgeRestriction rstr : cls.getObjectRestrictions() )
-   {
-    AgeObjectRestrictionImprint rstimp = new AgeObjectRestrictionImprint();
-    
-    if( rstr instanceof SomeValuesFromRestriction )
-    {
-     rstimp.setType(Type.SOME);
-    }
 
-   }
+  for(AgeClass cls : rootAgeClass.getSubClasses())
+  {
+   if(cls.getObjectRestrictions() == null)
+    continue;
+
+   AgeClassImprint clImp = (AgeClassImprint) clMap.get(cls);
+
+   for(AgeRestriction rstr : cls.getObjectRestrictions())
+    clImp.addRestriction(convertRestriction(rstr, clMap));
   }
+
  }
 
+ private AgeObjectRestrictionImprint convertRestriction( AgeRestriction rstr, Map<AgeAbstractClass, Object> clMap )
+ {
+  AgeObjectRestrictionImprint rstimp = new AgeObjectRestrictionImprint();
+  
+  if( rstr instanceof SomeValuesFromRestriction )
+  {
+   rstimp.setType(Type.SOME);
+   rstimp.setRelation((AgeRelationClassImprint)clMap.get(((SomeValuesFromRestriction) rstr).getAgeRelationClass()));
+   rstimp.setFiller( convertRestriction(((SomeValuesFromRestriction) rstr).getFiller(), clMap));
+  }
+  else if ( rstr instanceof AllValuesFromRestriction )
+  {
+   rstimp.setType(Type.ONLY);
+   rstimp.setRelation((AgeRelationClassImprint)clMap.get(((SomeValuesFromRestriction) rstr).getAgeRelationClass()));
+   rstimp.setFiller( convertRestriction(((SomeValuesFromRestriction) rstr).getFiller(), clMap));
+  }
+
+  return rstimp;
+ }
 
  private interface Creator<ImpC>
  {
