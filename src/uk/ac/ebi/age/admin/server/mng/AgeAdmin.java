@@ -3,8 +3,8 @@ package uk.ac.ebi.age.admin.server.mng;
 import java.io.File;
 
 import uk.ac.ebi.age.admin.client.common.user.exception.UserAuthException;
-import uk.ac.ebi.age.admin.client.model.Age2ImprintConverter;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
+import uk.ac.ebi.age.admin.server.model.Age2ImprintConverter;
 import uk.ac.ebi.age.admin.server.user.Session;
 import uk.ac.ebi.age.admin.server.user.SessionPool;
 import uk.ac.ebi.age.admin.server.user.UserDatabase;

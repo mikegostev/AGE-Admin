@@ -1,8 +1,12 @@
-package uk.ac.ebi.age.admin.client.model;
+package uk.ac.ebi.age.admin.server.model;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint;
+import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
+import uk.ac.ebi.age.admin.client.model.AgeRelationClassImprint;
+import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.restriction.CardinalityRestrictionImprint;
 import uk.ac.ebi.age.admin.client.model.restriction.FillerRestrictionImprint;
 import uk.ac.ebi.age.admin.client.model.restriction.IntanceOfRestrictionImprint;

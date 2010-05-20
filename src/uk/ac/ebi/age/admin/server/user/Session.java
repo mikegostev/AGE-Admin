@@ -25,6 +25,8 @@ public class Session
   {
    sessionDir = new File(Configuration.getDefaultConfiguration().getTmpDir(),sessionKey);
    sessionDir.mkdirs();
+   
+   sessionDir.deleteOnExit();
   }
    
    
