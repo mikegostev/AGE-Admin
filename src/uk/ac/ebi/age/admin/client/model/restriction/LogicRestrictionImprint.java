@@ -2,22 +2,22 @@ package uk.ac.ebi.age.admin.client.model.restriction;
 
 import java.util.Collection;
 
-public class LogicRestrictionImprint extends ObjectRestrictionImprint
+public class LogicRestrictionImprint extends RestrictionImprint
 {
 
- private Collection<ObjectRestrictionImprint> operands;
+ private Collection<RestrictionImprint> operands;
 
- public Collection<ObjectRestrictionImprint> getOperands()
+ public Collection<RestrictionImprint> getOperands()
  {
   return operands;
  }
 
- public void setOperands(Collection<ObjectRestrictionImprint> operands)
+ public void setOperands(Collection<RestrictionImprint> operands)
  {
   this.operands = operands;
  }
  
- public void addOperand(ObjectRestrictionImprint operand)
+ public void addOperand(RestrictionImprint operand)
  {
   operands.add(operand);
  }

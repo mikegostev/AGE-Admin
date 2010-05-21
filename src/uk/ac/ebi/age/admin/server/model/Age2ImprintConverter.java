@@ -3,6 +3,7 @@ package uk.ac.ebi.age.admin.server.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeRelationClassImprint;
@@ -11,8 +12,8 @@ import uk.ac.ebi.age.admin.client.model.restriction.CardinalityRestrictionImprin
 import uk.ac.ebi.age.admin.client.model.restriction.FillerRestrictionImprint;
 import uk.ac.ebi.age.admin.client.model.restriction.IntanceOfRestrictionImprint;
 import uk.ac.ebi.age.admin.client.model.restriction.LogicRestrictionImprint;
-import uk.ac.ebi.age.admin.client.model.restriction.ObjectRestrictionImprint;
-import uk.ac.ebi.age.admin.client.model.restriction.ObjectRestrictionImprint.Type;
+import uk.ac.ebi.age.admin.client.model.restriction.RestrictionImprint;
+import uk.ac.ebi.age.admin.client.model.restriction.RestrictionImprint.Type;
 import uk.ac.ebi.age.model.AgeAbstractClass;
 import uk.ac.ebi.age.model.AgeAllValuesFromRestriction;
 import uk.ac.ebi.age.model.AgeAndLogicRestriction;
@@ -145,6 +146,9 @@ public class Age2ImprintConverter
   mimp.setRootRelationClass(relImp);
 
   convertObjectRestrictions(sm.getRootAgeClass(), clMap );
+  convertAttributeRestrictions(sm.getRootAgeClass(), clMap );
+  convertAttributeRestrictions(sm.getRootAgeAttributeClass(), clMap );
+  convertAttributeRestrictions(sm.getRootAgeRelationClass(), clMap );
   
   return mimp;
  }
@@ -167,7 +171,7 @@ public class Age2ImprintConverter
   }
  }
 
- private <T extends AgeAbstractClass> void  convertAttributeRestrictions(T rootAgeClass, Map<AgeAbstractClass, Object> clMap)
+ private static void  convertAttributeRestrictions(AgeAbstractClass rootAgeClass, Map<AgeAbstractClass, Object> clMap)
  {
   if(rootAgeClass.getSubClasses() == null)
    return;
@@ -177,15 +181,14 @@ public class Age2ImprintConverter
    if(cls.getAttributeRestrictions() == null)
     continue;
 
-   AgeClassImprint clImp = (AgeClassImprint) clMap.get(cls);
+   AgeAbstractClassImprint clImp = (AgeAbstractClassImprint) clMap.get(cls);
 
    for(AgeRestriction rstr : cls.getAttributeRestrictions())
-    clImp.addRestriction(convertRestriction(rstr, clMap));
+    clImp.addAttributeRestriction(convertRestriction(rstr, clMap));
   }
-
  } 
  
- private static ObjectRestrictionImprint convertRestriction( AgeRestriction rstr, Map<AgeAbstractClass, Object> clMap )
+ private static RestrictionImprint convertRestriction( AgeRestriction rstr, Map<AgeAbstractClass, Object> clMap )
  {
 //  AgeObjectRestrictionImprint rstimp = null;
   

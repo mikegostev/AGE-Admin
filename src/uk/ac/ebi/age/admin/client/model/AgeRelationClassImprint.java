@@ -3,6 +3,8 @@ package uk.ac.ebi.age.admin.client.model;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import uk.ac.ebi.age.admin.client.model.restriction.RestrictionImprint;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class AgeRelationClassImprint implements IsSerializable
@@ -11,6 +13,8 @@ public class AgeRelationClassImprint implements IsSerializable
  private String id;
  private Collection<AgeRelationClassImprint> children;
  private Collection<AgeRelationClassImprint> parents;
+ 
+ private Collection<RestrictionImprint> qualifierRestrictions;
 
  public String getName()
  {
@@ -46,6 +50,24 @@ public class AgeRelationClassImprint implements IsSerializable
    parents = new ArrayList<AgeRelationClassImprint>(10);
   
   parents.add(simp);
+ }
+ 
+ public void addAttributeRestriction(RestrictionImprint rst)
+ {
+  if( qualifierRestrictions == null )
+   qualifierRestrictions = new ArrayList<RestrictionImprint>(10);
+  
+  qualifierRestrictions.add(rst);
+ }
+ 
+ public Collection<RestrictionImprint> getQualifierRestrictions()
+ {
+  return qualifierRestrictions;
+ }
+
+ public void setQualifierRestrictions(Collection<RestrictionImprint> attributeRestrictions)
+ {
+  this.qualifierRestrictions = attributeRestrictions;
  }
 
 }

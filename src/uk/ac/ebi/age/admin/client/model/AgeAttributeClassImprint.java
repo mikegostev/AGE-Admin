@@ -3,11 +3,11 @@ package uk.ac.ebi.age.admin.client.model;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import uk.ac.ebi.age.admin.client.model.restriction.QualifierRestrictionImprint;
+import uk.ac.ebi.age.admin.client.model.restriction.RestrictionImprint;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class AgeAttributeClassImprint implements IsSerializable
+public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSerializable
 {
  private String name;
  private String id;
@@ -15,7 +15,7 @@ public class AgeAttributeClassImprint implements IsSerializable
  private Collection<AgeAttributeClassImprint> parents;
  private Collection<AgeAttributeClassImprint> children;
  
- private Collection<QualifierRestrictionImprint> qualifierRestrictions;
+ private Collection<RestrictionImprint> qualifierRestrictions;
 
  public String getName()
  {
@@ -58,12 +58,12 @@ public class AgeAttributeClassImprint implements IsSerializable
  }
 
 
- public Collection<QualifierRestrictionImprint> getQualifierRestrictions()
+ public Collection<RestrictionImprint> getQualifierRestrictions()
  {
   return qualifierRestrictions;
  }
 
- public void setQualifierRestrictions(Collection<QualifierRestrictionImprint> attributeRestrictions)
+ public void setQualifierRestrictions(Collection<RestrictionImprint> attributeRestrictions)
  {
   this.qualifierRestrictions = attributeRestrictions;
  }
@@ -84,10 +84,10 @@ public class AgeAttributeClassImprint implements IsSerializable
   parents.add(simp);
  }
 
- public void addRestriction(QualifierRestrictionImprint rst)
+ public void addAttributeRestriction(RestrictionImprint rst)
  {
   if( qualifierRestrictions == null )
-   qualifierRestrictions = new ArrayList<QualifierRestrictionImprint>(10);
+   qualifierRestrictions = new ArrayList<RestrictionImprint>(10);
   
   qualifierRestrictions.add(rst);
  }

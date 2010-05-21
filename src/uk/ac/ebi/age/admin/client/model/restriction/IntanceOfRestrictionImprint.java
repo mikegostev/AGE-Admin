@@ -2,7 +2,7 @@ package uk.ac.ebi.age.admin.client.model.restriction;
 
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
 
-public class IntanceOfRestrictionImprint extends ObjectRestrictionImprint
+public class IntanceOfRestrictionImprint extends RestrictionImprint
 {
  private AgeClassImprint ageClassImprint;
 

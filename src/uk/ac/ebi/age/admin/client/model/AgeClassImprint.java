@@ -3,11 +3,11 @@ package uk.ac.ebi.age.admin.client.model;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import uk.ac.ebi.age.admin.client.model.restriction.ObjectRestrictionImprint;
+import uk.ac.ebi.age.admin.client.model.restriction.RestrictionImprint;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class AgeClassImprint implements IsSerializable
+public class AgeClassImprint implements IsSerializable, AgeAbstractClassImprint
 {
  private String name;
  private String id;
@@ -15,8 +15,8 @@ public class AgeClassImprint implements IsSerializable
  private Collection<AgeClassImprint> parents;
  private Collection<AgeClassImprint> children;
  
- private Collection<ObjectRestrictionImprint> objectRestrictions;
- private Collection<AgeAttributeRestrictionImprint> attributeRestrictions;
+ private Collection<RestrictionImprint> objectRestrictions;
+ private Collection<RestrictionImprint> attributeRestrictions;
 
  public String getName()
  {
@@ -58,22 +58,22 @@ public class AgeClassImprint implements IsSerializable
   this.children = children;
  }
 
- public Collection<ObjectRestrictionImprint> getObjectRestrictions()
+ public Collection<RestrictionImprint> getObjectRestrictions()
  {
   return objectRestrictions;
  }
 
- public void setObjectRestrictions(Collection<ObjectRestrictionImprint> restrictions)
+ public void setObjectRestrictions(Collection<RestrictionImprint> restrictions)
  {
   this.objectRestrictions = restrictions;
  }
 
- public Collection<AgeAttributeRestrictionImprint> getAttributeRestrictions()
+ public Collection<RestrictionImprint> getAttributeRestrictions()
  {
   return attributeRestrictions;
  }
 
- public void setAttributeRestrictions(Collection<AgeAttributeRestrictionImprint> attributeRestrictions)
+ public void setAttributeRestrictions(Collection<RestrictionImprint> attributeRestrictions)
  {
   this.attributeRestrictions = attributeRestrictions;
  }
@@ -94,11 +94,20 @@ public class AgeClassImprint implements IsSerializable
   parents.add(simp);
  }
 
- public void addRestriction(ObjectRestrictionImprint rst)
+ public void addRestriction(RestrictionImprint rst)
  {
   if( objectRestrictions == null )
-   objectRestrictions = new ArrayList<ObjectRestrictionImprint>(10);
+   objectRestrictions = new ArrayList<RestrictionImprint>(10);
   
   objectRestrictions.add(rst);
  }
+ 
+ public void addAttributeRestriction(RestrictionImprint rst)
+ {
+  if( attributeRestrictions == null )
+   attributeRestrictions = new ArrayList<RestrictionImprint>(10);
+  
+  attributeRestrictions.add(rst);
+ }
+
 }
