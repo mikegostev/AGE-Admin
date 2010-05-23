@@ -1,11 +1,12 @@
 package uk.ac.ebi.age.admin.client.model.restriction;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class LogicRestrictionImprint extends RestrictionImprint
 {
 
- private Collection<RestrictionImprint> operands;
+ private Collection<RestrictionImprint> operands = new ArrayList<RestrictionImprint>(3);
 
  public Collection<RestrictionImprint> getOperands()
  {

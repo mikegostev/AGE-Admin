@@ -42,6 +42,7 @@ public class Age2ImprintConverter
   AgeClass ageRoot = sm.getRootAgeClass();
   
   AgeClassImprint rImp = new AgeClassImprint();
+  rImp.setName("AgeClass");
   
   for( AgeClass acls : ageRoot.getSubClasses() )
   {
@@ -206,9 +207,11 @@ public class Age2ImprintConverter
   {
    FillerRestrictionImprint ri = new FillerRestrictionImprint();
  
+   AgeAllValuesFromRestriction avfResr = (AgeAllValuesFromRestriction)rstr;
+   
    ri.setType(Type.ONLY);
-   ri.setRelation((AgeRelationClassImprint)clMap.get(((AgeSomeValuesFromRestriction) rstr).getAgeRelationClass()));
-   ri.setFiller( convertRestriction(((AgeSomeValuesFromRestriction) rstr).getFiller(), clMap));
+   ri.setRelation((AgeRelationClassImprint)clMap.get(avfResr.getAgeRelationClass()));
+   ri.setFiller( convertRestriction(avfResr.getFiller(), clMap));
    
    return ri;
   }
@@ -285,7 +288,7 @@ public class Age2ImprintConverter
    IntanceOfRestrictionImprint ri = new IntanceOfRestrictionImprint();
 
    ri.setType(Type.IS);
-   ri.setAgeClassImprint((AgeClassImprint)clMap.get(((AgeIsInstanceOfRestriction) rstr).getTargetClass()));
+   ri.setAgeAbstractClassImprint((AgeAbstractClassImprint)clMap.get(((AgeIsInstanceOfRestriction) rstr).getTargetClass()));
    
    return ri;
   }
@@ -302,7 +305,7 @@ public class Age2ImprintConverter
  private static <ImpC> ImpC convertAgeToImprint(AgeAbstractClass acls, Map<AgeAbstractClass, Object> clMap, Creator<ImpC> cr)
  {
   ImpC cImp = cr.create(acls.getId(),acls.getName());
-  
+  clMap.put(acls,cImp);
 
   if( acls.getSubClasses() != null )
   {

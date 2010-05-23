@@ -7,7 +7,7 @@ import uk.ac.ebi.age.admin.client.model.restriction.RestrictionImprint;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class AgeRelationClassImprint implements IsSerializable
+public class AgeRelationClassImprint implements AgeAbstractClassImprint,IsSerializable
 {
  private String name;
  private String id;

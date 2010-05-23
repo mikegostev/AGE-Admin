@@ -1,18 +1,18 @@
 package uk.ac.ebi.age.admin.client.model.restriction;
 
-import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
+import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 
 public class IntanceOfRestrictionImprint extends RestrictionImprint
 {
- private AgeClassImprint ageClassImprint;
+ private AgeAbstractClassImprint ageAClassImprint;
 
- public AgeClassImprint getAgeClassImprint()
+ public AgeAbstractClassImprint getAgeAbstractClassImprint()
  {
-  return ageClassImprint;
+  return ageAClassImprint;
  }
 
- public void setAgeClassImprint(AgeClassImprint ageClassImprint)
+ public void setAgeAbstractClassImprint(AgeAbstractClassImprint ageClassImprint)
  {
-  this.ageClassImprint = ageClassImprint;
+  this.ageAClassImprint = ageClassImprint;
  }
 }
