@@ -9,6 +9,17 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSerializable
 {
+ public enum Type
+ {
+  ABSTRACT,
+  BOOLEAN,
+  STRING,
+  INTEGER,
+  REAL,
+  URI, 
+  TEXT
+ }
+ 
  private String name;
  private String id;
  
@@ -18,6 +29,11 @@ public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSeria
  private Collection<RestrictionImprint> qualifierRestrictions;
  private ModelImprint model;
 
+ private Type type;
+ 
+ AgeAttributeClassImprint()
+ {}
+ 
  public String getName()
  {
   return name;
@@ -38,14 +54,22 @@ public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSeria
   this.id = id;
  }
 
+ public AgeAttributeClassImprint createSubClass()
+ {
+  if(children == null)
+   children = new ArrayList<AgeAttributeClassImprint>(10);
+
+  AgeAttributeClassImprint simp = model.createAgeAttributClassImprint();
+  
+  simp.addSuperClass(this);
+  
+  return simp;
+ }
+
+ 
  public Collection<AgeAttributeClassImprint> getParents()
  {
   return parents;
- }
-
- public void setParents(Collection<AgeAttributeClassImprint> parents)
- {
-  this.parents = parents;
  }
 
  public Collection<AgeAttributeClassImprint> getChildren()
@@ -53,10 +77,6 @@ public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSeria
   return children;
  }
 
- public void setChildren(Collection<AgeAttributeClassImprint> children)
- {
-  this.children = children;
- }
 
 
  public Collection<RestrictionImprint> getQualifierRestrictions()
@@ -69,7 +89,7 @@ public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSeria
   this.qualifierRestrictions = attributeRestrictions;
  }
 
- public void addSubClass(AgeAttributeClassImprint simp)
+ void addSubClass(AgeAttributeClassImprint simp)
  {
   if( children == null )
    children = new ArrayList<AgeAttributeClassImprint>(10);
@@ -83,6 +103,7 @@ public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSeria
    parents = new ArrayList<AgeAttributeClassImprint>(10);
   
   parents.add(simp);
+  simp.addSubClass(this);
  }
 
  public void addAttributeRestriction(RestrictionImprint rst)
@@ -101,5 +122,15 @@ public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSeria
  public ModelImprint getModel()
  {
   return model;
+ }
+
+ public void setAbstract(boolean b)
+ {
+  type=Type.ABSTRACT;
+ }
+
+ public void setType( Type t )
+ {
+  type=t;
  }
 }

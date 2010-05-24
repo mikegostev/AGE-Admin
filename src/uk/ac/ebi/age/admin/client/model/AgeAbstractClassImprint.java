@@ -13,6 +13,5 @@ public interface AgeAbstractClassImprint extends IsSerializable
 
  String getName();
  
- public void setModel(ModelImprint modelImprint);
 
 }

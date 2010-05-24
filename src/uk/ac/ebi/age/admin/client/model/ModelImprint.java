@@ -9,16 +9,39 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class ModelImprint  implements IsSerializable
 {
  private AgeClassImprint rootClass;
+ private AgeRelationClassImprint rootRelation;
+ private AgeAttributeClassImprint rootAttribute;
+
  private Set<AgeClassImprint> classes = new HashSet<AgeClassImprint>();
 
- private AgeAttributeClassImprint rootAttribute;
- private Collection<AgeAttributeClassImprint> attributes;
+ private Set<AgeAttributeClassImprint> attributes = new HashSet<AgeAttributeClassImprint>();
 
- private AgeRelationClassImprint rootRelation;
+ private Set<AgeRelationClassImprint> relations = new HashSet<AgeRelationClassImprint>();
+
+
  
  public AgeClassImprint getRootClass()
  {
+  if( rootClass != null )
+   return rootClass;
+   
+  rootClass = new AgeClassImprint();
+  
+  classes.add(rootClass);
+  rootClass.setModel( this );
+  
   return rootClass;
+ }
+
+ AgeClassImprint createAgeClassImprint()
+ {
+  AgeClassImprint ncls = new AgeClassImprint();
+  
+  classes.add(ncls);
+  
+  ncls.setModel(this);
+  
+  return ncls;
  }
 
  public Collection<AgeClassImprint> getClasses()
@@ -26,33 +49,93 @@ public class ModelImprint  implements IsSerializable
   return classes;
  }
 
- public void setRootClass(AgeClassImprint rootClass)
+
+ public AgeAttributeClassImprint getRootAttributeClass()
  {
-  this.rootClass = rootClass;
+  if( rootAttribute != null )
+   return rootAttribute;
+   
+  rootAttribute = new AgeAttributeClassImprint();
   
-  addClass(rootClass);
+  attributes.add(rootAttribute);
+  rootAttribute.setModel( this );
+  
+  return rootAttribute;
  }
 
- private void addClass( AgeClassImprint rootClass )
+
+ AgeAttributeClassImprint createAgeAttributClassImprint()
  {
-  classes.add(rootClass);
+  AgeAttributeClassImprint ncls = new AgeAttributeClassImprint();
   
-  rootClass.setModel(this);
+  attributes.add(ncls);
   
-  if( rootClass.getChildren() != null )
-  {
-   for( AgeClassImprint sc : rootClass.getChildren() )
-    addClass( sc );
-  }
+  ncls.setModel(this);
+
+  return ncls;
  }
  
- public void setRootAttributeClass(AgeAttributeClassImprint atImp)
+ public Collection<AgeAttributeClassImprint> getAttributes()
  {
-  rootAttribute = atImp;
+  return attributes;
  }
 
- public void setRootRelationClass(AgeRelationClassImprint relImp)
+
+ public AgeRelationClassImprint getRootRelationClass()
  {
-  rootRelation=relImp;
+  if( rootRelation != null )
+   return rootRelation;
+   
+  rootRelation = new AgeRelationClassImprint();
+  
+  relations.add(rootRelation);
+  rootRelation.setModel( this );
+  
+  return rootRelation;
  }
+
+
+ AgeRelationClassImprint createAgeRelationClassImprint()
+ {
+  AgeRelationClassImprint ncls = new AgeRelationClassImprint();
+  
+  relations.add(ncls);
+  
+  ncls.setModel(this);
+
+  
+  return ncls;
+ }
+ 
+ public Collection<AgeRelationClassImprint> getRelations()
+ {
+  return relations;
+ }
+
+
+
+// private void addClass( AgeClassImprint rootClass )
+// {
+//  classes.add(rootClass);
+//  
+//  rootClass.setModel(this);
+//  
+//  if( rootClass.getChildren() != null )
+//  {
+//   for( AgeClassImprint sc : rootClass.getChildren() )
+//    addClass( sc );
+//  }
+// }
+ 
+
+
+
+// public void registerClass()
+// {
+//  classes.add(rootClass);
+//  
+//  rootClass.setModel(this);
+// }
+ 
+ 
 }

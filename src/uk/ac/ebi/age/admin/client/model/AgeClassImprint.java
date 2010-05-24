@@ -22,6 +22,9 @@ public class AgeClassImprint implements IsSerializable, AgeAbstractClassImprint
  
  private ModelImprint model;
 
+ AgeClassImprint()
+ {}
+ 
  public String getName()
  {
   return name;
@@ -57,10 +60,10 @@ public class AgeClassImprint implements IsSerializable, AgeAbstractClassImprint
   return children;
  }
 
- public void setChildren(Collection<AgeClassImprint> children)
- {
-  this.children = children;
- }
+// public void setChildren(Collection<AgeClassImprint> children)
+// {
+//  this.children = children;
+// }
 
  public Collection<RestrictionImprint> getObjectRestrictions()
  {
@@ -82,7 +85,19 @@ public class AgeClassImprint implements IsSerializable, AgeAbstractClassImprint
   this.attributeRestrictions = attributeRestrictions;
  }
 
- public void addSubClass(AgeClassImprint simp)
+ public AgeClassImprint createSubClass()
+ {
+  if(children == null)
+   children = new ArrayList<AgeClassImprint>(10);
+
+  AgeClassImprint simp = model.createAgeClassImprint();
+  
+  simp.addSuperClass(this);
+  
+  return simp;
+ }
+ 
+ void addSubClass(AgeClassImprint simp)
  {
   if( children == null )
    children = new ArrayList<AgeClassImprint>(10);
@@ -96,6 +111,7 @@ public class AgeClassImprint implements IsSerializable, AgeAbstractClassImprint
    parents = new ArrayList<AgeClassImprint>(10);
   
   parents.add(simp);
+  simp.addSubClass(this);
  }
 
  public void addRestriction(RestrictionImprint rst)
@@ -124,7 +140,7 @@ public class AgeClassImprint implements IsSerializable, AgeAbstractClassImprint
   this.isAbstract = isAbstract;
  }
 
- public void setModel(ModelImprint modelImprint)
+ void setModel(ModelImprint modelImprint)
  {
   model = modelImprint;
  }

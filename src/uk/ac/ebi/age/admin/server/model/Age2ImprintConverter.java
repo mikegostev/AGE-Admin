@@ -28,129 +28,149 @@ import uk.ac.ebi.age.model.AgeOrLogicRestriction;
 import uk.ac.ebi.age.model.AgeRelationClass;
 import uk.ac.ebi.age.model.AgeRestriction;
 import uk.ac.ebi.age.model.AgeSomeValuesFromRestriction;
+import uk.ac.ebi.age.model.DataType;
 import uk.ac.ebi.age.model.SemanticModel;
 
 public class Age2ImprintConverter
 {
  public static ModelImprint getModelImprint( SemanticModel sm )
  {
-  
+
   ModelImprint mimp = new ModelImprint();
-  
-  Map<AgeAbstractClass,Object> clMap = new HashMap<AgeAbstractClass, Object>();
-  
+
+  Map<AgeAbstractClass, Object> clMap = new HashMap<AgeAbstractClass, Object>();
+
   AgeClass ageRoot = sm.getRootAgeClass();
-  
-  AgeClassImprint rImp = new AgeClassImprint();
+
+  AgeClassImprint rImp = mimp.getRootClass();
   rImp.setName("AgeClass");
-  
-  for( AgeClass acls : ageRoot.getSubClasses() )
+  rImp.setAbstract(true);
+
+  clMap.put(ageRoot, rImp);
+
+  convertAgeToImprint(ageRoot, rImp, clMap, new Creator<AgeClassImprint>()
   {
-   AgeClassImprint simp = convertAgeToImprint(acls,clMap, new Creator<AgeClassImprint>()
+
+   @Override
+   public void addSubclass(AgeClassImprint bclass, AgeClassImprint derClass)
    {
+    derClass.addSuperClass(bclass);
+   }
 
-    @Override
-    public void addSubclass(AgeClassImprint bclass, AgeClassImprint derClass)
-    {
-     bclass.addSubClass(derClass);
-     derClass.addSuperClass(bclass);
-    }
+   @Override
+   public AgeClassImprint create(AgeAbstractClass acls, AgeClassImprint parent)
+   {
+    AgeClassImprint cImp = parent.createSubClass();
 
-    @Override
-    public AgeClassImprint create(String id, String name)
-    {
-     AgeClassImprint cImp = new AgeClassImprint();
-     
-     cImp.setName(name);
-     cImp.setId(id);
-     
-     return cImp;
-    }
-   });
-   
-   rImp.addSubClass(simp);
-   simp.addSuperClass(rImp);
-  }
-  
-  mimp.setRootClass(rImp);
-  
-  
-  
+    cImp.setName(acls.getName());
+    cImp.setId(acls.getId());
+    cImp.setAbstract(acls.isAbstract());
+
+    return cImp;
+   }
+  });
+
   AgeAttributeClass attrRoot = sm.getRootAgeAttributeClass();
-  
-  AgeAttributeClassImprint atImp = new AgeAttributeClassImprint();
-  
-  for( AgeAttributeClass acls : attrRoot.getSubClasses() )
+
+  AgeAttributeClassImprint atImp = mimp.getRootAttributeClass();
+
+  atImp.setName("AgeAttribute");
+  atImp.setAbstract(true);
+
+  clMap.put(attrRoot, atImp);
+
+  convertAgeToImprint(attrRoot, atImp, clMap, new Creator<AgeAttributeClassImprint>()
   {
-   AgeAttributeClassImprint simp = convertAgeToImprint(acls,clMap, new Creator<AgeAttributeClassImprint>()
+
+   @Override
+   public void addSubclass(AgeAttributeClassImprint bclass, AgeAttributeClassImprint derClass)
    {
+    derClass.addSuperClass(bclass);
+   }
 
-    @Override
-    public void addSubclass(AgeAttributeClassImprint bclass, AgeAttributeClassImprint derClass)
+   @Override
+   public AgeAttributeClassImprint create(AgeAbstractClass acls, AgeAttributeClassImprint parent)
+   {
+    AgeAttributeClassImprint cImp = parent.createSubClass();
+
+    cImp.setName(acls.getName());
+    cImp.setId(acls.getId());
+
+    DataType typ = ((AgeAttributeClass) acls).getDataType();
+
+    if(typ != null)
     {
-     bclass.addSubClass(derClass);
-     derClass.addSuperClass(bclass);
+     switch(typ)
+     {
+      case BOOLEAN:
+       cImp.setType(uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint.Type.BOOLEAN);
+       break;
+
+      case INTEGER:
+       cImp.setType(uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint.Type.INTEGER);
+       break;
+
+      case REAL:
+       cImp.setType(uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint.Type.REAL);
+       break;
+
+      case STRING:
+       cImp.setType(uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint.Type.STRING);
+       break;
+
+      case URI:
+       cImp.setType(uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint.Type.URI);
+       break;
+
+      case TEXT:
+       cImp.setType(uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint.Type.TEXT);
+       break;
+     }
+
     }
 
-    @Override
-    public AgeAttributeClassImprint create(String id, String name)
-    {
-     AgeAttributeClassImprint cImp = new AgeAttributeClassImprint();
-     
-     cImp.setName(name);
-     cImp.setId(id);
-     
-     return cImp;
-    }
-   });
-   
-   atImp.addSubClass(simp);
-   simp.addSuperClass(atImp);
-  }
-  
-  mimp.setRootAttributeClass(atImp);
-  
-  
-  
+    cImp.setAbstract(acls.isAbstract());
+
+    return cImp;
+   }
+  });
+
   AgeRelationClass relRoot = sm.getRootAgeRelationClass();
-  
-  AgeRelationClassImprint relImp = new AgeRelationClassImprint();
-  
-  for( AgeRelationClass rcls : relRoot.getSubClasses() )
+
+  AgeRelationClassImprint relImp = mimp.getRootRelationClass();
+
+  relImp.setName("AgeRelation");
+  relImp.setAbstract(true);
+
+  clMap.put(relRoot, relImp);
+
+  convertAgeToImprint(relRoot, relImp, clMap, new Creator<AgeRelationClassImprint>()
   {
-   AgeRelationClassImprint simp = convertAgeToImprint(rcls,clMap, new Creator<AgeRelationClassImprint>()
+
+   @Override
+   public void addSubclass(AgeRelationClassImprint bclass, AgeRelationClassImprint derClass)
    {
+    derClass.addSuperClass(bclass);
+   }
 
-    @Override
-    public void addSubclass(AgeRelationClassImprint bclass, AgeRelationClassImprint derClass)
-    {
-     bclass.addSubClass(derClass);
-     derClass.addSuperClass(bclass);
-    }
+   @Override
+   public AgeRelationClassImprint create(AgeAbstractClass acls, AgeRelationClassImprint parent)
+   {
+    AgeRelationClassImprint cImp = parent.createSubClass();
 
-    @Override
-    public AgeRelationClassImprint create(String id, String name)
-    {
-     AgeRelationClassImprint cImp = new AgeRelationClassImprint();
-     
-     cImp.setName(name);
-     cImp.setId(id);
-     
-     return cImp;
-    }
-   });
-   
-   relImp.addSubClass(simp);
-   simp.addSuperClass(relImp);
-  }
-  
-  mimp.setRootRelationClass(relImp);
+    cImp.setName(acls.getName());
+    cImp.setId(acls.getId());
+    cImp.setAbstract(acls.isAbstract());
 
-  convertObjectRestrictions(sm.getRootAgeClass(), clMap );
-  convertAttributeRestrictions(sm.getRootAgeClass(), clMap );
-  convertAttributeRestrictions(sm.getRootAgeAttributeClass(), clMap );
-  convertAttributeRestrictions(sm.getRootAgeRelationClass(), clMap );
-  
+    return cImp;
+   }
+  });
+
+  convertObjectRestrictions(sm.getRootAgeClass(), clMap);
+  convertAttributeRestrictions(sm.getRootAgeClass(), clMap);
+  convertAttributeRestrictions(sm.getRootAgeAttributeClass(), clMap);
+  convertAttributeRestrictions(sm.getRootAgeRelationClass(), clMap);
+
   return mimp;
  }
 
@@ -298,14 +318,14 @@ public class Age2ImprintConverter
 
  private interface Creator<ImpC>
  {
-  ImpC create( String id, String name );
+  ImpC create( AgeAbstractClass mCls, ImpC parent );
   void addSubclass(ImpC bclass, ImpC derClass);
  }
  
- private static <ImpC> ImpC convertAgeToImprint(AgeAbstractClass acls, Map<AgeAbstractClass, Object> clMap, Creator<ImpC> cr)
+ private static <ImpC> void convertAgeToImprint(AgeAbstractClass acls, ImpC parent, Map<AgeAbstractClass, Object> clMap, Creator<ImpC> cr)
  {
-  ImpC cImp = cr.create(acls.getId(),acls.getName());
-  clMap.put(acls,cImp);
+//  ImpC cImp = cr.create(acls.getId(),acls.getName());
+//  clMap.put(acls,cImp);
 
   if( acls.getSubClasses() != null )
   {
@@ -315,15 +335,16 @@ public class Age2ImprintConverter
     
     if( subImp == null )
     {
-     subImp = convertAgeToImprint(scls, clMap, cr);
+     subImp = cr.create(scls, parent);
      clMap.put(scls, subImp);
+
+     convertAgeToImprint(scls, parent, clMap, cr);
     }
+    else
+     cr.addSubclass(parent, subImp);
     
-    cr.addSubclass(cImp,subImp);
    }
   }
-  
-  return cImp;
- }
+ }  
 
 }

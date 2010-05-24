@@ -16,7 +16,13 @@ public class AgeRelationClassImprint implements AgeAbstractClassImprint,IsSerial
  
  private Collection<RestrictionImprint> qualifierRestrictions;
  private ModelImprint model;
+ private boolean isAbstract;
 
+
+
+ AgeRelationClassImprint()
+ {}
+ 
  public String getName()
  {
   return name;
@@ -37,7 +43,20 @@ public class AgeRelationClassImprint implements AgeAbstractClassImprint,IsSerial
   this.id = id;
  }
 
- public void addSubClass(AgeRelationClassImprint simp)
+ public AgeRelationClassImprint createSubClass()
+ {
+  if(children == null)
+   children = new ArrayList<AgeRelationClassImprint>(10);
+
+  AgeRelationClassImprint simp = model.createAgeRelationClassImprint();
+  
+  simp.addSuperClass(this);
+  
+  return simp;
+ }
+
+ 
+ void addSubClass(AgeRelationClassImprint simp)
  {
   if( children == null )
    children = new ArrayList<AgeRelationClassImprint>(10);
@@ -51,6 +70,8 @@ public class AgeRelationClassImprint implements AgeAbstractClassImprint,IsSerial
    parents = new ArrayList<AgeRelationClassImprint>(10);
   
   parents.add(simp);
+  
+  simp.addSubClass(this);
  }
  
  public void addAttributeRestriction(RestrictionImprint rst)
@@ -81,4 +102,13 @@ public class AgeRelationClassImprint implements AgeAbstractClassImprint,IsSerial
   return model;
  }
 
+ public void setAbstract(boolean b)
+ {
+  isAbstract=b;
+ }
+
+ public boolean isAbstract()
+ {
+  return isAbstract;
+ }
 }
