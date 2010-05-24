@@ -22,5 +22,33 @@ public class LogicRestrictionImprint extends RestrictionImprint
  {
   operands.add(operand);
  }
+ 
+ public String toString()
+ {
+  StringBuilder sb = new StringBuilder();
+  
+  if( getType() == Type.NOT )
+  {
+   sb.append("NOT ( ").append( operands.iterator().next() ).append(" )");
+   return sb.toString();
+  }
+  
+  sb.append("( ");
+  
+  String op = getType() == Type.AND?" AND ":" OR ";
+  
+  for( RestrictionImprint rimp : operands )
+  {
+   sb.append(rimp.toString());
+   sb.append(op);
+  }
+  
+  sb.setLength( sb.length()-op.length() );
+  
+  sb.append(" )");
+  
+  return sb.toString();
+  
+ }
 
 }

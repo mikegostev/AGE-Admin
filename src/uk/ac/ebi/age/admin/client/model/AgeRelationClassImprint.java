@@ -15,6 +15,7 @@ public class AgeRelationClassImprint implements AgeAbstractClassImprint,IsSerial
  private Collection<AgeRelationClassImprint> parents;
  
  private Collection<RestrictionImprint> qualifierRestrictions;
+ private ModelImprint model;
 
  public String getName()
  {
@@ -68,6 +69,16 @@ public class AgeRelationClassImprint implements AgeAbstractClassImprint,IsSerial
  public void setQualifierRestrictions(Collection<RestrictionImprint> attributeRestrictions)
  {
   this.qualifierRestrictions = attributeRestrictions;
+ }
+ 
+ public void setModel(ModelImprint modelImprint)
+ {
+  model = modelImprint;
+ }
+
+ public ModelImprint getModel()
+ {
+  return model;
  }
 
 }

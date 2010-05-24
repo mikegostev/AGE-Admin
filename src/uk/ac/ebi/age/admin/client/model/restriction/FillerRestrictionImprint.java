@@ -28,5 +28,27 @@ public class FillerRestrictionImprint extends RestrictionImprint
   this.relation = relation;
  }
 
+ public String toString()
+ {
+  StringBuilder sb = new StringBuilder();
+  
+  String op=null;
+  
+  if( getType() == Type.ONLY )
+   op="only";
+  else if( getType() == Type.SOME )
+   op="some";
+  
+  sb.append("( ")
+  .append(getRelation().getName())
+  .append(" ")
+  .append(op)
+  .append(" ")
+  .append(getFiller().toString())
+  .append(" )");
+  
+  return sb.toString();
+ }
+
 
 }

@@ -16,6 +16,7 @@ public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSeria
  private Collection<AgeAttributeClassImprint> children;
  
  private Collection<RestrictionImprint> qualifierRestrictions;
+ private ModelImprint model;
 
  public String getName()
  {
@@ -90,5 +91,15 @@ public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSeria
    qualifierRestrictions = new ArrayList<RestrictionImprint>(10);
   
   qualifierRestrictions.add(rst);
+ }
+ 
+ public void setModel(ModelImprint modelImprint)
+ {
+  model = modelImprint;
+ }
+
+ public ModelImprint getModel()
+ {
+  return model;
  }
 }

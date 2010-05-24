@@ -15,4 +15,9 @@ public class IntanceOfRestrictionImprint extends RestrictionImprint
  {
   this.ageAClassImprint = ageClassImprint;
  }
+ 
+ public String toString()
+ {
+  return ageAClassImprint.getName();
+ }
 }

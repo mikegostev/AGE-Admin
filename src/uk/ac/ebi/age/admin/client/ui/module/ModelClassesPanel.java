@@ -11,6 +11,8 @@ import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import com.smartgwt.client.types.TreeModelType;
 import com.smartgwt.client.widgets.events.DrawEvent;
 import com.smartgwt.client.widgets.events.DrawHandler;
+import com.smartgwt.client.widgets.grid.events.CellClickEvent;
+import com.smartgwt.client.widgets.grid.events.CellClickHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
@@ -31,12 +33,11 @@ public class ModelClassesPanel extends HLayout
   treePanel.setWidth100();
   treePanel.setHeight100();
 
-  treePanel.setNodeIcon("../images/icons/bullet.png");
-  treePanel.setFolderIcon("../images/icons/bullet.png");
+//  treePanel.setNodeIcon("../images/icons/bullet.png");
+//  treePanel.setFolderIcon("../images/icons/bullet.png");
 
   treePanel.setShowConnectors(true);
   treePanel.setShowRoot(false);
-
 
   treePanel.setFields(new TreeGridField("Class"));
 
@@ -78,8 +79,25 @@ public class ModelClassesPanel extends HLayout
     System.out.println("Classes panel draw");
    }
   });
+  
+  treePanel.addCellClickHandler( new CellClickHandler()
+  {
+   
+   @Override
+   public void onCellClick(CellClickEvent event)
+   {
+    showClassDetails( ((ClassTreeNode)event.getRecord()).getCls() );
+   }
+
+
+  });
  }
 
+ private void showClassDetails(AgeClassImprint cls)
+ {
+  detailPanel.setMembers( new ClassDetailsPanel(cls) );
+ }
+ 
  public void setModel(ModelImprint mod)
  {
 //  Tree data = new Tree();
@@ -201,6 +219,7 @@ public class ModelClassesPanel extends HLayout
    cls=cl;
    
    setAttribute("Class", cl.getName());
+   setIcon("../images/icons/class/"+(cl.isAbstract()?"abstract.png":"regular.png"));
   }
   
   public ClassTreeNode( String nm )

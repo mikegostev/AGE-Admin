@@ -12,11 +12,15 @@ public class AgeClassImprint implements IsSerializable, AgeAbstractClassImprint
  private String name;
  private String id;
  
+ private boolean isAbstract;
+ 
  private Collection<AgeClassImprint> parents;
  private Collection<AgeClassImprint> children;
  
  private Collection<RestrictionImprint> objectRestrictions;
  private Collection<RestrictionImprint> attributeRestrictions;
+ 
+ private ModelImprint model;
 
  public String getName()
  {
@@ -108,6 +112,26 @@ public class AgeClassImprint implements IsSerializable, AgeAbstractClassImprint
    attributeRestrictions = new ArrayList<RestrictionImprint>(10);
   
   attributeRestrictions.add(rst);
+ }
+
+ public boolean isAbstract()
+ {
+  return isAbstract;
+ }
+
+ public void setAbstract(boolean isAbstract)
+ {
+  this.isAbstract = isAbstract;
+ }
+
+ public void setModel(ModelImprint modelImprint)
+ {
+  model = modelImprint;
+ }
+
+ public ModelImprint getModel()
+ {
+  return model;
  }
 
 }
