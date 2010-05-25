@@ -18,7 +18,7 @@ public class AgeRelationClassImprint implements AgeAbstractClassImprint,IsSerial
  private ModelImprint model;
  private boolean isAbstract;
 
-
+ private transient Object auxData;
 
  AgeRelationClassImprint()
  {}
@@ -110,5 +110,15 @@ public class AgeRelationClassImprint implements AgeAbstractClassImprint,IsSerial
  public boolean isAbstract()
  {
   return isAbstract;
+ }
+
+ public Object getAuxData()
+ {
+  return auxData;
+ }
+
+ public void setAuxData(Object auxData)
+ {
+  this.auxData = auxData;
  }
 }

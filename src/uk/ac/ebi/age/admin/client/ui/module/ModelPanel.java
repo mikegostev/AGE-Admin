@@ -1,7 +1,9 @@
 package uk.ac.ebi.age.admin.client.ui.module;
 
 import uk.ac.ebi.age.admin.client.AgeAdminService;
+import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
+import uk.ac.ebi.age.admin.client.ui.ClassAuxData;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.types.Side;
@@ -53,6 +55,9 @@ public class ModelPanel extends TabSet
      @Override
      public void onSuccess(ModelImprint mod)
      {
+      for(AgeClassImprint climp : mod.getClasses() )
+       climp.setAuxData(new ClassAuxData());
+      
       classesPanel.setModel(mod);
       attribPanel.setModel(mod);
       relationsPanel.setModel(mod);

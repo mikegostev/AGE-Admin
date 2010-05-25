@@ -21,6 +21,8 @@ public class AgeClassImprint implements IsSerializable, AgeAbstractClassImprint
  private Collection<RestrictionImprint> attributeRestrictions;
  
  private ModelImprint model;
+ 
+ private transient Object auxData;
 
  AgeClassImprint()
  {}
@@ -148,6 +150,16 @@ public class AgeClassImprint implements IsSerializable, AgeAbstractClassImprint
  public ModelImprint getModel()
  {
   return model;
+ }
+
+ public Object getAuxData()
+ {
+  return auxData;
+ }
+
+ public void setAuxData(Object auxData)
+ {
+  this.auxData = auxData;
  }
 
 }

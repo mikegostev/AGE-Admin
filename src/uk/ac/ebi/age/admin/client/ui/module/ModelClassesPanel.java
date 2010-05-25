@@ -1,12 +1,13 @@
 package uk.ac.ebi.age.admin.client.ui.module;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
+import uk.ac.ebi.age.admin.client.ui.ClassAuxData;
+import uk.ac.ebi.age.admin.client.ui.ClassTreeNode;
 
 import com.smartgwt.client.types.TreeModelType;
 import com.smartgwt.client.util.SC;
@@ -21,14 +22,14 @@ import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeGrid;
-import com.smartgwt.client.widgets.tree.TreeGridField;
 import com.smartgwt.client.widgets.tree.TreeNode;
 
 public class ModelClassesPanel extends HLayout
 {
  private TreeGrid treePanel;
  private VLayout  detailPanel;
-
+ private ModelImprint model;
+ 
  public ModelClassesPanel()
  {
   treePanel = new TreeGrid();
@@ -42,8 +43,9 @@ public class ModelClassesPanel extends HLayout
 
   treePanel.setShowConnectors(true);
   treePanel.setShowRoot(false);
+  treePanel.setTitleField("Name");
 
-  treePanel.setFields(new TreeGridField("Class"));
+//  treePanel.setFields(new TreeGridField("Name"));
 
   Tree data = new Tree();
   data.setModelType(TreeModelType.CHILDREN);
@@ -171,33 +173,27 @@ public class ModelClassesPanel extends HLayout
     
     AgeClassImprint subCls = cImp.createSubClass();
     subCls.setName(value);
+    subCls.setAuxData(new ClassAuxData());
     
-    treePanel.getData().add(new ClassTreeNode(subCls), selNode);
+    ClassTreeNode nNd = new ClassTreeNode(subCls);
+    ((ClassAuxData)subCls.getAuxData()).addNode(nNd);
+    
+    treePanel.getData().add(nNd, selNode);
     
     treePanel.getData().openFolder(selNode);
-//    treePanel.expandRecord(selNode);
-//    treePanel.getData().setRoot(treePanel.getData().getRoot());
-//    treePanel.setData(treePanel.getData());
-//    
-//    treePanel.redraw();
-//    selNode.setChildren( new TreeNode[] { new ClassTreeNode(value) } );
-    
    }
   });
   
-//  System.out.println("Node selected: " + (selNode!=null?selNode.getName():"None"));
-//  System.out.println("Parent node: " + ((ClassTreeNode)treePanel.getData().getParent(selNode)).getCls().getName());
  }
  
  private void showClassDetails(AgeClassImprint cls)
  {
-  detailPanel.setMembers( new ClassDetailsPanel(cls) );
+  detailPanel.setMembers( new ClassDetailsPanel(cls, this) );
  }
  
  public void setModel(ModelImprint mod)
  {
-//  Tree data = new Tree();
-//  data.setModelType(TreeModelType.CHILDREN);
+  model=mod;
 
   Tree data = treePanel.getData();
   
@@ -217,6 +213,7 @@ public class ModelClassesPanel extends HLayout
   
   data.setRoot(rootNode);
   
+  data.openAll();
 //  treePanel.setData(data);
 //  TreeGridField field = new TreeGridField("Class");
 //
@@ -234,8 +231,10 @@ public class ModelClassesPanel extends HLayout
  }
 
  
- private void createTreeStructure(AgeClassImprint cls, TreeNode node, Map<AgeClassImprint, Collection<ClassTreeNode>> nodeMap)
+ private void createTreeStructure(AgeClassImprint cls, ClassTreeNode node, Map<AgeClassImprint, Collection<ClassTreeNode>> nodeMap)
  {
+  ((ClassAuxData)cls.getAuxData()).addNode(node);
+  
   if(cls.getChildren() == null)
    return;
 
@@ -246,20 +245,6 @@ public class ModelClassesPanel extends HLayout
   for(AgeClassImprint subcls : cls.getChildren())
   {
    ClassTreeNode ctn = new ClassTreeNode(subcls);
-   ctn.setName(subcls.getName());
-
-   Collection<ClassTreeNode> coll = nodeMap.get(subcls);
-
-   if(coll == null)
-   {
-    coll = new ArrayList<ClassTreeNode>(5);
-    nodeMap.put(subcls, coll);
-   }
-
-   coll.add(ctn);
-
-   ctn.setLinkedNodes(coll);
-
    children[i++] = ctn;
 
    createTreeStructure(subcls, ctn, nodeMap);
@@ -270,86 +255,73 @@ public class ModelClassesPanel extends HLayout
  }
 
  
- private void createTreeStructure2(AgeClassImprint cls, TreeNode node,
-   Map<AgeClassImprint, Collection<ClassTreeNode>> nodeMap)
+// private void createTreeStructure2(AgeClassImprint cls, TreeNode node,
+//   Map<AgeClassImprint, Collection<ClassTreeNode>> nodeMap)
+// {
+//  if(cls.getChildren() == null)
+//   return;
+//
+//  TreeNode[] children = new TreeNode[cls.getChildren().size()];
+//
+//  int i = 0;
+//  for(AgeClassImprint subcls : cls.getChildren())
+//  {
+//   ClassTreeNode ctn = new ClassTreeNode(subcls);
+//   ctn.setName(subcls.getName());
+//
+//   Collection<ClassTreeNode> coll = nodeMap.get(subcls);
+//
+//   if(coll == null)
+//   {
+//    coll = new ArrayList<ClassTreeNode>(5);
+//    nodeMap.put(subcls, coll);
+//   }
+//
+//   coll.add(ctn);
+//
+//   ctn.setLinkedNodes(coll);
+//
+//   children[i++] = ctn;
+//
+//   createTreeStructure(subcls, ctn, nodeMap);
+//  }
+//
+//  node.setChildren(children);
+//
+// }
+
+ void updateClassName(AgeClassImprint classImprint, String newName )
  {
-  if(cls.getChildren() == null)
-   return;
-
-  TreeNode[] children = new TreeNode[cls.getChildren().size()];
-
-  int i = 0;
-  for(AgeClassImprint subcls : cls.getChildren())
+  classImprint.setName(newName);
+  
+  ClassAuxData aux = (ClassAuxData)classImprint.getAuxData();
+  
+  for(ClassTreeNode tn : aux.getNodes() )
   {
-   ClassTreeNode ctn = new ClassTreeNode(subcls);
-   ctn.setName(subcls.getName());
-
-   Collection<ClassTreeNode> coll = nodeMap.get(subcls);
-
-   if(coll == null)
-   {
-    coll = new ArrayList<ClassTreeNode>(5);
-    nodeMap.put(subcls, coll);
-   }
-
-   coll.add(ctn);
-
-   ctn.setLinkedNodes(coll);
-
-   children[i++] = ctn;
-
-   createTreeStructure(subcls, ctn, nodeMap);
-  }
-
-  node.setChildren(children);
-
- }
-
- private static class ClassTreeNode extends TreeNode
- {
-  private AgeClassImprint           cls;
-  private Collection<ClassTreeNode> linkedNodes;
-
-  public ClassTreeNode( AgeClassImprint cl )
-  {
-   cls=cl;
-   
-   setAttribute("Class", cl.getName());
-   setIcon("../images/icons/class/"+(cl.isAbstract()?"abstract.png":"regular.png"));
+   tn.setTitle(newName);
   }
   
-  public ClassTreeNode( String nm )
+  treePanel.getData().setRoot(treePanel.getData().getRoot());
+ }
+
+ void updateClassType(AgeClassImprint classImprint, boolean abstr )
+ {
+  classImprint.setAbstract(abstr);
+
+  
+  ClassAuxData aux = (ClassAuxData)classImprint.getAuxData();
+  
+  for(ClassTreeNode tn : aux.getNodes() )
   {
-   setAttribute("Class", nm);
+   tn.setAbstract(abstr);
   }
   
-  public void setLinkedNodes(Collection<ClassTreeNode> linkedNodes)
-  {
-   this.linkedNodes = linkedNodes;
-  }
-
-  public AgeClassImprint getCls()
-  {
-   return cls;
-  }
-
-  public void setCls(AgeClassImprint cls)
-  {
-   this.cls = cls;
-  }
-
-  public Collection<ClassTreeNode> getLinkedNodes()
-  {
-   return linkedNodes;
-  }
-
-  public void addLinkedNode(ClassTreeNode nd)
-  {
-   if(linkedNodes == null)
-    linkedNodes = new ArrayList<ClassTreeNode>(5);
-
-   linkedNodes.add(nd);
-  }
-
+  treePanel.getData().setRoot(treePanel.getData().getRoot());
  }
+
+ public void addSubclass()
+ {
+  new ClassSelectDialog(model).show();
+ }
+
 }

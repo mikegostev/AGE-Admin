@@ -31,6 +31,9 @@ public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSeria
 
  private Type type;
  
+ private transient Object auxData;
+
+ 
  AgeAttributeClassImprint()
  {}
  
@@ -132,5 +135,15 @@ public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSeria
  public void setType( Type t )
  {
   type=t;
+ }
+
+ public Object getAuxData()
+ {
+  return auxData;
+ }
+
+ public void setAuxData(Object auxData)
+ {
+  this.auxData = auxData;
  }
 }

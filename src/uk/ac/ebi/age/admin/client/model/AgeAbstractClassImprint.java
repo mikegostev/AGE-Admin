@@ -13,5 +13,5 @@ public interface AgeAbstractClassImprint extends IsSerializable
 
  String getName();
  
-
+ Object getAuxData();
 }

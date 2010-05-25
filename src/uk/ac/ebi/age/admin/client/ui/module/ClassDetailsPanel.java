@@ -7,6 +7,8 @@ import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.ListGridFieldType;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.VisibilityMode;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.CheckboxItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
@@ -28,9 +30,11 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 public class ClassDetailsPanel extends SectionStack
 {
  private AgeClassImprint classImprint;
+ private ModelClassesPanel classesPanel;
  
- public ClassDetailsPanel( AgeClassImprint cls )
+ public ClassDetailsPanel( AgeClassImprint cls, ModelClassesPanel clsPanel )
  {
+  classesPanel = clsPanel;
   classImprint = cls;
   
   setWidth100();
@@ -58,11 +62,10 @@ public class ClassDetailsPanel extends SectionStack
    @Override
    public void onKeyPress(KeyPressEvent event)
    {
-    System.out.println("Key pressed: "+event.getKeyName());
-    
     if( "Enter".equals(event.getKeyName()) )
      nameField.blurItem();
    }
+
   });
   
   nameField.addBlurHandler(new BlurHandler()
@@ -71,7 +74,7 @@ public class ClassDetailsPanel extends SectionStack
    @Override
    public void onBlur(BlurEvent event)
    {
-    System.out.println("Field blur: "+event.getType());
+    classesPanel.updateClassName( classImprint, (String)event.getItem().getValue() );
    }
   });
 
@@ -83,7 +86,7 @@ public class ClassDetailsPanel extends SectionStack
    @Override
    public void onChanged(ChangedEvent event)
    {
-    System.out.println("Class is now "+(event.getValue())+"abstract");
+    classesPanel.updateClassType( classImprint, (Boolean)event.getItem().getValue() );
    }
   });
   
@@ -111,7 +114,8 @@ public class ClassDetailsPanel extends SectionStack
   ListGrid superClsList = new ListGrid();
   superClsList.setHeight(30);
   superClsList.setBodyOverflow(Overflow.VISIBLE);  
-  superClsList.setOverflow(Overflow.VISIBLE);  
+  superClsList.setOverflow(Overflow.VISIBLE);
+  superClsList.setShowHeader(false);
 
   ListGridField superclassIconField = new ListGridField("type", "Type", 40);
   superclassIconField.setAlign(Alignment.CENTER);
@@ -139,9 +143,26 @@ public class ClassDetailsPanel extends SectionStack
   {
    VLayout subClsSec = new VLayout();
    subClsSec.setWidth100();
+   subClsSec.setMargin(3);
 
    ToolStrip subTS = new ToolStrip();
    subTS.setWidth100();
+
+   btadd = new ToolStripButton();
+   btadd.setIcon("../images/icons/class/add.png");
+   btadd.addClickHandler( new ClickHandler()
+   {
+    @Override
+    public void onClick(ClickEvent event)
+    {
+     classesPanel.addSubclass();
+    }
+   });
+   subTS.addButton(btadd);
+  
+   btdel = new ToolStripButton();
+   btdel.setIcon("../images/icons/class/del.png");
+   subTS.addButton(btdel);
 
    subClsSec.addMember(subTS);
 
@@ -149,6 +170,7 @@ public class ClassDetailsPanel extends SectionStack
    subClsList.setHeight(30);
    subClsList.setBodyOverflow(Overflow.VISIBLE);
    subClsList.setOverflow(Overflow.VISIBLE);
+   subClsList.setShowHeader(false);
 
    ListGridField subclassIconField = new ListGridField("type", "Type", 40);
    subclassIconField.setAlign(Alignment.CENTER);
@@ -176,6 +198,7 @@ public class ClassDetailsPanel extends SectionStack
   {
    VLayout relSec = new VLayout();
    relSec.setWidth100();
+   relSec.setMargin(3);
 
    ToolStrip relTS = new ToolStrip();
    relTS.setWidth100();
@@ -186,7 +209,8 @@ public class ClassDetailsPanel extends SectionStack
    relList.setHeight(30);
    relList.setBodyOverflow(Overflow.VISIBLE);
    relList.setOverflow(Overflow.VISIBLE);
-
+   relList.setShowHeader(false);
+   
    ListGridField relIconField = new ListGridField("type", "Type", 40);
    relIconField.setAlign(Alignment.CENTER);
    relIconField.setType(ListGridFieldType.IMAGE);
@@ -235,4 +259,5 @@ public class ClassDetailsPanel extends SectionStack
   }
  }
 
+ 
 }
