@@ -1,13 +1,21 @@
 package uk.ac.ebi.age.admin.client.ui.module;
 
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
+import uk.ac.ebi.age.admin.client.ui.ClassSelectedCallback;
+import uk.ac.ebi.age.admin.client.ui.ClassTreeNode;
 
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.VerticalAlignment;
+import com.smartgwt.client.widgets.IButton;
 import com.smartgwt.client.widgets.Window;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
 public class ClassSelectDialog extends Window
 {
- public ClassSelectDialog( ModelImprint mod)
+ public ClassSelectDialog( ModelImprint mod, final ClassSelectedCallback cb )
  {
    setWidth(600);  
    setHeight(600);  
@@ -21,11 +29,51 @@ public class ClassSelectDialog extends Window
    winInter.setWidth100();
    winInter.setHeight100();
    
-   ClassTreePanel cTree = new ClassTreePanel(mod);
+   final ClassTreePanel cTree = new ClassTreePanel(mod);
    cTree.setWidth100();
    cTree.setHeight("*"); 
    
-   winInter.addMember(new ClassTreePanel(mod));
+   winInter.addMember(cTree);
+   
+   HLayout btnPanel = new HLayout();
+   btnPanel.setLayoutAlign(Alignment.CENTER);
+   btnPanel.setWidth("1%");
+   btnPanel.setHeight("40");
+   btnPanel.setMembersMargin(30);
+   
+   IButton button;
+   
+   button=new IButton("OK");
+   button.setLayoutAlign(VerticalAlignment.CENTER);
+   button.addClickHandler(new ClickHandler()
+   {
+    @Override
+    public void onClick(ClickEvent event)
+    {
+     ClassTreeNode nd = (ClassTreeNode)cTree.getSelectedRecord();
+     
+     if( nd == null )
+      return;
+     
+     destroy();
+     cb.classSelected(nd.getCls());
+    }
+   });
+   btnPanel.addMember( button );
+  
+   button=new IButton("Cancel");
+   button.setLayoutAlign(VerticalAlignment.CENTER);
+   button.addClickHandler(new ClickHandler()
+   {
+    @Override
+    public void onClick(ClickEvent event)
+    {
+     destroy();
+    }
+   });
+   btnPanel.addMember( button );
+   
+   winInter.addMember(btnPanel);
    
    addItem( winInter );
  }

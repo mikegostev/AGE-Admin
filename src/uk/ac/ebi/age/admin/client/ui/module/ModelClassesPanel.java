@@ -1,12 +1,11 @@
 package uk.ac.ebi.age.admin.client.ui.module;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.ui.ClassAuxData;
+import uk.ac.ebi.age.admin.client.ui.ClassSelectedCallback;
 import uk.ac.ebi.age.admin.client.ui.ClassTreeNode;
 
 import com.smartgwt.client.types.TreeModelType;
@@ -16,6 +15,8 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.events.CellClickEvent;
 import com.smartgwt.client.widgets.grid.events.CellClickHandler;
+import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
+import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
@@ -60,6 +61,33 @@ public class ModelClassesPanel extends HLayout
 
   treePanel.setData(data);
 
+  treePanel.addSelectionChangedHandler(new SelectionChangedHandler()
+  {
+   
+   @Override
+   public void onSelectionChanged(SelectionEvent event)
+   {
+    ClassTreeNode ctn = (ClassTreeNode)event.getRecord();
+    
+    Collection<ClassTreeNode> sameNodes = ((ClassAuxData)ctn.getCls().getAuxData()).getNodes();
+    
+    if(sameNodes.size()==1)
+     return;
+    
+    TreeNode[] auxNodes = new TreeNode[sameNodes.size()-1]; 
+    
+    int i=0;
+    for( ClassTreeNode smNd  : sameNodes )
+     if( smNd != ctn )
+      auxNodes[i++]=smNd;
+    
+    treePanel.selectRecords(auxNodes);
+    
+    System.out.println("Node selected : "+ctn.getCls().getName());
+   }
+  });
+  
+  
   detailPanel = new VLayout();
   detailPanel.setHeight100();
   detailPanel.setWidth("70%");
@@ -201,11 +229,10 @@ public class ModelClassesPanel extends HLayout
   
 //  ClassTreeNode rootNode = new ClassTreeNode(mod.getRootClass());
 
-  Map<AgeClassImprint, Collection<ClassTreeNode>> nodeMap = new HashMap<AgeClassImprint, Collection<ClassTreeNode>>();
 
   ClassTreeNode  clsRoot = new ClassTreeNode(mod.getRootClass());
   
-  createTreeStructure(mod.getRootClass(), clsRoot, nodeMap);
+  createTreeStructure( mod.getRootClass(), clsRoot );
 
   rootNode.setChildren( new TreeNode[] { clsRoot } );
   
@@ -231,7 +258,7 @@ public class ModelClassesPanel extends HLayout
  }
 
  
- private void createTreeStructure(AgeClassImprint cls, ClassTreeNode node, Map<AgeClassImprint, Collection<ClassTreeNode>> nodeMap)
+ private void createTreeStructure(AgeClassImprint cls, ClassTreeNode node )
  {
   ((ClassAuxData)cls.getAuxData()).addNode(node);
   
@@ -247,48 +274,14 @@ public class ModelClassesPanel extends HLayout
    ClassTreeNode ctn = new ClassTreeNode(subcls);
    children[i++] = ctn;
 
-   createTreeStructure(subcls, ctn, nodeMap);
+   createTreeStructure(subcls, ctn);
   }
 
   node.setChildren(children);
 
  }
 
- 
-// private void createTreeStructure2(AgeClassImprint cls, TreeNode node,
-//   Map<AgeClassImprint, Collection<ClassTreeNode>> nodeMap)
-// {
-//  if(cls.getChildren() == null)
-//   return;
-//
-//  TreeNode[] children = new TreeNode[cls.getChildren().size()];
-//
-//  int i = 0;
-//  for(AgeClassImprint subcls : cls.getChildren())
-//  {
-//   ClassTreeNode ctn = new ClassTreeNode(subcls);
-//   ctn.setName(subcls.getName());
-//
-//   Collection<ClassTreeNode> coll = nodeMap.get(subcls);
-//
-//   if(coll == null)
-//   {
-//    coll = new ArrayList<ClassTreeNode>(5);
-//    nodeMap.put(subcls, coll);
-//   }
-//
-//   coll.add(ctn);
-//
-//   ctn.setLinkedNodes(coll);
-//
-//   children[i++] = ctn;
-//
-//   createTreeStructure(subcls, ctn, nodeMap);
-//  }
-//
-//  node.setChildren(children);
-//
-// }
+
 
  void updateClassName(AgeClassImprint classImprint, String newName )
  {
@@ -319,9 +312,26 @@ public class ModelClassesPanel extends HLayout
   treePanel.getData().setRoot(treePanel.getData().getRoot());
  }
 
- public void addSubclass()
+ public void addSubclass( final AgeClassImprint superClass )
  {
-  new ClassSelectDialog(model).show();
+  new ClassSelectDialog(model, new ClassSelectedCallback()
+  {
+   @Override
+   public void classSelected(AgeClassImprint cls)
+   {
+    cls.addSuperClass(superClass);
+    
+    for( ClassTreeNode supNodes  : ((ClassAuxData)superClass.getAuxData()).getNodes() )
+    {
+     ClassTreeNode nd = new ClassTreeNode(cls);
+     createTreeStructure(cls, nd);
+     treePanel.getData().add(nd, supNodes);
+     
+     System.out.println("Adding "+cls.getName()+" to "+supNodes.getTitle());
+    }
+    
+   }
+  }).show();
  }
 
 }

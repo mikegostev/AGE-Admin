@@ -39,6 +39,17 @@ public class ClassTreePanel extends TreeGrid
    setModel(mod);
   }
   
+//  addCellClickHandler( new CellClickHandler()
+//  {
+//   
+//   @Override
+//   public void onCellClick(CellClickEvent event)
+//   {
+//    System.out.println("Cell selected: "+event.getRecord());
+//    System.out.println("Selected cell: "+ClassTreePanel.this.getSelectedRecord());
+//    System.out.println("Tree: "+ClassTreePanel.this);
+//   }
+//  });
  }
 
  

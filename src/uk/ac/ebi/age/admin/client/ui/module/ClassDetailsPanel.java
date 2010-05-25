@@ -155,7 +155,7 @@ public class ClassDetailsPanel extends SectionStack
     @Override
     public void onClick(ClickEvent event)
     {
-     classesPanel.addSubclass();
+     classesPanel.addSubclass(classImprint);
     }
    });
    subTS.addButton(btadd);
