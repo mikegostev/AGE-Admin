@@ -127,6 +127,11 @@ public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSeria
   return model;
  }
 
+ public boolean isAbstract()
+ {
+  return type==Type.ABSTRACT;
+ }
+ 
  public void setAbstract(boolean b)
  {
   type=Type.ABSTRACT;

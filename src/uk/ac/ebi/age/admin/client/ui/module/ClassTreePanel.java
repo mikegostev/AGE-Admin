@@ -5,9 +5,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
-import uk.ac.ebi.age.admin.client.model.ModelImprint;
+import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.ui.ClassTreeNode;
+import uk.ac.ebi.age.admin.client.ui.ImprintTreeNode;
+import uk.ac.ebi.age.admin.client.ui.NodeCreator;
 
 import com.smartgwt.client.types.TreeModelType;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
@@ -18,10 +19,26 @@ import com.smartgwt.client.widgets.tree.TreeNode;
 
 public class ClassTreePanel extends TreeGrid
 {
- private Map<AgeClassImprint, Collection<ClassTreeNode>> nodeMap = new HashMap<AgeClassImprint, Collection<ClassTreeNode>>();
- 
- ClassTreePanel( ModelImprint mod )
+ public enum Direction
  {
+  PARENT2CHILD, CHILD2PARENT
+ }
+
+ private Direction direction;
+
+ private Map<AgeAbstractClassImprint, Collection<ImprintTreeNode>> nodeMap = new HashMap<AgeAbstractClassImprint, Collection<ImprintTreeNode>>();
+ private NodeCreator nodeCreator;
+ 
+ ClassTreePanel( AgeAbstractClassImprint root, NodeCreator nc )
+ {
+  this(root,Direction.PARENT2CHILD,nc);
+ }
+
+ ClassTreePanel( AgeAbstractClassImprint root, Direction dir, NodeCreator nc )
+ {
+  direction=dir;
+  nodeCreator = nc;
+  
   setShowHeader(false);
   
   setShowConnectors(true);
@@ -35,18 +52,20 @@ public class ClassTreePanel extends TreeGrid
   TreeNode rootNode = new TreeNode( "Root" );
   data.setRoot(rootNode);
 
-  if( mod == null )
-  {
-   ClassTreeNode classRoot =  new ClassTreeNode("AgeClass");
-   classRoot.setIcon("../images/icons/class/abstract.png");
-   
-   rootNode.setChildren( new TreeNode[] { classRoot } );
-  }
-  else
-  {
-   setModel(mod);
-  }
-  
+//  if( mod == null )
+//  {
+//   ClassTreeNode classRoot =  new ClassTreeNode("AgeClass");
+//   classRoot.setIcon("../images/icons/class/abstract.png");
+//   
+//   rootNode.setChildren( new TreeNode[] { classRoot } );
+//  }
+//  else
+//  {
+//   setModel(root);
+//  }
+  if( root != null )
+   setRoot(root);
+ 
   addSelectionChangedHandler( new SelectionChangedHandler()
   {
    @Override
@@ -54,12 +73,12 @@ public class ClassTreePanel extends TreeGrid
    {
     ClassTreeNode ctn = (ClassTreeNode)event.getRecord();
     
-    Collection<ClassTreeNode> coll = nodeMap.get(ctn.getCls());
+    Collection<ImprintTreeNode> coll = nodeMap.get(ctn.getClassImprint());
     
     if( coll.size() == 1 )
      return;
     
-    for(ClassTreeNode othnd : coll )
+    for(ImprintTreeNode othnd : coll )
     {
      if( othnd != ctn )
      {
@@ -75,16 +94,24 @@ public class ClassTreePanel extends TreeGrid
  }
 
  
- public void setModel(ModelImprint mod)
+ public void setRoot(AgeAbstractClassImprint root)
  {
   Tree data = getData();
+
+  if( root == null )
+  {
+   data.getRoot().setChildren( new TreeNode[0] );
+   data.setRoot(data.getRoot());
+   return;
+  }
+  
   
   TreeNode rootNode =data.getRoot();
   
 
-  ClassTreeNode  clsRoot = new ClassTreeNode(mod.getRootClass());
+  ImprintTreeNode  clsRoot = nodeCreator.create(root);
   
-  createTreeStructure(mod.getRootClass(), clsRoot);
+  createTreeStructure(root, clsRoot);
 
   rootNode.setChildren( new TreeNode[] { clsRoot } );
   
@@ -93,20 +120,20 @@ public class ClassTreePanel extends TreeGrid
   data.openAll();
  }
  
- private void createTreeStructure(AgeClassImprint cls, ClassTreeNode node)
+ private void createTreeStructure(AgeAbstractClassImprint cls, ImprintTreeNode node)
  {
   addNodeToMap(node);
   
-  if(cls.getChildren() == null)
+  if( (direction == Direction.PARENT2CHILD && cls.getChildren() == null) || (direction == Direction.CHILD2PARENT && cls.getParents() == null))
    return;
 
-  TreeNode[] children = new TreeNode[cls.getChildren().size()];
+  TreeNode[] children = new TreeNode[ direction==Direction.PARENT2CHILD?cls.getChildren().size():cls.getParents().size()];
 
 
   int i = 0;
-  for(AgeClassImprint subcls : cls.getChildren())
+  for(AgeAbstractClassImprint subcls : direction==Direction.PARENT2CHILD?cls.getChildren():cls.getParents())
   {
-   ClassTreeNode ctn = new ClassTreeNode(subcls);
+   ImprintTreeNode ctn = nodeCreator.create(subcls);
    children[i++] = ctn;
 
    createTreeStructure(subcls, ctn);
@@ -116,25 +143,25 @@ public class ClassTreePanel extends TreeGrid
 
  }
  
- private void addNodeToMap( ClassTreeNode node )
+ private void addNodeToMap( ImprintTreeNode node )
  {
-  Collection<ClassTreeNode> coll = nodeMap.get(node.getCls());
+  Collection<ImprintTreeNode> coll = nodeMap.get(node.getClassImprint());
   
   if( coll == null )
   {
-   coll = new ArrayList<ClassTreeNode>(5);
-   nodeMap.put(node.getCls(), coll);
+   coll = new ArrayList<ImprintTreeNode>(5);
+   nodeMap.put(node.getClassImprint(), coll);
   }
   
   coll.add(node);
  }
 
 
- public void addBranch(AgeClassImprint superClass, AgeClassImprint subClass)
+ public void addBranch(AgeAbstractClassImprint superClass, AgeAbstractClassImprint subClass)
  {
-  for( ClassTreeNode supNodes  : nodeMap.get(superClass) )
+  for( ImprintTreeNode supNodes  : nodeMap.get(superClass) )
   {
-   ClassTreeNode nd = new ClassTreeNode(subClass);
+   ImprintTreeNode nd = nodeCreator.create(subClass);
    createTreeStructure(subClass, nd);
    getData().add(nd, supNodes);
    
@@ -144,11 +171,11 @@ public class ClassTreePanel extends TreeGrid
   }
  }
  
- void updateClassName(AgeClassImprint classImprint, String newName )
+ void updateClassName(AgeAbstractClassImprint classImprint, String newName )
  {
   classImprint.setName(newName);
   
-  for(ClassTreeNode tn : nodeMap.get(classImprint) )
+  for(ImprintTreeNode tn : nodeMap.get(classImprint) )
   {
    tn.setTitle(newName);
   }
@@ -156,12 +183,12 @@ public class ClassTreePanel extends TreeGrid
   getData().setRoot(getData().getRoot());
  }
 
- void updateClassType(AgeClassImprint classImprint, boolean abstr )
+ void updateClassType(AgeAbstractClassImprint classImprint, boolean abstr )
  {
   classImprint.setAbstract(abstr);
 
   
-  for(ClassTreeNode tn : nodeMap.get(classImprint) )
+  for(ImprintTreeNode tn : nodeMap.get(classImprint) )
   {
    tn.setAbstract(abstr);
   }

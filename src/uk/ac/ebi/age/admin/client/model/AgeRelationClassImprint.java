@@ -121,4 +121,16 @@ public class AgeRelationClassImprint implements AgeAbstractClassImprint,IsSerial
  {
   this.auxData = auxData;
  }
+
+ @Override
+ public Collection<AgeRelationClassImprint> getChildren()
+ {
+  return children;
+ }
+
+ @Override
+ public Collection< AgeRelationClassImprint> getParents()
+ {
+  return parents;
+ }
 }

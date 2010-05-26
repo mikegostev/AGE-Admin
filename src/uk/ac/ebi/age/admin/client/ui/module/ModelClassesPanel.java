@@ -1,9 +1,13 @@
 package uk.ac.ebi.age.admin.client.ui.module;
 
+import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.ui.ClassSelectedCallback;
 import uk.ac.ebi.age.admin.client.ui.ClassTreeNode;
+import uk.ac.ebi.age.admin.client.ui.ImprintTreeNode;
+import uk.ac.ebi.age.admin.client.ui.NodeCreator;
+import uk.ac.ebi.age.admin.client.ui.module.ClassTreePanel.Direction;
 
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.util.ValueCallback;
@@ -18,10 +22,21 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
 public class ModelClassesPanel extends HLayout
 {
+ private static NodeCreator classNodeCreator = new NodeCreator() 
+ {
+  @Override
+  public ImprintTreeNode create(AgeAbstractClassImprint cls)
+  {
+   return new ClassTreeNode((AgeClassImprint)cls);
+  }
+ };
+ 
 // private TreeGrid treePanel;
  private VLayout  detailPanel;
  private ModelImprint model;
  private ClassTreePanel treePanel;
+ private ClassTreePanel childrenTreePanel;
+ private ClassTreePanel parentsTreePanel;
  
  public ModelClassesPanel()
  {
@@ -80,7 +95,9 @@ public class ModelClassesPanel extends HLayout
 //  });
   
   
-  treePanel = new ClassTreePanel(null);
+  treePanel = new ClassTreePanel(null, classNodeCreator ); 
+  treePanel.setHeight("*");
+  
   
   detailPanel = new VLayout();
   detailPanel.setHeight100();
@@ -132,6 +149,21 @@ public class ModelClassesPanel extends HLayout
   toolTree.addMember(clsTools);
   toolTree.addMember(treePanel);
   
+  HLayout auxTrees = new HLayout();
+  auxTrees.setHeight("25%");
+  
+  childrenTreePanel = new ClassTreePanel(null, classNodeCreator);
+  childrenTreePanel.setWidth("50%");
+  childrenTreePanel.setHeight100();
+
+  parentsTreePanel = new ClassTreePanel(null, Direction.CHILD2PARENT, classNodeCreator);
+  parentsTreePanel.setWidth("50%");
+  parentsTreePanel.setHeight100();
+  
+  auxTrees.setMembers(childrenTreePanel, parentsTreePanel );
+  
+  toolTree.addMember(auxTrees);
+  
   setMembers(toolTree, detailPanel);
 
  
@@ -141,11 +173,15 @@ public class ModelClassesPanel extends HLayout
    @Override
    public void onCellClick(CellClickEvent event)
    {
-    showClassDetails( ((ClassTreeNode)event.getRecord()).getCls() );
+    showClassDetails( ((ClassTreeNode)event.getRecord()).getClassImprint() );
+    childrenTreePanel.setRoot(((ClassTreeNode)event.getRecord()).getClassImprint());
+    parentsTreePanel.setRoot(((ClassTreeNode)event.getRecord()).getClassImprint());
    }
 
 
   });
+  
+
  }
 
  private void addSiblingClass( )
@@ -182,7 +218,7 @@ public class ModelClassesPanel extends HLayout
     if( value.length() == 0 )
      return;
     
-    AgeClassImprint cImp = selNode.getCls();
+    AgeClassImprint cImp = selNode.getClassImprint();
     
     for( AgeClassImprint othCls : cImp.getModel().getClasses() )
     {
@@ -222,7 +258,7 @@ public class ModelClassesPanel extends HLayout
  {
   model=mod;
 
-  treePanel.setModel(mod);
+  treePanel.setRoot(mod.getRootClass());
   
 //  Tree data = treePanel.getData();
 //  
@@ -296,26 +332,28 @@ public class ModelClassesPanel extends HLayout
 
  public void addSubclass( final AgeClassImprint superClass )
  {
-  new ClassSelectDialog(model, new ClassSelectedCallback()
+  new ClassSelectDialog<AgeClassImprint>(model.getRootClass(), classNodeCreator, new ClassSelectedCallback()
   {
    @Override
    public void classSelected(AgeClassImprint cls)
    {
     cls.addSuperClass(superClass);
     treePanel.addBranch(superClass, cls);
-    
-//    for( ClassTreeNode supNodes  : ((ClassAuxData)superClass.getAuxData()).getNodes() )
-//    {
-//     
-//     ClassTreeNode nd = new ClassTreeNode(cls);
-//     createTreeStructure(cls, nd);
-//     treePanel.getData().add(nd, supNodes);
-//     
-//     System.out.println("Adding "+cls.getName()+" to "+supNodes.getTitle());
-//    }
-    
    }
   }).show();
  }
 
+ public void addSuperclass( final AgeClassImprint subClass )
+ {
+  new ClassSelectDialog<AgeClassImprint>(model.getRootClass(), classNodeCreator, new ClassSelectedCallback()
+  {
+   @Override
+   public void classSelected(AgeClassImprint cls)
+   {
+    subClass.addSuperClass(cls);
+    treePanel.addBranch( cls, subClass);
+   }
+  }).show();
+ }
+ 
 }

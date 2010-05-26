@@ -103,6 +103,14 @@ public class ClassDetailsPanel extends SectionStack
   
   ToolStripButton btadd = new ToolStripButton();
   btadd.setIcon("../images/icons/class/add.png");
+  btadd.addClickHandler( new ClickHandler()
+  {
+   @Override
+   public void onClick(ClickEvent event)
+   {
+    classesPanel.addSuperclass(classImprint);
+   }
+  });
   superTS.addButton(btadd);
  
   ToolStripButton btdel = new ToolStripButton();
