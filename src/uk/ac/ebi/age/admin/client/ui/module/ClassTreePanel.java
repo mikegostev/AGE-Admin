@@ -1,17 +1,25 @@
 package uk.ac.ebi.age.admin.client.ui.module;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
-import uk.ac.ebi.age.admin.client.ui.ClassAuxData;
 import uk.ac.ebi.age.admin.client.ui.ClassTreeNode;
 
 import com.smartgwt.client.types.TreeModelType;
+import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
+import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeGrid;
 import com.smartgwt.client.widgets.tree.TreeNode;
 
 public class ClassTreePanel extends TreeGrid
 {
+ private Map<AgeClassImprint, Collection<ClassTreeNode>> nodeMap = new HashMap<AgeClassImprint, Collection<ClassTreeNode>>();
+ 
  ClassTreePanel( ModelImprint mod )
  {
   setShowHeader(false);
@@ -39,17 +47,31 @@ public class ClassTreePanel extends TreeGrid
    setModel(mod);
   }
   
-//  addCellClickHandler( new CellClickHandler()
-//  {
-//   
-//   @Override
-//   public void onCellClick(CellClickEvent event)
-//   {
-//    System.out.println("Cell selected: "+event.getRecord());
-//    System.out.println("Selected cell: "+ClassTreePanel.this.getSelectedRecord());
-//    System.out.println("Tree: "+ClassTreePanel.this);
-//   }
-//  });
+  addSelectionChangedHandler( new SelectionChangedHandler()
+  {
+   @Override
+   public void onSelectionChanged(SelectionEvent event)
+   {
+    ClassTreeNode ctn = (ClassTreeNode)event.getRecord();
+    
+    Collection<ClassTreeNode> coll = nodeMap.get(ctn.getCls());
+    
+    if( coll.size() == 1 )
+     return;
+    
+    for(ClassTreeNode othnd : coll )
+    {
+     if( othnd != ctn )
+     {
+      othnd.set_baseStyle(event.getState()?"sameClassHighlite treeCell":"treeCell");
+     }
+    }
+    
+    redraw();
+    
+   }
+  });
+  
  }
 
  
@@ -73,7 +95,7 @@ public class ClassTreePanel extends TreeGrid
  
  private void createTreeStructure(AgeClassImprint cls, ClassTreeNode node)
  {
-  ((ClassAuxData)cls.getAuxData()).addNode(node);
+  addNodeToMap(node);
   
   if(cls.getChildren() == null)
    return;
@@ -93,4 +115,59 @@ public class ClassTreePanel extends TreeGrid
   node.setChildren(children);
 
  }
+ 
+ private void addNodeToMap( ClassTreeNode node )
+ {
+  Collection<ClassTreeNode> coll = nodeMap.get(node.getCls());
+  
+  if( coll == null )
+  {
+   coll = new ArrayList<ClassTreeNode>(5);
+   nodeMap.put(node.getCls(), coll);
+  }
+  
+  coll.add(node);
+ }
+
+
+ public void addBranch(AgeClassImprint superClass, AgeClassImprint subClass)
+ {
+  for( ClassTreeNode supNodes  : nodeMap.get(superClass) )
+  {
+   ClassTreeNode nd = new ClassTreeNode(subClass);
+   createTreeStructure(subClass, nd);
+   getData().add(nd, supNodes);
+   
+   getData().openAll(supNodes);
+   
+//   System.out.println("Adding "+subClass.getName()+" to "+supNodes.getTitle());
+  }
+ }
+ 
+ void updateClassName(AgeClassImprint classImprint, String newName )
+ {
+  classImprint.setName(newName);
+  
+  for(ClassTreeNode tn : nodeMap.get(classImprint) )
+  {
+   tn.setTitle(newName);
+  }
+  
+  getData().setRoot(getData().getRoot());
+ }
+
+ void updateClassType(AgeClassImprint classImprint, boolean abstr )
+ {
+  classImprint.setAbstract(abstr);
+
+  
+  for(ClassTreeNode tn : nodeMap.get(classImprint) )
+  {
+   tn.setAbstract(abstr);
+  }
+  
+  
+  getData().setRoot(getData().getRoot());
+ }
+ 
 }
