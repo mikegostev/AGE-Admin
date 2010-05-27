@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
-import uk.ac.ebi.age.admin.client.ui.ClassTreeNode;
 import uk.ac.ebi.age.admin.client.ui.ImprintTreeNode;
 import uk.ac.ebi.age.admin.client.ui.NodeCreator;
 
@@ -23,7 +22,8 @@ public class ClassTreePanel extends TreeGrid
 {
  public enum Direction
  {
-  PARENT2CHILD, CHILD2PARENT
+  PARENT2CHILD,
+  CHILD2PARENT
  }
 
  private Direction direction;
@@ -85,7 +85,7 @@ public class ClassTreePanel extends TreeGrid
    @Override
    public void onSelectionChanged(SelectionEvent event)
    {
-    ClassTreeNode ctn = (ClassTreeNode)event.getRecord();
+    ImprintTreeNode ctn = (ImprintTreeNode)event.getRecord();
     
     Collection<ImprintTreeNode> coll = nodeMap.get(ctn.getClassImprint());
     
@@ -242,7 +242,10 @@ public class ClassTreePanel extends TreeGrid
    if( ((ImprintTreeNode)data.getParent(node)).getClassImprint() == parent )
    {
     if( node == selNode )
+    {
      needReselect=true;
+     selectRecord(selNode, false);
+    }
     
     data.remove(node);
     iter.remove();

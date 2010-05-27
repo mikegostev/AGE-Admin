@@ -59,6 +59,7 @@ public class ClassDetailsPanel extends SectionStack
   
   final TextItem nameField = new TextItem("Name");
   nameField.setValue( cls.getName() );
+  nameField.setDisabled(classImprint.getParents()==null);
   
   nameField.addKeyPressHandler( new KeyPressHandler()
   {
@@ -85,6 +86,7 @@ public class ClassDetailsPanel extends SectionStack
   
   CheckboxItem abstractCB = new CheckboxItem("Abstract");
   abstractCB.setValue(classImprint.isAbstract());
+  abstractCB.setDisabled(classImprint.getParents()==null);
   abstractCB.addChangedHandler( new ChangedHandler()
   {
    @Override

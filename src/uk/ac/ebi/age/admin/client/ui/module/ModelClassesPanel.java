@@ -405,6 +405,23 @@ public class ModelClassesPanel extends HLayout
   childrenTreePanel.setRoot(cls);
   parentsTreePanel.setRoot(cls);
  }
+
+ private boolean checkCycle( AgeClassImprint superClass, AgeClassImprint subClass )
+ {
+  if( superClass == subClass )
+   return false;
+  
+  if( subClass.getChildren() == null )
+   return true;
+  
+  for( AgeClassImprint scls : subClass.getChildren() )
+  {
+   if( ! checkCycle(superClass,scls) )
+    return false;
+  }
+  
+  return true;
+ }
  
  public void addSubclass( final AgeClassImprint superClass, final ClassSelectedCallback extCB )
  {
@@ -413,6 +430,12 @@ public class ModelClassesPanel extends HLayout
    @Override
    public void classSelected(AgeClassImprint cls)
    {
+    if( ! checkCycle(superClass, cls) )
+    {
+     SC.warn("A hierarchy must not have cycles");
+     return;
+    }
+    
     cls.addSuperClass(superClass);
     treePanel.addBranch(superClass, cls);
     
@@ -431,6 +454,12 @@ public class ModelClassesPanel extends HLayout
    @Override
    public void classSelected(AgeClassImprint cls)
    {
+    if( ! checkCycle( cls, subClass) )
+    {
+     SC.warn("A hierarchy must not have cycles");
+     return;
+    }
+
     subClass.addSuperClass(cls);
     treePanel.addBranch( cls, subClass);
     
