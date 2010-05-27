@@ -151,4 +151,41 @@ public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSeria
  {
   this.auxData = auxData;
  }
+ 
+ @Override
+ public void removeChild(AgeAbstractClassImprint cimp)
+ {
+  if( children != null )
+   children.remove(cimp);
+ }
+
+ @Override
+ public void removeParent(AgeAbstractClassImprint cimp)
+ {
+  if( parents != null )
+  {
+   parents.remove(cimp);
+  
+   if( parents.size() == 0 )
+    delete();
+  }
+ }
+
+ @Override
+ public void delete()
+ {
+  if( getParents() != null )
+  {
+   for( AgeAbstractClassImprint pcls : getParents() )
+    pcls.removeChild( this );
+  }
+  
+  if( getChildren() != null )
+  {
+   for( AgeAbstractClassImprint pcls : getChildren() )
+    pcls.removeParent( this );
+  } 
+  
+  model.removeAttributeClassImprint( this );
+ }
 }

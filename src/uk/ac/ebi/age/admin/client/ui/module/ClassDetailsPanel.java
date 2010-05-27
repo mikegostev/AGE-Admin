@@ -1,12 +1,16 @@
 package uk.ac.ebi.age.admin.client.ui.module;
 
+import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
 import uk.ac.ebi.age.admin.client.model.restriction.RestrictionImprint;
+import uk.ac.ebi.age.admin.client.ui.ClassSelectedCallback;
 
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.ListGridFieldType;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.VisibilityMode;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
@@ -80,7 +84,7 @@ public class ClassDetailsPanel extends SectionStack
 
   
   CheckboxItem abstractCB = new CheckboxItem("Abstract");
-  
+  abstractCB.setValue(classImprint.isAbstract());
   abstractCB.addChangedHandler( new ChangedHandler()
   {
    @Override
@@ -93,60 +97,66 @@ public class ClassDetailsPanel extends SectionStack
   commonForm.setFields(nameField, abstractCB );
   commonSection.setItems(commonForm);
   
-  
-  VLayout superClsSec = new VLayout();
-  superClsSec.setWidth100();
-  superClsSec.setMargin(3);
-  
-  ToolStrip superTS = new ToolStrip();
-  superTS.setWidth100();
-  
-  ToolStripButton btadd = new ToolStripButton();
-  btadd.setIcon("../images/icons/class/add.png");
-  btadd.addClickHandler( new ClickHandler()
   {
-   @Override
-   public void onClick(ClickEvent event)
+   VLayout superClsSec = new VLayout();
+   superClsSec.setWidth100();
+   superClsSec.setMargin(3);
+
+   ToolStrip superTS = new ToolStrip();
+   superTS.setWidth100();
+
+   final RelativesListPanel superClsList = new RelativesListPanel("class", cls.getParents());
+
+   ToolStripButton btadd = new ToolStripButton();
+   btadd.setIcon("../images/icons/class/add.png");
+   btadd.addClickHandler(new ClickHandler()
    {
-    classesPanel.addSuperclass(classImprint);
-   }
-  });
-  superTS.addButton(btadd);
- 
-  ToolStripButton btdel = new ToolStripButton();
-  btdel.setIcon("../images/icons/class/del.png");
-  superTS.addButton(btdel);
-  
-  superClsSec.addMember(superTS);
-  
-  ListGrid superClsList = new ListGrid();
-  superClsList.setHeight(30);
-  superClsList.setBodyOverflow(Overflow.VISIBLE);  
-  superClsList.setOverflow(Overflow.VISIBLE);
-  superClsList.setShowHeader(false);
+    @Override
+    public void onClick(ClickEvent event)
+    {
+     classesPanel.addSuperclass(classImprint, new ClassSelectedCallback()
+     {
+      @Override
+      public void classSelected(AgeClassImprint cls)
+      {
+       superClsList.addNode(cls);
+      }
+     });
+    }
+   });
+   superTS.addButton(btadd);
 
-  ListGridField superclassIconField = new ListGridField("type", "Type", 40);
-  superclassIconField.setAlign(Alignment.CENTER);
-  superclassIconField.setType(ListGridFieldType.IMAGE);
-  superclassIconField.setImageURLPrefix("../images/icons/class/");
-  superclassIconField.setImageURLSuffix(".png");
+   ToolStripButton btdel = new ToolStripButton();
+   btdel.setIcon("../images/icons/class/del.png");
+   btdel.addClickHandler(new ClickHandler()
+   {
+    @Override
+    public void onClick(ClickEvent event)
+    {
+     final AgeAbstractClassImprint cimp  = superClsList.getSelectedClass();
+     
+     if( cimp == null )
+      return;
+     
+     if( classImprint.getParents().size() == 1 )
+      SC.warn("You can't delete the last superclass");
+     else
+     {
+      classesPanel.unlink(cimp, classImprint);
+      superClsList.deleteNode(cimp);
+     }
+    }
+   });
+   superTS.addButton(btdel);
 
-  ListGridField superclassNameField = new ListGridField("name", "Class");
-  
-  superClsList.setFields(superclassIconField,superclassNameField);
-  
-  if( cls.getParents() != null )
-  {
-   for( AgeClassImprint sc : cls.getParents() )
-    superClsList.addData(new ClassRecord(sc) );
+   superClsSec.addMember(superTS);
+
+   superClsSec.addMember(superClsList);
+   superclassSection.addItem(superClsSec);
+
+   if(cls.getParents() != null)
+    expandSection(1);
   }
-  
-  superClsSec.addMember(superClsList);
-  superclassSection.addItem(superClsSec);
-  
-  if( cls.getParents() != null )
-   expandSection(1);
-  
   
   {
    VLayout subClsSec = new VLayout();
@@ -156,45 +166,67 @@ public class ClassDetailsPanel extends SectionStack
    ToolStrip subTS = new ToolStrip();
    subTS.setWidth100();
 
-   btadd = new ToolStripButton();
+   final RelativesListPanel subClsList = new RelativesListPanel("class", cls.getChildren());
+   
+   ToolStripButton btadd = new ToolStripButton();
    btadd.setIcon("../images/icons/class/add.png");
    btadd.addClickHandler( new ClickHandler()
    {
     @Override
     public void onClick(ClickEvent event)
     {
-     classesPanel.addSubclass(classImprint);
+     classesPanel.addSubclass(classImprint, new ClassSelectedCallback()
+     {
+      @Override
+      public void classSelected(AgeClassImprint cls)
+      {
+       subClsList.addNode( cls );
+      }
+     });
     }
    });
    subTS.addButton(btadd);
   
-   btdel = new ToolStripButton();
+   ToolStripButton btdel = new ToolStripButton();
    btdel.setIcon("../images/icons/class/del.png");
+   btdel.addClickHandler(new ClickHandler()
+   {
+    @Override
+    public void onClick(ClickEvent event)
+    {
+     final AgeAbstractClassImprint cimp  = subClsList.getSelectedClass();
+     
+     if( cimp == null )
+      return;
+    
+     if( cimp.getParents().size() == 1 )
+     {
+      SC.confirm("Class '"+cimp.getName()+"' will be deleted", new BooleanCallback()
+      {
+       
+       @Override
+       public void execute(Boolean value)
+       {
+        if( ! value )
+         return;
+
+        classesPanel.unlink( classImprint, cimp);
+        subClsList.deleteNode(cimp);
+       }
+      });
+     }
+     else
+     {
+      classesPanel.unlink( classImprint, cimp);
+      subClsList.deleteNode(cimp);
+     }
+     
+
+    }
+   });
    subTS.addButton(btdel);
 
    subClsSec.addMember(subTS);
-
-   ListGrid subClsList = new ListGrid();
-   subClsList.setHeight(30);
-   subClsList.setBodyOverflow(Overflow.VISIBLE);
-   subClsList.setOverflow(Overflow.VISIBLE);
-   subClsList.setShowHeader(false);
-
-   ListGridField subclassIconField = new ListGridField("type", "Type", 40);
-   subclassIconField.setAlign(Alignment.CENTER);
-   subclassIconField.setType(ListGridFieldType.IMAGE);
-   subclassIconField.setImageURLPrefix("../images/icons/class/");
-   subclassIconField.setImageURLSuffix(".png");
-
-   ListGridField subclassNameField = new ListGridField("name", "Class");
-
-   subClsList.setFields(subclassIconField, subclassNameField);
-
-   if(cls.getChildren() != null)
-   {
-    for(AgeClassImprint sc : cls.getChildren())
-     subClsList.addData(new ClassRecord(sc));
-   }
 
    subClsSec.addMember(subClsList);
    subclassSection.addItem(subClsSec);
@@ -245,16 +277,7 @@ public class ClassDetailsPanel extends SectionStack
   
  }
  
- class ClassRecord extends ListGridRecord
- {
-  ClassRecord( AgeClassImprint ci )
-  {
-   super();
-   
-   setAttribute("type", ci.isAbstract()?"abstract":"regular" );
-   setAttribute("name", ci.getName() );
-  }
- }
+
  
  class RestrictionRecord extends ListGridRecord
  {

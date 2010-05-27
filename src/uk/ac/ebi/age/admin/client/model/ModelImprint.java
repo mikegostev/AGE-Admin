@@ -112,7 +112,23 @@ public class ModelImprint  implements IsSerializable
   return relations;
  }
 
+ public void removeClassImprint(AgeClassImprint ageClassImprint)
+ {
+  classes.remove(ageClassImprint);
+ }
 
+ public void removeAttributeClassImprint(AgeAttributeClassImprint cls)
+ {
+  attributes.remove(cls);
+ }
+
+ public void removeRelationClassImprint(AgeRelationClassImprint cls)
+ {
+  relations.remove(cls);
+ }
+
+ 
+ 
 
 // private void addClass( AgeClassImprint rootClass )
 // {

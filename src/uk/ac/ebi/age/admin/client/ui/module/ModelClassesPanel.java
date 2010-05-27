@@ -9,12 +9,14 @@ import uk.ac.ebi.age.admin.client.ui.ImprintTreeNode;
 import uk.ac.ebi.age.admin.client.ui.NodeCreator;
 import uk.ac.ebi.age.admin.client.ui.module.ClassTreePanel.Direction;
 
+import com.smartgwt.client.util.BooleanCallback;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.util.ValueCallback;
+import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.grid.events.CellClickEvent;
-import com.smartgwt.client.widgets.grid.events.CellClickHandler;
+import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
+import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
@@ -136,8 +138,16 @@ public class ModelClassesPanel extends HLayout
   clsTools.addButton(sibBut);
  
   ToolStripButton delBut = new ToolStripButton();
-  delBut.setTitle("Delete class");
+  delBut.setTitle("Delete");
   delBut.setIcon("../images/icons/class/del.png");
+  delBut.addClickHandler( new ClickHandler()
+  {
+   @Override
+   public void onClick(ClickEvent event)
+   {
+    deleteClass();
+   }
+  });
   
   clsTools.addButton(delBut);
 
@@ -152,11 +162,11 @@ public class ModelClassesPanel extends HLayout
   HLayout auxTrees = new HLayout();
   auxTrees.setHeight("25%");
   
-  childrenTreePanel = new ClassTreePanel(null, classNodeCreator);
+  childrenTreePanel = new ClassTreePanel("Direct branch", null, classNodeCreator);
   childrenTreePanel.setWidth("50%");
   childrenTreePanel.setHeight100();
 
-  parentsTreePanel = new ClassTreePanel(null, Direction.CHILD2PARENT, classNodeCreator);
+  parentsTreePanel = new ClassTreePanel("Reverse branch", null, Direction.CHILD2PARENT, classNodeCreator);
   parentsTreePanel.setWidth("50%");
   parentsTreePanel.setHeight100();
   
@@ -167,20 +177,34 @@ public class ModelClassesPanel extends HLayout
   setMembers(toolTree, detailPanel);
 
  
-  treePanel.addCellClickHandler( new CellClickHandler()
+//  treePanel.addCellClickHandler( new CellClickHandler()
+//  {
+//   
+//   @Override
+//   public void onCellClick(CellClickEvent event)
+//   {
+//    showClassDetails( ((ClassTreeNode)event.getRecord()).getClassImprint() );
+//    childrenTreePanel.setRoot(((ClassTreeNode)event.getRecord()).getClassImprint());
+//    parentsTreePanel.setRoot(((ClassTreeNode)event.getRecord()).getClassImprint());
+//   }
+//
+//
+//  });
+  
+  treePanel.addSelectionChangedHandler( new SelectionChangedHandler()
   {
    
    @Override
-   public void onCellClick(CellClickEvent event)
+   public void onSelectionChanged(SelectionEvent event)
    {
+    if( ! event.getState() )
+     return;
+    
     showClassDetails( ((ClassTreeNode)event.getRecord()).getClassImprint() );
     childrenTreePanel.setRoot(((ClassTreeNode)event.getRecord()).getClassImprint());
     parentsTreePanel.setRoot(((ClassTreeNode)event.getRecord()).getClassImprint());
    }
-
-
   });
-  
 
  }
 
@@ -199,6 +223,35 @@ public class ModelClassesPanel extends HLayout
   addChildClass( pNode );
  }
 
+ private void deleteClass()
+ {
+  final ClassTreeNode selNode = (ClassTreeNode)treePanel.getSelectedRecord();
+  
+  if( selNode == null )
+   return;
+
+  final AgeAbstractClassImprint cimp = selNode.getClassImprint();
+
+  SC.confirm("Are you sure to delete class '"+cimp.getName()+"'", new BooleanCallback()
+  {
+   
+   @Override
+   public void execute(Boolean value)
+   {
+    if( ! value )
+     return;
+
+    cimp.delete();
+    
+    treePanel.removeClass(cimp);
+    updateSubbranchView(null);
+    
+    showClassDetails(null);
+   }
+  });
+  
+  
+ }
  
  private void addChildClass( ClassTreeNode node )
  {
@@ -208,7 +261,7 @@ public class ModelClassesPanel extends HLayout
   if( selNode == null )
    return;
   
-  SC.askforValue("Please inter new class name", new ValueCallback()
+  SC.askforValue("Please enter new class name", new ValueCallback()
   {
    @Override
    public void execute(String value)
@@ -234,6 +287,8 @@ public class ModelClassesPanel extends HLayout
 
     treePanel.addBranch(cImp, subCls);
     
+    updateSubbranchView(cImp);
+    
 //    AgeClassImprint subCls = cImp.createSubClass();
 //    subCls.setName(value);
 //    subCls.setAuxData(new ClassAuxData());
@@ -251,7 +306,10 @@ public class ModelClassesPanel extends HLayout
  
  private void showClassDetails(AgeClassImprint cls)
  {
-  detailPanel.setMembers( new ClassDetailsPanel(cls, this) );
+  if( cls == null )
+   detailPanel.setMembers( new Canvas[0] );
+  else  
+   detailPanel.setMembers( new ClassDetailsPanel(cls, this) );
  }
  
  public void setModel(ModelImprint mod)
@@ -323,14 +381,32 @@ public class ModelClassesPanel extends HLayout
  void updateClassName(AgeClassImprint classImprint, String newName )
  {
   treePanel.updateClassName( classImprint, newName  );
+  childrenTreePanel.updateClassName( classImprint, newName );
+  parentsTreePanel.updateClassName( classImprint, newName );
  }
 
  void updateClassType(AgeClassImprint classImprint, boolean abstr )
  {
   treePanel.updateClassType( classImprint, abstr  );
+  childrenTreePanel.updateClassType( classImprint, abstr  );
+  parentsTreePanel.updateClassType( classImprint, abstr  );
  }
 
- public void addSubclass( final AgeClassImprint superClass )
+ private void updateSubbranchView( AgeAbstractClassImprint cls )
+ {
+  if( cls == null )
+  {
+   ImprintTreeNode node = (ImprintTreeNode)treePanel.getSelectedRecord();
+   
+   if( node != null )
+    cls = node.getClassImprint();
+  }
+  
+  childrenTreePanel.setRoot(cls);
+  parentsTreePanel.setRoot(cls);
+ }
+ 
+ public void addSubclass( final AgeClassImprint superClass, final ClassSelectedCallback extCB )
  {
   new ClassSelectDialog<AgeClassImprint>(model.getRootClass(), classNodeCreator, new ClassSelectedCallback()
   {
@@ -339,11 +415,16 @@ public class ModelClassesPanel extends HLayout
    {
     cls.addSuperClass(superClass);
     treePanel.addBranch(superClass, cls);
+    
+    updateSubbranchView(null);
+
+    if( extCB != null )
+     extCB.classSelected(cls);
    }
   }).show();
  }
 
- public void addSuperclass( final AgeClassImprint subClass )
+ public void addSuperclass( final AgeClassImprint subClass, final ClassSelectedCallback extCB  )
  {
   new ClassSelectDialog<AgeClassImprint>(model.getRootClass(), classNodeCreator, new ClassSelectedCallback()
   {
@@ -352,8 +433,24 @@ public class ModelClassesPanel extends HLayout
    {
     subClass.addSuperClass(cls);
     treePanel.addBranch( cls, subClass);
+    
+    updateSubbranchView(null);
+    
+    if( extCB != null )
+     extCB.classSelected(cls);
    }
   }).show();
  }
+
+ public void unlink(final AgeAbstractClassImprint superClassImprint, final AgeAbstractClassImprint classImprint)
+ {
+  classImprint.removeParent(superClassImprint);
+  superClassImprint.removeChild(classImprint);
+  
+  treePanel.unlink(superClassImprint, classImprint);
+  
+  updateSubbranchView(null);
+ }
+
  
 }

@@ -3,6 +3,7 @@ package uk.ac.ebi.age.admin.client.ui.module;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
@@ -11,6 +12,7 @@ import uk.ac.ebi.age.admin.client.ui.ImprintTreeNode;
 import uk.ac.ebi.age.admin.client.ui.NodeCreator;
 
 import com.smartgwt.client.types.TreeModelType;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.tree.Tree;
@@ -29,18 +31,30 @@ public class ClassTreePanel extends TreeGrid
  private Map<AgeAbstractClassImprint, Collection<ImprintTreeNode>> nodeMap = new HashMap<AgeAbstractClassImprint, Collection<ImprintTreeNode>>();
  private NodeCreator nodeCreator;
  
- ClassTreePanel( AgeAbstractClassImprint root, NodeCreator nc )
+
+ ClassTreePanel( String title ,AgeAbstractClassImprint root, NodeCreator nc )
  {
-  this(root,Direction.PARENT2CHILD,nc);
+  this(title, root,Direction.PARENT2CHILD,nc);
  }
 
- ClassTreePanel( AgeAbstractClassImprint root, Direction dir, NodeCreator nc )
+ ClassTreePanel( AgeAbstractClassImprint root, NodeCreator nc )
+ {
+  this(null, root,Direction.PARENT2CHILD,nc);
+ }
+
+ ClassTreePanel(String title , AgeAbstractClassImprint root, Direction dir, NodeCreator nc )
  {
   direction=dir;
   nodeCreator = nc;
   
-  setShowHeader(false);
+//  if( title!=null )
+//  {
+//   setGroupTitle(title);
+////   setShowHeader(title!=null);
+////   setFields( new TreeGridField(title,title) );
+//  }
   
+  setShowHeader(false);
   setShowConnectors(true);
   setShowRoot(false);
   setTitleField("Name");
@@ -196,5 +210,48 @@ public class ClassTreePanel extends TreeGrid
   
   getData().setRoot(getData().getRoot());
  }
+
+ public void removeClass(AgeAbstractClassImprint cimp)
+ {
+
+  for(ImprintTreeNode tn : nodeMap.get(cimp) )
+  {
+   getData().remove(tn);
+  }
+  
+  nodeMap.remove(cimp);
+ }
  
+ public void unlink( AgeAbstractClassImprint parent, AgeAbstractClassImprint child )
+ {
+  Tree data = getData();
+  
+  Collection<ImprintTreeNode> ndColl = nodeMap.get(child);
+  
+  Iterator<ImprintTreeNode> iter = ndColl.iterator();
+  
+  ListGridRecord selNode = getSelectedRecord();
+  
+  ListGridRecord toSelect = null;
+  boolean needReselect=false;
+  
+  while( iter.hasNext() )
+  {
+   ImprintTreeNode node = iter.next();
+   
+   if( ((ImprintTreeNode)data.getParent(node)).getClassImprint() == parent )
+   {
+    if( node == selNode )
+     needReselect=true;
+    
+    data.remove(node);
+    iter.remove();
+   }
+   else if( toSelect == null ) 
+    toSelect = node;
+  }
+  
+  if( needReselect && toSelect != null )
+   selectRecord(toSelect);
+ }
 }

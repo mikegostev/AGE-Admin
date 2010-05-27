@@ -25,4 +25,10 @@ public interface AgeAbstractClassImprint extends IsSerializable
  void setName(String newName);
 
  void setAbstract(boolean abstr);
+
+ void removeChild(AgeAbstractClassImprint cimp);
+ void removeParent(AgeAbstractClassImprint cimp);
+
+ void delete();
+ 
 }
