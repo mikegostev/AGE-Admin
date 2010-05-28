@@ -1,5 +1,7 @@
 package uk.ac.ebi.age.admin.client.ui.module;
 
+import uk.ac.ebi.age.admin.client.ui.module.modeled.ModelPanel;
+
 import com.smartgwt.client.types.Side;
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.TabSet;

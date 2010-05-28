@@ -1,4 +1,4 @@
-package uk.ac.ebi.age.admin.client.ui.module;
+package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
@@ -119,7 +119,7 @@ public class ClassDetailsPanel extends SectionStack
      classesPanel.addSuperclass(classImprint, new ClassSelectedCallback()
      {
       @Override
-      public void classSelected(AgeClassImprint cls)
+      public void classSelected(AgeAbstractClassImprint cls)
       {
        superClsList.addNode(cls);
       }
@@ -180,7 +180,7 @@ public class ClassDetailsPanel extends SectionStack
      classesPanel.addSubclass(classImprint, new ClassSelectedCallback()
      {
       @Override
-      public void classSelected(AgeClassImprint cls)
+      public void classSelected(AgeAbstractClassImprint cls)
       {
        subClsList.addNode( cls );
       }

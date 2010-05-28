@@ -30,5 +30,11 @@ public interface AgeAbstractClassImprint extends IsSerializable
  void removeParent(AgeAbstractClassImprint cimp);
 
  void delete();
+
+ ModelImprint getModel();
+
+ AgeAbstractClassImprint createSubClass();
+
+ void addSuperClass(AgeAbstractClassImprint superClass);
  
 }

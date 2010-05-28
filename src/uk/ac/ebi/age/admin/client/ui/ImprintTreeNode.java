@@ -33,9 +33,14 @@ public abstract class ImprintTreeNode extends TreeNode
   this.cls = cls;
  }
 
- public void setAbstract(boolean abstr)
+ public void updateType()
  {
-  setIcon("../images/icons/"+getMetaClassname()+"/"+(abstr?"abstract.png":"regular.png"));
+  setIcon("../images/icons/"+getMetaClassname()+"/"+(cls.isAbstract()?"abstract.png":"regular.png"));
  }
+ 
+// public void setAbstract(boolean abstr)
+// {
+//  setIcon("../images/icons/"+getMetaClassname()+"/"+(abstr?"abstract.png":"regular.png"));
+// }
 
 }

@@ -1,4 +1,4 @@
-package uk.ac.ebi.age.admin.client.ui.module;
+package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import java.util.Collection;
 

@@ -1,4 +1,4 @@
-package uk.ac.ebi.age.admin.client.ui.module;
+package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -204,7 +204,7 @@ public class ClassTreePanel extends TreeGrid
   
   for(ImprintTreeNode tn : nodeMap.get(classImprint) )
   {
-   tn.setAbstract(abstr);
+   tn.updateType();
   }
   
   

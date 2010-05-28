@@ -1,9 +1,11 @@
-package uk.ac.ebi.age.admin.client.ui.module;
+package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import uk.ac.ebi.age.admin.client.AgeAdminService;
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
+import uk.ac.ebi.age.admin.client.ui.AttributeMetaClassDef;
 import uk.ac.ebi.age.admin.client.ui.ClassAuxData;
+import uk.ac.ebi.age.admin.client.ui.ClassMetaClassDef;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.types.Side;
@@ -16,8 +18,8 @@ import com.smartgwt.client.widgets.tab.TabSet;
 public class ModelPanel extends TabSet
 {
  private ModelClassesPanel classesPanel;
- private AttributeEditorPanel attribPanel;
- private RelationEditorPanel relationsPanel;
+ private XEditorPanel attribPanel;
+ private XEditorPanel relationsPanel;
  
  public ModelPanel()
  {
@@ -32,13 +34,13 @@ public class ModelPanel extends TabSet
 
   
   Tab attrTab = new Tab("Attributes");
-  attrTab.setPane( attribPanel=new AttributeEditorPanel() );
+  attrTab.setPane( attribPanel=new XEditorPanel( new ClassMetaClassDef() ) );
   
   addTab(attrTab);
 
   
   Tab relTab = new Tab("Relations");
-  relTab.setPane( relationsPanel=new RelationEditorPanel() );
+  relTab.setPane( relationsPanel=new XEditorPanel( new AttributeMetaClassDef() ));
   
   addTab(relTab);
 

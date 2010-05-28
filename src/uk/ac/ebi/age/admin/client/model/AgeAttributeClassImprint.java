@@ -188,4 +188,10 @@ public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSeria
   
   model.removeAttributeClassImprint( this );
  }
+ 
+ @Override
+ public void addSuperClass(AgeAbstractClassImprint superClass)
+ {
+  addSuperClass((AgeAttributeClassImprint)superClass);
+ }
 }

@@ -1,4 +1,4 @@
-package uk.ac.ebi.age.admin.client.ui.module;
+package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
@@ -7,7 +7,7 @@ import uk.ac.ebi.age.admin.client.ui.ClassSelectedCallback;
 import uk.ac.ebi.age.admin.client.ui.ClassTreeNode;
 import uk.ac.ebi.age.admin.client.ui.ImprintTreeNode;
 import uk.ac.ebi.age.admin.client.ui.NodeCreator;
-import uk.ac.ebi.age.admin.client.ui.module.ClassTreePanel.Direction;
+import uk.ac.ebi.age.admin.client.ui.module.modeled.ClassTreePanel.Direction;
 
 import com.smartgwt.client.util.BooleanCallback;
 import com.smartgwt.client.util.SC;
@@ -406,7 +406,7 @@ public class ModelClassesPanel extends HLayout
   parentsTreePanel.setRoot(cls);
  }
 
- private boolean checkCycle( AgeClassImprint superClass, AgeClassImprint subClass )
+ private boolean checkCycle( AgeAbstractClassImprint superClass, AgeAbstractClassImprint subClass )
  {
   if( superClass == subClass )
    return false;
@@ -414,7 +414,7 @@ public class ModelClassesPanel extends HLayout
   if( subClass.getChildren() == null )
    return true;
   
-  for( AgeClassImprint scls : subClass.getChildren() )
+  for( AgeAbstractClassImprint scls : subClass.getChildren() )
   {
    if( ! checkCycle(superClass,scls) )
     return false;
@@ -428,7 +428,7 @@ public class ModelClassesPanel extends HLayout
   new ClassSelectDialog<AgeClassImprint>(model.getRootClass(), classNodeCreator, new ClassSelectedCallback()
   {
    @Override
-   public void classSelected(AgeClassImprint cls)
+   public void classSelected(AgeAbstractClassImprint cls)
    {
     if( ! checkCycle(superClass, cls) )
     {
@@ -452,7 +452,7 @@ public class ModelClassesPanel extends HLayout
   new ClassSelectDialog<AgeClassImprint>(model.getRootClass(), classNodeCreator, new ClassSelectedCallback()
   {
    @Override
-   public void classSelected(AgeClassImprint cls)
+   public void classSelected(AgeAbstractClassImprint cls)
    {
     if( ! checkCycle( cls, subClass) )
     {

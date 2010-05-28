@@ -1,9 +1,9 @@
-package uk.ac.ebi.age.admin.client.ui.module;
+package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.ui.ClassSelectedCallback;
 import uk.ac.ebi.age.admin.client.ui.ClassTreeNode;
-import uk.ac.ebi.age.admin.client.ui.NodeCreator;
+import uk.ac.ebi.age.admin.client.ui.MetaClassDef;
 
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.VerticalAlignment;
@@ -14,10 +14,10 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
-public class ClassSelectDialog<T extends AgeAbstractClassImprint> extends Window
+public class XSelectDialog<T extends AgeAbstractClassImprint> extends Window
 {
 
- public ClassSelectDialog(T rootNode, NodeCreator creator, final ClassSelectedCallback cb)
+ public XSelectDialog(T rootNode, MetaClassDef creator, final ClassSelectedCallback cb)
  {
   setWidth(600);
   setHeight(600);
@@ -31,7 +31,7 @@ public class ClassSelectDialog<T extends AgeAbstractClassImprint> extends Window
   winInter.setWidth100();
   winInter.setHeight100();
 
-  final ClassTreePanel cTree = new ClassTreePanel(rootNode, creator);
+  final XTreePanel cTree = new XTreePanel(rootNode, creator);
   cTree.setWidth100();
   cTree.setHeight("*");
 

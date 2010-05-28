@@ -199,5 +199,10 @@ public class AgeClassImprint implements IsSerializable, AgeAbstractClassImprint
   model.removeClassImprint( this );
  }
 
+ @Override
+ public void addSuperClass(AgeAbstractClassImprint superClass)
+ {
+  addSuperClass((AgeClassImprint)superClass);
+ }
  
 }

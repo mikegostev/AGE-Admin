@@ -170,4 +170,10 @@ public class AgeRelationClassImprint implements AgeAbstractClassImprint,IsSerial
   
   model.removeRelationClassImprint( this );
  }
+
+ @Override
+ public void addSuperClass(AgeAbstractClassImprint superClass)
+ {
+  addSuperClass((AgeRelationClassImprint)superClass);
+ }
 }
