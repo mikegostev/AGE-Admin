@@ -2,6 +2,7 @@ package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 
+import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.VisibilityMode;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.layout.SectionStack;
@@ -13,6 +14,7 @@ public class XDetailsPanel extends SectionStack
  {
   setWidth100();
   setHeight100();
+  setOverflow(Overflow.AUTO);
   
   setVisibilityMode(VisibilityMode.MULTIPLE);
   
@@ -28,10 +30,5 @@ public class XDetailsPanel extends SectionStack
   }
    
  }
- 
-
- 
-
-
  
 }

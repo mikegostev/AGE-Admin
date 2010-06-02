@@ -16,6 +16,7 @@ import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeGrid;
+import com.smartgwt.client.widgets.tree.TreeGridField;
 import com.smartgwt.client.widgets.tree.TreeNode;
 
 public class XTreePanel extends TreeGrid
@@ -30,7 +31,7 @@ public class XTreePanel extends TreeGrid
 
  private Map<AgeAbstractClassImprint, Collection<ImprintTreeNode>> nodeMap = new HashMap<AgeAbstractClassImprint, Collection<ImprintTreeNode>>();
  private MetaClassDef metaDef;
- 
+ private TreeGridField treeField;
 
  XTreePanel( AgeAbstractClassImprint root, MetaClassDef md )
  {
@@ -53,9 +54,12 @@ public class XTreePanel extends TreeGrid
   setShowConnectors(true);
   setShowRoot(false);
   setTitleField("Name");
-  
+  setFields(treeField = new TreeGridField("Name") );  
+ 
   Tree data = new Tree();
   data.setModelType(TreeModelType.CHILDREN);
+  data.setNameProperty("Name");
+  data.setChildrenProperty("children");
   setData(data);
 
   TreeNode rootNode = new TreeNode( "Root" );
@@ -91,6 +95,11 @@ public class XTreePanel extends TreeGrid
   
  }
 
+ public void setTitle(String title)
+ {
+  treeField.setTitle(title);
+  setShowHeader(true);
+ }
  
  public void setRoot(AgeAbstractClassImprint root)
  {
@@ -98,22 +107,22 @@ public class XTreePanel extends TreeGrid
 
   if( root == null )
   {
-   data.getRoot().setChildren( new TreeNode[0] );
-   data.setRoot(data.getRoot());
+   data.setRoot(new TreeNode());
+   
    return;
   }
   
   
-  TreeNode rootNode =data.getRoot();
+  TreeNode rootNode =new TreeNode();
   
 
   ImprintTreeNode  clsRoot = metaDef.createTreeNode(root);
   
   createTreeStructure(root, clsRoot);
 
-  rootNode.setChildren( new TreeNode[] { clsRoot } );
-  
   data.setRoot(rootNode);
+  
+  data.addList(new TreeNode[] { clsRoot } , rootNode);
   
   data.openAll();
  }
@@ -137,8 +146,8 @@ public class XTreePanel extends TreeGrid
    createTreeStructure(subcls, ctn);
   }
 
-  node.setChildren(children);
-
+  getData().addList(children, node);
+  
  }
  
  private void addNodeToMap( ImprintTreeNode node )

@@ -6,7 +6,7 @@ import java.util.Collection;
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
-import uk.ac.ebi.age.admin.client.ui.module.modeled.AttributesPanel;
+import uk.ac.ebi.age.admin.client.ui.module.modeled.AttributeAttachPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.ClassCommonsPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.RestrictionPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.XEditorPanel;
@@ -17,7 +17,11 @@ import com.smartgwt.client.widgets.Canvas;
 
 public class ClassMetaClassDef implements MetaClassDef
 {
-
+ private static ClassMetaClassDef instance = new ClassMetaClassDef();
+ 
+ private ClassMetaClassDef()
+ {}
+ 
  @Override
  public Collection<Canvas> createDetailsPanels(AgeAbstractClassImprint cls, XEditorPanel editor)
  {
@@ -35,7 +39,7 @@ public class ClassMetaClassDef implements MetaClassDef
   pnl = new RestrictionPanel( (AgeClassImprint)cls, editor );
   panels.add(pnl);
 
-  pnl = new AttributesPanel( cls, editor );
+  pnl = new AttributeAttachPanel( (AgeClassImprint)cls, editor );
   panels.add(pnl);
 
 
@@ -65,5 +69,15 @@ public class ClassMetaClassDef implements MetaClassDef
  public AgeAbstractClassImprint getRoot(ModelImprint mod)
  {
   return mod.getRootClass();
+ }
+
+ public static String getIcon(AgeClassImprint classImprint)
+ {
+  return "../images/icons/class/"+(classImprint.isAbstract()?"abstract.png":"regular.png");
+ }
+
+ public static MetaClassDef getInstance()
+ {
+  return instance;
  }
 }

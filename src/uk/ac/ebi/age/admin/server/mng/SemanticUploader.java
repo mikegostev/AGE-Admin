@@ -1,6 +1,7 @@
 package uk.ac.ebi.age.admin.server.mng;
 
 import java.io.File;
+import java.io.PrintWriter;
 
 import uk.ac.ebi.age.admin.server.service.UploadRequest;
 import uk.ac.ebi.age.admin.server.user.Session;
@@ -21,7 +22,7 @@ public class SemanticUploader implements UploadCommandListener
  }
  
  @Override
- public boolean processUpload(UploadRequest upReq, Session sess)
+ public boolean processUpload(UploadRequest upReq, Session sess, PrintWriter out)
  {
   File f = upReq.getFiles().get(0);
   

@@ -3,6 +3,7 @@ package uk.ac.ebi.age.admin.server.mng;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.PrintWriter;
 
 import uk.ac.ebi.age.admin.server.service.UploadRequest;
 import uk.ac.ebi.age.admin.server.user.Session;
@@ -25,7 +26,7 @@ public class SubmissionUploader implements UploadCommandListener
  }
 
  @Override
- public boolean processUpload(UploadRequest upReq, Session sess)
+ public boolean processUpload(UploadRequest upReq, Session sess, PrintWriter out)
  {
   try
   {
@@ -56,14 +57,17 @@ public class SubmissionUploader implements UploadCommandListener
    text = new String(bais.toByteArray());
 
    AgeTabSubmission sbm = AgeTabSyntaxParser.getInstance().parse(text);
+   
    SubmissionWritable submission = AgeTabSemanticValidator.getInstance().parse(sbm,
      SemanticManager.getInstance().getContextModel(sess.getUserProfile()));
 
    storAdm.storeSubmission(submission);
+   
+   out.println("OK");
   }
   catch(Exception e)
   {
-   e.printStackTrace();
+   e.printStackTrace(out);
   }
 
   return true;

@@ -97,6 +97,7 @@ public class SubmissionPanel extends HLayout
 
   submModel.setFields(upl, cmd, bt2);
   submModel.setAction("upload");
+  submModel.setTarget("_blank");
   submModel.setEncoding(Encoding.MULTIPART);
 
   addMember(submModel);
@@ -124,6 +125,7 @@ public class SubmissionPanel extends HLayout
 
   submModel2.setFields(new UploadItem("file1", "Upload model"), cmd, bt3);
   submModel2.setAction("upload");
+  submModel2.setTarget("_blank");
   submModel2.setEncoding(Encoding.MULTIPART);
 
   addMember(submModel2);

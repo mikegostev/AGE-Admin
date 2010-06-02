@@ -10,15 +10,19 @@ public class ClassTreeNode extends ImprintTreeNode
   super(cl);
  }
 
- @Override
- public String getMetaClassname()
- {
-  return "class";
- }
+
 
  public AgeClassImprint getClassImprint()
  {
   return (AgeClassImprint)super.getClassImprint();
+ }
+
+
+
+ @Override
+ public String getIcon()
+ {
+  return ClassMetaClassDef.getIcon(getClassImprint());
  }
 
 }

@@ -9,16 +9,6 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSerializable
 {
- public enum Type
- {
-  ABSTRACT,
-  BOOLEAN,
-  STRING,
-  INTEGER,
-  REAL,
-  URI, 
-  TEXT
- }
  
  private String name;
  private String id;
@@ -29,7 +19,7 @@ public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSeria
  private Collection<RestrictionImprint> qualifierRestrictions;
  private ModelImprint model;
 
- private Type type;
+ private AttributeType type;
  
  private transient Object auxData;
 
@@ -65,6 +55,7 @@ public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSeria
   AgeAttributeClassImprint simp = model.createAgeAttributClassImprint();
   
   simp.addSuperClass(this);
+  simp.setType(AttributeType.ABSTRACT);
   
   return simp;
  }
@@ -129,15 +120,22 @@ public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSeria
 
  public boolean isAbstract()
  {
-  return type==Type.ABSTRACT;
+  return type==AttributeType.ABSTRACT;
  }
  
  public void setAbstract(boolean b)
  {
-  type=Type.ABSTRACT;
+  if( b )
+   type=AttributeType.ABSTRACT;
  }
 
- public void setType( Type t )
+
+ public AttributeType getType()
+ {
+  return type;
+ }
+ 
+ public void setType( AttributeType t )
  {
   type=t;
  }
@@ -194,4 +192,5 @@ public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSeria
  {
   addSuperClass((AgeAttributeClassImprint)superClass);
  }
+
 }

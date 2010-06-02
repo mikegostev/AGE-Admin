@@ -13,15 +13,11 @@ public abstract class ImprintTreeNode extends TreeNode
   cls=cl;
   
   setTitle(cl.getName());
-  setIcon("../images/icons/"+getMetaClassname()+"/"+(cl.isAbstract()?"abstract.png":"regular.png"));
+  setIcon(getIcon());
+  setAttribute("Name", cl.getName());
  }
  
-// public ClassTreeNode( String nm )
-// {
-//  setTitle(nm);
-// }
- 
- public abstract String getMetaClassname(); 
+ public abstract String getIcon(); 
 
  public AgeAbstractClassImprint getClassImprint()
  {
@@ -35,12 +31,8 @@ public abstract class ImprintTreeNode extends TreeNode
 
  public void updateType()
  {
-  setIcon("../images/icons/"+getMetaClassname()+"/"+(cls.isAbstract()?"abstract.png":"regular.png"));
+  setIcon(getIcon());
  }
- 
-// public void setAbstract(boolean abstr)
-// {
-//  setIcon("../images/icons/"+getMetaClassname()+"/"+(abstr?"abstract.png":"regular.png"));
-// }
+
 
 }

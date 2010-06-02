@@ -3,6 +3,7 @@ package uk.ac.ebi.age.admin.client.model;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import uk.ac.ebi.age.admin.client.model.restriction.AttributeRule;
 import uk.ac.ebi.age.admin.client.model.restriction.RestrictionImprint;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
@@ -18,7 +19,7 @@ public class AgeClassImprint implements IsSerializable, AgeAbstractClassImprint
  private Collection<AgeClassImprint> children;
  
  private Collection<RestrictionImprint> objectRestrictions;
- private Collection<RestrictionImprint> attributeRestrictions;
+ private Collection<AttributeRule> attributeRestrictions;
  
  private ModelImprint model;
  
@@ -77,12 +78,12 @@ public class AgeClassImprint implements IsSerializable, AgeAbstractClassImprint
   this.objectRestrictions = restrictions;
  }
 
- public Collection<RestrictionImprint> getAttributeRestrictions()
+ public Collection<AttributeRule> getAttributeRule()
  {
   return attributeRestrictions;
  }
 
- public void setAttributeRestrictions(Collection<RestrictionImprint> attributeRestrictions)
+ public void setAttributeRestrictions(Collection<AttributeRule> attributeRestrictions)
  {
   this.attributeRestrictions = attributeRestrictions;
  }
@@ -124,10 +125,10 @@ public class AgeClassImprint implements IsSerializable, AgeAbstractClassImprint
   objectRestrictions.add(rst);
  }
  
- public void addAttributeRestriction(RestrictionImprint rst)
+ public void addAttributeRule(AttributeRule rst)
  {
   if( attributeRestrictions == null )
-   attributeRestrictions = new ArrayList<RestrictionImprint>(10);
+   attributeRestrictions = new ArrayList<AttributeRule>(10);
   
   attributeRestrictions.add(rst);
  }
@@ -203,6 +204,18 @@ public class AgeClassImprint implements IsSerializable, AgeAbstractClassImprint
  public void addSuperClass(AgeAbstractClassImprint superClass)
  {
   addSuperClass((AgeClassImprint)superClass);
+ }
+
+ public void removeAttribiteRule(AttributeRule rule)
+ {
+  attributeRestrictions.remove(rule);
+ }
+
+ @Override
+ public void addAttributeRestriction(RestrictionImprint restr)
+ {
+  // TODO Auto-generated method stub
+  
  }
  
 }

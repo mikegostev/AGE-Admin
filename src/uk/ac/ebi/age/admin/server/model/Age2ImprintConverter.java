@@ -7,6 +7,7 @@ import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeRelationClassImprint;
+import uk.ac.ebi.age.admin.client.model.AttributeType;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.restriction.CardinalityRestrictionImprint;
 import uk.ac.ebi.age.admin.client.model.restriction.FillerRestrictionImprint;
@@ -103,33 +104,34 @@ public class Age2ImprintConverter
      switch(typ)
      {
       case BOOLEAN:
-       cImp.setType(uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint.Type.BOOLEAN);
+       cImp.setType(AttributeType.BOOLEAN);
        break;
 
       case INTEGER:
-       cImp.setType(uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint.Type.INTEGER);
+       cImp.setType(AttributeType.INTEGER);
        break;
 
       case REAL:
-       cImp.setType(uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint.Type.REAL);
+       cImp.setType(AttributeType.REAL);
        break;
 
       case STRING:
-       cImp.setType(uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint.Type.STRING);
+       cImp.setType(AttributeType.STRING);
        break;
 
       case URI:
-       cImp.setType(uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint.Type.URI);
+       cImp.setType(AttributeType.URI);
        break;
 
       case TEXT:
-       cImp.setType(uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint.Type.TEXT);
+       cImp.setType(AttributeType.TEXT);
        break;
      }
 
     }
+    else
+     cImp.setAbstract(true);
 
-    cImp.setAbstract(acls.isAbstract());
 
     return cImp;
    }
@@ -338,7 +340,7 @@ public class Age2ImprintConverter
      subImp = cr.create(scls, parent);
      clMap.put(scls, subImp);
 
-     convertAgeToImprint(scls, parent, clMap, cr);
+     convertAgeToImprint(scls, subImp, clMap, cr);
     }
     else
      cr.addSubclass(parent, subImp);

@@ -2,7 +2,7 @@ package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.ui.ClassSelectedCallback;
-import uk.ac.ebi.age.admin.client.ui.ClassTreeNode;
+import uk.ac.ebi.age.admin.client.ui.ImprintTreeNode;
 import uk.ac.ebi.age.admin.client.ui.MetaClassDef;
 
 import com.smartgwt.client.types.Alignment;
@@ -52,7 +52,7 @@ public class XSelectDialog<T extends AgeAbstractClassImprint> extends Window
    @Override
    public void onClick(ClickEvent event)
    {
-    ClassTreeNode nd = (ClassTreeNode) cTree.getSelectedRecord();
+    ImprintTreeNode nd = (ImprintTreeNode) cTree.getSelectedRecord();
 
     if(nd == null)
      return;

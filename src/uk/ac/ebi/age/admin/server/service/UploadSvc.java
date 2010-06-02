@@ -90,6 +90,6 @@ public class UploadSvc extends ServiceServlet
    return;
   }
   
-  Configuration.getDefaultConfiguration().getUploadManager().processUpload(upReq,sess);
+  Configuration.getDefaultConfiguration().getUploadManager().processUpload(upReq,sess, resp.getWriter());
  }
 }

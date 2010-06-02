@@ -102,10 +102,12 @@ public class XEditorPanel extends HLayout
   childrenTreePanel = new XTreePanel( null, metaDef );
   childrenTreePanel.setWidth("50%");
   childrenTreePanel.setHeight100();
-
+  childrenTreePanel.setTitle("Direct branch");
+  
   parentsTreePanel = new XTreePanel(null, Direction.CHILD2PARENT, metaDef);
   parentsTreePanel.setWidth("50%");
   parentsTreePanel.setHeight100();
+  parentsTreePanel.setTitle("Reverse branch");
   
   auxTrees.setMembers(childrenTreePanel, parentsTreePanel );
   
@@ -135,7 +137,7 @@ public class XEditorPanel extends HLayout
  {
   final ImprintTreeNode selNode = (ImprintTreeNode)treePanel.getSelectedRecord();
   
-  if( selNode == null )
+  if( selNode == null || selNode.getClassImprint().getParents() == null )
    return;
   
   ImprintTreeNode pNode = ((ImprintTreeNode)treePanel.getData().getParent(selNode));
@@ -150,7 +152,7 @@ public class XEditorPanel extends HLayout
  {
   final ImprintTreeNode selNode = (ImprintTreeNode)treePanel.getSelectedRecord();
   
-  if( selNode == null )
+  if( selNode == null || selNode.getClassImprint().getParents() == null )
    return;
 
   final AgeAbstractClassImprint cimp = selNode.getClassImprint();
@@ -280,7 +282,7 @@ public class XEditorPanel extends HLayout
  
  public void addSubclass( final AgeAbstractClassImprint superClass, final ClassSelectedCallback extCB )
  {
-  new XSelectDialog<AgeAbstractClassImprint>(model.getRootClass(), metaDef, new ClassSelectedCallback()
+  new XSelectDialog<AgeAbstractClassImprint>(metaDef.getRoot(model), metaDef, new ClassSelectedCallback()
   {
    @Override
    public void classSelected(AgeAbstractClassImprint cls)
@@ -304,7 +306,7 @@ public class XEditorPanel extends HLayout
 
  public void addSuperclass( final AgeAbstractClassImprint subClass, final ClassSelectedCallback extCB  )
  {
-  new XSelectDialog<AgeAbstractClassImprint>(model.getRootClass(), metaDef, new ClassSelectedCallback()
+  new XSelectDialog<AgeAbstractClassImprint>(metaDef.getRoot(model), metaDef, new ClassSelectedCallback()
   {
    @Override
    public void classSelected(AgeAbstractClassImprint cls)

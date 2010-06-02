@@ -4,26 +4,25 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
-import uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint;
-import uk.ac.ebi.age.admin.client.model.AttributeType;
+import uk.ac.ebi.age.admin.client.model.AgeRelationClassImprint;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
-import uk.ac.ebi.age.admin.client.ui.module.modeled.AttributeCommonsPanel;
+import uk.ac.ebi.age.admin.client.ui.module.modeled.RelationCommonsPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.XEditorPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.XSubclassesPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.XSuperclassesPanel;
 
 import com.smartgwt.client.widgets.Canvas;
 
-public class AttributeMetaClassDef implements MetaClassDef
+public class RelationMetaClassDef implements MetaClassDef
 {
- private static AttributeMetaClassDef instance = new AttributeMetaClassDef();
+ private static RelationMetaClassDef instance = new RelationMetaClassDef();
  
- public static AttributeMetaClassDef getInstance()
+ public static RelationMetaClassDef getInstance()
  {
   return instance;
  }
 
- private AttributeMetaClassDef()
+ private RelationMetaClassDef()
  {}
  
  @Override
@@ -31,7 +30,7 @@ public class AttributeMetaClassDef implements MetaClassDef
  {
   ArrayList<Canvas> panels = new ArrayList<Canvas>(5);
 
-  Canvas pnl = new AttributeCommonsPanel((AgeAttributeClassImprint)cls, editor);
+  Canvas pnl = new RelationCommonsPanel((AgeRelationClassImprint)cls, editor);
   panels.add(pnl);
 
   pnl = new XSuperclassesPanel(cls, editor);
@@ -50,48 +49,30 @@ public class AttributeMetaClassDef implements MetaClassDef
  @Override
  public ImprintTreeNode createTreeNode(AgeAbstractClassImprint root)
  {
-  return new AttributeTreeNode((AgeAttributeClassImprint)root);
+  return new RelationTreeNode((AgeRelationClassImprint)root);
  }
 
  @Override
  public String getMetaClassName()
  {
-  return "attribute";
+  return "relation";
  }
 
  @Override
  public Collection< ? extends AgeAbstractClassImprint> getXClasses(ModelImprint model)
  {
-  return model.getAttributes();
+  return model.getRelations();
  }
 
  @Override
  public AgeAbstractClassImprint getRoot(ModelImprint mod)
  {
-  return mod.getRootAttributeClass();
+  return mod.getRootRelationClass();
  }
 
- public static String getIcon(AgeAttributeClassImprint classImprint)
+ public static String getIcon(AgeRelationClassImprint classImprint)
  {
-  return getIcon(classImprint.getType());
+  return "../images/icons/class/"+(classImprint.isAbstract()?"abstract.png":"regular.png");
  }
-
- public static String getIcon(AttributeType atyp)
- {
-  
-  switch(atyp)
-  {
-   case STRING:
-    return "../images/icons/attribute/regular.png";
- 
-   case ABSTRACT:
-    return "../images/icons/attribute/abstract.png";
-
-   default:
-    return "../images/icons/attribute/tag_green.png";
-  }
- }
-
-
 
 }

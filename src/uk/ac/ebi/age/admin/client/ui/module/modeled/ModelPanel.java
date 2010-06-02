@@ -6,6 +6,7 @@ import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.ui.AttributeMetaClassDef;
 import uk.ac.ebi.age.admin.client.ui.ClassAuxData;
 import uk.ac.ebi.age.admin.client.ui.ClassMetaClassDef;
+import uk.ac.ebi.age.admin.client.ui.RelationMetaClassDef;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.types.Side;
@@ -17,7 +18,7 @@ import com.smartgwt.client.widgets.tab.TabSet;
 
 public class ModelPanel extends TabSet
 {
- private ModelClassesPanel classesPanel;
+ private XEditorPanel classesPanel;
  private XEditorPanel attribPanel;
  private XEditorPanel relationsPanel;
  
@@ -28,19 +29,19 @@ public class ModelPanel extends TabSet
   setHeight100();  
 
   Tab classTab = new Tab("Classes");
-  classTab.setPane( classesPanel=new ModelClassesPanel() );
+  classTab.setPane( classesPanel=new XEditorPanel( ClassMetaClassDef.getInstance() )  );
   
   addTab(classTab);
 
   
   Tab attrTab = new Tab("Attributes");
-  attrTab.setPane( attribPanel=new XEditorPanel( new ClassMetaClassDef() ) );
+  attrTab.setPane( attribPanel=new XEditorPanel( AttributeMetaClassDef.getInstance() ) );
   
   addTab(attrTab);
 
   
   Tab relTab = new Tab("Relations");
-  relTab.setPane( relationsPanel=new XEditorPanel( new AttributeMetaClassDef() ));
+  relTab.setPane( relationsPanel = new XEditorPanel(RelationMetaClassDef.getInstance()));
   
   addTab(relTab);
 
