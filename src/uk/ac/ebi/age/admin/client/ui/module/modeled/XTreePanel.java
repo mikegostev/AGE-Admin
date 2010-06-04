@@ -187,7 +187,9 @@ public class XTreePanel extends TreeGrid
    tn.setTitle(newName);
   }
   
-  getData().setRoot(getData().getRoot());
+  refreshFields();
+  
+//  getData().setRoot(getData().getRoot());
  }
 
  void updateClassType(AgeAbstractClassImprint classImprint )
@@ -198,8 +200,9 @@ public class XTreePanel extends TreeGrid
    tn.updateType();
   }
   
+  refreshFields();
   
-  getData().setRoot(getData().getRoot());
+//  getData().setRoot(getData().getRoot());
  }
 
  public void removeClass(AgeAbstractClassImprint cimp)

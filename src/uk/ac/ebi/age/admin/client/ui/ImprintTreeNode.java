@@ -19,6 +19,12 @@ public abstract class ImprintTreeNode extends TreeNode
  
  public abstract String getIcon(); 
 
+ public void setTitle(String t)
+ {
+  super.setTitle(t);
+  setAttribute("Name", t);
+ }
+ 
  public AgeAbstractClassImprint getClassImprint()
  {
   return cls;
