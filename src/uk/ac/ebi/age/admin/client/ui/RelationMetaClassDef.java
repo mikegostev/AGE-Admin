@@ -72,7 +72,7 @@ public class RelationMetaClassDef implements MetaClassDef
 
  public static String getIcon(AgeRelationClassImprint classImprint)
  {
-  return "../images/icons/class/"+(classImprint.isAbstract()?"abstract.png":"regular.png");
+  return "../images/icons/relation/"+(classImprint.isAbstract()?"abstract.png":"regular.png");
  }
 
 }

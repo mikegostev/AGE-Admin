@@ -57,7 +57,7 @@ public class RestrictionPanel extends VLayout
   {
    super();
    
-   setAttribute("type", ri.isObligatory()?"must":"may" );
+   setAttribute("type", ri.isObligatory()?"MUST":"MAY" );
    setAttribute("name", ri.toString() );
   }
  }
