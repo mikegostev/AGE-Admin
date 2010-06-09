@@ -15,6 +15,11 @@ public class AttributeRule
  private int cardinality;
  private Map<RestrictionType,Collection<QualifierRule>> qualifiers;
 
+ public AttributeRule( RestrictionType typ )
+ {
+  type=typ;
+ }
+ 
  public AgeAttributeClassImprint getAttributeClass()
  {
   return attributeClass;

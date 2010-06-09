@@ -10,6 +10,7 @@ import uk.ac.ebi.age.admin.client.model.restriction.AttributeRule;
 import uk.ac.ebi.age.admin.client.model.restriction.QualifierRule;
 import uk.ac.ebi.age.admin.client.model.restriction.RestrictionCardinality;
 import uk.ac.ebi.age.admin.client.model.restriction.RestrictionType;
+import uk.ac.ebi.age.admin.client.model.restriction.ValueMultuplicity;
 import uk.ac.ebi.age.admin.client.ui.AttributeMetaClassDef;
 import uk.ac.ebi.age.admin.client.ui.ClassSelectedCallback;
 
@@ -20,6 +21,7 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.CanvasItem;
+import com.smartgwt.client.widgets.form.fields.CheckboxItem;
 import com.smartgwt.client.widgets.form.fields.FormItemIcon;
 import com.smartgwt.client.widgets.form.fields.RadioGroupItem;
 import com.smartgwt.client.widgets.form.fields.StaticTextItem;
@@ -36,23 +38,23 @@ import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
-public class AttributeRulePanel extends VLayout
+public class AttributeMMRulePanel extends RulePanel
 {
  private AttributeRule rule;
  private AgeAttributeClassImprint targetClass;
- private RadioGroupItem typeSelect;
  private RadioGroupItem rangeSelect;
  private final StaticTextItem attrTgClass;
  private ListGrid qTbl;
  private TextItem cardVal;
  
- AttributeRulePanel( final ModelImprint model )
+ AttributeMMRulePanel( final ModelImprint model )
  {
   setWidth100();
   setHeight100();
   setPadding(10);
   setMembersMargin(10);
-  
+ 
+  /*
   DynamicForm typeForm = new DynamicForm();
   typeForm.setGroupTitle("Rule type");
   typeForm.setIsGroup(true);
@@ -70,17 +72,61 @@ public class AttributeRulePanel extends VLayout
   typeForm.setItems( typeSelect );
   
   addMember(typeForm);
+  */
+  
+  targetForm: {
+   DynamicForm targetForm = new DynamicForm();
+   targetForm.setGroupTitle("Target attribute");
+   targetForm.setIsGroup(true);
+   targetForm.setPadding(5);
+   
+   attrTgClass = new StaticTextItem();
+   attrTgClass.setTitle("Attribute class");
+   attrTgClass.setWidth(50);
+   attrTgClass.setAlign(Alignment.CENTER);
+   
+   FormItemIcon icn = new FormItemIcon();
+   icn.setSrc("../images/icons/attribute/selbt2.png");
+   icn.addFormItemClickHandler(new FormItemClickHandler()
+   {
+    @Override
+    public void onFormItemClick(FormItemIconClickEvent event)
+    {
+     new XSelectDialog<AgeAttributeClassImprint>(model.getRootAttributeClass(), AttributeMetaClassDef.getInstance(), new ClassSelectedCallback()
+     {
+      
+      @Override
+      public void classSelected(AgeAbstractClassImprint cls)
+      {
+       attrTgClass.setValue("<span class='attrRef'>"+cls.getName()+"</span>");
+       targetClass = (AgeAttributeClassImprint)cls;
+      }
+     }).show();
+
+     
+    }
+   });
+   attrTgClass.setIcons(icn);
+   
+   CheckboxItem subclCb = new CheckboxItem();
+   subclCb.setTitle("Including subclasses");
+   
+   targetForm.setItems(attrTgClass,subclCb);
+
+   addMember(targetForm);
+  }
+  
   
   DynamicForm rangeForm = new DynamicForm();
-  rangeForm.setGroupTitle("Rule range");
+  rangeForm.setGroupTitle("Value multiplicity");
   rangeForm.setIsGroup(true);
   
   rangeSelect = new RadioGroupItem();
-  rangeSelect.setTitle("Range");
+  rangeSelect.setTitle("Multiplicity");
 
-  valueMap = new LinkedHashMap<String, String>();
+  LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();
   
-  for( RestrictionCardinality rc : RestrictionCardinality.values() )
+  for( ValueMultuplicity rc : ValueMultuplicity.values() )
    valueMap.put(rc.name(),rc.getTitle());
   
   rangeSelect.setValueMap(valueMap);
@@ -92,64 +138,36 @@ public class AttributeRulePanel extends VLayout
   IntegerRangeValidator vldtr = new IntegerRangeValidator();
   vldtr.setMin(0);
   cardVal.setValidators(vldtr);
-  cardVal.setHint("empty or zero means infinity");
+//  cardVal.setHint("empty or zero means infinity");
   
-  rangeForm.setItems(rangeSelect,cardVal);
+  CheckboxItem uvCb = new CheckboxItem("valuniq");
+  uvCb.setTitle("Values must be unique");
+  
+  CheckboxItem uqCb = new CheckboxItem("qualuniq");
+  uqCb.setTitle("Qualifiers' value set must be unique");
+ 
+  rangeForm.setItems(rangeSelect,cardVal,uvCb,uqCb);
   
   addMember(rangeForm);
   
-  DynamicForm targetForm = new DynamicForm();
-  targetForm.setGroupTitle("Target attribute");
-  targetForm.setIsGroup(true);
-  targetForm.setPadding(5);
-  
-  attrTgClass = new StaticTextItem();
-  attrTgClass.setTitle("Attribute class");
-  attrTgClass.setWidth(50);
-  attrTgClass.setAlign(Alignment.CENTER);
-  
-  FormItemIcon icn = new FormItemIcon();
-  icn.setSrc("../images/icons/attribute/selbt2.png");
-  icn.addFormItemClickHandler(new FormItemClickHandler()
-  {
-   @Override
-   public void onFormItemClick(FormItemIconClickEvent event)
-   {
-    new XSelectDialog<AgeAttributeClassImprint>(model.getRootAttributeClass(), AttributeMetaClassDef.getInstance(), new ClassSelectedCallback()
-    {
-     
-     @Override
-     public void classSelected(AgeAbstractClassImprint cls)
-     {
-      attrTgClass.setValue(cls.getName());
-      targetClass = (AgeAttributeClassImprint)cls;
-     }
-    }).show();
 
-    
-   }
-  });
-  attrTgClass.setIcons(icn);
-  
-  targetForm.setItems(attrTgClass);
-
-  addMember(targetForm);
 
   DynamicForm qualifiersForm = new DynamicForm();
   qualifiersForm.setGroupTitle("Qualifiers");
   qualifiersForm.setIsGroup(true);
-  qualifiersForm.setPadding(5);
-  qualifiersForm.setWidth100();
-  qualifiersForm.setHeight(210);
+//  qualifiersForm.setPadding(1);
+//  qualifiersForm.setWidth100();
+  qualifiersForm.setHeight(200);
 
   CanvasItem qTblItem = new CanvasItem();
   
   VLayout qLay = new VLayout();
-  qLay.setWidth100();
+  qLay.setWidth("98%");
   qLay.setHeight100();
+  qLay.setPadding(5);
   
   ToolStrip qTools = new ToolStrip();
-  qTools.setWidth("98%");
+  qTools.setWidth100();
  
   qTbl = new ListGrid();
 
@@ -200,7 +218,7 @@ public class AttributeRulePanel extends VLayout
   
   qTblItem.setShowTitle(false);
   
-  qTbl.setWidth("98%");
+  qTbl.setWidth100();
   qTbl.setShowHeader(false);
 
   ListGridField typeIconField = new ListGridField("type", "Type", 40);
@@ -242,7 +260,6 @@ public class AttributeRulePanel extends VLayout
  {
   this.rule = rule;
   
-  typeSelect.setValue( rule.getType().name() );
   rangeSelect.setValue( rule.getCardinalityType().name() );
   cardVal.setValue(rule.getCardinality());
   
@@ -301,7 +318,6 @@ public class AttributeRulePanel extends VLayout
    return false;
   }
 
-  rule.setType(RestrictionType.valueOf(typeSelect.getValue().toString()));
   rule.setCardinalityType(RestrictionCardinality.valueOf(rangeSelect.getValue().toString()));
   rule.setCardinality(card);
   rule.setAttributeClass(targetClass);

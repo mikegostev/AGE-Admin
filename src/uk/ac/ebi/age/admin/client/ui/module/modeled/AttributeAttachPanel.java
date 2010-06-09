@@ -42,14 +42,15 @@ public class AttributeAttachPanel extends VLayout
 
   ruleList.setFields(typeIconField, ruleField);
 
-  ToolStripButton btadd = new ToolStripButton();
-  btadd.setIcon("../images/icons/attribute/attach.png");
-  btadd.addClickHandler(new ClickHandler()
+  ToolStripButton btaddMay = new ToolStripButton();
+  btaddMay.setIcon("../images/icons/attribute/attach.png");
+  btaddMay.setTitle("Add MAY rule");
+  btaddMay.addClickHandler(new ClickHandler()
   {
    @Override
    public void onClick(ClickEvent event)
    {
-    AttributeRuleDialog.show(new AttributeRule(), cls.getModel(), new SelectedAttrubuteRule(){
+    AttributeMMRuleDialog.show(new AttributeRule(RestrictionType.MAY), cls.getModel(), new SelectedAttrubuteRule(){
 
      @Override
      public void attributeRuleSelected(AttributeRule ar)
@@ -58,7 +59,45 @@ public class AttributeAttachPanel extends VLayout
      }});
    }
   });
-  superTS.addButton(btadd);
+  superTS.addButton(btaddMay);
+
+  ToolStripButton btaddMust = new ToolStripButton();
+  btaddMust.setIcon("../images/icons/attribute/attach.png");
+  btaddMust.setTitle("Add MUST rule");
+  btaddMust.addClickHandler(new ClickHandler()
+  {
+   @Override
+   public void onClick(ClickEvent event)
+   {
+    AttributeMMRuleDialog.show(new AttributeRule(RestrictionType.MUST), cls.getModel(), new SelectedAttrubuteRule(){
+
+     @Override
+     public void attributeRuleSelected(AttributeRule ar)
+     {
+      ruleList.addData(new RuleRecord(ar));
+     }});
+   }
+  });
+  superTS.addButton(btaddMust);
+
+  ToolStripButton btaddMustNot = new ToolStripButton();
+  btaddMustNot.setIcon("../images/icons/attribute/attach.png");
+  btaddMustNot.setTitle("Add MUSTNOT rule");
+  btaddMustNot.addClickHandler(new ClickHandler()
+  {
+   @Override
+   public void onClick(ClickEvent event)
+   {
+    AttributeMNOTRuleDialog.show(new AttributeRule(RestrictionType.MUSTNOT), cls.getModel(), new SelectedAttrubuteRule(){
+
+     @Override
+     public void attributeRuleSelected(AttributeRule ar)
+     {
+      ruleList.addData(new RuleRecord(ar));
+     }});
+   }
+  });
+  superTS.addButton(btaddMustNot);
 
   ToolStripButton btdel = new ToolStripButton();
   btdel.setIcon("../images/icons/attribute/detach.png");

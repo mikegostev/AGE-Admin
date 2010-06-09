@@ -15,18 +15,17 @@ import com.smartgwt.client.widgets.events.CloseClientEvent;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
-public class AttributeRuleDialog extends Window
+public abstract class AttributeRuleDialog extends Window
 {
- private static AttributeRuleDialog instance;
- private SelectedAttrubuteRule listener;
- private AttributeRulePanel ruleForm;
- 
+ private RulePanel ruleForm;
  private ModelImprint model;
+ private SelectedAttrubuteRule listener;
+
  
  public AttributeRuleDialog(ModelImprint mod)
  {
   setWidth(600);
-  setHeight(640);
+  setHeight(580);
   setTitle("Edit rule");
   setShowMinimizeButton(false);
   setIsModal(true);
@@ -48,7 +47,7 @@ public class AttributeRuleDialog extends Window
   winInter.setWidth100();
   winInter.setHeight100();
 
-  ruleForm = new AttributeRulePanel(mod);
+  ruleForm = getRulePanel();
   ruleForm.setWidth100();
   ruleForm.setHeight("*");
 
@@ -99,41 +98,24 @@ public class AttributeRuleDialog extends Window
 
  }
 
+ public abstract RulePanel getRulePanel();
+ public abstract void close();
+ 
  public ModelImprint getModel()
  {
   return model;
  }
  
- public static void show(AttributeRule rule, ModelImprint mod, SelectedAttrubuteRule selectedAttrubuteRule)
- {
-  if( instance == null )
-   instance = new AttributeRuleDialog(mod);
-  
-  if( instance.getModel() != mod )
-  {
-   instance.destroy();
-   instance = new AttributeRuleDialog(mod);
-  }
-  
-  instance.setRule( rule );
-  instance.setListener(selectedAttrubuteRule);
 
-  instance.show();
- }
-
- private void setListener(SelectedAttrubuteRule selectedAttrubuteRule)
+ public void setListener(SelectedAttrubuteRule selectedAttrubuteRule)
  {
   listener = selectedAttrubuteRule;
  }
 
- private void setRule(AttributeRule rule)
+ public void setRule(AttributeRule rule)
  {
   ruleForm.setRule(rule);
  }
 
- public void close()
- {
-  instance=null;
-  destroy();
- }
+
 }
