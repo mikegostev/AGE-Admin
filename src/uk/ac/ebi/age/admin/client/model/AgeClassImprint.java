@@ -208,7 +208,8 @@ public class AgeClassImprint implements IsSerializable, AgeAbstractClassImprint
 
  public void removeAttribiteRule(AttributeRule rule)
  {
-  attributeRestrictions.remove(rule);
+  if( attributeRestrictions != null )
+   attributeRestrictions.remove(rule);
  }
 
  @Override

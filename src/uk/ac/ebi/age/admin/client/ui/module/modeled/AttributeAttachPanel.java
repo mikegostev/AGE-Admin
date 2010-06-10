@@ -7,6 +7,7 @@ import uk.ac.ebi.age.admin.client.ui.SelectedAttrubuteRule;
 
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.ListGridFieldType;
+import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.ListGrid;
@@ -31,6 +32,11 @@ public class AttributeAttachPanel extends VLayout
 
   final ListGrid ruleList = new ListGrid();
   ruleList.setShowHeader(false);
+  ruleList.setWrapCells(true);
+  ruleList.setFixedRecordHeights(false);
+  ruleList.setBodyOverflow(Overflow.VISIBLE);
+  ruleList.setOverflow(Overflow.VISIBLE);
+
   
   ListGridField typeIconField = new ListGridField("type", "Type", 40);
   typeIconField.setAlign(Alignment.CENTER);

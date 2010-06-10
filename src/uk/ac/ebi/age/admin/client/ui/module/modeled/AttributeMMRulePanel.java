@@ -7,10 +7,9 @@ import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.restriction.AttributeRule;
+import uk.ac.ebi.age.admin.client.model.restriction.Cardinality;
 import uk.ac.ebi.age.admin.client.model.restriction.QualifierRule;
-import uk.ac.ebi.age.admin.client.model.restriction.RestrictionCardinality;
 import uk.ac.ebi.age.admin.client.model.restriction.RestrictionType;
-import uk.ac.ebi.age.admin.client.model.restriction.ValueMultuplicity;
 import uk.ac.ebi.age.admin.client.ui.AttributeMetaClassDef;
 import uk.ac.ebi.age.admin.client.ui.ClassSelectedCallback;
 
@@ -42,10 +41,13 @@ public class AttributeMMRulePanel extends RulePanel
 {
  private AttributeRule rule;
  private AgeAttributeClassImprint targetClass;
- private RadioGroupItem rangeSelect;
+ private RadioGroupItem cardType;
  private final StaticTextItem attrTgClass;
  private ListGrid qTbl;
  private TextItem cardVal;
+ private CheckboxItem subclCb;
+ private CheckboxItem valUniq;
+ private CheckboxItem qualUniq;
  
  AttributeMMRulePanel( final ModelImprint model )
  {
@@ -74,7 +76,7 @@ public class AttributeMMRulePanel extends RulePanel
   addMember(typeForm);
   */
   
-  targetForm: {
+  {
    DynamicForm targetForm = new DynamicForm();
    targetForm.setGroupTitle("Target attribute");
    targetForm.setIsGroup(true);
@@ -108,7 +110,7 @@ public class AttributeMMRulePanel extends RulePanel
    });
    attrTgClass.setIcons(icn);
    
-   CheckboxItem subclCb = new CheckboxItem();
+   subclCb = new CheckboxItem();
    subclCb.setTitle("Including subclasses");
    
    targetForm.setItems(attrTgClass,subclCb);
@@ -121,15 +123,15 @@ public class AttributeMMRulePanel extends RulePanel
   rangeForm.setGroupTitle("Value multiplicity");
   rangeForm.setIsGroup(true);
   
-  rangeSelect = new RadioGroupItem();
-  rangeSelect.setTitle("Multiplicity");
+  cardType = new RadioGroupItem();
+  cardType.setTitle("Multiplicity");
 
   LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();
   
-  for( ValueMultuplicity rc : ValueMultuplicity.values() )
+  for( Cardinality rc : Cardinality.values() )
    valueMap.put(rc.name(),rc.getTitle());
   
-  rangeSelect.setValueMap(valueMap);
+  cardType.setValueMap(valueMap);
 
   cardVal = new TextItem();
   cardVal.setValidateOnChange(true);
@@ -140,13 +142,13 @@ public class AttributeMMRulePanel extends RulePanel
   cardVal.setValidators(vldtr);
 //  cardVal.setHint("empty or zero means infinity");
   
-  CheckboxItem uvCb = new CheckboxItem("valuniq");
-  uvCb.setTitle("Values must be unique");
+  valUniq = new CheckboxItem("valuniq");
+  valUniq.setTitle("Values must be unique");
   
-  CheckboxItem uqCb = new CheckboxItem("qualuniq");
-  uqCb.setTitle("Qualifiers' value set must be unique");
+  qualUniq = new CheckboxItem("qualuniq");
+  qualUniq.setTitle("Qualifiers' value set must be unique");
  
-  rangeForm.setItems(rangeSelect,cardVal,uvCb,uqCb);
+  rangeForm.setItems(cardType,cardVal,valUniq,qualUniq);
   
   addMember(rangeForm);
   
@@ -260,13 +262,19 @@ public class AttributeMMRulePanel extends RulePanel
  {
   this.rule = rule;
   
-  rangeSelect.setValue( rule.getCardinalityType().name() );
-  cardVal.setValue(rule.getCardinality());
-  
   targetClass = rule.getAttributeClass();
-  
   if( targetClass != null )
    attrTgClass.setValue(targetClass.getName());
+  else
+   attrTgClass.setValue("");
+   
+  subclCb.setValue( rule.isSubclassesIncluded() );
+
+  cardType.setValue( rule.getCardinalityType().name() );
+  cardVal.setValue(rule.getCardinality());
+  
+  valUniq.setValue(rule.isValueUnique());
+  qualUniq.setValue(rule.isQualifiersUnique());
   
   if( rule.getQualifiersMap() != null )
   {
@@ -318,10 +326,15 @@ public class AttributeMMRulePanel extends RulePanel
    return false;
   }
 
-  rule.setCardinalityType(RestrictionCardinality.valueOf(rangeSelect.getValue().toString()));
+  rule.setSubclassesIncluded(subclCb.getValueAsBoolean());
+  
+  rule.setCardinalityType(Cardinality.valueOf(cardType.getValue().toString()));
   rule.setCardinality(card);
   rule.setAttributeClass(targetClass);
 
+  rule.setValueUnique(valUniq.getValueAsBoolean());
+  rule.setQualifiersUnique(qualUniq.getValueAsBoolean());
+  
   ListGridRecord[] recs = qTbl.getRecords();
 
   rule.clearQualifiers();
