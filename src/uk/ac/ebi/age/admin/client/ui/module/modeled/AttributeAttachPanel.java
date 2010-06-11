@@ -86,6 +86,7 @@ public class AttributeAttachPanel extends VLayout
   });
   superTS.addButton(btaddMust);
 
+
   ToolStripButton btaddMustNot = new ToolStripButton();
   btaddMustNot.setIcon("../images/icons/attribute/attach.png");
   btaddMustNot.setTitle("Add MUSTNOT rule");
@@ -105,6 +106,54 @@ public class AttributeAttachPanel extends VLayout
   });
   superTS.addButton(btaddMustNot);
 
+  
+  ToolStripButton btEdit = new ToolStripButton();
+  btEdit.setIcon("../images/icons/attribute/attachEdit.png");
+  btEdit.setTitle("Edit rule");
+  btEdit.addClickHandler(new ClickHandler()
+  {
+   @Override
+   public void onClick(ClickEvent event)
+   {
+    final RuleRecord rr = (RuleRecord)ruleList.getSelectedRecord();
+    
+    if( rr == null )
+     return;
+    
+    AttributeRule atrl = rr.getRule();
+    
+    if( atrl.getType() == RestrictionType.MUSTNOT )
+    {
+     AttributeMNOTRuleDialog.show(atrl, cls.getModel(), new SelectedAttrubuteRule()
+     {
+
+      @Override
+      public void attributeRuleSelected(AttributeRule ar)
+      {
+       rr.update();
+       ruleList.refreshCell(ruleList.getRecordIndex(rr), 1);
+      }
+     });
+    }
+    else
+    {
+     AttributeMMRuleDialog.show(atrl, cls.getModel(), new SelectedAttrubuteRule()
+     {
+
+      @Override
+      public void attributeRuleSelected(AttributeRule ar)
+      {
+       rr.update();
+       ruleList.refreshCell(ruleList.getRecordIndex(rr), 1);
+      }
+     });
+    }
+     
+   }
+  });
+  superTS.addButton(btEdit);
+ 
+  
   ToolStripButton btdel = new ToolStripButton();
   btdel.setIcon("../images/icons/attribute/detach.png");
   btdel.addClickHandler(new ClickHandler()
@@ -143,6 +192,11 @@ public class AttributeAttachPanel extends VLayout
    setAttribute("name", r.toString() );
   }
   
+  public void update()
+  {
+   setAttribute("name", rule.toString() );
+  }
+
   public AttributeRule getRule()
   {
    return rule;
