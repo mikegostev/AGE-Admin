@@ -99,22 +99,14 @@ public class RelationRule
   StringBuilder sb = new StringBuilder();
   
   sb.append("object ").append(type.getTitle()).append(" have ");
-  sb.append("attributes of class <b>").append(targetClass.getName()).append("</b> (");
-
-  if( subclassesIncluded )
-   sb.append("including subclasses)");
-  else
-   sb.append("excluding subclasses)");
-   
+  
   
   if( type != RestrictionType.MUSTNOT )
   {
-//   sb.append(" that have ").append(cardType.name());
-   
    if( cardType == Cardinality.ANY)
-    sb.append(" that may have any number of values ");
+    sb.append(" any number of relations ");
    else
-    sb.append(" that must have ").append(cardType.getTitle()).append(" ").append(cardinality).append(" value").append(cardinality>1?"s ":" ");
+    sb.append(cardType.getTitle()).append(" ").append(cardinality).append(" relation").append(cardinality>1?"s ":" ");
    
    if( ( cardinality > 1 || cardType == Cardinality.MIN ) &&  qualifiersUnique )
    {
@@ -126,6 +118,13 @@ public class RelationRule
     sb.append(" must be unique) ");
     
    }
+   
+   sb.append("with class <b>").append(targetClass.getName()).append("</b> (");
+   
+   if( subclassesIncluded )
+    sb.append("including subclasses) ");
+   else
+    sb.append("excluding subclasses) ");
    
    if( qualifiers != null )
    {
@@ -207,6 +206,16 @@ public class RelationRule
     }
    }
   }
+  
+  sb.append(" with class <b>").append(targetClass.getName()).append("</b> (");
+  
+  if( subclassesIncluded )
+   sb.append("including subclasses)");
+  else
+   sb.append("excluding subclasses)");
+
+  
+
   
   return sb.toString();
  }
