@@ -14,7 +14,7 @@ public class AttributeMMRuleDialog extends AttributeRuleDialog
   super(mod);
  }
 
- public RulePanel getRulePanel()
+ public AttributeRulePanel getRulePanel()
  {
   return new AttributeMMRulePanel(getModel());
  }

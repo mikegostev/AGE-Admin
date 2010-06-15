@@ -6,9 +6,9 @@ import java.util.Collection;
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
-import uk.ac.ebi.age.admin.client.ui.module.modeled.AttributeAttachPanel;
+import uk.ac.ebi.age.admin.client.ui.module.modeled.AttributeRuleAttachPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.ClassCommonsPanel;
-import uk.ac.ebi.age.admin.client.ui.module.modeled.RestrictionPanel;
+import uk.ac.ebi.age.admin.client.ui.module.modeled.RelationRuleAttachPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.XEditorPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.XSubclassesPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.XSuperclassesPanel;
@@ -36,10 +36,10 @@ public class ClassMetaClassDef implements MetaClassDef
   pnl = new XSubclassesPanel(cls, editor);
   panels.add(pnl);
 
-  pnl = new RestrictionPanel( (AgeClassImprint)cls, editor );
+  pnl = new RelationRuleAttachPanel( (AgeClassImprint)cls, editor );
   panels.add(pnl);
 
-  pnl = new AttributeAttachPanel( (AgeClassImprint)cls, editor );
+  pnl = new AttributeRuleAttachPanel( (AgeClassImprint)cls, editor );
   panels.add(pnl);
 
 

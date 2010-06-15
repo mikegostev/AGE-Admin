@@ -1,8 +1,8 @@
 package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
-import uk.ac.ebi.age.admin.client.model.restriction.AttributeRule;
-import uk.ac.ebi.age.admin.client.ui.SelectedAttrubuteRule;
+import uk.ac.ebi.age.admin.client.model.restriction.RelationRule;
+import uk.ac.ebi.age.admin.client.ui.SelectedRelationRule;
 
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.VerticalAlignment;
@@ -15,17 +15,17 @@ import com.smartgwt.client.widgets.events.CloseClientEvent;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
-public abstract class AttributeRuleDialog extends Window
+public abstract class RelationRuleDialog extends Window
 {
- private AttributeRulePanel ruleForm;
+ private RelationRulePanel ruleForm;
  private ModelImprint model;
- private SelectedAttrubuteRule listener;
+ private SelectedRelationRule listener;
 
  
- public AttributeRuleDialog(ModelImprint mod)
+ public RelationRuleDialog(ModelImprint mod)
  {
   setWidth(600);
-  setHeight(580);
+  setHeight(600);
   setTitle("Edit rule");
   setShowMinimizeButton(false);
   setIsModal(true);
@@ -74,7 +74,7 @@ public abstract class AttributeRuleDialog extends Window
     close();
     
     if( listener != null )
-     listener.attributeRuleSelected(ruleForm.getRule());
+     listener.relationRuleSelected(ruleForm.getRule());
 
    }
   });
@@ -98,7 +98,7 @@ public abstract class AttributeRuleDialog extends Window
 
  }
 
- public abstract AttributeRulePanel getRulePanel();
+ public abstract RelationRulePanel getRulePanel();
  public abstract void close();
  
  public ModelImprint getModel()
@@ -107,12 +107,12 @@ public abstract class AttributeRuleDialog extends Window
  }
  
 
- public void setListener(SelectedAttrubuteRule selectedAttrubuteRule)
+ public void setListener(SelectedRelationRule selectedRelRule)
  {
-  listener = selectedAttrubuteRule;
+  listener = selectedRelRule;
  }
 
- public void setRule(AttributeRule rule)
+ public void setRule(RelationRule rule)
  {
   ruleForm.setRule(rule);
  }

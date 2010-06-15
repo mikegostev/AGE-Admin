@@ -189,8 +189,8 @@ public class Age2ImprintConverter
 
    AgeClassImprint clImp = (AgeClassImprint) clMap.get(cls);
 
-   for(AgeRestriction rstr : cls.getObjectRestrictions())
-    clImp.addRestriction(convertRestriction(rstr, clMap));
+//   for(AgeRestriction rstr : cls.getObjectRestrictions())
+//    clImp.addRestriction(convertRestriction(rstr, clMap));
   }
  }
 

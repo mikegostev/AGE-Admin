@@ -1,9 +1,9 @@
 package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
-import uk.ac.ebi.age.admin.client.model.restriction.AttributeRule;
+import uk.ac.ebi.age.admin.client.model.restriction.RelationRule;
 import uk.ac.ebi.age.admin.client.model.restriction.RestrictionType;
-import uk.ac.ebi.age.admin.client.ui.SelectedAttrubuteRule;
+import uk.ac.ebi.age.admin.client.ui.SelectedRelationRule;
 
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.ListGridFieldType;
@@ -17,12 +17,12 @@ import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
-public class AttributeAttachPanel extends VLayout
+public class RelationRuleAttachPanel extends VLayout
 {
 
- public AttributeAttachPanel( final AgeClassImprint cls, final XEditorPanel editor)
+ public RelationRuleAttachPanel( final AgeClassImprint cls, final XEditorPanel editor)
  {
-  setTitle("Attributes");
+  setTitle("Relations");
   
   setWidth100();
   setMargin(3);
@@ -56,10 +56,10 @@ public class AttributeAttachPanel extends VLayout
    @Override
    public void onClick(ClickEvent event)
    {
-    AttributeMMRuleDialog.show(new AttributeRule(RestrictionType.MAY), cls.getModel(), new SelectedAttrubuteRule(){
+    RelationMMRuleDialog.show(new RelationRule(RestrictionType.MAY), cls.getModel(), new SelectedRelationRule(){
 
      @Override
-     public void attributeRuleSelected(AttributeRule ar)
+     public void relationRuleSelected(RelationRule ar)
      {
       ruleList.addData(new RuleRecord(ar));
      }});
@@ -75,10 +75,10 @@ public class AttributeAttachPanel extends VLayout
    @Override
    public void onClick(ClickEvent event)
    {
-    AttributeMMRuleDialog.show(new AttributeRule(RestrictionType.MUST), cls.getModel(), new SelectedAttrubuteRule(){
+    RelationMMRuleDialog.show(new RelationRule(RestrictionType.MUST), cls.getModel(), new SelectedRelationRule(){
 
      @Override
-     public void attributeRuleSelected(AttributeRule ar)
+     public void relationRuleSelected(RelationRule ar)
      {
       ruleList.addData(new RuleRecord(ar));
      }});
@@ -95,10 +95,10 @@ public class AttributeAttachPanel extends VLayout
    @Override
    public void onClick(ClickEvent event)
    {
-    AttributeMNOTRuleDialog.show(new AttributeRule(RestrictionType.MUSTNOT), cls.getModel(), new SelectedAttrubuteRule(){
+    RelationMNOTRuleDialog.show(new RelationRule(RestrictionType.MUSTNOT), cls.getModel(), new SelectedRelationRule(){
 
      @Override
-     public void attributeRuleSelected(AttributeRule ar)
+     public void relationRuleSelected(RelationRule ar)
      {
       ruleList.addData(new RuleRecord(ar));
      }});
@@ -120,15 +120,15 @@ public class AttributeAttachPanel extends VLayout
     if( rr == null )
      return;
     
-    AttributeRule atrl = rr.getRule();
+    RelationRule atrl = rr.getRule();
     
     if( atrl.getType() == RestrictionType.MUSTNOT )
     {
-     AttributeMNOTRuleDialog.show(atrl, cls.getModel(), new SelectedAttrubuteRule()
+     RelationMNOTRuleDialog.show(atrl, cls.getModel(), new SelectedRelationRule()
      {
 
       @Override
-      public void attributeRuleSelected(AttributeRule ar)
+      public void relationRuleSelected(RelationRule ar)
       {
        rr.update();
        ruleList.refreshCell(ruleList.getRecordIndex(rr), 1);
@@ -137,11 +137,11 @@ public class AttributeAttachPanel extends VLayout
     }
     else
     {
-     AttributeMMRuleDialog.show(atrl, cls.getModel(), new SelectedAttrubuteRule()
+     RelationMMRuleDialog.show(atrl, cls.getModel(), new SelectedRelationRule()
      {
 
       @Override
-      public void attributeRuleSelected(AttributeRule ar)
+      public void relationRuleSelected(RelationRule ar)
       {
        rr.update();
        ruleList.refreshCell(ruleList.getRecordIndex(rr), 1);
@@ -167,7 +167,7 @@ public class AttributeAttachPanel extends VLayout
      return;
 
     ruleList.removeData(rec);
-    cls.removeAttribiteRule(rec.getRule());
+    cls.removeRelationRule(rec.getRule());
    }
   });
   superTS.addButton(btdel);
@@ -180,9 +180,9 @@ public class AttributeAttachPanel extends VLayout
 
  static class RuleRecord extends ListGridRecord
  {
-  private AttributeRule rule;
+  private RelationRule rule;
   
-  RuleRecord( AttributeRule r )
+  RuleRecord( RelationRule r )
   {
    super();
    
@@ -197,31 +197,10 @@ public class AttributeAttachPanel extends VLayout
    setAttribute("name", rule.toString() );
   }
 
-  public AttributeRule getRule()
+  public RelationRule getRule()
   {
    return rule;
   }
-  
-  public void toggleType()
-  {
-   RestrictionType rtype = rule.getType();
-   
-   RestrictionType[] vals = RestrictionType.values();
-   
-   for(int i=0; i < vals.length; i++ )
-   {
-    if( vals[i] == rtype )
-    {
-     if( i == (vals.length-1) )
-      rtype=vals[0];
-     else
-      rtype = vals[i+1];
-     
-     setAttribute("type", rtype.name() );
-     rule.setType( rtype );
-     return;
-    }
-   }
-  }
+
  }
 }

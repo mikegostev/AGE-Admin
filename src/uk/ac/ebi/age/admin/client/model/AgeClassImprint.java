@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import uk.ac.ebi.age.admin.client.model.restriction.AttributeRule;
+import uk.ac.ebi.age.admin.client.model.restriction.RelationRule;
 import uk.ac.ebi.age.admin.client.model.restriction.RestrictionImprint;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
@@ -18,7 +19,7 @@ public class AgeClassImprint implements IsSerializable, AgeAbstractClassImprint
  private Collection<AgeClassImprint> parents;
  private Collection<AgeClassImprint> children;
  
- private Collection<RestrictionImprint> objectRestrictions;
+ private Collection<RelationRule> objectRestrictions;
  private Collection<AttributeRule> attributeRestrictions;
  
  private ModelImprint model;
@@ -68,12 +69,12 @@ public class AgeClassImprint implements IsSerializable, AgeAbstractClassImprint
 //  this.children = children;
 // }
 
- public Collection<RestrictionImprint> getObjectRestrictions()
+ public Collection<RelationRule> getRelationRules()
  {
   return objectRestrictions;
  }
 
- public void setObjectRestrictions(Collection<RestrictionImprint> restrictions)
+ public void setRelationRules(Collection<RelationRule> restrictions)
  {
   this.objectRestrictions = restrictions;
  }
@@ -117,10 +118,10 @@ public class AgeClassImprint implements IsSerializable, AgeAbstractClassImprint
   simp.addSubClass(this);
  }
 
- public void addRestriction(RestrictionImprint rst)
+ public void addRelationRule(RelationRule rst)
  {
   if( objectRestrictions == null )
-   objectRestrictions = new ArrayList<RestrictionImprint>(10);
+   objectRestrictions = new ArrayList<RelationRule>(10);
   
   objectRestrictions.add(rst);
  }
@@ -217,6 +218,12 @@ public class AgeClassImprint implements IsSerializable, AgeAbstractClassImprint
  {
   // TODO Auto-generated method stub
   
+ }
+
+ public void removeRelationRule(RelationRule rule)
+ {
+  if( objectRestrictions != null )
+   objectRestrictions.remove(rule);
  }
  
 }

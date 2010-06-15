@@ -13,6 +13,7 @@ import uk.ac.ebi.age.admin.client.model.restriction.QualifiersCondition;
 import uk.ac.ebi.age.admin.client.model.restriction.RestrictionType;
 import uk.ac.ebi.age.admin.client.ui.AttributeMetaClassDef;
 import uk.ac.ebi.age.admin.client.ui.ClassSelectedCallback;
+import uk.ac.ebi.age.admin.client.ui.QualifiersRecord;
 
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.ListGridFieldType;
@@ -38,7 +39,7 @@ import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
-public class AttributeMNOTRulePanel extends RulePanel
+public class AttributeMNOTRulePanel extends AttributeRulePanel
 {
  private AttributeRule rule;
 
@@ -355,7 +356,7 @@ public class AttributeMNOTRulePanel extends RulePanel
     QualifierRule qr = new QualifierRule();
 
     qr.setType(RestrictionType.MUST);
-    qr.setAttributeClassImprint(((QualifiersRecord) r).getAgeAttributeClassImprint());
+    qr.setAttributeClassImprint((AgeAttributeClassImprint)((QualifiersRecord) r).getAgeAbstractClassImprint());
 
     rule.addQualifier(qr);
    }
@@ -370,49 +371,4 @@ public class AttributeMNOTRulePanel extends RulePanel
   return rule;
  }
 
- static class QualifiersRecord extends ListGridRecord
- {
-  private AgeAttributeClassImprint cls;
-  private RestrictionType rtype;
-  
-  QualifiersRecord( RestrictionType rt, AgeAttributeClassImprint ci )
-  {
-   super();
-   
-   rtype=rt;
-   cls=ci;
-   
-   setAttribute("type", "qualifier" );
-   setAttribute("name", ci.getName() );
-  }
-  
-  AgeAttributeClassImprint getAgeAttributeClassImprint()
-  {
-   return cls;
-  }
-  
-  public RestrictionType getType()
-  {
-   return rtype;
-  }
-  
-  public void toggleType()
-  {
-   RestrictionType[] vals = RestrictionType.values();
-   
-   for(int i=0; i < vals.length; i++ )
-   {
-    if( vals[i] == rtype )
-    {
-     if( i == (vals.length-1) )
-      rtype=vals[0];
-     else
-      rtype = vals[i+1];
-     
-     setAttribute("type", rtype.name() );
-     return;
-    }
-   }
-  }
- }
 }

@@ -16,7 +16,7 @@ public class AttributeMNOTRuleDialog extends AttributeRuleDialog
 
  }
 
- public RulePanel getRulePanel()
+ public AttributeRulePanel getRulePanel()
  {
   return new AttributeMNOTRulePanel(getModel());
  }

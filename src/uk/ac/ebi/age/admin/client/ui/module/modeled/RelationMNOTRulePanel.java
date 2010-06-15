@@ -5,14 +5,19 @@ import java.util.LinkedHashMap;
 
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint;
+import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
+import uk.ac.ebi.age.admin.client.model.AgeRelationClassImprint;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
-import uk.ac.ebi.age.admin.client.model.restriction.AttributeRule;
 import uk.ac.ebi.age.admin.client.model.restriction.Cardinality;
 import uk.ac.ebi.age.admin.client.model.restriction.QualifierRule;
+import uk.ac.ebi.age.admin.client.model.restriction.QualifiersCondition;
+import uk.ac.ebi.age.admin.client.model.restriction.RelationRule;
 import uk.ac.ebi.age.admin.client.model.restriction.RestrictionType;
 import uk.ac.ebi.age.admin.client.ui.AttributeMetaClassDef;
+import uk.ac.ebi.age.admin.client.ui.ClassMetaClassDef;
 import uk.ac.ebi.age.admin.client.ui.ClassSelectedCallback;
 import uk.ac.ebi.age.admin.client.ui.QualifiersRecord;
+import uk.ac.ebi.age.admin.client.ui.RelationMetaClassDef;
 
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.ListGridFieldType;
@@ -38,101 +43,132 @@ import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
-public class AttributeMMRulePanel extends AttributeRulePanel
+public class RelationMNOTRulePanel extends RelationRulePanel
 {
- private AttributeRule rule;
- private AgeAttributeClassImprint targetClass;
- private RadioGroupItem cardType;
- private final StaticTextItem attrTgClass;
- private ListGrid qTbl;
- private TextItem cardVal;
- private CheckboxItem subclCb;
- private CheckboxItem valUniq;
- private CheckboxItem qualUniq;
+ private RelationRule rule;
+
+ private final StaticTextItem relClassItm;
+ private final StaticTextItem tagClassItm;
+ private CheckboxItem relSubclCb;
+ private CheckboxItem tagSubclCb;
+
+ private AgeRelationClassImprint relationClass;
+ private AgeClassImprint targetClass;
+
  
- AttributeMMRulePanel( final ModelImprint model )
+ private RadioGroupItem rangeSelect;
+ private TextItem cardVal;
+ 
+ private RadioGroupItem qualCondition;
+ private ListGrid qTbl;
+ 
+ RelationMNOTRulePanel( final ModelImprint model )
  {
   setWidth100();
   setHeight100();
   setPadding(10);
   setMembersMargin(10);
  
-  /*
-  DynamicForm typeForm = new DynamicForm();
-  typeForm.setGroupTitle("Rule type");
-  typeForm.setIsGroup(true);
-  
-  typeSelect = new RadioGroupItem();
-  typeSelect.setTitle("Type");
-
-  LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();
-  
-  for( RestrictionType rc : RestrictionType.values() )
-   valueMap.put(rc.name(),rc.getTitle());
-
-  typeSelect.setValueMap(valueMap);
-
-  typeForm.setItems( typeSelect );
-  
-  addMember(typeForm);
-  */
-  
   {
-   DynamicForm targetForm = new DynamicForm();
-   targetForm.setGroupTitle("Target attribute");
-   targetForm.setIsGroup(true);
-   targetForm.setPadding(5);
+   DynamicForm relForm = new DynamicForm();
+   relForm.setGroupTitle("Relation");
+   relForm.setIsGroup(true);
+   relForm.setPadding(5);
    
-   attrTgClass = new StaticTextItem();
-   attrTgClass.setTitle("Attribute class");
-   attrTgClass.setWidth(50);
-   attrTgClass.setAlign(Alignment.CENTER);
+   relClassItm = new StaticTextItem();
+   relClassItm.setTitle("Attribute class");
+   relClassItm.setWidth(50);
+   relClassItm.setAlign(Alignment.CENTER);
    
    FormItemIcon icn = new FormItemIcon();
-   icn.setSrc("../images/icons/attribute/selbt2.png");
+   icn.setSrc("../images/icons/relation/selbt.png");
    icn.addFormItemClickHandler(new FormItemClickHandler()
    {
     @Override
     public void onFormItemClick(FormItemIconClickEvent event)
     {
-     new XSelectDialog<AgeAttributeClassImprint>(model.getRootAttributeClass(), AttributeMetaClassDef.getInstance(), new ClassSelectedCallback()
+     new XSelectDialog<AgeRelationClassImprint>(model.getRootRelationClass(), RelationMetaClassDef.getInstance(), new ClassSelectedCallback()
      {
       
       @Override
       public void classSelected(AgeAbstractClassImprint cls)
       {
-       attrTgClass.setValue("<span class='attrRef'>"+cls.getName()+"</span>");
-       targetClass = (AgeAttributeClassImprint)cls;
+       relClassItm.setValue("<span class='relRef'>"+cls.getName()+"</span>");
+       relationClass = (AgeRelationClassImprint)cls;
       }
      }).show();
 
      
     }
    });
-   attrTgClass.setIcons(icn);
+   relClassItm.setIcons(icn);
    
-   subclCb = new CheckboxItem();
-   subclCb.setTitle("Including subclasses");
+   relSubclCb = new CheckboxItem();
+   relSubclCb.setTitle("Including subclasses");
    
-   targetForm.setItems(attrTgClass,subclCb);
+   relForm.setItems(relClassItm,relSubclCb);
+
+   addMember(relForm);
+  }
+  
+  {
+   DynamicForm targetForm = new DynamicForm();
+   targetForm.setGroupTitle("Target class");
+   targetForm.setIsGroup(true);
+   targetForm.setPadding(5);
+   
+   tagClassItm = new StaticTextItem();
+   tagClassItm.setTitle("Target class");
+   tagClassItm.setWidth(50);
+   tagClassItm.setAlign(Alignment.CENTER);
+   
+   FormItemIcon icn = new FormItemIcon();
+   icn.setSrc("../images/icons/class/selbt.png");
+   icn.addFormItemClickHandler(new FormItemClickHandler()
+   {
+    @Override
+    public void onFormItemClick(FormItemIconClickEvent event)
+    {
+     new XSelectDialog<AgeClassImprint>(model.getRootClass(), ClassMetaClassDef.getInstance(), new ClassSelectedCallback()
+     {
+      
+      @Override
+      public void classSelected(AgeAbstractClassImprint cls)
+      {
+       tagClassItm.setValue("<span class='clsRef'>"+cls.getName()+"</span>");
+       targetClass = (AgeClassImprint)cls;
+      }
+     }).show();
+
+     
+    }
+   });
+   tagClassItm.setIcons(icn);
+   
+   tagSubclCb = new CheckboxItem();
+   tagSubclCb.setTitle("Including subclasses");
+   
+   targetForm.setItems(tagClassItm,tagSubclCb);
 
    addMember(targetForm);
   }
   
   
   DynamicForm rangeForm = new DynamicForm();
-  rangeForm.setGroupTitle("Value multiplicity");
+  rangeForm.setGroupTitle("Multiplicity condition");
   rangeForm.setIsGroup(true);
   
-  cardType = new RadioGroupItem();
-  cardType.setTitle("Multiplicity");
+  rangeSelect = new RadioGroupItem();
+  rangeSelect.setTitle("Multiplicity");
 
   LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();
   
-  for( Cardinality rc : Cardinality.values() )
-   valueMap.put(rc.name(),rc.getTitle());
+  valueMap.put(Cardinality.ANY.name(),"any");
+  valueMap.put(Cardinality.EXACT.name(),"exactly");
+  valueMap.put(Cardinality.MAX.name(),"less or equal");
+  valueMap.put(Cardinality.MIN.name(),"more or equal");
   
-  cardType.setValueMap(valueMap);
+  rangeSelect.setValueMap(valueMap);
 
   cardVal = new TextItem();
   cardVal.setValidateOnChange(true);
@@ -141,15 +177,8 @@ public class AttributeMMRulePanel extends AttributeRulePanel
   IntegerRangeValidator vldtr = new IntegerRangeValidator();
   vldtr.setMin(0);
   cardVal.setValidators(vldtr);
-//  cardVal.setHint("empty or zero means infinity");
-  
-  valUniq = new CheckboxItem("valuniq");
-  valUniq.setTitle("Values must be unique");
-  
-  qualUniq = new CheckboxItem("qualuniq");
-  qualUniq.setTitle("Qualifiers' value set must be unique");
  
-  rangeForm.setItems(cardType,cardVal,valUniq,qualUniq);
+  rangeForm.setItems(rangeSelect,cardVal);
   
   addMember(rangeForm);
   
@@ -158,11 +187,25 @@ public class AttributeMMRulePanel extends AttributeRulePanel
   DynamicForm qualifiersForm = new DynamicForm();
   qualifiersForm.setGroupTitle("Qualifiers");
   qualifiersForm.setIsGroup(true);
-//  qualifiersForm.setPadding(1);
-//  qualifiersForm.setWidth100();
-  qualifiersForm.setHeight(200);
+  qualifiersForm.setHeight(190);
+//  qualifiersForm.setNumCols(6);
 
+  qualCondition = new RadioGroupItem();
+  qualCondition.setTitle("Qualifiers");
+  qualCondition.setVertical(false);
+  qualCondition.setWidth(1);
+  
+  valueMap = new LinkedHashMap<String, String>();
+  
+  valueMap.put(QualifiersCondition.ANY.name(),"regardless");
+  valueMap.put(QualifiersCondition.NONE.name(),"none");
+  valueMap.put(QualifiersCondition.SPECIFIED.name(),"selected");
+  
+  qualCondition.setValueMap(valueMap);
+
+  
   CanvasItem qTblItem = new CanvasItem();
+  qTblItem.setColSpan(2);
   
   VLayout qLay = new VLayout();
   qLay.setWidth("98%");
@@ -199,7 +242,7 @@ public class AttributeMMRulePanel extends AttributeRulePanel
   qTools.addButton(chldBut);
   
   ToolStripButton sibBut = new ToolStripButton();
-  sibBut.setTitle("Remode qualifier");
+  sibBut.setTitle("Remove qualifier");
   sibBut.setIcon("../images/icons/qualifier/qdel.png");
   sibBut.addClickHandler( new ClickHandler()
   {
@@ -222,12 +265,13 @@ public class AttributeMMRulePanel extends AttributeRulePanel
   qTblItem.setShowTitle(false);
   
   qTbl.setWidth100();
+  qTbl.setHeight(100);
   qTbl.setShowHeader(false);
 
   ListGridField typeIconField = new ListGridField("type", "Type", 40);
   typeIconField.setAlign(Alignment.CENTER);
   typeIconField.setType(ListGridFieldType.IMAGE);
-  typeIconField.setImageURLPrefix("../images/icons/restriction/");
+  typeIconField.setImageURLPrefix("../images/icons/qualifier/");
   typeIconField.setImageURLSuffix(".png");
 
   ListGridField subclassNameField = new ListGridField("name", "Class");
@@ -250,32 +294,32 @@ public class AttributeMMRulePanel extends AttributeRulePanel
    }
   });
   
-  qLay.addMember(qTbl);
   qTblItem.setCanvas(qLay);
+  qLay.addMember(qTbl);
   
-  qualifiersForm.setItems(qTblItem);
+  qualifiersForm.setItems(qualCondition,qTblItem);
 
   addMember(qualifiersForm);
  
  }
  
- public void setRule(AttributeRule rule)
+ public void setRule(RelationRule rule)
  {
   this.rule = rule;
-  
-  targetClass = rule.getAttributeClass();
-  if( targetClass != null )
-   attrTgClass.setValue(targetClass.getName());
-  else
-   attrTgClass.setValue("");
-   
-  subclCb.setValue( rule.isSubclassesIncluded() );
 
-  cardType.setValue( rule.getCardinalityType().name() );
+  targetClass = rule.getTargetClass();
+  if( targetClass != null )
+   tagClassItm.setValue(targetClass.getName());
+  else 
+   tagClassItm.setValue("");
+  
+  tagSubclCb.setValue(rule.isSubclassesIncluded());
+  relSubclCb.setValue(rule.isRelationSubclassesIncluded());
+  
+  rangeSelect.setValue( rule.getCardinalityType().name() );
   cardVal.setValue(rule.getCardinality());
   
-  valUniq.setValue(rule.isValueUnique());
-  qualUniq.setValue(rule.isQualifiersUnique());
+  qualCondition.setValue(rule.getQualifiersCondition().name());
   
   if( rule.getQualifiersMap() != null )
   {
@@ -327,14 +371,15 @@ public class AttributeMMRulePanel extends AttributeRulePanel
    return false;
   }
 
-  rule.setSubclassesIncluded(subclCb.getValueAsBoolean());
-  
-  rule.setCardinalityType(Cardinality.valueOf(cardType.getValue().toString()));
-  rule.setCardinality(card);
-  rule.setAttributeClass(targetClass);
+  rule.setRelationSubclassesIncluded(relSubclCb.getValueAsBoolean());
+  rule.setSubclassesIncluded(tagSubclCb.getValueAsBoolean());
 
-  rule.setValueUnique(valUniq.getValueAsBoolean());
-  rule.setQualifiersUnique(qualUniq.getValueAsBoolean());
+  rule.setCardinalityType(Cardinality.valueOf(rangeSelect.getValue().toString()));
+  rule.setCardinality(card);
+  rule.setTargetClass(targetClass);
+  rule.setRelationClass(relationClass);
+
+  rule.setQualifiersCondition(QualifiersCondition.valueOf(qualCondition.getValue().toString()));
   
   ListGridRecord[] recs = qTbl.getRecords();
 
@@ -345,7 +390,7 @@ public class AttributeMMRulePanel extends AttributeRulePanel
    {
     QualifierRule qr = new QualifierRule();
 
-    qr.setType(((QualifiersRecord) r).getType());
+    qr.setType(RestrictionType.MUST);
     qr.setAttributeClassImprint((AgeAttributeClassImprint)((QualifiersRecord) r).getAgeAbstractClassImprint());
 
     rule.addQualifier(qr);
@@ -356,7 +401,7 @@ public class AttributeMMRulePanel extends AttributeRulePanel
  }
 
  
- public AttributeRule getRule()
+ public RelationRule getRule()
  {
   return rule;
  }

@@ -4,7 +4,7 @@ import uk.ac.ebi.age.admin.client.model.restriction.AttributeRule;
 
 import com.smartgwt.client.widgets.layout.VLayout;
 
-public abstract class RulePanel extends VLayout 
+public abstract class AttributeRulePanel extends VLayout 
 {
 
  public abstract boolean updateRule();
