@@ -213,12 +213,6 @@ public class AgeClassImprint implements IsSerializable, AgeAbstractClassImprint
    attributeRestrictions.remove(rule);
  }
 
- @Override
- public void addAttributeRestriction(RestrictionImprint restr)
- {
-  // TODO Auto-generated method stub
-  
- }
 
  public void removeRelationRule(RelationRule rule)
  {

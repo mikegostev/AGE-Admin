@@ -41,6 +41,9 @@ public class Age2ImprintConverter
 
   Map<AgeAbstractClass, Object> clMap = new HashMap<AgeAbstractClass, Object>();
 
+  
+  mimp.getRootAnnotationClass().setName("AgeAnnotation");
+  
   AgeClass ageRoot = sm.getRootAgeClass();
 
   AgeClassImprint rImp = mimp.getRootClass();
@@ -206,8 +209,8 @@ public class Age2ImprintConverter
 
    AgeAbstractClassImprint clImp = (AgeAbstractClassImprint) clMap.get(cls);
 
-   for(AgeRestriction rstr : cls.getAttributeRestrictions())
-    clImp.addAttributeRestriction(convertRestriction(rstr, clMap));
+//   for(AgeRestriction rstr : cls.getAttributeRestrictions())
+//    clImp.addAttributeRestriction(convertRestriction(rstr, clMap));
   }
  } 
  

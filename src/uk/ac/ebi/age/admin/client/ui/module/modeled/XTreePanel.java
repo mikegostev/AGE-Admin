@@ -53,6 +53,7 @@ public class XTreePanel extends TreeGrid
   setShowHeader(false);
   setShowConnectors(true);
   setShowRoot(false);
+  setShowAllRecords(true);
   setTitleField("Name");
   setFields(treeField = new TreeGridField("Name") );  
  
@@ -185,22 +186,25 @@ public class XTreePanel extends TreeGrid
   for(ImprintTreeNode tn : nodeMap.get(classImprint) )
   {
    tn.setTitle(newName);
+   
+   refreshRow( getRecordIndex(tn) );
   }
   
-  refreshFields();
+//  refreshFields();
   
 //  getData().setRoot(getData().getRoot());
  }
 
  void updateClassType(AgeAbstractClassImprint classImprint )
  {
-  
   for(ImprintTreeNode tn : nodeMap.get(classImprint) )
   {
    tn.updateType();
+   
+   refreshRow(getRecordIndex(tn));
   }
   
-  refreshFields();
+//  refreshFields();
   
 //  getData().setRoot(getData().getRoot());
  }

@@ -11,12 +11,14 @@ public class ModelImprint  implements IsSerializable
  private AgeClassImprint rootClass;
  private AgeRelationClassImprint rootRelation;
  private AgeAttributeClassImprint rootAttribute;
+ private AgeAnnotationClassImprint rootAnnotation;
 
  private Set<AgeClassImprint> classes = new HashSet<AgeClassImprint>();
 
  private Set<AgeAttributeClassImprint> attributes = new HashSet<AgeAttributeClassImprint>();
 
  private Set<AgeRelationClassImprint> relations = new HashSet<AgeRelationClassImprint>();
+ private Set<AgeAnnotationClassImprint> annotations = new HashSet<AgeAnnotationClassImprint>();
 
 
  
@@ -63,6 +65,21 @@ public class ModelImprint  implements IsSerializable
   return rootAttribute;
  }
 
+ public AgeAnnotationClassImprint getRootAnnotationClass()
+ {
+  if( rootAnnotation != null )
+   return rootAnnotation;
+   
+  rootAnnotation = new AgeAnnotationClassImprint();
+  rootAnnotation.setName("AgeAnnotation");
+  rootAnnotation.setAbstract(true);
+  
+  annotations.add(rootAnnotation);
+  rootAnnotation.setModel( this );
+  
+  return rootAnnotation;
+ }
+
 
  AgeAttributeClassImprint createAgeAttributClassImprint()
  {
@@ -107,9 +124,26 @@ public class ModelImprint  implements IsSerializable
   return ncls;
  }
  
+ public AgeAnnotationClassImprint createAgeAnnotationClassImprint()
+ {
+  AgeAnnotationClassImprint ncls = new AgeAnnotationClassImprint();
+  
+  annotations.add(ncls);
+  
+  ncls.setModel(this);
+
+  
+  return ncls;
+ }
+ 
  public Collection<AgeRelationClassImprint> getRelations()
  {
   return relations;
+ }
+ 
+ public Collection<AgeAnnotationClassImprint> getAnnotations()
+ {
+  return annotations;
  }
 
  public void removeClassImprint(AgeClassImprint ageClassImprint)
@@ -126,6 +160,15 @@ public class ModelImprint  implements IsSerializable
  {
   relations.remove(cls);
  }
+
+ public void removeAnnotationClassImprint(AgeAnnotationClassImprint cls)
+ {
+  annotations.remove(cls);
+ }
+
+
+
+
 
  
  

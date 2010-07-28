@@ -11,7 +11,7 @@ public interface AgeAbstractClassImprint extends IsSerializable
 // void addSubclass( AgeAbstractClassImprint cls );
 // void addSuperclass( AgeAbstractClassImprint cls );
  
- void addAttributeRestriction( RestrictionImprint restr );
+// void addAttributeRestriction( RestrictionImprint restr );
 
  String getName();
  

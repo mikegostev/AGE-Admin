@@ -3,6 +3,7 @@ package uk.ac.ebi.age.admin.client.ui.module.modeled;
 import uk.ac.ebi.age.admin.client.AgeAdminService;
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
+import uk.ac.ebi.age.admin.client.ui.AnnotationMetaClassDef;
 import uk.ac.ebi.age.admin.client.ui.AttributeMetaClassDef;
 import uk.ac.ebi.age.admin.client.ui.ClassAuxData;
 import uk.ac.ebi.age.admin.client.ui.ClassMetaClassDef;
@@ -21,6 +22,7 @@ public class ModelPanel extends TabSet
  private XEditorPanel classesPanel;
  private XEditorPanel attribPanel;
  private XEditorPanel relationsPanel;
+ private XEditorPanel annotationsPanel;
  
  public ModelPanel()
  {
@@ -45,6 +47,12 @@ public class ModelPanel extends TabSet
   
   addTab(relTab);
 
+  Tab annotTab = new Tab("Annotations");
+  annotTab.setPane( annotationsPanel = new XEditorPanel(AnnotationMetaClassDef.getInstance()));
+  
+  addTab(annotTab);
+
+  
   addDrawHandler(new DrawHandler()
   {
    
@@ -64,6 +72,7 @@ public class ModelPanel extends TabSet
       classesPanel.setModel(mod);
       attribPanel.setModel(mod);
       relationsPanel.setModel(mod);
+      annotationsPanel.setModel(mod);
      }
      
      @Override

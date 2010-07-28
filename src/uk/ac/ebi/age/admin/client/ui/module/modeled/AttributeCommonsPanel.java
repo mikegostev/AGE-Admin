@@ -52,6 +52,7 @@ public class AttributeCommonsPanel extends DynamicForm
   
   SelectItem typeSelect = new SelectItem();  
   typeSelect.setTitle("Select datatype");  
+  typeSelect.setDisabled(cls.getParents()==null);
   LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();  
 
   for( AttributeType atyp : AttributeType.values() )
