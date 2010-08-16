@@ -14,7 +14,7 @@ import uk.ac.ebi.age.admin.client.ui.module.modeled.XSuperclassesPanel;
 
 import com.smartgwt.client.widgets.Canvas;
 
-public class AttributeMetaClassDef implements MetaClassDef
+public class AttributeMetaClassDef extends MetaClassDef
 {
  private static AttributeMetaClassDef instance = new AttributeMetaClassDef();
  

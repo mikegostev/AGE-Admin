@@ -18,6 +18,9 @@ public class AgeRelationClassImprint implements AgeAbstractClassImprint,IsSerial
  private ModelImprint model;
  private boolean isAbstract;
 
+ private Collection<String> aliases;
+ private Collection<AgeAnnotationImprint> annotations;
+ 
  private transient Object auxData;
 
  AgeRelationClassImprint()
@@ -175,5 +178,53 @@ public class AgeRelationClassImprint implements AgeAbstractClassImprint,IsSerial
  public void addSuperClass(AgeAbstractClassImprint superClass)
  {
   addSuperClass((AgeRelationClassImprint)superClass);
+ }
+ 
+ @Override
+ public Collection<String> getAliases()
+ {
+  return aliases;
+ }
+
+ @Override
+ public void addAlias(String value)
+ {
+  if( aliases == null )
+   aliases = new ArrayList<String>(5);
+  
+  aliases.add(value);
+ }
+ 
+ @Override
+ public void removeAlias(String value)
+ {
+  if( aliases == null )
+   return;
+  
+  aliases.remove(value);
+ }
+ 
+ @Override
+ public Collection<AgeAnnotationImprint> getAnnotations()
+ {
+  return annotations;
+ }
+
+ @Override
+ public void addAnnotation(AgeAnnotationImprint a)
+ {
+  if( annotations == null )
+   annotations = new ArrayList<AgeAnnotationImprint>(5);
+  
+  annotations.add(a);
+ }
+
+ @Override
+ public void removeAnnotation(AgeAnnotationImprint a)
+ {
+  if( annotations == null )
+   return;
+  
+  annotations.remove(a);
  }
 }

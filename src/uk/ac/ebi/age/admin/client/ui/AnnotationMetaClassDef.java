@@ -13,7 +13,7 @@ import uk.ac.ebi.age.admin.client.ui.module.modeled.XSuperclassesPanel;
 
 import com.smartgwt.client.widgets.Canvas;
 
-public class AnnotationMetaClassDef implements MetaClassDef
+public class AnnotationMetaClassDef extends MetaClassDef
 {
  private static AnnotationMetaClassDef instance = new AnnotationMetaClassDef();
  
@@ -65,7 +65,7 @@ public class AnnotationMetaClassDef implements MetaClassDef
  }
 
  @Override
- public AgeAbstractClassImprint getRoot(ModelImprint mod)
+ public AgeAnnotationClassImprint getRoot(ModelImprint mod)
  {
   return mod.getRootAnnotationClass();
  }

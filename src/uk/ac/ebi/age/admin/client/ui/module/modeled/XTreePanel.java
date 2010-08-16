@@ -119,6 +119,8 @@ public class XTreePanel extends TreeGrid
 
   ImprintTreeNode  clsRoot = metaDef.createTreeNode(root);
   
+  nodeMap.clear();
+  
   createTreeStructure(root, clsRoot);
 
   data.setRoot(rootNode);
@@ -201,7 +203,9 @@ public class XTreePanel extends TreeGrid
   {
    tn.updateType();
    
-   refreshRow(getRecordIndex(tn));
+   int ind = getRecordIndex(tn);
+   
+   refreshRow( ind );
   }
   
 //  refreshFields();

@@ -5,7 +5,6 @@ import java.util.Collection;
 
 import uk.ac.ebi.age.admin.client.model.restriction.AttributeRule;
 import uk.ac.ebi.age.admin.client.model.restriction.RelationRule;
-import uk.ac.ebi.age.admin.client.model.restriction.RestrictionImprint;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
@@ -22,6 +21,9 @@ public class AgeClassImprint implements IsSerializable, AgeAbstractClassImprint
  private Collection<RelationRule> objectRestrictions;
  private Collection<AttributeRule> attributeRestrictions;
  
+ private Collection<String> aliases;
+ private Collection<AgeAnnotationImprint> annotations;
+
  private ModelImprint model;
  
  private transient Object auxData;
@@ -219,5 +221,52 @@ public class AgeClassImprint implements IsSerializable, AgeAbstractClassImprint
   if( objectRestrictions != null )
    objectRestrictions.remove(rule);
  }
+
+ @Override
+ public Collection<String> getAliases()
+ {
+  return aliases;
+ }
+
+ @Override
+ public void addAlias(String value)
+ {
+  if( aliases == null )
+   aliases = new ArrayList<String>(5);
+  
+  aliases.add(value);
+ }
  
+ @Override
+ public void removeAlias(String value)
+ {
+  if( aliases == null )
+   return;
+  
+  aliases.remove(value);
+ }
+
+ @Override
+ public Collection<AgeAnnotationImprint> getAnnotations()
+ {
+  return annotations;
+ }
+
+ @Override
+ public void addAnnotation(AgeAnnotationImprint a)
+ {
+  if( annotations == null )
+   annotations = new ArrayList<AgeAnnotationImprint>(5);
+  
+  annotations.add(a);
+ }
+
+ @Override
+ public void removeAnnotation(AgeAnnotationImprint a)
+ {
+  if( annotations == null )
+   return;
+  
+  annotations.remove(a);
+ }
 }

@@ -16,6 +16,9 @@ public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSeria
  private Collection<AgeAttributeClassImprint> parents;
  private Collection<AgeAttributeClassImprint> children;
  
+ private Collection<String> aliases;
+ private Collection<AgeAnnotationImprint> annotations;
+
  private Collection<RestrictionImprint> qualifierRestrictions;
  private ModelImprint model;
 
@@ -193,4 +196,51 @@ public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSeria
   addSuperClass((AgeAttributeClassImprint)superClass);
  }
 
+ @Override
+ public Collection<String> getAliases()
+ {
+  return aliases;
+ }
+
+ @Override
+ public void addAlias(String value)
+ {
+  if( aliases == null )
+   aliases = new ArrayList<String>(5);
+  
+  aliases.add(value);
+ }
+ 
+ @Override
+ public void removeAlias(String value)
+ {
+  if( aliases == null )
+   return;
+  
+  aliases.remove(value);
+ }
+ 
+ @Override
+ public Collection<AgeAnnotationImprint> getAnnotations()
+ {
+  return annotations;
+ }
+
+ @Override
+ public void addAnnotation(AgeAnnotationImprint a)
+ {
+  if( annotations == null )
+   annotations = new ArrayList<AgeAnnotationImprint>(5);
+  
+  annotations.add(a);
+ }
+
+ @Override
+ public void removeAnnotation(AgeAnnotationImprint a)
+ {
+  if( annotations == null )
+   return;
+  
+  annotations.remove(a);
+ }
 }

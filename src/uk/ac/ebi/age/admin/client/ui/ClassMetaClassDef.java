@@ -15,7 +15,7 @@ import uk.ac.ebi.age.admin.client.ui.module.modeled.XSuperclassesPanel;
 
 import com.smartgwt.client.widgets.Canvas;
 
-public class ClassMetaClassDef implements MetaClassDef
+public class ClassMetaClassDef extends MetaClassDef
 {
  private static ClassMetaClassDef instance = new ClassMetaClassDef();
  

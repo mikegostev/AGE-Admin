@@ -3,8 +3,6 @@ package uk.ac.ebi.age.admin.client.model;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import uk.ac.ebi.age.admin.client.model.restriction.RestrictionImprint;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class AgeAnnotationClassImprint implements AgeAbstractClassImprint,IsSerializable
@@ -13,6 +11,9 @@ public class AgeAnnotationClassImprint implements AgeAbstractClassImprint,IsSeri
  private String id;
  private Collection<AgeAnnotationClassImprint> children;
  private Collection<AgeAnnotationClassImprint> parents;
+ 
+ private Collection<String> aliases;
+ private Collection<AgeAnnotationImprint> annotations;
  
  private ModelImprint model;
  private boolean isAbstract;
@@ -157,5 +158,53 @@ public class AgeAnnotationClassImprint implements AgeAbstractClassImprint,IsSeri
  public void addSuperClass(AgeAbstractClassImprint superClass)
  {
   addSuperClass((AgeAnnotationClassImprint)superClass);
+ }
+ 
+ @Override
+ public Collection<String> getAliases()
+ {
+  return aliases;
+ }
+
+ @Override
+ public void addAlias(String value)
+ {
+  if( aliases == null )
+   aliases = new ArrayList<String>(5);
+  
+  aliases.add(value);
+ }
+ 
+ @Override
+ public void removeAlias(String value)
+ {
+  if( aliases == null )
+   return;
+  
+  aliases.remove(value);
+ }
+
+ @Override
+ public Collection<AgeAnnotationImprint> getAnnotations()
+ {
+  return annotations;
+ }
+
+ @Override
+ public void addAnnotation(AgeAnnotationImprint a)
+ {
+  if( annotations == null )
+   annotations = new ArrayList<AgeAnnotationImprint>(5);
+  
+  annotations.add(a);
+ }
+
+ @Override
+ public void removeAnnotation(AgeAnnotationImprint a)
+ {
+  if( annotations == null )
+   return;
+  
+  annotations.remove(a);
  }
 }

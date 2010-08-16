@@ -13,7 +13,7 @@ import uk.ac.ebi.age.admin.client.ui.module.modeled.XSuperclassesPanel;
 
 import com.smartgwt.client.widgets.Canvas;
 
-public class RelationMetaClassDef implements MetaClassDef
+public class RelationMetaClassDef extends MetaClassDef
 {
  private static RelationMetaClassDef instance = new RelationMetaClassDef();
  

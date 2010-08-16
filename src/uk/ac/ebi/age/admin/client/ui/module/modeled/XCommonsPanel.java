@@ -70,6 +70,7 @@ public class XCommonsPanel extends HLayout
   form.setFields(nameField, abstractCB);
 
   addMember(form);
-  addMember(new AliasesPanel());
+  addMember(new AliasesPanel(cls));
+  addMember( new AnnotationPanel(cls) ); 
  }
 }

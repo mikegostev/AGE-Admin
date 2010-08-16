@@ -2,8 +2,6 @@ package uk.ac.ebi.age.admin.client.model;
 
 import java.util.Collection;
 
-import uk.ac.ebi.age.admin.client.model.restriction.RestrictionImprint;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public interface AgeAbstractClassImprint extends IsSerializable
@@ -36,5 +34,13 @@ public interface AgeAbstractClassImprint extends IsSerializable
  AgeAbstractClassImprint createSubClass();
 
  void addSuperClass(AgeAbstractClassImprint superClass);
- 
+
+ Collection<String> getAliases();
+
+ void addAlias(String value);
+ void removeAlias(String value);
+
+ Collection<AgeAnnotationImprint> getAnnotations();
+ void addAnnotation( AgeAnnotationImprint a);
+ void removeAnnotation( AgeAnnotationImprint a);
 }
