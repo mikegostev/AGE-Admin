@@ -19,6 +19,7 @@ import com.smartgwt.client.widgets.tab.TabSet;
 
 public class ModelPanel extends TabSet
 {
+ private ModelGeneralPanel generalPanel;
  private XEditorPanel classesPanel;
  private XEditorPanel attribPanel;
  private XEditorPanel relationsPanel;
@@ -30,6 +31,12 @@ public class ModelPanel extends TabSet
   setWidth100();  
   setHeight100();  
 
+  Tab genTab = new Tab("General");
+  genTab.setPane( generalPanel=new ModelGeneralPanel( )  );
+  
+  addTab(genTab);
+
+  
   Tab classTab = new Tab("Classes");
   classTab.setPane( classesPanel=new XEditorPanel( ClassMetaClassDef.getInstance() )  );
   

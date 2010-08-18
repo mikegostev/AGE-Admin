@@ -15,14 +15,22 @@ import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
 import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
 import com.smartgwt.client.widgets.form.fields.events.KeyPressEvent;
 import com.smartgwt.client.widgets.form.fields.events.KeyPressHandler;
+import com.smartgwt.client.widgets.layout.HLayout;
 
-public class AttributeCommonsPanel extends DynamicForm
+public class AttributeCommonsPanel extends HLayout
 {
 
  public AttributeCommonsPanel( final AgeAttributeClassImprint cls, final XEditorPanel editor )
  {
+  super(8);
+  
+  setMembersMargin(8);
+  setLayoutMargin(8);
+  
   setTitle("Common properties");
   
+  DynamicForm form = new DynamicForm();
+
   final TextItem nameField = new TextItem("Name");
   nameField.setValue( cls.getName() );
   nameField.setDisabled(cls.getParents()==null);
@@ -79,7 +87,11 @@ public class AttributeCommonsPanel extends DynamicForm
    }
   });
   
-  setFields(nameField, typeSelect );
+  form.setFields(nameField, typeSelect );
+  
+  addMember(form);
+  addMember(new AliasesPanel(cls));
+  addMember( new AnnotationPanel(cls) ); 
  }
  
 }

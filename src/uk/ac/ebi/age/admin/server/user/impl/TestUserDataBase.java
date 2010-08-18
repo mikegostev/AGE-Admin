@@ -14,6 +14,7 @@ public class TestUserDataBase implements UserDatabase
  {
   UserProfile testProf = new UserProfile();
   
+  testProf.setUserId(1);
   testProf.setUserName("test");
   testProf.setPassword("test");
   testProf.setUploadAllowed(true);
@@ -26,6 +27,7 @@ public class TestUserDataBase implements UserDatabase
  {
   UserProfile testProf = new UserProfile();
   
+  testProf.setUserId(0);
   testProf.setUserName("anonymout");
   testProf.setUploadAllowed(false);
   

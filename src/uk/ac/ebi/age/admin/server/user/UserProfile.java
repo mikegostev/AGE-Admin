@@ -7,6 +7,7 @@ import uk.ac.ebi.age.model.SubmissionContext;
 
 public class UserProfile implements SubmissionContext
 {
+ private int id;
  private boolean isUploadAllowed;
  private String userName;
  private String passwordHash;
@@ -95,4 +96,16 @@ public class UserProfile implements SubmissionContext
  {
   return true;
  }
+
+ public int getUserId()
+ {
+  return id;
+ }
+ 
+ public void setUserId( int id )
+ {
+  this.id = id;
+ }
+
+
 }

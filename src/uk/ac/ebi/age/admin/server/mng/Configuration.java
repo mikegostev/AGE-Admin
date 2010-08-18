@@ -8,6 +8,12 @@ import uk.ac.ebi.age.admin.server.user.UserDatabase;
 
 public class Configuration
 {
+ public static final String SESSION_COOKIE_NAME = "AGEADMSESS";
+ 
+ public static final String pubResRelPath="public";
+ public static final String modelRelPath="model";
+ public static final String userRelPath="user";
+ 
  private static Configuration defaultConfig = new Configuration();
  
  public static Configuration getDefaultConfiguration()
@@ -19,6 +25,10 @@ public class Configuration
  private SessionPool sessionPool;
  private UploadManager uploadManager;
  private File tmpDir;
+ private File baseDir;
+ private File userBaseDir;
+ 
+ private File publicModelDir;
  
  
  
@@ -72,6 +82,33 @@ public class Configuration
  public void setTmpDir( File f)
  {
   tmpDir=f;
+ }
+
+
+ public void setBaseDir(File file)
+ {
+  baseDir = file;
+ }
+
+ public File getPublicModelDir()
+ {
+  if( publicModelDir == null )
+   publicModelDir = new File(baseDir,pubResRelPath+File.separatorChar+modelRelPath);
+  
+  return publicModelDir;
+ }
+ 
+ public File getUserBaseDir()
+ {
+  if( userBaseDir == null )
+   userBaseDir = new File(baseDir,userRelPath);
+  
+  return userBaseDir;
+ }
+ 
+ public String getModelRelPath()
+ {
+  return modelRelPath;
  }
 
 }

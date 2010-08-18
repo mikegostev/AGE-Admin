@@ -4,6 +4,7 @@ import java.io.File;
 
 import uk.ac.ebi.age.admin.client.common.user.exception.UserAuthException;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
+import uk.ac.ebi.age.admin.client.model.ModelStorage;
 import uk.ac.ebi.age.admin.server.model.Age2ImprintConverter;
 import uk.ac.ebi.age.admin.server.user.Session;
 import uk.ac.ebi.age.admin.server.user.SessionPool;
@@ -13,6 +14,8 @@ import uk.ac.ebi.age.admin.server.user.impl.SessionPoolImpl;
 import uk.ac.ebi.age.admin.server.user.impl.TestUserDataBase;
 import uk.ac.ebi.age.model.SemanticModel;
 import uk.ac.ebi.age.storage.AgeStorageAdm;
+
+import com.pri.util.Directory;
 
 public class AgeAdmin
 {
@@ -26,9 +29,12 @@ public class AgeAdmin
  private SessionPool   spool;
  private UserDatabase  udb;
  private AgeStorageAdm storage;
+ private Configuration configuration;
 
  public AgeAdmin(Configuration conf, AgeStorageAdm storage)
  {
+  configuration=conf;
+  
   this.storage = storage;
 
   if(conf.getTmpDir() == null)
@@ -61,7 +67,7 @@ public class AgeAdmin
 
  public Session login(String userName, String password, String clientAddr) throws UserAuthException
  {
-  UserDatabase udb = Configuration.getDefaultConfiguration().getUserDatabase();
+//  UserDatabase udb = Configuration.getDefaultConfiguration().getUserDatabase();
 
   UserProfile prof = null;
 
@@ -79,7 +85,7 @@ public class AgeAdmin
 
   }
 
-  Session sess = Configuration.getDefaultConfiguration().getSessionPool().createSession(prof, new String[] { userName, clientAddr });
+  Session sess = spool.createSession(prof, new String[] { userName, clientAddr });
 
   return sess;
  }
@@ -89,6 +95,22 @@ public class AgeAdmin
   SemanticModel sm = storage.getSemanticModel();
   
   return Age2ImprintConverter.getModelImprint(sm);
+ }
+
+ public Session getSession(String value)
+ {
+  return spool.getSession(value);
+ }
+
+ public ModelStorage getModelStorage(Session userSession)
+ {
+  ModelStorage stor = new ModelStorage();
+  
+  stor.setPublicDirectory( Directory.createDirectory( configuration.getPublicModelDir() ) );
+  stor.setUserDirectory( Directory.createDirectory( new File( configuration.getUserBaseDir(),
+    userSession.getUserProfile().getUserId()+File.separatorChar+configuration.getModelRelPath()) ) );
+  
+  return stor;
  }
 
  

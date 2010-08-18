@@ -6,7 +6,7 @@ import java.util.Collection;
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeRelationClassImprint;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
-import uk.ac.ebi.age.admin.client.ui.module.modeled.RelationCommonsPanel;
+import uk.ac.ebi.age.admin.client.ui.module.modeled.XCommonsPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.XEditorPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.XSubclassesPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.XSuperclassesPanel;
@@ -30,7 +30,7 @@ public class RelationMetaClassDef extends MetaClassDef
  {
   ArrayList<Canvas> panels = new ArrayList<Canvas>(5);
 
-  Canvas pnl = new RelationCommonsPanel((AgeRelationClassImprint)cls, editor);
+  Canvas pnl = new XCommonsPanel((AgeRelationClassImprint)cls, editor);
   panels.add(pnl);
 
   pnl = new XSuperclassesPanel(cls, editor);

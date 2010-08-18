@@ -7,8 +7,8 @@ import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.AttributeRuleAttachPanel;
-import uk.ac.ebi.age.admin.client.ui.module.modeled.ClassCommonsPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.RelationRuleAttachPanel;
+import uk.ac.ebi.age.admin.client.ui.module.modeled.XCommonsPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.XEditorPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.XSubclassesPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.XSuperclassesPanel;
@@ -27,7 +27,7 @@ public class ClassMetaClassDef extends MetaClassDef
  {
   ArrayList<Canvas> panels = new ArrayList<Canvas>(5);
 
-  Canvas pnl = new ClassCommonsPanel(cls, editor);
+  Canvas pnl = new XCommonsPanel(cls, editor);
   panels.add(pnl);
 
   pnl = new XSuperclassesPanel(cls, editor);

@@ -2,6 +2,7 @@ package uk.ac.ebi.age.admin.client;
 
 import uk.ac.ebi.age.admin.client.common.user.exception.UserAuthException;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
+import uk.ac.ebi.age.admin.client.model.ModelStorage;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -28,4 +29,6 @@ public interface AgeAdminService extends RemoteService
  String login(String uname, String pass) throws UserAuthException;
  
  ModelImprint getModelImprint();
+
+ ModelStorage getModelStorage() throws UserAuthException;
 }
