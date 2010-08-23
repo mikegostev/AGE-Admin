@@ -1,8 +1,11 @@
 package uk.ac.ebi.age.admin.client.model;
 
-import com.pri.util.Directory;
+import uk.ac.ebi.age.admin.client.common.Directory;
 
-public class ModelStorage
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+
+public class ModelStorage implements IsSerializable
 {
  private Directory publicDir;
  private Directory userDir;

@@ -12,10 +12,10 @@ import uk.ac.ebi.age.admin.server.user.UserDatabase;
 import uk.ac.ebi.age.admin.server.user.UserProfile;
 import uk.ac.ebi.age.admin.server.user.impl.SessionPoolImpl;
 import uk.ac.ebi.age.admin.server.user.impl.TestUserDataBase;
+import uk.ac.ebi.age.admin.server.util.DirectoryTools;
 import uk.ac.ebi.age.model.SemanticModel;
 import uk.ac.ebi.age.storage.AgeStorageAdm;
 
-import com.pri.util.Directory;
 
 public class AgeAdmin
 {
@@ -106,9 +106,9 @@ public class AgeAdmin
  {
   ModelStorage stor = new ModelStorage();
   
-  stor.setPublicDirectory( Directory.createDirectory( configuration.getPublicModelDir() ) );
-  stor.setUserDirectory( Directory.createDirectory( new File( configuration.getUserBaseDir(),
-    userSession.getUserProfile().getUserId()+File.separatorChar+configuration.getModelRelPath()) ) );
+  stor.setPublicDirectory( DirectoryTools.createDirectory( configuration.getPublicModelDir() ) );
+  stor.setUserDirectory( DirectoryTools.createDirectory( new File( configuration.getUserBaseDir(),
+    String.valueOf(userSession.getUserProfile().getUserId())+File.separatorChar+configuration.getModelRelPath()) ) );
   
   return stor;
  }

@@ -16,9 +16,12 @@ public class ModelGeneralPanel extends HLayout
  public ModelGeneralPanel()
  {
   modelStoreTree = new ModelStoreTree();
-  modelStoreTree.setHeight("*");
+  modelStoreTree.setHeight100();
+  modelStoreTree.setWidth(300);
   
   modelDetailsPanel = new ModelDetailsPanel();
+  modelDetailsPanel.setHeight100();
+  modelDetailsPanel.setWidth("*");
   
   setMembers(modelStoreTree,modelDetailsPanel);
   

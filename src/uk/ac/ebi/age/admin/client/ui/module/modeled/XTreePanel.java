@@ -114,7 +114,7 @@ public class XTreePanel extends TreeGrid
   }
   
   
-  TreeNode rootNode =new TreeNode();
+  TreeNode rootNode = new TreeNode();
   
 
   ImprintTreeNode  clsRoot = metaDef.createTreeNode(root);
