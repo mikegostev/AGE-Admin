@@ -17,7 +17,7 @@ import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.TabSet;
 
 
-public class ModelPanel extends TabSet
+public class ModelPanel extends TabSet implements ModelMngr
 {
  private ModelGeneralPanel generalPanel;
  private XEditorPanel classesPanel;
@@ -32,7 +32,7 @@ public class ModelPanel extends TabSet
   setHeight100();  
 
   Tab genTab = new Tab("General");
-  genTab.setPane( generalPanel=new ModelGeneralPanel( )  );
+  genTab.setPane( generalPanel=new ModelGeneralPanel( this )  );
   
   addTab(genTab);
 
@@ -93,5 +93,22 @@ public class ModelPanel extends TabSet
    }
   });
   
+ }
+
+ private void setModel( ModelImprint mod )
+ {
+  generalPanel.setModel(mod);
+  classesPanel.setModel(mod);
+  attribPanel.setModel(mod);
+  relationsPanel.setModel(mod);
+  annotationsPanel.setModel(mod);
+
+ }
+ 
+ @Override
+ public void setNewModel()
+ {
+  ModelImprint mod = new ModelImprint();
+  setModel(mod);
  }
 }

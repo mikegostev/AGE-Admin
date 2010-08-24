@@ -4,9 +4,9 @@ import uk.ac.ebi.age.admin.client.common.Directory;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
 
 import com.smartgwt.client.types.TreeModelType;
-import com.smartgwt.client.widgets.IButton;
 import com.smartgwt.client.widgets.ImgButton;
-import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.tree.Tree;
@@ -17,20 +17,44 @@ import com.smartgwt.client.widgets.tree.TreeNode;
 public class ModelStoreTree extends VLayout
 {
  private TreeGrid treeGrid;
+ private ModelMngr mngr;
  
- public ModelStoreTree()
+ public ModelStoreTree(ModelMngr m)
  {
 //  setShowShadow(true);
+  mngr = m;
   
   ToolStrip toolStrip = new ToolStrip();  
   toolStrip.setWidth100();  
   toolStrip.setHeight(24);  
      
-  ImgButton boldButton = new ImgButton();  
-  boldButton.setSize(16);  
-  boldButton.setShowRollOver(false);  
-  boldButton.setSrc("../images/icons/class/regular.png");  
-  toolStrip.addMember(boldButton);  
+  ImgButton newButton = new ImgButton();  
+  newButton.setSize(16);  
+  newButton.setShowRollOver(false);  
+  newButton.setSrc("../images/icons/class/regular.png");
+  newButton.setTooltip("Create new model");
+  toolStrip.addMember(newButton);  
+  newButton.addClickHandler(new ClickHandler()
+  {
+   @Override
+   public void onClick(ClickEvent event)
+   {
+    mngr.setNewModel();
+   }
+  });
+  
+  
+  ImgButton editButton = new ImgButton();  
+  editButton.setSize(16);  
+  editButton.setShowRollOver(false);  
+  editButton.setSrc("../images/icons/class/regular.png");  
+  toolStrip.addMember(editButton);  
+  
+  ImgButton installButton = new ImgButton();  
+  installButton.setSize(16);  
+  installButton.setShowRollOver(false);  
+  installButton.setSrc("../images/icons/class/regular.png");  
+  toolStrip.addMember(installButton);  
 
   
   treeGrid = new TreeGrid();
@@ -54,22 +78,22 @@ public class ModelStoreTree extends VLayout
   treeGrid.setWidth100();
   treeGrid.setHeight100();
   
-  HLayout butPnl = new HLayout();
-  butPnl.setMembersMargin(20);
-  butPnl.setWidth100();
+//  HLayout butPnl = new HLayout();
+//  butPnl.setMembersMargin(20);
+//  butPnl.setWidth100();
+//  
+//  IButton newBt = new IButton("New");
+//  newBt.setAutoFit(true);
+//
+//  IButton editBt = new IButton("Edit");
+//  editBt.setAutoFit(true);
+//  
+//  IButton installBt = new IButton("Install");
+//  installBt.setAutoFit(true);
+// 
+//  butPnl.setMembers(newBt, editBt, installBt);
   
-  IButton newBt = new IButton("New");
-  newBt.setAutoFit(true);
-
-  IButton editBt = new IButton("Edit");
-  editBt.setAutoFit(true);
-  
-  IButton installBt = new IButton("Install");
-  installBt.setAutoFit(true);
- 
-  butPnl.setMembers(newBt, editBt, installBt);
-  
-  setMembers(toolStrip,treeGrid,butPnl);
+  setMembers(toolStrip,treeGrid);
  }
 
  public void setStorage(ModelStorage modst)

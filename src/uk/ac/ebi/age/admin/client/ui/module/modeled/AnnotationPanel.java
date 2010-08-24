@@ -3,6 +3,7 @@ package uk.ac.ebi.age.admin.client.ui.module.modeled;
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeAnnotationClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeAnnotationImprint;
+import uk.ac.ebi.age.admin.client.model.Annotated;
 import uk.ac.ebi.age.admin.client.ui.AnnotationMetaClassDef;
 import uk.ac.ebi.age.admin.client.ui.ClassSelectedCallback;
 
@@ -27,15 +28,15 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 public class AnnotationPanel extends VLayout
 {
  private ListGrid lst;
- private AgeAbstractClassImprint classImp;
+ private Annotated anntObj;
  
- public AnnotationPanel(AgeAbstractClassImprint cls)
+ public AnnotationPanel(Annotated cls)
  {
   super(0);
   
   setWidth("*");
   
-  classImp = cls;
+  anntObj = cls;
   
   ToolStrip superTS = new ToolStrip();
   superTS.setWidth100();
@@ -111,7 +112,7 @@ public class AnnotationPanel extends VLayout
   addMember(superTS);
   addMember(lst);
   
-  if( cls.getAnnotations() != null )
+  if( cls != null && cls.getAnnotations() != null )
   {
    for(AgeAnnotationImprint ant : cls.getAnnotations() )
     lst.addData( new AnnotationRecord(ant) );
@@ -120,7 +121,7 @@ public class AnnotationPanel extends VLayout
  
  private void addAnnotation()
  {
-  new XSelectDialog<AgeAnnotationClassImprint>(AnnotationMetaClassDef.getInstance().getRoot(classImp.getModel()), AnnotationMetaClassDef.getInstance(), new ClassSelectedCallback()
+  new XSelectDialog<AgeAnnotationClassImprint>(AnnotationMetaClassDef.getInstance().getRoot(anntObj.getModel()), AnnotationMetaClassDef.getInstance(), new ClassSelectedCallback()
   {
    @Override
    public void classSelected(AgeAbstractClassImprint cls)
@@ -138,6 +139,7 @@ public class AnnotationPanel extends VLayout
     
     lst.addData( new AnnotationRecord(annt) );
 
+    anntObj.addAnnotation(annt);
    }
   }).show();
 
@@ -151,7 +153,7 @@ public class AnnotationPanel extends VLayout
    return;
   
   lst.removeData(cr);
-  classImp.removeAnnotation( cr.getAnnotation() );
+  anntObj.removeAnnotation( cr.getAnnotation() );
  }
 
  class AnnotationRecord extends ListGridRecord

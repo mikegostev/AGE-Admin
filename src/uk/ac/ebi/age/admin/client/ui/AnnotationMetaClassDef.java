@@ -61,7 +61,7 @@ public class AnnotationMetaClassDef extends MetaClassDef
  @Override
  public Collection< ? extends AgeAbstractClassImprint> getXClasses(ModelImprint model)
  {
-  return model.getAnnotations();
+  return model.getAnnotationClasses();
  }
 
  @Override

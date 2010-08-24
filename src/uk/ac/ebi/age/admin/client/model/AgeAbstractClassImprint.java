@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public interface AgeAbstractClassImprint extends IsSerializable
+public interface AgeAbstractClassImprint extends IsSerializable, Annotated
 {
 // void addSubclass( AgeAbstractClassImprint cls );
 // void addSuperclass( AgeAbstractClassImprint cls );

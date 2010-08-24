@@ -1,12 +1,13 @@
 package uk.ac.ebi.age.admin.client.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class ModelImprint  implements IsSerializable
+public class ModelImprint  implements IsSerializable, Annotated
 {
  private AgeClassImprint rootClass;
  private AgeRelationClassImprint rootRelation;
@@ -18,9 +19,11 @@ public class ModelImprint  implements IsSerializable
  private Set<AgeAttributeClassImprint> attributes = new HashSet<AgeAttributeClassImprint>();
 
  private Set<AgeRelationClassImprint> relations = new HashSet<AgeRelationClassImprint>();
- private Set<AgeAnnotationClassImprint> annotations = new HashSet<AgeAnnotationClassImprint>();
+ private Set<AgeAnnotationClassImprint> annotationClasses = new HashSet<AgeAnnotationClassImprint>();
 
-
+ private Collection<AgeAnnotationImprint> annotations = new ArrayList<AgeAnnotationImprint>();
+ 
+ private String name;
  
  public AgeClassImprint getRootClass()
  {
@@ -28,6 +31,8 @@ public class ModelImprint  implements IsSerializable
    return rootClass;
    
   rootClass = new AgeClassImprint();
+  rootClass.setAbstract(true);
+  rootClass.setName("AgeClass");
   
   classes.add(rootClass);
   rootClass.setModel( this );
@@ -58,7 +63,9 @@ public class ModelImprint  implements IsSerializable
    return rootAttribute;
    
   rootAttribute = new AgeAttributeClassImprint();
-  
+  rootAttribute.setAbstract(true);
+  rootAttribute.setName("AgeAttributeClass");
+
   attributes.add(rootAttribute);
   rootAttribute.setModel( this );
   
@@ -74,7 +81,7 @@ public class ModelImprint  implements IsSerializable
   rootAnnotation.setName("AgeAnnotation");
   rootAnnotation.setAbstract(true);
   
-  annotations.add(rootAnnotation);
+  annotationClasses.add(rootAnnotation);
   rootAnnotation.setModel( this );
   
   return rootAnnotation;
@@ -104,7 +111,9 @@ public class ModelImprint  implements IsSerializable
    return rootRelation;
    
   rootRelation = new AgeRelationClassImprint();
-  
+  rootRelation.setAbstract(true);
+  rootRelation.setName("AgeRelationClass");
+
   relations.add(rootRelation);
   rootRelation.setModel( this );
   
@@ -128,7 +137,7 @@ public class ModelImprint  implements IsSerializable
  {
   AgeAnnotationClassImprint ncls = new AgeAnnotationClassImprint();
   
-  annotations.add(ncls);
+  annotationClasses.add(ncls);
   
   ncls.setModel(this);
 
@@ -141,9 +150,9 @@ public class ModelImprint  implements IsSerializable
   return relations;
  }
  
- public Collection<AgeAnnotationClassImprint> getAnnotations()
+ public Collection<AgeAnnotationClassImprint> getAnnotationClasses()
  {
-  return annotations;
+  return annotationClasses;
  }
 
  public void removeClassImprint(AgeClassImprint ageClassImprint)
@@ -163,15 +172,43 @@ public class ModelImprint  implements IsSerializable
 
  public void removeAnnotationClassImprint(AgeAnnotationClassImprint cls)
  {
-  annotations.remove(cls);
+  annotationClasses.remove(cls);
  }
 
+ @Override
+ public ModelImprint getModel()
+ {
+  return this;
+ }
 
+ @Override
+ public void removeAnnotation(AgeAnnotationImprint annotation)
+ {
+  annotations.remove(annotation);
+ }
 
+ @Override
+ public void addAnnotation(AgeAnnotationImprint annt)
+ {
+  annotations.add(annt);
+ }
 
+ @Override
+ public Collection<AgeAnnotationImprint> getAnnotations()
+ {
+  return annotations;
+ }
 
- 
- 
+ public String getName()
+ {
+  return name;
+ }
+
+ public void setName(String name)
+ {
+  this.name = name;
+ }
+
 
 // private void addClass( AgeClassImprint rootClass )
 // {

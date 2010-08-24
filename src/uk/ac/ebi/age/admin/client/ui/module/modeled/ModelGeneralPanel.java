@@ -1,6 +1,7 @@
 package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import uk.ac.ebi.age.admin.client.AgeAdminService;
+import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -13,9 +14,9 @@ public class ModelGeneralPanel extends HLayout
  private ModelStoreTree modelStoreTree;
  private ModelDetailsPanel modelDetailsPanel;
 
- public ModelGeneralPanel()
+ public ModelGeneralPanel( ModelMngr mngr )
  {
-  modelStoreTree = new ModelStoreTree();
+  modelStoreTree = new ModelStoreTree( mngr );
   modelStoreTree.setHeight100();
   modelStoreTree.setWidth(300);
   
@@ -51,5 +52,10 @@ public class ModelGeneralPanel extends HLayout
     
    }
   });
+ }
+
+ public void setModel(ModelImprint mod)
+ {
+  modelDetailsPanel.setModel( mod );
  }
 }
