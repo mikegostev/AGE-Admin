@@ -5,6 +5,7 @@ import java.io.File;
 import uk.ac.ebi.age.admin.client.common.user.exception.UserAuthException;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
+import uk.ac.ebi.age.admin.client.model.ModelStorageException;
 import uk.ac.ebi.age.admin.server.model.Age2ImprintConverter;
 import uk.ac.ebi.age.admin.server.user.Session;
 import uk.ac.ebi.age.admin.server.user.SessionPool;
@@ -106,11 +107,16 @@ public class AgeAdmin
  {
   ModelStorage stor = new ModelStorage();
   
-  stor.setPublicDirectory( DirectoryTools.createDirectory( configuration.getPublicModelDir() ) );
-  stor.setUserDirectory( DirectoryTools.createDirectory( new File( configuration.getUserBaseDir(),
+  stor.setPublicDirectory( DirectoryTools.imprintDirectory( configuration.getPublicModelDir() ) );
+  stor.setUserDirectory( DirectoryTools.imprintDirectory( new File( configuration.getUserBaseDir(),
     String.valueOf(userSession.getUserProfile().getUserId())+File.separatorChar+configuration.getModelRelPath()) ) );
   
   return stor;
+ }
+
+ public void saveModel(ModelImprint model, String storePath, Session userSession) throws ModelStorageException
+ {
+  // TODO Auto-generated method stub
  }
 
  

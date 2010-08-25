@@ -6,7 +6,7 @@ import uk.ac.ebi.age.admin.client.common.Directory;
 
 public class DirectoryTools
 {
- public static Directory createDirectory( File d )
+ public static Directory imprintDirectory( File d )
  {
   if( ! d.isDirectory() )
    return null;
@@ -15,7 +15,7 @@ public class DirectoryTools
   
   for( File f : d.listFiles() )
    if( f.isDirectory() )
-    dir.addSubdirectory( createDirectory(f) );
+    dir.addSubdirectory( imprintDirectory(f) );
    else
     dir.addFile( f.getName() );
   

@@ -111,4 +111,26 @@ public class ModelPanel extends TabSet implements ModelMngr
   ModelImprint mod = new ModelImprint();
   setModel(mod);
  }
+
+ @Override
+ public void saveModel(ModelImprint model)
+ {
+  if( model.getStorePath() != null )
+   AgeAdminService.Util.getInstance().saveModel(model,model.getStorePath(),new AsyncCallback<Void>(){
+
+    @Override
+    public void onFailure(Throwable arg0)
+    {
+     // TODO Auto-generated method stub
+     
+    }
+
+    @Override
+    public void onSuccess(Void arg0)
+    {
+     // TODO Auto-generated method stub
+     
+    }});
+
+ }
 }

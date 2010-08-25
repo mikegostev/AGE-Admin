@@ -14,4 +14,6 @@ public interface AgeAdminServiceAsync
 
  void getModelStorage(AsyncCallback<ModelStorage> asyncCallback);
 
+ void saveModel(ModelImprint model, String storePath, AsyncCallback<Void> asyncCallback);
+
 }

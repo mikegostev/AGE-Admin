@@ -9,6 +9,8 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class ModelImprint  implements IsSerializable, Annotated
 {
+ private transient String storePath; 
+
  private AgeClassImprint rootClass;
  private AgeRelationClassImprint rootRelation;
  private AgeAttributeClassImprint rootAttribute;
@@ -208,7 +210,16 @@ public class ModelImprint  implements IsSerializable, Annotated
  {
   this.name = name;
  }
+ 
+ public String getStorePath()
+ {
+  return storePath;
+ }
 
+ public void setStorePath(String storePath)
+ {
+  this.storePath = storePath;
+ }
 
 // private void addClass( AgeClassImprint rootClass )
 // {

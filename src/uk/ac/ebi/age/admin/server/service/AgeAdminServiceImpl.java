@@ -8,6 +8,7 @@ import uk.ac.ebi.age.admin.client.AgeAdminService;
 import uk.ac.ebi.age.admin.client.common.user.exception.UserAuthException;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
+import uk.ac.ebi.age.admin.client.model.ModelStorageException;
 import uk.ac.ebi.age.admin.server.mng.AgeAdmin;
 import uk.ac.ebi.age.admin.server.mng.Configuration;
 import uk.ac.ebi.age.admin.server.user.Session;
@@ -65,5 +66,11 @@ public class AgeAdminServiceImpl extends RemoteServiceServlet implements AgeAdmi
  public ModelStorage getModelStorage() throws UserAuthException
  {
   return adm.getModelStorage( getUserSession() );
+ }
+
+ @Override
+ public void saveModel(ModelImprint model, String storePath) throws ModelStorageException, UserAuthException
+ {
+  adm.saveModel(model, storePath, getUserSession() );
  }
 }
