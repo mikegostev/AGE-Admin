@@ -1,5 +1,6 @@
 package uk.ac.ebi.age.admin.client;
 
+import uk.ac.ebi.age.admin.client.common.ModelPath;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
 
@@ -14,6 +15,6 @@ public interface AgeAdminServiceAsync
 
  void getModelStorage(AsyncCallback<ModelStorage> asyncCallback);
 
- void saveModel(ModelImprint model, String storePath, AsyncCallback<Void> asyncCallback);
+ void saveModel(ModelImprint model, ModelPath storePath, AsyncCallback<Void> callback);
 
 }

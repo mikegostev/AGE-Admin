@@ -5,11 +5,13 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import uk.ac.ebi.age.admin.client.common.ModelPath;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class ModelImprint  implements IsSerializable, Annotated
 {
- private transient String storePath; 
+ private transient ModelPath storePath; 
 
  private AgeClassImprint rootClass;
  private AgeRelationClassImprint rootRelation;
@@ -211,12 +213,12 @@ public class ModelImprint  implements IsSerializable, Annotated
   this.name = name;
  }
  
- public String getStorePath()
+ public ModelPath getStorePath()
  {
   return storePath;
  }
 
- public void setStorePath(String storePath)
+ public void setStorePath(ModelPath storePath)
  {
   this.storePath = storePath;
  }

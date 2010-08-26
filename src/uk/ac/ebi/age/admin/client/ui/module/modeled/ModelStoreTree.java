@@ -1,6 +1,9 @@
 package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
+import java.util.LinkedList;
+
 import uk.ac.ebi.age.admin.client.common.Directory;
+import uk.ac.ebi.age.admin.client.common.ModelPath;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
 
 import com.smartgwt.client.types.TreeModelType;
@@ -18,6 +21,9 @@ public class ModelStoreTree extends VLayout
 {
  private TreeGrid treeGrid;
  private ModelMngr mngr;
+ 
+ private Directory pubDir;
+ private Directory privDir;
  
  public ModelStoreTree(ModelMngr m)
  {
@@ -100,8 +106,14 @@ public class ModelStoreTree extends VLayout
  {
   TreeNode nRoot = new TreeNode();
  
-  FileTreeNode common = new FileTreeNode("Common",true);
-  FileTreeNode priv = new FileTreeNode("Private",true);
+  pubDir = modst.getPublicDirectory();
+  pubDir.setName("Common");
+
+  privDir = modst.getUserDirectory();
+  privDir.setName("Private");
+  
+  FileTreeNode common = new FileTreeNode(pubDir);
+  FileTreeNode priv = new FileTreeNode(privDir);
   
 //  treeGrid.getData().addList(new TreeNode[]{ nRoot }, treeGrid.getData().getRoot());
   
@@ -138,7 +150,7 @@ public class ModelStoreTree extends VLayout
   {
    for(Directory d : dir.getSubdirectories())
    {
-    subNodes[cnod] = new FileTreeNode(d.getName(),true); 
+    subNodes[cnod] = new FileTreeNode(d); 
     createTree(subNodes[cnod], d);
     cnod++;
    }
@@ -148,7 +160,7 @@ public class ModelStoreTree extends VLayout
   {
    for(String f : dir.getFiles())
    {
-    subNodes[cnod] = new FileTreeNode(f,false); 
+    subNodes[cnod] = new FileTreeNode(dir,f); 
     cnod++;
    }
   }
@@ -157,14 +169,55 @@ public class ModelStoreTree extends VLayout
 
  }
 
+ public ModelPath getModelPath()
+ {
+  FileTreeNode nd = (FileTreeNode) treeGrid.getSelectedRecord();
+
+  if(nd == null)
+   return null;
+
+  ModelPath pth = new ModelPath();
+
+  Directory dir = nd.getDirectory();
+
+  LinkedList<String> path = new LinkedList<String>();
+
+  while(dir != pubDir && dir != privDir)
+  {
+   path.add(0, dir.getName());
+
+   dir = dir.getParent();
+  }
+
+  pth.setPublic(dir == pubDir);
+
+  if(path.size() > 0)
+   pth.setPathElements(path);
+
+  return pth;
+ }
+ 
  private static class FileTreeNode extends TreeNode
  {
-
-  public FileTreeNode(String string, boolean dir)
+  public FileTreeNode( Directory dir )
   {
-   setAttribute("Name", string);
-   setTitle(string);
-   setIsFolder(dir);
+   setAttribute("Name", dir.getName() );
+   setAttribute("Dir", dir );
+   setTitle(dir.getName());
+   setIsFolder(true);
+  }
+
+  public FileTreeNode( Directory dir, String file )
+  {
+   setAttribute("Name", file);
+   setAttribute("Dir", dir );
+   setTitle(file);
+   setIsFolder(false);
+  }
+  
+  public Directory getDirectory()
+  {
+   return (Directory) getAttributeAsObject("Dir");
   }
  }
 }

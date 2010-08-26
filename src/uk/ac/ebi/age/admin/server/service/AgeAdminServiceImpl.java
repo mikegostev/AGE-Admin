@@ -5,6 +5,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import uk.ac.ebi.age.admin.client.AgeAdminService;
+import uk.ac.ebi.age.admin.client.common.ModelPath;
 import uk.ac.ebi.age.admin.client.common.user.exception.UserAuthException;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
@@ -69,7 +70,7 @@ public class AgeAdminServiceImpl extends RemoteServiceServlet implements AgeAdmi
  }
 
  @Override
- public void saveModel(ModelImprint model, String storePath) throws ModelStorageException, UserAuthException
+ public void saveModel(ModelImprint model, ModelPath storePath) throws ModelStorageException, UserAuthException
  {
   adm.saveModel(model, storePath, getUserSession() );
  }

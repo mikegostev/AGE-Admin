@@ -1,5 +1,6 @@
 package uk.ac.ebi.age.admin.client;
 
+import uk.ac.ebi.age.admin.client.common.ModelPath;
 import uk.ac.ebi.age.admin.client.common.user.exception.UserAuthException;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
@@ -33,5 +34,5 @@ public interface AgeAdminService extends RemoteService
 
  ModelStorage getModelStorage() throws UserAuthException;
 
- void saveModel(ModelImprint model, String storePath) throws ModelStorageException, UserAuthException;
+ void saveModel(ModelImprint model, ModelPath storePath) throws ModelStorageException, UserAuthException;
 }

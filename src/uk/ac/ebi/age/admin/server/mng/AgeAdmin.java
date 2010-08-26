@@ -2,6 +2,7 @@ package uk.ac.ebi.age.admin.server.mng;
 
 import java.io.File;
 
+import uk.ac.ebi.age.admin.client.common.ModelPath;
 import uk.ac.ebi.age.admin.client.common.user.exception.UserAuthException;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
@@ -114,7 +115,7 @@ public class AgeAdmin
   return stor;
  }
 
- public void saveModel(ModelImprint model, String storePath, Session userSession) throws ModelStorageException
+ public void saveModel(ModelImprint model, ModelPath storePath, Session userSession) throws ModelStorageException
  {
   // TODO Auto-generated method stub
  }

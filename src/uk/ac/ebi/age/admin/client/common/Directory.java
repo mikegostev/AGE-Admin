@@ -1,16 +1,17 @@
 package uk.ac.ebi.age.admin.client.common;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class Directory implements Serializable, IsSerializable
+public class Directory implements IsSerializable
 {
  private String name;
  private List<Directory> subDirs;
  private List<String> files;
+ 
+ private Directory parent;
 
  public Directory()
  {}
@@ -41,6 +42,8 @@ public class Directory implements Serializable, IsSerializable
    subDirs = new ArrayList<Directory>(5);
   
   subDirs.add(sd);
+  
+  sd.parent = this;
  }
  
  public void addFile(String nm)
@@ -49,5 +52,15 @@ public class Directory implements Serializable, IsSerializable
    files = new ArrayList<String>(5);
   
   files.add(nm);
+ }
+
+ public void setName(String string)
+ {
+  name=string;
+ }
+ 
+ public Directory getParent()
+ {
+  return parent;
  }
 }
