@@ -1,6 +1,8 @@
 package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import uk.ac.ebi.age.admin.client.AgeAdminService;
+import uk.ac.ebi.age.admin.client.common.ModelPath;
+import uk.ac.ebi.age.admin.client.common.StoreNode;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
 
@@ -57,5 +59,20 @@ public class ModelGeneralPanel extends HLayout
  public void setModel(ModelImprint mod)
  {
   modelDetailsPanel.setModel( mod );
+ }
+ 
+ public ModelPath getSelectedPath()
+ {
+  return modelStoreTree.getModelPath();
+ }
+
+ public StoreNode getSelectedNode()
+ {
+  return modelStoreTree.getSelectedNode();
+ }
+
+ public void addModel(ModelPath path)
+ {
+  modelStoreTree.addModel(path);
  }
 }

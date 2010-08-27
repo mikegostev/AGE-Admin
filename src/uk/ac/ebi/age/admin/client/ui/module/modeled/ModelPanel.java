@@ -1,6 +1,8 @@
 package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import uk.ac.ebi.age.admin.client.AgeAdminService;
+import uk.ac.ebi.age.admin.client.common.ModelPath;
+import uk.ac.ebi.age.admin.client.common.StoreNode;
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.ui.AnnotationMetaClassDef;
@@ -11,6 +13,8 @@ import uk.ac.ebi.age.admin.client.ui.RelationMetaClassDef;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.types.Side;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.events.DrawEvent;
 import com.smartgwt.client.widgets.events.DrawHandler;
 import com.smartgwt.client.widgets.tab.Tab;
@@ -112,30 +116,71 @@ public class ModelPanel extends TabSet implements ModelMngr
   setModel(mod);
  }
 
+ private void doSaveModel(final ModelImprint model, final ModelPath path)
+ {
+  path.setModelName(model.getName());
+  
+  AgeAdminService.Util.getInstance().saveModel(model,path,new AsyncCallback<Void>(){
+
+   @Override
+   public void onFailure(Throwable arg0)
+   {
+    SC.warn("Error occured while saving the model:<br> "+arg0.getMessage());
+   }
+
+   @Override
+   public void onSuccess(Void arg0)
+   {
+    model.setStorePath(path);
+    generalPanel.addModel(path);
+   }});
+ }
+ 
  @Override
- public void saveModel(ModelImprint model)
+ public void saveModel(final ModelImprint model)
  {
   if( model.getStorePath() != null )
   {
-   AgeAdminService.Util.getInstance().saveModel(model,model.getStorePath(),new AsyncCallback<Void>(){
-
-    @Override
-    public void onFailure(Throwable arg0)
-    {
-     // TODO Auto-generated method stub
-     
-    }
-
-    @Override
-    public void onSuccess(Void arg0)
-    {
-     // TODO Auto-generated method stub
-     
-    }});
+   doSaveModel(model,model.getStorePath());
   }
   else
   {
+   StoreNode nd = generalPanel.getSelectedNode();
    
+   if( ! nd.isDirectory() )
+    nd = nd.getParent();
+   
+   String modName = model.getName();
+   
+   if( modName == null || modName.length() == 0 )
+   {
+    SC.say("Enter model name", "Please enter model name to save");
+    return;
+   }
+   
+   if( nd.getFiles() != null )
+   {
+    for( StoreNode f : nd.getFiles() )
+    {
+     if( f.getName().equals(modName) )
+     {
+      SC.ask("Confirm overwrite", "Model with name '"+modName+"' already exists. Do you want to overwrite it?", new BooleanCallback()
+      {
+       @Override
+       public void execute(Boolean value)
+       {
+        if( !value )
+         return;
+        
+        doSaveModel(model, generalPanel.getSelectedPath());
+        return;
+       }
+      });
+     }
+    }
+   }
+
+   doSaveModel(model, generalPanel.getSelectedPath());
   }
  }
 }

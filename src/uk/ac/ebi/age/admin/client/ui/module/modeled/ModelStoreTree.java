@@ -2,11 +2,12 @@ package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import java.util.LinkedList;
 
-import uk.ac.ebi.age.admin.client.common.Directory;
 import uk.ac.ebi.age.admin.client.common.ModelPath;
+import uk.ac.ebi.age.admin.client.common.StoreNode;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
 
 import com.smartgwt.client.types.TreeModelType;
+import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.ImgButton;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
@@ -22,8 +23,8 @@ public class ModelStoreTree extends VLayout
  private TreeGrid treeGrid;
  private ModelMngr mngr;
  
- private Directory pubDir;
- private Directory privDir;
+ private StoreNode pubDir;
+ private StoreNode privDir;
  
  public ModelStoreTree(ModelMngr m)
  {
@@ -107,11 +108,20 @@ public class ModelStoreTree extends VLayout
   TreeNode nRoot = new TreeNode();
  
   pubDir = modst.getPublicDirectory();
+  
+  if( pubDir == null )
+   pubDir = new StoreNode();
+  
   pubDir.setName("Common");
 
   privDir = modst.getUserDirectory();
+
+  if( privDir == null )
+   privDir = new StoreNode();
+  
   privDir.setName("Private");
   
+
   FileTreeNode common = new FileTreeNode(pubDir);
   FileTreeNode priv = new FileTreeNode(privDir);
   
@@ -127,15 +137,15 @@ public class ModelStoreTree extends VLayout
   treeGrid.getData().openAll();
  }
  
- private void createTree(FileTreeNode nd, Directory dir)
+ private void createTree(FileTreeNode nd, StoreNode dir)
  {
   if( dir == null )
    return;
   
   int subSize = 0;
   
-  if( dir.getSubdirectories() != null )
-   subSize+= dir.getSubdirectories().size();
+  if( dir.getSubnodes() != null )
+   subSize+= dir.getSubnodes().size();
 
   if( dir.getFiles() != null )
    subSize+= dir.getFiles().size();
@@ -146,9 +156,9 @@ public class ModelStoreTree extends VLayout
   FileTreeNode[] subNodes = new FileTreeNode[ subSize ];
   int cnod = 0;
   
-  if( dir.getSubdirectories() != null )
+  if( dir.getSubnodes() != null )
   {
-   for(Directory d : dir.getSubdirectories())
+   for(StoreNode d : dir.getSubnodes())
    {
     subNodes[cnod] = new FileTreeNode(d); 
     createTree(subNodes[cnod], d);
@@ -158,9 +168,9 @@ public class ModelStoreTree extends VLayout
   
   if( dir.getFiles() != null )
   {
-   for(String f : dir.getFiles())
+   for(StoreNode f : dir.getFiles())
    {
-    subNodes[cnod] = new FileTreeNode(dir,f); 
+    subNodes[cnod] = new FileTreeNode(f); 
     cnod++;
    }
   }
@@ -169,6 +179,16 @@ public class ModelStoreTree extends VLayout
 
  }
 
+ public StoreNode getSelectedNode()
+ {
+  FileTreeNode nd = (FileTreeNode) treeGrid.getSelectedRecord();
+
+  if(nd == null)
+   return null;
+  
+  return nd.getStoreNode();
+ }
+ 
  public ModelPath getModelPath()
  {
   FileTreeNode nd = (FileTreeNode) treeGrid.getSelectedRecord();
@@ -178,7 +198,7 @@ public class ModelStoreTree extends VLayout
 
   ModelPath pth = new ModelPath();
 
-  Directory dir = nd.getDirectory();
+  StoreNode dir = nd.getStoreNode();
 
   LinkedList<String> path = new LinkedList<String>();
 
@@ -196,28 +216,74 @@ public class ModelStoreTree extends VLayout
 
   return pth;
  }
+
+ public void addModel(ModelPath path)
+ {
+  TreeNode[] rnds = treeGrid.getData().getChildren(treeGrid.getData().getRoot());
+  
+  FileTreeNode cNode=null;
+  
+  for( TreeNode nd : rnds )
+  {
+   if( path.isPublic() && ((FileTreeNode)nd).getStoreNode() == pubDir )
+   {
+    cNode = (FileTreeNode)nd;
+    break;
+   }
+   else if( !path.isPublic() && ((FileTreeNode)nd).getStoreNode() == privDir )
+   {
+    cNode = (FileTreeNode)nd;
+    break;
+   }
+  }
+  
+  if( cNode == null )
+  {
+   SC.warn("Can't found Public/Private node in the tree");
+   return;
+  }
+  
+  pEls: for( String pEl : path.getPathElements() )
+  {
+   for( TreeNode snd : treeGrid.getData().getChildren( cNode ) )
+   {
+    if( ((FileTreeNode)snd).getStoreNode().getName().equals(pEl) )
+    {
+     cNode = (FileTreeNode)snd;
+     continue pEls;
+    }
+   }
+   
+   SC.warn("Can't found '"+pEl+"' node in the tree");
+   return;
+  }
+  
+  for( TreeNode snd : treeGrid.getData().getChildren( cNode ) )
+  {
+   if( ((FileTreeNode)snd).getStoreNode().getName().equals(path.getModelName()) )
+   return; 
+  }
+  
+  FileTreeNode ftn = new FileTreeNode(cNode.getStoreNode().addFile(path.getModelName()));
+  treeGrid.getData().addList(new TreeNode[]{ftn}, cNode);
+ }
+ 
  
  private static class FileTreeNode extends TreeNode
  {
-  public FileTreeNode( Directory dir )
+  public FileTreeNode( StoreNode dir )
   {
    setAttribute("Name", dir.getName() );
    setAttribute("Dir", dir );
    setTitle(dir.getName());
-   setIsFolder(true);
+   setIsFolder(dir.isDirectory());
   }
 
-  public FileTreeNode( Directory dir, String file )
-  {
-   setAttribute("Name", file);
-   setAttribute("Dir", dir );
-   setTitle(file);
-   setIsFolder(false);
-  }
   
-  public Directory getDirectory()
+  public StoreNode getStoreNode()
   {
-   return (Directory) getAttributeAsObject("Dir");
+   return (StoreNode) getAttributeAsObject("Dir");
   }
  }
+
 }
