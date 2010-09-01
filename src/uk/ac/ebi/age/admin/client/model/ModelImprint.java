@@ -1,5 +1,6 @@
 package uk.ac.ebi.age.admin.client.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -9,7 +10,7 @@ import uk.ac.ebi.age.admin.client.common.ModelPath;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class ModelImprint  implements IsSerializable, Annotated
+public class ModelImprint  implements IsSerializable, Serializable, Annotated
 {
  private transient ModelPath storePath; 
 

@@ -1,8 +1,10 @@
 package uk.ac.ebi.age.admin.client.model.restriction;
 
+import java.io.Serializable;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class RestrictionImprint implements IsSerializable
+public class RestrictionImprint implements IsSerializable, Serializable
 {
  public enum Type
  {

@@ -80,10 +80,7 @@ public class ModelPanel extends TabSet implements ModelMngr
       for(AgeClassImprint climp : mod.getClasses() )
        climp.setAuxData(new ClassAuxData());
       
-      classesPanel.setModel(mod);
-      attribPanel.setModel(mod);
-      relationsPanel.setModel(mod);
-      annotationsPanel.setModel(mod);
+      setModel(mod);
      }
      
      @Override
@@ -106,7 +103,6 @@ public class ModelPanel extends TabSet implements ModelMngr
   attribPanel.setModel(mod);
   relationsPanel.setModel(mod);
   annotationsPanel.setModel(mod);
-
  }
  
  @Override
@@ -183,4 +179,44 @@ public class ModelPanel extends TabSet implements ModelMngr
    doSaveModel(model, generalPanel.getSelectedPath());
   }
  }
+
+ @Override
+ public void loadModel(final ModelPath path)
+ {
+  AgeAdminService.Util.getInstance().getModel(path,new AsyncCallback<ModelImprint>(){
+
+   @Override
+   public void onFailure(Throwable arg0)
+   {
+    SC.warn("Error occured while saving the model:<br> "+arg0.getMessage());
+   }
+
+   @Override
+   public void onSuccess(ModelImprint model)
+   {
+    model.setStorePath(path);
+    setModel(model);
+   }
+   });
+ }
+
+ @Override
+ public void installModel(ModelPath modelPath)
+ {
+  AgeAdminService.Util.getInstance().installModel( modelPath,new AsyncCallback<Void>(){
+
+   @Override
+   public void onFailure(Throwable arg0)
+   {
+    SC.warn("Error occured while saving the model:<br> "+arg0.getMessage());
+   }
+
+   @Override
+   public void onSuccess( Void arg)
+   {
+
+   }
+   });
+ }
+  
 }

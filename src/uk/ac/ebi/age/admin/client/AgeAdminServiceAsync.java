@@ -17,4 +17,8 @@ public interface AgeAdminServiceAsync
 
  void saveModel(ModelImprint model, ModelPath storePath, AsyncCallback<Void> callback);
 
+ void getModel(ModelPath path, AsyncCallback<ModelImprint> asyncCallback);
+
+ void installModel(ModelPath modelPath, AsyncCallback<Void> asyncCallback);
+
 }

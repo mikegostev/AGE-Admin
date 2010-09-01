@@ -35,4 +35,8 @@ public interface AgeAdminService extends RemoteService
  ModelStorage getModelStorage() throws UserAuthException;
 
  void saveModel(ModelImprint model, ModelPath storePath) throws ModelStorageException, UserAuthException;
+
+ ModelImprint getModel(ModelPath path) throws ModelStorageException, UserAuthException;
+
+ void installModel(ModelPath modelPath) throws UserAuthException;
 }

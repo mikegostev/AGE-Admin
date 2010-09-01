@@ -62,6 +62,7 @@ public class RelationRuleAttachPanel extends VLayout
      public void relationRuleSelected(RelationRule ar)
      {
       ruleList.addData(new RuleRecord(ar));
+      cls.addRelationRule(ar);
      }});
    }
   });
@@ -81,6 +82,7 @@ public class RelationRuleAttachPanel extends VLayout
      public void relationRuleSelected(RelationRule ar)
      {
       ruleList.addData(new RuleRecord(ar));
+      cls.addRelationRule(ar);
      }});
    }
   });
@@ -101,6 +103,7 @@ public class RelationRuleAttachPanel extends VLayout
      public void relationRuleSelected(RelationRule ar)
      {
       ruleList.addData(new RuleRecord(ar));
+      cls.addRelationRule(ar);
      }});
    }
   });

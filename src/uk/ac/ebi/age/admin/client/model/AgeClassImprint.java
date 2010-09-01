@@ -1,5 +1,6 @@
 package uk.ac.ebi.age.admin.client.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -8,7 +9,7 @@ import uk.ac.ebi.age.admin.client.model.restriction.RelationRule;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class AgeClassImprint implements IsSerializable, AgeAbstractClassImprint
+public class AgeClassImprint implements IsSerializable, Serializable, AgeAbstractClassImprint
 {
  private String name;
  private String id;

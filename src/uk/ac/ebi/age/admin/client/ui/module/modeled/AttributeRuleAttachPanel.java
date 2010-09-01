@@ -62,6 +62,7 @@ public class AttributeRuleAttachPanel extends VLayout
      public void attributeRuleSelected(AttributeRule ar)
      {
       ruleList.addData(new RuleRecord(ar));
+      cls.addAttributeRule(ar);
      }});
    }
   });
@@ -81,6 +82,7 @@ public class AttributeRuleAttachPanel extends VLayout
      public void attributeRuleSelected(AttributeRule ar)
      {
       ruleList.addData(new RuleRecord(ar));
+      cls.addAttributeRule(ar);
      }});
    }
   });
@@ -101,6 +103,7 @@ public class AttributeRuleAttachPanel extends VLayout
      public void attributeRuleSelected(AttributeRule ar)
      {
       ruleList.addData(new RuleRecord(ar));
+      cls.addAttributeRule(ar);
      }});
    }
   });

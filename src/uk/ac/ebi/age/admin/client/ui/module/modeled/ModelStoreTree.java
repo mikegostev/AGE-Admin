@@ -55,13 +55,47 @@ public class ModelStoreTree extends VLayout
   editButton.setSize(16);  
   editButton.setShowRollOver(false);  
   editButton.setSrc("../images/icons/class/regular.png");  
+  editButton.setTooltip("Load and edit model");
   toolStrip.addMember(editButton);  
+  editButton.addClickHandler(new ClickHandler()
+  {
+   @Override
+   public void onClick(ClickEvent event)
+   {
+    StoreNode nd = getSelectedNode();
+    
+    if( nd == null || nd.isDirectory() )
+    {
+     SC.say("Please select a model in the tree");
+     return;
+    }
+    
+    mngr.loadModel( getModelPath() );
+   }
+  });
   
   ImgButton installButton = new ImgButton();  
   installButton.setSize(16);  
   installButton.setShowRollOver(false);  
   installButton.setSrc("../images/icons/class/regular.png");  
+  installButton.setTooltip("Install selected model");
   toolStrip.addMember(installButton);  
+  installButton.addClickHandler(new ClickHandler()
+  {
+   @Override
+   public void onClick(ClickEvent event)
+   {
+    StoreNode nd = getSelectedNode();
+    
+    if( nd == null || nd.isDirectory() )
+    {
+     SC.say("Please select a model in the tree");
+     return;
+    }
+    
+    mngr.installModel( getModelPath() );
+   }
+  });
 
   
   treeGrid = new TreeGrid();
@@ -200,6 +234,12 @@ public class ModelStoreTree extends VLayout
 
   StoreNode dir = nd.getStoreNode();
 
+  if( ! dir.isDirectory() )
+  {
+   pth.setModelName(dir.getName());
+   dir=dir.getParent();
+  }
+  
   LinkedList<String> path = new LinkedList<String>();
 
   while(dir != pubDir && dir != privDir)

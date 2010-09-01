@@ -18,6 +18,8 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class AgeAdminServiceImpl extends RemoteServiceServlet implements AgeAdminService
 {
+ private static final long serialVersionUID = 1L;
+
  private AgeAdmin adm;
  
  public void init() throws ServletException
@@ -73,5 +75,17 @@ public class AgeAdminServiceImpl extends RemoteServiceServlet implements AgeAdmi
  public void saveModel(ModelImprint model, ModelPath storePath) throws ModelStorageException, UserAuthException
  {
   adm.saveModel(model, storePath, getUserSession() );
+ }
+
+ @Override
+ public ModelImprint getModel(ModelPath path) throws ModelStorageException, UserAuthException
+ {
+  return  adm.getModel(path, getUserSession() );
+ }
+
+ @Override
+ public void installModel(ModelPath modelPath) throws UserAuthException
+ {
+  adm.installModel(modelPath, getUserSession() );
  }
 }

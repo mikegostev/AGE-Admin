@@ -1,6 +1,10 @@
 package uk.ac.ebi.age.admin.client.model;
 
-public class AgeAnnotationImprint
+import java.io.Serializable;
+
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public class AgeAnnotationImprint implements IsSerializable, Serializable
 {
  private AgeAnnotationClassImprint annotClass;
  private String text;

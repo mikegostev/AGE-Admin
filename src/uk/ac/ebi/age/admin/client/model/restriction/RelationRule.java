@@ -1,5 +1,6 @@
 package uk.ac.ebi.age.admin.client.model.restriction;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -8,7 +9,9 @@ import java.util.TreeMap;
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeRelationClassImprint;
 
-public class RelationRule
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public class RelationRule implements Serializable, IsSerializable
 {
  private RestrictionType type = RestrictionType.MAY;
  private Cardinality cardType = Cardinality.ANY;
