@@ -4,9 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
+import uk.ac.ebi.age.admin.client.model.AgeAnnotationClassImprint;
+import uk.ac.ebi.age.admin.client.model.AgeAnnotationImprint;
 import uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeRelationClassImprint;
+import uk.ac.ebi.age.admin.client.model.Annotated;
 import uk.ac.ebi.age.admin.client.model.AttributeType;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.restriction.CardinalityRestrictionImprint;
@@ -18,6 +21,8 @@ import uk.ac.ebi.age.admin.client.model.restriction.RestrictionImprint.Type;
 import uk.ac.ebi.age.model.AgeAbstractClass;
 import uk.ac.ebi.age.model.AgeAllValuesFromRestriction;
 import uk.ac.ebi.age.model.AgeAndLogicRestriction;
+import uk.ac.ebi.age.model.AgeAnnotation;
+import uk.ac.ebi.age.model.AgeAnnotationClass;
 import uk.ac.ebi.age.model.AgeAttributeClass;
 import uk.ac.ebi.age.model.AgeClass;
 import uk.ac.ebi.age.model.AgeExactCardinalityRestriction;
@@ -34,25 +39,62 @@ import uk.ac.ebi.age.model.SemanticModel;
 
 public class Age2ImprintConverter
 {
+ private static class State
+ {
+  Map<AgeAbstractClass, Annotated> clMap = new HashMap<AgeAbstractClass, Annotated>();
+  ModelImprint mimp;
+ }
+ 
  public static ModelImprint getModelImprint( SemanticModel sm )
  {
 
-  ModelImprint mimp = new ModelImprint();
+  State state = new State();
+  
+  state.mimp = new ModelImprint();
 
-  Map<AgeAbstractClass, Object> clMap = new HashMap<AgeAbstractClass, Object>();
+//  Map<AgeAbstractClass, Object> clMap = new HashMap<AgeAbstractClass, Object>();
 
   
-  mimp.getRootAnnotationClass().setName("AgeAnnotation");
+  AgeAnnotationClass ageAnntRoot = sm.getRootAgeAnnotationClass();
+
+  AgeAnnotationClassImprint aImp =  state.mimp.getRootAnnotationClass();
+  aImp.setName("AgeAnnotation");
+  aImp.setAbstract(true);
+
+  state.clMap.put(ageAnntRoot, aImp);
+
+  convertAgeToImprint(ageAnntRoot, aImp, state, new Creator<AgeAnnotationClassImprint>()
+  {
+
+   @Override
+   public void addSubclass(AgeAnnotationClassImprint bclass, AgeAnnotationClassImprint derClass)
+   {
+    derClass.addSuperClass(bclass);
+   }
+
+   @Override
+   public AgeAnnotationClassImprint create(AgeAbstractClass acls, AgeAnnotationClassImprint parent)
+   {
+    AgeAnnotationClassImprint cImp = parent.createSubClass();
+
+    cImp.setName(acls.getName());
+    cImp.setId(acls.getId());
+    cImp.setAbstract(acls.isAbstract());
+
+    return cImp;
+   }
+  });
+
   
   AgeClass ageRoot = sm.getRootAgeClass();
 
-  AgeClassImprint rImp = mimp.getRootClass();
+  AgeClassImprint rImp =  state.mimp.getRootClass();
   rImp.setName("AgeClass");
   rImp.setAbstract(true);
 
-  clMap.put(ageRoot, rImp);
+  state.clMap.put(ageRoot, rImp);
 
-  convertAgeToImprint(ageRoot, rImp, clMap, new Creator<AgeClassImprint>()
+  convertAgeToImprint(ageRoot, rImp, state, new Creator<AgeClassImprint>()
   {
 
    @Override
@@ -76,14 +118,14 @@ public class Age2ImprintConverter
 
   AgeAttributeClass attrRoot = sm.getRootAgeAttributeClass();
 
-  AgeAttributeClassImprint atImp = mimp.getRootAttributeClass();
+  AgeAttributeClassImprint atImp = state.mimp.getRootAttributeClass();
 
   atImp.setName("AgeAttribute");
   atImp.setAbstract(true);
 
-  clMap.put(attrRoot, atImp);
+  state.clMap.put(attrRoot, atImp);
 
-  convertAgeToImprint(attrRoot, atImp, clMap, new Creator<AgeAttributeClassImprint>()
+  convertAgeToImprint(attrRoot, atImp, state, new Creator<AgeAttributeClassImprint>()
   {
 
    @Override
@@ -142,14 +184,14 @@ public class Age2ImprintConverter
 
   AgeRelationClass relRoot = sm.getRootAgeRelationClass();
 
-  AgeRelationClassImprint relImp = mimp.getRootRelationClass();
+  AgeRelationClassImprint relImp = state.mimp.getRootRelationClass();
 
   relImp.setName("AgeRelation");
   relImp.setAbstract(true);
 
-  clMap.put(relRoot, relImp);
+  state.clMap.put(relRoot, relImp);
 
-  convertAgeToImprint(relRoot, relImp, clMap, new Creator<AgeRelationClassImprint>()
+  convertAgeToImprint(relRoot, relImp, state, new Creator<AgeRelationClassImprint>()
   {
 
    @Override
@@ -171,16 +213,28 @@ public class Age2ImprintConverter
    }
   });
 
-  convertObjectRestrictions(sm.getRootAgeClass(), clMap);
-  convertAttributeRestrictions(sm.getRootAgeClass(), clMap);
-  convertAttributeRestrictions(sm.getRootAgeAttributeClass(), clMap);
-  convertAttributeRestrictions(sm.getRootAgeRelationClass(), clMap);
+  for(Map.Entry<AgeAbstractClass, Annotated> me : state.clMap.entrySet() )
+  {
+   if( me.getKey().getAnnotations() != null )
+   {
+    for( AgeAnnotation aannt : me.getKey().getAnnotations() )
+    {
+     AgeAnnotationImprint aimp = state.mimp.createAgeAnnotationImprint((AgeAnnotationClassImprint)state.clMap.get(aannt.getAgeElClass()));
+     me.getValue().addAnnotation(aimp);
+    }
+   }
+  }
+  
+  convertObjectRestrictions(sm.getRootAgeClass(), state);
+  convertAttributeRestrictions(sm.getRootAgeClass(), state);
+  convertAttributeRestrictions(sm.getRootAgeAttributeClass(), state);
+  convertAttributeRestrictions(sm.getRootAgeRelationClass(), state);
 
-  return mimp;
+  return state.mimp;
  }
 
  
- private static void convertObjectRestrictions(AgeClass rootAgeClass, Map<AgeAbstractClass, Object> clMap)
+ private static void convertObjectRestrictions(AgeClass rootAgeClass, State state)
  {
   if(rootAgeClass.getSubClasses() == null)
    return;
@@ -190,14 +244,14 @@ public class Age2ImprintConverter
    if(cls.getObjectRestrictions() == null)
     continue;
 
-   AgeClassImprint clImp = (AgeClassImprint) clMap.get(cls);
+   AgeClassImprint clImp = (AgeClassImprint) state.clMap.get(cls);
 
 //   for(AgeRestriction rstr : cls.getObjectRestrictions())
 //    clImp.addRestriction(convertRestriction(rstr, clMap));
   }
  }
 
- private static void  convertAttributeRestrictions(AgeAbstractClass rootAgeClass, Map<AgeAbstractClass, Object> clMap)
+ private static void  convertAttributeRestrictions(AgeAbstractClass rootAgeClass, State state)
  {
   if(rootAgeClass.getSubClasses() == null)
    return;
@@ -207,14 +261,14 @@ public class Age2ImprintConverter
    if(cls.getAttributeRestrictions() == null)
     continue;
 
-   AgeAbstractClassImprint clImp = (AgeAbstractClassImprint) clMap.get(cls);
+   AgeAbstractClassImprint clImp = (AgeAbstractClassImprint) state.clMap.get(cls);
 
 //   for(AgeRestriction rstr : cls.getAttributeRestrictions())
 //    clImp.addAttributeRestriction(convertRestriction(rstr, clMap));
   }
  } 
  
- private static RestrictionImprint convertRestriction( AgeRestriction rstr, Map<AgeAbstractClass, Object> clMap )
+ private static RestrictionImprint convertRestriction( AgeRestriction rstr, State state )
  {
 //  AgeObjectRestrictionImprint rstimp = null;
   
@@ -223,8 +277,8 @@ public class Age2ImprintConverter
    FillerRestrictionImprint ri = new FillerRestrictionImprint();
    
    ri.setType(Type.SOME);
-   ri.setRelation((AgeRelationClassImprint)clMap.get(((AgeSomeValuesFromRestriction) rstr).getAgeRelationClass()));
-   ri.setFiller( convertRestriction(((AgeSomeValuesFromRestriction) rstr).getFiller(), clMap));
+   ri.setRelation((AgeRelationClassImprint)state.clMap.get(((AgeSomeValuesFromRestriction) rstr).getAgeRelationClass()));
+   ri.setFiller( convertRestriction(((AgeSomeValuesFromRestriction) rstr).getFiller(), state));
    
    return ri;
   }
@@ -235,8 +289,8 @@ public class Age2ImprintConverter
    AgeAllValuesFromRestriction avfResr = (AgeAllValuesFromRestriction)rstr;
    
    ri.setType(Type.ONLY);
-   ri.setRelation((AgeRelationClassImprint)clMap.get(avfResr.getAgeRelationClass()));
-   ri.setFiller( convertRestriction(avfResr.getFiller(), clMap));
+   ri.setRelation((AgeRelationClassImprint)state.clMap.get(avfResr.getAgeRelationClass()));
+   ri.setFiller( convertRestriction(avfResr.getFiller(), state));
    
    return ri;
   }
@@ -247,7 +301,7 @@ public class Age2ImprintConverter
    ri.setType(Type.AND);
    
    for( AgeRestriction ar : ((AgeAndLogicRestriction) rstr).getOperands() )
-    ri.addOperand( convertRestriction(ar, clMap) );
+    ri.addOperand( convertRestriction(ar, state) );
    
    return ri;
   }
@@ -258,7 +312,7 @@ public class Age2ImprintConverter
    ri.setType(Type.OR);
    
    for( AgeRestriction ar : ((AgeOrLogicRestriction) rstr).getOperands() )
-    ri.addOperand( convertRestriction(ar, clMap) );
+    ri.addOperand( convertRestriction(ar, state) );
    
    return ri;
   }
@@ -268,7 +322,7 @@ public class Age2ImprintConverter
 
    ri.setType(Type.NOT);
    
-   ri.addOperand( convertRestriction( ((AgeNotLogicRestriction) rstr).getOperand(), clMap) );
+   ri.addOperand( convertRestriction( ((AgeNotLogicRestriction) rstr).getOperand(), state) );
    
    return ri;
   }
@@ -277,8 +331,8 @@ public class Age2ImprintConverter
    CardinalityRestrictionImprint ri = new CardinalityRestrictionImprint();
 
    ri.setType(Type.EXACTLY);
-   ri.setRelation((AgeRelationClassImprint)clMap.get(((AgeExactCardinalityRestriction) rstr).getAgeRelationClass()));
-   ri.setFiller( convertRestriction(((AgeExactCardinalityRestriction) rstr).getFiller(), clMap));
+   ri.setRelation((AgeRelationClassImprint)state.clMap.get(((AgeExactCardinalityRestriction) rstr).getAgeRelationClass()));
+   ri.setFiller( convertRestriction(((AgeExactCardinalityRestriction) rstr).getFiller(), state));
 
    ri.setCardinality(((AgeExactCardinalityRestriction) rstr).getCardinality());
    
@@ -289,8 +343,8 @@ public class Age2ImprintConverter
    CardinalityRestrictionImprint ri = new CardinalityRestrictionImprint();
 
    ri.setType(Type.MIN);
-   ri.setRelation((AgeRelationClassImprint)clMap.get(((AgeMinCardinalityRestriction) rstr).getAgeRelationClass()));
-   ri.setFiller( convertRestriction(((AgeMinCardinalityRestriction) rstr).getFiller(), clMap));
+   ri.setRelation((AgeRelationClassImprint)state.clMap.get(((AgeMinCardinalityRestriction) rstr).getAgeRelationClass()));
+   ri.setFiller( convertRestriction(((AgeMinCardinalityRestriction) rstr).getFiller(), state));
 
    ri.setCardinality(((AgeMinCardinalityRestriction) rstr).getCardinality());
    
@@ -301,8 +355,8 @@ public class Age2ImprintConverter
    CardinalityRestrictionImprint ri = new CardinalityRestrictionImprint();
 
    ri.setType(Type.MAX);
-   ri.setRelation((AgeRelationClassImprint)clMap.get(((AgeMaxCardinalityRestriction) rstr).getAgeRelationClass()));
-   ri.setFiller( convertRestriction(((AgeMaxCardinalityRestriction) rstr).getFiller(), clMap));
+   ri.setRelation((AgeRelationClassImprint)state.clMap.get(((AgeMaxCardinalityRestriction) rstr).getAgeRelationClass()));
+   ri.setFiller( convertRestriction(((AgeMaxCardinalityRestriction) rstr).getFiller(), state));
 
    ri.setCardinality(((AgeMaxCardinalityRestriction) rstr).getCardinality());
    
@@ -313,7 +367,7 @@ public class Age2ImprintConverter
    IntanceOfRestrictionImprint ri = new IntanceOfRestrictionImprint();
 
    ri.setType(Type.IS);
-   ri.setAgeAbstractClassImprint((AgeAbstractClassImprint)clMap.get(((AgeIsInstanceOfRestriction) rstr).getTargetClass()));
+   ri.setAgeAbstractClassImprint((AgeAbstractClassImprint)state.clMap.get(((AgeIsInstanceOfRestriction) rstr).getTargetClass()));
    
    return ri;
   }
@@ -327,7 +381,7 @@ public class Age2ImprintConverter
   void addSubclass(ImpC bclass, ImpC derClass);
  }
  
- private static <ImpC> void convertAgeToImprint(AgeAbstractClass acls, ImpC parent, Map<AgeAbstractClass, Object> clMap, Creator<ImpC> cr)
+ private static <ImpC extends Annotated> void convertAgeToImprint(AgeAbstractClass acls, ImpC parent, State state, Creator<ImpC> cr)
  {
 //  ImpC cImp = cr.create(acls.getId(),acls.getName());
 //  clMap.put(acls,cImp);
@@ -336,20 +390,20 @@ public class Age2ImprintConverter
   {
    for( AgeAbstractClass scls : acls.getSubClasses() )
    {
-    ImpC subImp = (ImpC)clMap.get(scls);
+    ImpC subImp = (ImpC)state.clMap.get(scls);
     
     if( subImp == null )
     {
      subImp = cr.create(scls, parent);
-     clMap.put(scls, subImp);
-
-     convertAgeToImprint(scls, subImp, clMap, cr);
+     
+     state.clMap.put(scls, subImp);
+     convertAgeToImprint(scls, subImp, state, cr);
     }
     else
      cr.addSubclass(parent, subImp);
     
    }
   }
- }  
+ }
 
 }

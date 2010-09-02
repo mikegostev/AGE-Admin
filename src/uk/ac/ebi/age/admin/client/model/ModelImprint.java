@@ -12,6 +12,9 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class ModelImprint  implements IsSerializable, Serializable, Annotated
 {
+
+ private static final long serialVersionUID = 1L;
+
  private transient ModelPath storePath; 
 
  private AgeClassImprint rootClass;
@@ -149,6 +152,14 @@ public class ModelImprint  implements IsSerializable, Serializable, Annotated
   
   return ncls;
  }
+ 
+ public AgeAnnotationImprint createAgeAnnotationImprint( AgeAnnotationClassImprint cls )
+ {
+  AgeAnnotationImprint ncls = new AgeAnnotationImprint(cls);
+  
+  return ncls;
+ }
+
  
  public Collection<AgeRelationClassImprint> getRelations()
  {

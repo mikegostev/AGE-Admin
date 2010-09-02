@@ -132,9 +132,8 @@ public class AnnotationPanel extends VLayout
      return;
     }
     
-    AgeAnnotationImprint annt = new AgeAnnotationImprint();
+    AgeAnnotationImprint annt = ((AgeAnnotationClassImprint)cls).getModel().createAgeAnnotationImprint((AgeAnnotationClassImprint)cls);
     
-    annt.setAnnotationClass( (AgeAnnotationClassImprint)cls );
     annt.setText("");
     
     lst.addData( new AnnotationRecord(annt) );
