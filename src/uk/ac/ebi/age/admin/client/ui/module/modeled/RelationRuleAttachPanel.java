@@ -1,9 +1,9 @@
 package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
-import uk.ac.ebi.age.admin.client.model.restriction.RelationRule;
-import uk.ac.ebi.age.admin.client.model.restriction.RestrictionType;
+import uk.ac.ebi.age.admin.client.model.RelationRuleImprint;
 import uk.ac.ebi.age.admin.client.ui.SelectedRelationRule;
+import uk.ac.ebi.age.model.RestrictionType;
 
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.ListGridFieldType;
@@ -56,10 +56,10 @@ public class RelationRuleAttachPanel extends VLayout
    @Override
    public void onClick(ClickEvent event)
    {
-    RelationMMRuleDialog.show(new RelationRule(RestrictionType.MAY), cls.getModel(), new SelectedRelationRule(){
+    RelationMMRuleDialog.show(cls.getModel().createRelationRuleImprint(RestrictionType.MAY), cls.getModel(), new SelectedRelationRule(){
 
      @Override
-     public void relationRuleSelected(RelationRule ar)
+     public void relationRuleSelected(RelationRuleImprint ar)
      {
       ruleList.addData(new RuleRecord(ar));
       cls.addRelationRule(ar);
@@ -76,10 +76,10 @@ public class RelationRuleAttachPanel extends VLayout
    @Override
    public void onClick(ClickEvent event)
    {
-    RelationMMRuleDialog.show(new RelationRule(RestrictionType.MUST), cls.getModel(), new SelectedRelationRule(){
+    RelationMMRuleDialog.show(cls.getModel().createRelationRuleImprint(RestrictionType.MUST), cls.getModel(), new SelectedRelationRule(){
 
      @Override
-     public void relationRuleSelected(RelationRule ar)
+     public void relationRuleSelected(RelationRuleImprint ar)
      {
       ruleList.addData(new RuleRecord(ar));
       cls.addRelationRule(ar);
@@ -97,10 +97,10 @@ public class RelationRuleAttachPanel extends VLayout
    @Override
    public void onClick(ClickEvent event)
    {
-    RelationMNOTRuleDialog.show(new RelationRule(RestrictionType.MUSTNOT), cls.getModel(), new SelectedRelationRule(){
+    RelationMNOTRuleDialog.show(cls.getModel().createRelationRuleImprint(RestrictionType.MUSTNOT), cls.getModel(), new SelectedRelationRule(){
 
      @Override
-     public void relationRuleSelected(RelationRule ar)
+     public void relationRuleSelected(RelationRuleImprint ar)
      {
       ruleList.addData(new RuleRecord(ar));
       cls.addRelationRule(ar);
@@ -123,7 +123,7 @@ public class RelationRuleAttachPanel extends VLayout
     if( rr == null )
      return;
     
-    RelationRule atrl = rr.getRule();
+    RelationRuleImprint atrl = rr.getRule();
     
     if( atrl.getType() == RestrictionType.MUSTNOT )
     {
@@ -131,7 +131,7 @@ public class RelationRuleAttachPanel extends VLayout
      {
 
       @Override
-      public void relationRuleSelected(RelationRule ar)
+      public void relationRuleSelected(RelationRuleImprint ar)
       {
        rr.update();
        ruleList.refreshCell(ruleList.getRecordIndex(rr), 1);
@@ -144,7 +144,7 @@ public class RelationRuleAttachPanel extends VLayout
      {
 
       @Override
-      public void relationRuleSelected(RelationRule ar)
+      public void relationRuleSelected(RelationRuleImprint ar)
       {
        rr.update();
        ruleList.refreshCell(ruleList.getRecordIndex(rr), 1);
@@ -183,9 +183,9 @@ public class RelationRuleAttachPanel extends VLayout
 
  static class RuleRecord extends ListGridRecord
  {
-  private RelationRule rule;
+  private RelationRuleImprint rule;
   
-  RuleRecord( RelationRule r )
+  RuleRecord( RelationRuleImprint r )
   {
    super();
    
@@ -200,7 +200,7 @@ public class RelationRuleAttachPanel extends VLayout
    setAttribute("name", rule.toString() );
   }
 
-  public RelationRule getRule()
+  public RelationRuleImprint getRule()
   {
    return rule;
   }

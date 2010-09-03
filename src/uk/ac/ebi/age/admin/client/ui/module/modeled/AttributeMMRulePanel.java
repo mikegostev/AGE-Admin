@@ -5,14 +5,13 @@ import java.util.LinkedHashMap;
 
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint;
-import uk.ac.ebi.age.admin.client.model.ModelImprint;
-import uk.ac.ebi.age.admin.client.model.restriction.AttributeRule;
-import uk.ac.ebi.age.admin.client.model.restriction.Cardinality;
-import uk.ac.ebi.age.admin.client.model.restriction.QualifierRule;
-import uk.ac.ebi.age.admin.client.model.restriction.RestrictionType;
+import uk.ac.ebi.age.admin.client.model.AttributeRule;
+import uk.ac.ebi.age.admin.client.model.QualifierRule;
 import uk.ac.ebi.age.admin.client.ui.AttributeMetaClassDef;
 import uk.ac.ebi.age.admin.client.ui.ClassSelectedCallback;
 import uk.ac.ebi.age.admin.client.ui.QualifiersRecord;
+import uk.ac.ebi.age.model.Cardinality;
+import uk.ac.ebi.age.model.RestrictionType;
 
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.ListGridFieldType;
@@ -50,7 +49,7 @@ public class AttributeMMRulePanel extends AttributeRulePanel
  private CheckboxItem valUniq;
  private CheckboxItem qualUniq;
  
- AttributeMMRulePanel( final ModelImprint model )
+ AttributeMMRulePanel( AttributeRule rl )
  {
   setWidth100();
   setHeight100();
@@ -95,7 +94,7 @@ public class AttributeMMRulePanel extends AttributeRulePanel
     @Override
     public void onFormItemClick(FormItemIconClickEvent event)
     {
-     new XSelectDialog<AgeAttributeClassImprint>(model.getRootAttributeClass(), AttributeMetaClassDef.getInstance(), new ClassSelectedCallback()
+     new XSelectDialog<AgeAttributeClassImprint>(rule.getModel().getRootAttributeClass(), AttributeMetaClassDef.getInstance(), new ClassSelectedCallback()
      {
       
       @Override
@@ -183,7 +182,7 @@ public class AttributeMMRulePanel extends AttributeRulePanel
    @Override
    public void onClick(ClickEvent event)
    {
-    new XSelectDialog<AgeAttributeClassImprint>(model.getRootAttributeClass(), AttributeMetaClassDef.getInstance(), new ClassSelectedCallback()
+    new XSelectDialog<AgeAttributeClassImprint>(rule.getModel().getRootAttributeClass(), AttributeMetaClassDef.getInstance(), new ClassSelectedCallback()
     {
      
      @Override
@@ -257,6 +256,8 @@ public class AttributeMMRulePanel extends AttributeRulePanel
 
   addMember(qualifiersForm);
  
+  setRule(rl);
+  
  }
  
  public void setRule(AttributeRule rule)
@@ -343,7 +344,7 @@ public class AttributeMMRulePanel extends AttributeRulePanel
   {
    for(ListGridRecord r : recs)
    {
-    QualifierRule qr = new QualifierRule();
+    QualifierRule qr = rule.getModel().createQualifierRule();
 
     qr.setType(((QualifiersRecord) r).getType());
     qr.setAttributeClassImprint((AgeAttributeClassImprint)((QualifiersRecord) r).getAgeAbstractClassImprint());

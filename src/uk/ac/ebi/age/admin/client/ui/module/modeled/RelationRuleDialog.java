@@ -1,7 +1,7 @@
 package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
-import uk.ac.ebi.age.admin.client.model.restriction.RelationRule;
+import uk.ac.ebi.age.admin.client.model.RelationRuleImprint;
 import uk.ac.ebi.age.admin.client.ui.SelectedRelationRule;
 
 import com.smartgwt.client.types.Alignment;
@@ -112,7 +112,7 @@ public abstract class RelationRuleDialog extends Window
   listener = selectedRelRule;
  }
 
- public void setRule(RelationRule rule)
+ public void setRule(RelationRuleImprint rule)
  {
   ruleForm.setRule(rule);
  }

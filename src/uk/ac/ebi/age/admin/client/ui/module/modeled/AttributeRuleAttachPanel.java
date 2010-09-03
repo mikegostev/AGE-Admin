@@ -1,9 +1,9 @@
 package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
-import uk.ac.ebi.age.admin.client.model.restriction.AttributeRule;
-import uk.ac.ebi.age.admin.client.model.restriction.RestrictionType;
+import uk.ac.ebi.age.admin.client.model.AttributeRule;
 import uk.ac.ebi.age.admin.client.ui.SelectedAttrubuteRule;
+import uk.ac.ebi.age.model.RestrictionType;
 
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.ListGridFieldType;
@@ -56,7 +56,7 @@ public class AttributeRuleAttachPanel extends VLayout
    @Override
    public void onClick(ClickEvent event)
    {
-    AttributeMMRuleDialog.show(new AttributeRule(RestrictionType.MAY), cls.getModel(), new SelectedAttrubuteRule(){
+    AttributeMMRuleDialog.show(cls.getModel().createAttributeRuleImprint(RestrictionType.MAY), cls.getModel(), new SelectedAttrubuteRule(){
 
      @Override
      public void attributeRuleSelected(AttributeRule ar)
@@ -76,7 +76,7 @@ public class AttributeRuleAttachPanel extends VLayout
    @Override
    public void onClick(ClickEvent event)
    {
-    AttributeMMRuleDialog.show(new AttributeRule(RestrictionType.MUST), cls.getModel(), new SelectedAttrubuteRule(){
+    AttributeMMRuleDialog.show(cls.getModel().createAttributeRuleImprint(RestrictionType.MUST), cls.getModel(), new SelectedAttrubuteRule(){
 
      @Override
      public void attributeRuleSelected(AttributeRule ar)
@@ -97,7 +97,7 @@ public class AttributeRuleAttachPanel extends VLayout
    @Override
    public void onClick(ClickEvent event)
    {
-    AttributeMNOTRuleDialog.show(new AttributeRule(RestrictionType.MUSTNOT), cls.getModel(), new SelectedAttrubuteRule(){
+    AttributeMNOTRuleDialog.show(cls.getModel().createAttributeRuleImprint(RestrictionType.MUSTNOT), cls.getModel(), new SelectedAttrubuteRule(){
 
      @Override
      public void attributeRuleSelected(AttributeRule ar)

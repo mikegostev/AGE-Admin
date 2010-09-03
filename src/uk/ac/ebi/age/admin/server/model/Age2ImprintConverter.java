@@ -3,7 +3,6 @@ package uk.ac.ebi.age.admin.server.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeAnnotationClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeAnnotationImprint;
 import uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint;
@@ -12,29 +11,15 @@ import uk.ac.ebi.age.admin.client.model.AgeRelationClassImprint;
 import uk.ac.ebi.age.admin.client.model.Annotated;
 import uk.ac.ebi.age.admin.client.model.AttributeType;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
-import uk.ac.ebi.age.admin.client.model.restriction.CardinalityRestrictionImprint;
-import uk.ac.ebi.age.admin.client.model.restriction.FillerRestrictionImprint;
-import uk.ac.ebi.age.admin.client.model.restriction.IntanceOfRestrictionImprint;
-import uk.ac.ebi.age.admin.client.model.restriction.LogicRestrictionImprint;
-import uk.ac.ebi.age.admin.client.model.restriction.RestrictionImprint;
-import uk.ac.ebi.age.admin.client.model.restriction.RestrictionImprint.Type;
+import uk.ac.ebi.age.admin.client.model.RelationRuleImprint;
 import uk.ac.ebi.age.model.AgeAbstractClass;
-import uk.ac.ebi.age.model.AgeAllValuesFromRestriction;
-import uk.ac.ebi.age.model.AgeAndLogicRestriction;
 import uk.ac.ebi.age.model.AgeAnnotation;
 import uk.ac.ebi.age.model.AgeAnnotationClass;
 import uk.ac.ebi.age.model.AgeAttributeClass;
 import uk.ac.ebi.age.model.AgeClass;
-import uk.ac.ebi.age.model.AgeExactCardinalityRestriction;
-import uk.ac.ebi.age.model.AgeIsInstanceOfRestriction;
-import uk.ac.ebi.age.model.AgeMaxCardinalityRestriction;
-import uk.ac.ebi.age.model.AgeMinCardinalityRestriction;
-import uk.ac.ebi.age.model.AgeNotLogicRestriction;
-import uk.ac.ebi.age.model.AgeOrLogicRestriction;
 import uk.ac.ebi.age.model.AgeRelationClass;
-import uk.ac.ebi.age.model.AgeRestriction;
-import uk.ac.ebi.age.model.AgeSomeValuesFromRestriction;
 import uk.ac.ebi.age.model.DataType;
+import uk.ac.ebi.age.model.RelationRule;
 import uk.ac.ebi.age.model.SemanticModel;
 
 public class Age2ImprintConverter
@@ -47,8 +32,7 @@ public class Age2ImprintConverter
  
  public static ModelImprint getModelImprint( SemanticModel sm )
  {
-
-  State state = new State();
+  final State state = new State();
   
   state.mimp = new ModelImprint();
 
@@ -112,8 +96,12 @@ public class Age2ImprintConverter
     cImp.setId(acls.getId());
     cImp.setAbstract(acls.isAbstract());
 
+    transferRestrictions((AgeClass) acls, cImp, state);
+    
     return cImp;
    }
+
+
   });
 
   AgeAttributeClass attrRoot = sm.getRootAgeAttributeClass();
@@ -225,15 +213,49 @@ public class Age2ImprintConverter
    }
   }
   
-  convertObjectRestrictions(sm.getRootAgeClass(), state);
-  convertAttributeRestrictions(sm.getRootAgeClass(), state);
-  convertAttributeRestrictions(sm.getRootAgeAttributeClass(), state);
-  convertAttributeRestrictions(sm.getRootAgeRelationClass(), state);
+  if( sm.getAnnotations() != null )
+  {
+   for( AgeAnnotation aannt : sm.getAnnotations() )
+   {
+    AgeAnnotationImprint aimp = state.mimp.createAgeAnnotationImprint((AgeAnnotationClassImprint)state.clMap.get(aannt.getAgeElClass()));
+    state.mimp.addAnnotation(aimp);
+   }
+  }
+  
+//  convertObjectRestrictions(sm.getRootAgeClass(), state);
+//  convertAttributeRestrictions(sm.getRootAgeClass(), state);
+//  convertAttributeRestrictions(sm.getRootAgeAttributeClass(), state);
+//  convertAttributeRestrictions(sm.getRootAgeRelationClass(), state);
 
   return state.mimp;
  }
 
  
+ private static void transferRestrictions(AgeClass acls, AgeClassImprint cImp, State state)
+ {
+  if( acls.getRelationRules() != null )
+  {
+   for( RelationRule rr : acls.getRelationRules() )
+   {
+    RelationRuleImprint rrimp = state.mimp.createRelationRuleImprint(rr.getRestrictionType());
+    
+    rrimp.setCardinality( rr.getCardinality() );
+    rrimp.setCardinalityType( rr.getCardinalityType() );
+    rrimp.setQualifiersUnique( rr.isQualifiersUnique() );
+    rrimp.setRelationSubclassesIncluded( rr.isRelationSubclassesIncluded() );
+    rrimp.setType( rr.getType() );
+    rrimp.setSubclassesIncluded(rr.isSubclassesIncluded());
+    rrimp.setQualifiersCondition( rr.getQualifiersCondition() );
+    rrimp.setRelationClass((AgeRelationClassImprint)state.clMap.get(rr.getRelationClass()));
+    rrimp.setTargetClass((AgeClassImprint)state.clMap.get(rr.getTargetClass()));
+    
+    cImp.addRelationRule(rrimp);
+   }
+  }
+  
+ }
+
+/*
  private static void convertObjectRestrictions(AgeClass rootAgeClass, State state)
  {
   if(rootAgeClass.getSubClasses() == null)
@@ -374,7 +396,8 @@ public class Age2ImprintConverter
 
   return null;
  }
-
+*/
+ 
  private interface Creator<ImpC>
  {
   ImpC create( AgeAbstractClass mCls, ImpC parent );

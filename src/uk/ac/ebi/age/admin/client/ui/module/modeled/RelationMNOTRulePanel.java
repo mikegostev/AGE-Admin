@@ -7,17 +7,16 @@ import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeRelationClassImprint;
-import uk.ac.ebi.age.admin.client.model.ModelImprint;
-import uk.ac.ebi.age.admin.client.model.restriction.Cardinality;
-import uk.ac.ebi.age.admin.client.model.restriction.QualifierRule;
-import uk.ac.ebi.age.admin.client.model.restriction.QualifiersCondition;
-import uk.ac.ebi.age.admin.client.model.restriction.RelationRule;
-import uk.ac.ebi.age.admin.client.model.restriction.RestrictionType;
+import uk.ac.ebi.age.admin.client.model.QualifierRule;
+import uk.ac.ebi.age.admin.client.model.RelationRuleImprint;
 import uk.ac.ebi.age.admin.client.ui.AttributeMetaClassDef;
 import uk.ac.ebi.age.admin.client.ui.ClassMetaClassDef;
 import uk.ac.ebi.age.admin.client.ui.ClassSelectedCallback;
 import uk.ac.ebi.age.admin.client.ui.QualifiersRecord;
 import uk.ac.ebi.age.admin.client.ui.RelationMetaClassDef;
+import uk.ac.ebi.age.model.Cardinality;
+import uk.ac.ebi.age.model.QualifiersCondition;
+import uk.ac.ebi.age.model.RestrictionType;
 
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.ListGridFieldType;
@@ -45,7 +44,7 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
 public class RelationMNOTRulePanel extends RelationRulePanel
 {
- private RelationRule rule;
+ private RelationRuleImprint rule;
 
  private final StaticTextItem relClassItm;
  private final StaticTextItem tagClassItm;
@@ -62,7 +61,7 @@ public class RelationMNOTRulePanel extends RelationRulePanel
  private RadioGroupItem qualCondition;
  private ListGrid qTbl;
  
- RelationMNOTRulePanel( final ModelImprint model )
+ RelationMNOTRulePanel( RelationRuleImprint rl )
  {
   setWidth100();
   setHeight100();
@@ -87,7 +86,7 @@ public class RelationMNOTRulePanel extends RelationRulePanel
     @Override
     public void onFormItemClick(FormItemIconClickEvent event)
     {
-     new XSelectDialog<AgeRelationClassImprint>(model.getRootRelationClass(), RelationMetaClassDef.getInstance(), new ClassSelectedCallback()
+     new XSelectDialog<AgeRelationClassImprint>(rule.getModel().getRootRelationClass(), RelationMetaClassDef.getInstance(), new ClassSelectedCallback()
      {
       
       @Override
@@ -129,7 +128,7 @@ public class RelationMNOTRulePanel extends RelationRulePanel
     @Override
     public void onFormItemClick(FormItemIconClickEvent event)
     {
-     new XSelectDialog<AgeClassImprint>(model.getRootClass(), ClassMetaClassDef.getInstance(), new ClassSelectedCallback()
+     new XSelectDialog<AgeClassImprint>(rule.getModel().getRootClass(), ClassMetaClassDef.getInstance(), new ClassSelectedCallback()
      {
       
       @Override
@@ -226,7 +225,7 @@ public class RelationMNOTRulePanel extends RelationRulePanel
    @Override
    public void onClick(ClickEvent event)
    {
-    new XSelectDialog<AgeAttributeClassImprint>(model.getRootAttributeClass(), AttributeMetaClassDef.getInstance(), new ClassSelectedCallback()
+    new XSelectDialog<AgeAttributeClassImprint>(rule.getModel().getRootAttributeClass(), AttributeMetaClassDef.getInstance(), new ClassSelectedCallback()
     {
      
      @Override
@@ -301,9 +300,11 @@ public class RelationMNOTRulePanel extends RelationRulePanel
 
   addMember(qualifiersForm);
  
+  setRule(rl);
+  
  }
  
- public void setRule(RelationRule rule)
+ public void setRule(RelationRuleImprint rule)
  {
   this.rule = rule;
 
@@ -388,7 +389,7 @@ public class RelationMNOTRulePanel extends RelationRulePanel
   {
    for(ListGridRecord r : recs)
    {
-    QualifierRule qr = new QualifierRule();
+    QualifierRule qr = rule.getModel().createQualifierRule();
 
     qr.setType(RestrictionType.MUST);
     qr.setAttributeClassImprint((AgeAttributeClassImprint)((QualifiersRecord) r).getAgeAbstractClassImprint());
@@ -401,7 +402,7 @@ public class RelationMNOTRulePanel extends RelationRulePanel
  }
 
  
- public RelationRule getRule()
+ public RelationRuleImprint getRule()
  {
   return rule;
  }

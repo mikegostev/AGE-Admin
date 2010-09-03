@@ -4,13 +4,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import uk.ac.ebi.age.admin.client.model.restriction.AttributeRule;
-import uk.ac.ebi.age.admin.client.model.restriction.RelationRule;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class AgeClassImprint implements IsSerializable, Serializable, AgeAbstractClassImprint
 {
+
+ private static final long serialVersionUID = 1L;
+ 
  private String name;
  private String id;
  
@@ -19,7 +19,7 @@ public class AgeClassImprint implements IsSerializable, Serializable, AgeAbstrac
  private Collection<AgeClassImprint> parents;
  private Collection<AgeClassImprint> children;
  
- private Collection<RelationRule> objectRestrictions;
+ private Collection<RelationRuleImprint> objectRestrictions;
  private Collection<AttributeRule> attributeRestrictions;
  
  private Collection<String> aliases;
@@ -29,8 +29,10 @@ public class AgeClassImprint implements IsSerializable, Serializable, AgeAbstrac
  
  private transient Object auxData;
 
- AgeClassImprint()
- {}
+ AgeClassImprint(ModelImprint m)
+ {
+  model = m;
+ }
  
  public String getName()
  {
@@ -72,12 +74,12 @@ public class AgeClassImprint implements IsSerializable, Serializable, AgeAbstrac
 //  this.children = children;
 // }
 
- public Collection<RelationRule> getRelationRules()
+ public Collection<RelationRuleImprint> getRelationRules()
  {
   return objectRestrictions;
  }
 
- public void setRelationRules(Collection<RelationRule> restrictions)
+ public void setRelationRules(Collection<RelationRuleImprint> restrictions)
  {
   this.objectRestrictions = restrictions;
  }
@@ -121,10 +123,10 @@ public class AgeClassImprint implements IsSerializable, Serializable, AgeAbstrac
   simp.addSubClass(this);
  }
 
- public void addRelationRule(RelationRule rst)
+ public void addRelationRule(RelationRuleImprint rst)
  {
   if( objectRestrictions == null )
-   objectRestrictions = new ArrayList<RelationRule>(10);
+   objectRestrictions = new ArrayList<RelationRuleImprint>(10);
   
   objectRestrictions.add(rst);
  }
@@ -217,7 +219,7 @@ public class AgeClassImprint implements IsSerializable, Serializable, AgeAbstrac
  }
 
 
- public void removeRelationRule(RelationRule rule)
+ public void removeRelationRule(RelationRuleImprint rule)
  {
   if( objectRestrictions != null )
    objectRestrictions.remove(rule);

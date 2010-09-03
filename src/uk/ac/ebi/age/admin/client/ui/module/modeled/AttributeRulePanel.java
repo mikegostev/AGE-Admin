@@ -1,6 +1,6 @@
 package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
-import uk.ac.ebi.age.admin.client.model.restriction.AttributeRule;
+import uk.ac.ebi.age.admin.client.model.AttributeRule;
 
 import com.smartgwt.client.widgets.layout.VLayout;
 

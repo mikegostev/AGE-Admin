@@ -8,6 +8,8 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class AgeAnnotationClassImprint implements AgeAbstractClassImprint,IsSerializable, Serializable
 {
+ private static final long serialVersionUID = 1L;
+
  private String name;
  private String id;
  private Collection<AgeAnnotationClassImprint> children;
@@ -21,9 +23,12 @@ public class AgeAnnotationClassImprint implements AgeAbstractClassImprint,IsSeri
 
  private transient Object auxData;
 
- AgeAnnotationClassImprint()
- {}
  
+ AgeAnnotationClassImprint(ModelImprint modelImprint)
+ {
+  model = modelImprint;
+ }
+
  public String getName()
  {
   return name;

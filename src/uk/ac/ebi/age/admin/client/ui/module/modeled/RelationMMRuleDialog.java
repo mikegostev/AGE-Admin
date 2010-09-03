@@ -1,8 +1,9 @@
 package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
-import uk.ac.ebi.age.admin.client.model.restriction.RelationRule;
+import uk.ac.ebi.age.admin.client.model.RelationRuleImprint;
 import uk.ac.ebi.age.admin.client.ui.SelectedRelationRule;
+import uk.ac.ebi.age.model.RestrictionType;
 
 public class RelationMMRuleDialog extends RelationRuleDialog
 {
@@ -16,11 +17,11 @@ public class RelationMMRuleDialog extends RelationRuleDialog
 
  public RelationRulePanel getRulePanel()
  {
-  return new RelationMMRulePanel(getModel());
+  return new RelationMMRulePanel(getModel().createRelationRuleImprint(RestrictionType.MAY));
  }
  
  
- public static void show(RelationRule rule, ModelImprint mod, SelectedRelationRule selectedRelRule)
+ public static void show(RelationRuleImprint rule, ModelImprint mod, SelectedRelationRule selectedRelRule)
  {
   if( instance == null )
    instance = new RelationMMRuleDialog(mod);

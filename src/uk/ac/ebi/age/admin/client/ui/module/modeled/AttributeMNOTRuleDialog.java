@@ -1,8 +1,9 @@
 package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
+import uk.ac.ebi.age.admin.client.model.AttributeRule;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
-import uk.ac.ebi.age.admin.client.model.restriction.AttributeRule;
 import uk.ac.ebi.age.admin.client.ui.SelectedAttrubuteRule;
+import uk.ac.ebi.age.model.RestrictionType;
 
 public class AttributeMNOTRuleDialog extends AttributeRuleDialog
 {
@@ -18,7 +19,7 @@ public class AttributeMNOTRuleDialog extends AttributeRuleDialog
 
  public AttributeRulePanel getRulePanel()
  {
-  return new AttributeMNOTRulePanel(getModel());
+  return new AttributeMNOTRulePanel(getModel().createAttributeRuleImprint(RestrictionType.MUSTNOT));
  }
  
  

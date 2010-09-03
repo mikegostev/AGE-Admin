@@ -4,13 +4,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import uk.ac.ebi.age.admin.client.model.restriction.RestrictionImprint;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSerializable, Serializable
 {
- 
+
+ private static final long serialVersionUID = 1L;
+
  private String name;
  private String id;
  
@@ -20,17 +20,19 @@ public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSeria
  private Collection<String> aliases;
  private Collection<AgeAnnotationImprint> annotations;
 
- private Collection<RestrictionImprint> qualifierRestrictions;
+// private Collection<RestrictionImprint> qualifierRestrictions;
  private ModelImprint model;
 
  private AttributeType type;
  
  private transient Object auxData;
+ 
+ 
+ AgeAttributeClassImprint(ModelImprint modelImprint)
+ {
+  model=modelImprint;
+ }
 
- 
- AgeAttributeClassImprint()
- {}
- 
  public String getName()
  {
   return name;
@@ -77,15 +79,15 @@ public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSeria
 
 
 
- public Collection<RestrictionImprint> getQualifierRestrictions()
- {
-  return qualifierRestrictions;
- }
-
- public void setQualifierRestrictions(Collection<RestrictionImprint> attributeRestrictions)
- {
-  this.qualifierRestrictions = attributeRestrictions;
- }
+// public Collection<RestrictionImprint> getQualifierRestrictions()
+// {
+//  return qualifierRestrictions;
+// }
+//
+// public void setQualifierRestrictions(Collection<RestrictionImprint> attributeRestrictions)
+// {
+//  this.qualifierRestrictions = attributeRestrictions;
+// }
 
  void addSubClass(AgeAttributeClassImprint simp)
  {
@@ -104,13 +106,13 @@ public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSeria
   simp.addSubClass(this);
  }
 
- public void addAttributeRestriction(RestrictionImprint rst)
- {
-  if( qualifierRestrictions == null )
-   qualifierRestrictions = new ArrayList<RestrictionImprint>(10);
-  
-  qualifierRestrictions.add(rst);
- }
+// public void addAttributeRestriction(RestrictionImprint rst)
+// {
+//  if( qualifierRestrictions == null )
+//   qualifierRestrictions = new ArrayList<RestrictionImprint>(10);
+//  
+//  qualifierRestrictions.add(rst);
+// }
  
  public void setModel(ModelImprint modelImprint)
  {

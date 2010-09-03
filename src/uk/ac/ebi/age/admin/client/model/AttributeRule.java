@@ -1,4 +1,4 @@
-package uk.ac.ebi.age.admin.client.model.restriction;
+package uk.ac.ebi.age.admin.client.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -6,12 +6,16 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
-import uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint;
+import uk.ac.ebi.age.model.Cardinality;
+import uk.ac.ebi.age.model.QualifiersCondition;
+import uk.ac.ebi.age.model.RestrictionType;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class AttributeRule implements IsSerializable, Serializable
 {
+ private static final long serialVersionUID = 1L;
+
  private RestrictionType type = RestrictionType.MAY;
  private Cardinality cardType = Cardinality.ANY;
  private AgeAttributeClassImprint attributeClass;
@@ -22,9 +26,12 @@ public class AttributeRule implements IsSerializable, Serializable
  private boolean subclassesIncluded=true;
  private QualifiersCondition qualifiersCondition = QualifiersCondition.ANY ;
 
- public AttributeRule( RestrictionType typ )
+ private ModelImprint model;
+ 
+ AttributeRule( RestrictionType typ, ModelImprint m )
  {
   type=typ;
+  model=m;
  }
  
  public AgeAttributeClassImprint getAttributeClass()
@@ -264,5 +271,10 @@ public class AttributeRule implements IsSerializable, Serializable
  public void setSubclassesIncluded(boolean subclassesIncluded)
  {
   this.subclassesIncluded = subclassesIncluded;
+ }
+
+ public ModelImprint getModel()
+ {
+  return model;
  }
 }

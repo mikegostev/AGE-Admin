@@ -4,18 +4,18 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import uk.ac.ebi.age.admin.client.model.restriction.RestrictionImprint;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class AgeRelationClassImprint implements AgeAbstractClassImprint, IsSerializable, Serializable
 {
+ private static final long serialVersionUID = 1L;
+
  private String name;
  private String id;
  private Collection<AgeRelationClassImprint> children;
  private Collection<AgeRelationClassImprint> parents;
  
- private Collection<RestrictionImprint> qualifierRestrictions;
+// private Collection<RestrictionImprint> qualifierRestrictions;
  private ModelImprint model;
  private boolean isAbstract;
 
@@ -24,9 +24,12 @@ public class AgeRelationClassImprint implements AgeAbstractClassImprint, IsSeria
  
  private transient Object auxData;
 
- AgeRelationClassImprint()
- {}
  
+ AgeRelationClassImprint(ModelImprint modelImprint)
+ {
+  model = modelImprint;
+ }
+
  public String getName()
  {
   return name;
@@ -78,23 +81,23 @@ public class AgeRelationClassImprint implements AgeAbstractClassImprint, IsSeria
   simp.addSubClass(this);
  }
  
- public void addAttributeRestriction(RestrictionImprint rst)
- {
-  if( qualifierRestrictions == null )
-   qualifierRestrictions = new ArrayList<RestrictionImprint>(10);
-  
-  qualifierRestrictions.add(rst);
- }
- 
- public Collection<RestrictionImprint> getQualifierRestrictions()
- {
-  return qualifierRestrictions;
- }
-
- public void setQualifierRestrictions(Collection<RestrictionImprint> attributeRestrictions)
- {
-  this.qualifierRestrictions = attributeRestrictions;
- }
+// public void addAttributeRestriction(RestrictionImprint rst)
+// {
+//  if( qualifierRestrictions == null )
+//   qualifierRestrictions = new ArrayList<RestrictionImprint>(10);
+//  
+//  qualifierRestrictions.add(rst);
+// }
+// 
+// public Collection<RestrictionImprint> getQualifierRestrictions()
+// {
+//  return qualifierRestrictions;
+// }
+//
+// public void setQualifierRestrictions(Collection<RestrictionImprint> attributeRestrictions)
+// {
+//  this.qualifierRestrictions = attributeRestrictions;
+// }
  
  public void setModel(ModelImprint modelImprint)
  {

@@ -1,11 +1,18 @@
-package uk.ac.ebi.age.admin.client.model.restriction;
+package uk.ac.ebi.age.admin.client.model;
 
-import uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint;
+import uk.ac.ebi.age.model.RestrictionType;
 
 public class QualifierRule
 {
  private AgeAttributeClassImprint attr;
  private RestrictionType type;
+
+ private ModelImprint model;
+ 
+ QualifierRule(ModelImprint modelImprint)
+ {
+  model=modelImprint;
+ }
 
  public AgeAttributeClassImprint getAttributeClassImprint()
  {
@@ -27,4 +34,8 @@ public class QualifierRule
   this.type = type;
  }
 
+ public ModelImprint getModel()
+ {
+  return model;
+ }
 }
