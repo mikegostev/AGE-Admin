@@ -20,7 +20,7 @@ public class AttributeRule implements IsSerializable, Serializable
  private Cardinality cardType = Cardinality.ANY;
  private AgeAttributeClassImprint attributeClass;
  private int cardinality=1;
- private Map<RestrictionType,Collection<QualifierRule>> qualifiers;
+ private Map<RestrictionType,Collection<QualifierRuleImprint>> qualifiers;
  private boolean valueUnique;
  private boolean qualifiersUnique;
  private boolean subclassesIncluded=true;
@@ -69,27 +69,27 @@ public class AttributeRule implements IsSerializable, Serializable
   this.cardinality = cardinality;
  }
 
- public Map<RestrictionType,Collection<QualifierRule>> getQualifiersMap()
+ public Map<RestrictionType,Collection<QualifierRuleImprint>> getQualifiersMap()
  {
   return qualifiers;
  }
 
- public void addQualifier( QualifierRule qr )
+ public void addQualifier( QualifierRuleImprint qr )
  {
   if( qualifiers == null )
   {
-   qualifiers=new TreeMap<RestrictionType, Collection<QualifierRule>>();
-   Collection<QualifierRule> coll = new ArrayList<QualifierRule>(5);
+   qualifiers=new TreeMap<RestrictionType, Collection<QualifierRuleImprint>>();
+   Collection<QualifierRuleImprint> coll = new ArrayList<QualifierRuleImprint>(5);
    coll.add(qr);
    qualifiers.put(qr.getType(), coll);
    return;
   }
   
-  Collection<QualifierRule> coll = qualifiers.get(qr.getType());
+  Collection<QualifierRuleImprint> coll = qualifiers.get(qr.getType());
   
   if( coll == null )
   {
-   coll = new ArrayList<QualifierRule>(5);
+   coll = new ArrayList<QualifierRuleImprint>(5);
    qualifiers.put(qr.getType(), coll);
   }
  
@@ -151,7 +151,7 @@ public class AttributeRule implements IsSerializable, Serializable
     
     for( RestrictionType rt : RestrictionType.values() )
     {
-     Collection<QualifierRule> qcoll = qualifiers.get(rt);
+     Collection<QualifierRuleImprint> qcoll = qualifiers.get(rt);
      
      if( qcoll != null && qcoll.size() > 0 )
      {
@@ -163,7 +163,7 @@ public class AttributeRule implements IsSerializable, Serializable
       
       sb.append(" ");
       
-      for( QualifierRule qr : qcoll )
+      for( QualifierRuleImprint qr : qcoll )
        sb.append("<b>").append(qr.getAttributeClassImprint().getName()).append("</b>, ");
       
       sb.setLength( sb.length()-2 );
@@ -216,7 +216,7 @@ public class AttributeRule implements IsSerializable, Serializable
      
      sb.append( qualifiers.size() > 1?"s ":" ");
      
-     for( QualifierRule qr : qualifiers.get(RestrictionType.MUST) )
+     for( QualifierRuleImprint qr : qualifiers.get(RestrictionType.MUST) )
       sb.append("<b>").append(qr.getAttributeClassImprint().getName()).append("</b>, ");
 
      sb.setLength(sb.length()-2);

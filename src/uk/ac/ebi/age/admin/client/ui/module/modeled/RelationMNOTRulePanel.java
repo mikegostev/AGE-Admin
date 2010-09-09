@@ -7,7 +7,7 @@ import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeRelationClassImprint;
-import uk.ac.ebi.age.admin.client.model.QualifierRule;
+import uk.ac.ebi.age.admin.client.model.QualifierRuleImprint;
 import uk.ac.ebi.age.admin.client.model.RelationRuleImprint;
 import uk.ac.ebi.age.admin.client.ui.AttributeMetaClassDef;
 import uk.ac.ebi.age.admin.client.ui.ClassMetaClassDef;
@@ -324,10 +324,10 @@ public class RelationMNOTRulePanel extends RelationRulePanel
   
   if( rule.getQualifiersMap() != null )
   {
-   for( Collection<QualifierRule> qrc : rule.getQualifiersMap().values() )
+   for( Collection<QualifierRuleImprint> qrc : rule.getQualifiersMap().values() )
    {
     if( qrc != null)
-     for(QualifierRule qr : qrc )
+     for(QualifierRuleImprint qr : qrc )
       qTbl.addData( new QualifiersRecord(qr.getType(), qr.getAttributeClassImprint()) );
    }
   }
@@ -389,7 +389,7 @@ public class RelationMNOTRulePanel extends RelationRulePanel
   {
    for(ListGridRecord r : recs)
    {
-    QualifierRule qr = rule.getModel().createQualifierRule();
+    QualifierRuleImprint qr = rule.getModel().createQualifierRuleImprint();
 
     qr.setType(RestrictionType.MUST);
     qr.setAttributeClassImprint((AgeAttributeClassImprint)((QualifiersRecord) r).getAgeAbstractClassImprint());

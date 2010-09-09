@@ -103,7 +103,7 @@ public class AgeAdmin
  {
   SemanticModel sm = storage.getSemanticModel();
   
-  return Age2ImprintConverter.getModelImprint(sm);
+  return Age2ImprintConverter.convertToImprint(sm);
  }
 
  public Session getSession(String value)

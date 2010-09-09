@@ -172,11 +172,11 @@ public class ModelImprint  implements IsSerializable, Serializable, Annotated
   return new RelationRuleImprint(may, this);
  }
 
- public QualifierRule createQualifierRule()
+ public QualifierRuleImprint createQualifierRuleImprint()
  {
-  return new QualifierRule( this );
+  return new QualifierRuleImprint( this );
  }
- 
+
  
  public Collection<AgeRelationClassImprint> getRelations()
  {
@@ -251,6 +251,7 @@ public class ModelImprint  implements IsSerializable, Serializable, Annotated
  {
   this.storePath = storePath;
  }
+
 
 
 // private void addClass( AgeClassImprint rootClass )

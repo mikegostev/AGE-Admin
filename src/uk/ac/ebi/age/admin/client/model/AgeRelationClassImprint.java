@@ -22,6 +22,14 @@ public class AgeRelationClassImprint implements AgeAbstractClassImprint, IsSeria
  private Collection<String> aliases;
  private Collection<AgeAnnotationImprint> annotations;
  
+ private boolean functional;
+ private boolean inverseFunctional;
+ private boolean symmetric;
+ private boolean transitive;
+
+ private AgeRelationClassImprint inverseRelation;
+
+
  private transient Object auxData;
 
  
@@ -230,5 +238,56 @@ public class AgeRelationClassImprint implements AgeAbstractClassImprint, IsSeria
    return;
   
   annotations.remove(a);
+ }
+ 
+ public boolean isFunctional()
+ {
+  return functional;
+ }
+
+ public void setFunctional(boolean functional)
+ {
+  this.functional = functional;
+ }
+
+ public boolean isInverseFunctional()
+ {
+  return inverseFunctional;
+ }
+
+ public void setInverseFunctional(boolean inverseFunctional)
+ {
+  this.inverseFunctional = inverseFunctional;
+ }
+
+ public boolean isSymmetric()
+ {
+  return symmetric;
+ }
+
+ public void setSymmetric(boolean symmetric)
+ {
+  this.symmetric = symmetric;
+ }
+
+ public boolean isTransitive()
+ {
+  return transitive;
+ }
+
+ public void setTransitive(boolean transitive)
+ {
+  this.transitive = transitive;
+ }
+ 
+ 
+ public AgeRelationClassImprint getInverseRelation()
+ {
+  return inverseRelation;
+ }
+
+ public void setInverseRelation(AgeRelationClassImprint inverseRelation)
+ {
+  this.inverseRelation = inverseRelation;
  }
 }

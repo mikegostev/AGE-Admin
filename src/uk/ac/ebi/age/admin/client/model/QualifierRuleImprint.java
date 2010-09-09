@@ -2,14 +2,14 @@ package uk.ac.ebi.age.admin.client.model;
 
 import uk.ac.ebi.age.model.RestrictionType;
 
-public class QualifierRule
+public class QualifierRuleImprint
 {
  private AgeAttributeClassImprint attr;
  private RestrictionType type;
 
  private ModelImprint model;
  
- QualifierRule(ModelImprint modelImprint)
+ QualifierRuleImprint(ModelImprint modelImprint)
  {
   model=modelImprint;
  }
