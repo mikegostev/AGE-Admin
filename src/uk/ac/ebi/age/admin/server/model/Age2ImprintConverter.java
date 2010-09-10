@@ -28,6 +28,10 @@ import uk.ac.ebi.age.model.QualifierRule;
 import uk.ac.ebi.age.model.RelationRule;
 import uk.ac.ebi.age.model.SemanticModel;
 import uk.ac.ebi.age.model.writable.AgeAnnotationClassWritable;
+import uk.ac.ebi.age.model.writable.AgeAnnotationWritable;
+import uk.ac.ebi.age.model.writable.AgeAttributeClassWritable;
+import uk.ac.ebi.age.model.writable.AgeClassWritable;
+import uk.ac.ebi.age.model.writable.AgeRelationClassWritable;
 
 public class Age2ImprintConverter
 {
@@ -53,12 +57,12 @@ public class Age2ImprintConverter
   
   AgeAnnotationClassImprint anCImp = mimp.getRootAnnotationClass();
   
-  AgeAnnotationClassWritable aCls =  state.model.createAgeAnnotationClass("AgeAnnotation", anCImp.getId());
-  aCls.setAbstract(true);
+  AgeAnnotationClassWritable aACls =  state.model.createAgeAnnotationClass(ModelImprint.ROOT_ANNOT_NAME, anCImp.getId());
+  aACls.setAbstract(true);
   
-  state.classMap.put(anCImp, aCls);
+  state.classMap.put(anCImp, aACls);
 
-  convertImprintToAge(anCImp, aCls, state, new AgeCreator<AgeAnnotationClassImprint,AgeAnnotationClassWritable>() {
+  convertImprintToAge(anCImp, aACls, state, new AgeCreator<AgeAnnotationClassImprint,AgeAnnotationClassWritable>() {
 
    @Override
    public AgeAnnotationClassWritable create(AgeAnnotationClassImprint parent, AgeAnnotationClassWritable mCls)
@@ -70,6 +74,8 @@ public class Age2ImprintConverter
      for( String ali : parent.getAliases() )
       aac.addAlias( ali );
     }
+    
+    aac.setAbstract( parent.isAbstract() );
     
     return aac;
    }
@@ -86,6 +92,203 @@ public class Age2ImprintConverter
     prnt.addSubClass(chld);
     
    }} );
+  
+  {
+   AgeClassImprint rootClsImp = mimp.getRootClass();
+
+   AgeClassWritable aCls = state.model.createAgeClass(ModelImprint.ROOT_CLASS_NAME, rootClsImp.getName(), rootClsImp.getPrefix());
+   aCls.setAbstract(true);
+
+   state.classMap.put(rootClsImp, aCls);
+
+   convertImprintToAge(rootClsImp, aCls, state, new AgeCreator<AgeClassImprint, AgeClassWritable>()
+   {
+
+    @Override
+    public AgeClassWritable create(AgeClassImprint parent, AgeClassWritable mCls)
+    {
+     AgeClassWritable aac = mCls.getSemanticModel().createAgeClass(parent.getName(), parent.getId(), parent.getPrefix());
+
+     if(parent.getAliases() != null)
+     {
+      for(String ali : parent.getAliases())
+       aac.addAlias(ali);
+     }
+
+     aac.setAbstract(parent.isAbstract());
+
+     return aac;
+    }
+
+    @Override
+    public Collection<AgeClassImprint> getSubclasses(AgeClassImprint parent)
+    {
+     return parent.getChildren();
+    }
+
+    @Override
+    public void addSubClass(AgeClassWritable prnt, AgeClassWritable chld)
+    {
+     prnt.addSubClass(chld);
+
+    }
+   });
+
+  }
+  
+  AgeAttributeClassImprint rootAttrImp = mimp.getRootAttributeClass();
+
+  AgeAttributeClassWritable atrCls =  state.model.createAgeAttributeClass(ModelImprint.ROOT_ATTR_NAME, rootAttrImp.getName(), null );
+  atrCls.setAbstract(true);
+  
+  state.classMap.put(rootAttrImp, atrCls);
+
+  convertImprintToAge(rootAttrImp, atrCls, state, new AgeCreator<AgeAttributeClassImprint,AgeAttributeClassWritable>() {
+
+   @Override
+   public AgeAttributeClassWritable create(AgeAttributeClassImprint parent, AgeAttributeClassWritable mCls)
+   {
+    DataType typ = null;
+    
+    switch( parent.getType() )
+    {
+     case BOOLEAN:
+      typ = DataType.BOOLEAN;
+      break;
+     
+     case INTEGER:
+      typ = DataType.INTEGER;
+      break;
+     
+     case REAL:
+      typ = DataType.REAL;
+      break;
+     
+     case STRING:
+      typ = DataType.STRING;
+      break;
+     
+     case TEXT:
+      typ = DataType.TEXT;
+      break;
+     
+     case URI:
+      typ = DataType.URI;
+      break;
+   }
+    
+    AgeAttributeClassWritable aac = mCls.getSemanticModel().createAgeAttributeClass( parent.getName(), parent.getId(), typ );
+
+    if( parent.getAliases() != null )
+    {
+     for( String ali : parent.getAliases() )
+      aac.addAlias( ali );
+    }
+    
+    aac.setAbstract( parent.isAbstract() );
+    
+    return aac;
+   }
+
+   @Override
+   public Collection<AgeAttributeClassImprint> getSubclasses(AgeAttributeClassImprint parent)
+   {
+    return parent.getChildren();
+   }
+
+   @Override
+   public void addSubClass(AgeAttributeClassWritable prnt, AgeAttributeClassWritable chld)
+   {
+    prnt.addSubClass(chld);
+    
+   }} );
+
+  {
+   AgeRelationClassImprint rootRlClsImp = mimp.getRootRelationClass();
+
+   AgeRelationClassWritable aCls = state.model.createAgeRelationClass(ModelImprint.ROOT_REL_NAME, rootRlClsImp.getName());
+   aCls.setAbstract(true);
+
+   state.classMap.put(rootRlClsImp, aCls);
+
+   convertImprintToAge(rootRlClsImp, aCls, state, new AgeCreator<AgeRelationClassImprint, AgeRelationClassWritable>()
+   {
+
+    @Override
+    public AgeRelationClassWritable create(AgeRelationClassImprint parent, AgeRelationClassWritable mCls)
+    {
+     AgeRelationClassWritable aac = mCls.getSemanticModel().createAgeRelationClass(parent.getName(), parent.getId());
+
+     if(parent.getAliases() != null)
+     {
+      for(String ali : parent.getAliases())
+       aac.addAlias(ali);
+     }
+
+     aac.setAbstract(parent.isAbstract());
+
+
+     parent.setFunctional(mCls.isFunctional());
+     parent.setInverseFunctional(mCls.isInverseFunctional());
+     parent.setSymmetric(mCls.isSymmetric());
+     parent.setTransitive(mCls.isTransitive());
+     
+     return aac;
+    }
+
+    @Override
+    public Collection<AgeRelationClassImprint> getSubclasses(AgeRelationClassImprint parent)
+    {
+     return parent.getChildren();
+    }
+
+    @Override
+    public void addSubClass(AgeRelationClassWritable prnt, AgeRelationClassWritable chld)
+    {
+     prnt.addSubClass(chld);
+
+    }
+   });
+
+  }
+  
+  for(Map.Entry<Annotated, AgeAbstractClass> me : state.classMap.entrySet() )
+  {
+   if( me.getKey().getAnnotations() != null )
+   {
+    for( AgeAnnotationImprint aaImp : me.getKey().getAnnotations() )
+    {
+     AgeAnnotationWritable ant = state.model.createAgeAnnotation((AgeAnnotationClass)state.classMap.get(aaImp.getAnnotationClass()));
+     
+     ant.setText(aaImp.getText());
+     me.getValue().addAnnotation(ant);
+    }
+   }
+   
+   if( me.getKey() instanceof AgeClass )
+    transferRestrictions((AgeClass) me.getKey(), (AgeClassImprint)me.getValue(), state);
+   else if( me.getKey() instanceof AgeRelationClass )
+   {
+    AgeRelationClass arc  = (AgeRelationClass)me.getKey();
+    
+    if( arc.getInverseClass() != null )
+     ((AgeRelationClassImprint)me.getValue()).setInverseRelation((AgeRelationClassImprint)state.classMap.get(arc.getInverseClass()));
+   }
+   
+
+  }
+  
+  if( mimp.getAnnotations() != null )
+  {
+   for( AgeAnnotationImprint aaImp : mimp.getAnnotations() )
+   {
+    AgeAnnotationWritable ant = state.model.createAgeAnnotation((AgeAnnotationClass)state.classMap.get(aaImp.getAnnotationClass()));
+    
+    ant.setText(aaImp.getText());
+    
+    state.model.addAnnotation(ant);
+   }
+  }
   
   return state.model;
  }
@@ -155,7 +358,7 @@ public class Age2ImprintConverter
     cImp.setName(acls.getName());
     cImp.setId(acls.getId());
     cImp.setAbstract(acls.isAbstract());
-
+    
     return cImp;
    }
 
@@ -272,6 +475,9 @@ public class Age2ImprintConverter
     for( AgeAnnotation aannt : me.getKey().getAnnotations() )
     {
      AgeAnnotationImprint aimp = state.modelImprint.createAgeAnnotationImprint((AgeAnnotationClassImprint)state.classMap.get(aannt.getAgeElClass()));
+
+     aimp.setText(aannt.getText());
+     
      me.getValue().addAnnotation(aimp);
     }
    }
@@ -285,7 +491,6 @@ public class Age2ImprintConverter
     if( arc.getInverseClass() != null )
      ((AgeRelationClassImprint)me.getValue()).setInverseRelation((AgeRelationClassImprint)state.classMap.get(arc.getInverseClass()));
    }
-   
 
   }
   
@@ -294,6 +499,9 @@ public class Age2ImprintConverter
    for( AgeAnnotation aannt : sm.getAnnotations() )
    {
     AgeAnnotationImprint aimp = state.modelImprint.createAgeAnnotationImprint((AgeAnnotationClassImprint)state.classMap.get(aannt.getAgeElClass()));
+    
+    aimp.setText(aannt.getText());
+    
     state.modelImprint.addAnnotation(aimp);
    }
   }

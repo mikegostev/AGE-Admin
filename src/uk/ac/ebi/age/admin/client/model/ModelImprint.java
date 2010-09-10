@@ -13,8 +13,13 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class ModelImprint  implements IsSerializable, Serializable, Annotated
 {
+ public static final String ROOT_CLASS_NAME = "AgeClass";
+ public static final String ROOT_ANNOT_NAME = "AgeAnnotation";
+ public static final String ROOT_ATTR_NAME = "AgeAttribute";
+ public static final String ROOT_REL_NAME = "AgeRelation";
 
  private static final long serialVersionUID = 1L;
+
 
  private transient ModelPath storePath; 
 

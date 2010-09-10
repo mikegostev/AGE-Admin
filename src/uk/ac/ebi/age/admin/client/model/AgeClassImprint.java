@@ -13,7 +13,9 @@ public class AgeClassImprint implements IsSerializable, Serializable, AgeAbstrac
  
  private String name;
  private String id;
- 
+ private String prefix;
+
+
  private boolean isAbstract;
  
  private Collection<AgeClassImprint> parents;
@@ -271,5 +273,16 @@ public class AgeClassImprint implements IsSerializable, Serializable, AgeAbstrac
    return;
   
   annotations.remove(a);
+ }
+ 
+ 
+ public String getPrefix()
+ {
+  return prefix;
+ }
+
+ public void setPrefix(String prefix)
+ {
+  this.prefix = prefix;
  }
 }
