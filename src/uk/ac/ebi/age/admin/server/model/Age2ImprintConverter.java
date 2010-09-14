@@ -27,11 +27,14 @@ import uk.ac.ebi.age.model.DataType;
 import uk.ac.ebi.age.model.QualifierRule;
 import uk.ac.ebi.age.model.RelationRule;
 import uk.ac.ebi.age.model.SemanticModel;
+import uk.ac.ebi.age.model.writable.AgeAbstractClassWritable;
 import uk.ac.ebi.age.model.writable.AgeAnnotationClassWritable;
 import uk.ac.ebi.age.model.writable.AgeAnnotationWritable;
 import uk.ac.ebi.age.model.writable.AgeAttributeClassWritable;
 import uk.ac.ebi.age.model.writable.AgeClassWritable;
 import uk.ac.ebi.age.model.writable.AgeRelationClassWritable;
+import uk.ac.ebi.age.model.writable.QualifierRuleWritable;
+import uk.ac.ebi.age.model.writable.RelationRuleWritable;
 
 public class Age2ImprintConverter
 {
@@ -43,17 +46,16 @@ public class Age2ImprintConverter
  
  private static class StateI2A
  {
-  Map<Annotated, AgeAbstractClass> classMap = new HashMap< Annotated, AgeAbstractClass >();
+  Map<Annotated, AgeAbstractClassWritable> classMap = new HashMap< Annotated, AgeAbstractClassWritable >();
   SemanticModel model;
  }
 
- public static SemanticModel convertToModel( ModelImprint mimp )
+ public static SemanticModel convertImprintToModel( ModelImprint mimp )
  {
   
   final StateI2A state = new StateI2A();
   
   state.model = SemanticManager.createModelInstance();
-  state.classMap = new HashMap<Annotated, AgeAbstractClass>();
   
   AgeAnnotationClassImprint anCImp = mimp.getRootAnnotationClass();
   
@@ -252,7 +254,7 @@ public class Age2ImprintConverter
 
   }
   
-  for(Map.Entry<Annotated, AgeAbstractClass> me : state.classMap.entrySet() )
+  for(Map.Entry<Annotated, AgeAbstractClassWritable> me : state.classMap.entrySet() )
   {
    if( me.getKey().getAnnotations() != null )
    {
@@ -265,14 +267,14 @@ public class Age2ImprintConverter
     }
    }
    
-   if( me.getKey() instanceof AgeClass )
-    transferRestrictions((AgeClass) me.getKey(), (AgeClassImprint)me.getValue(), state);
-   else if( me.getKey() instanceof AgeRelationClass )
+   if( me.getKey() instanceof AgeClassImprint )
+    transferRestrictionsI2M((AgeClassImprint) me.getKey(), (AgeClassWritable)me.getValue(), state);
+   else if( me.getKey() instanceof AgeRelationClassImprint )
    {
-    AgeRelationClass arc  = (AgeRelationClass)me.getKey();
+    AgeRelationClassImprint arc  = (AgeRelationClassImprint)me.getKey();
     
-    if( arc.getInverseClass() != null )
-     ((AgeRelationClassImprint)me.getValue()).setInverseRelation((AgeRelationClassImprint)state.classMap.get(arc.getInverseClass()));
+    if( arc.getInverseRelation() != null )
+     ((AgeRelationClassWritable)me.getValue()).setInverseRelationClass((AgeRelationClass)state.classMap.get(arc.getInverseRelation()));
    }
    
 
@@ -293,7 +295,75 @@ public class Age2ImprintConverter
   return state.model;
  }
  
- public static ModelImprint convertToImprint( SemanticModel sm )
+ private static void transferRestrictionsI2M(AgeClassImprint impr, AgeClassWritable cls, StateI2A state)
+ {
+  if(impr.getRelationRules() != null)
+  {
+   for(RelationRuleImprint rri : impr.getRelationRules())
+   {
+    RelationRuleWritable mrr = state.model.createRelationRule(rri.getType());
+    
+    
+    mrr.setCardinality(rri.getCardinality());
+    mrr.setCardinalityType(rri.getCardinalityType());
+    mrr.setQualifiersUnique(rri.isQualifiersUnique());
+    mrr.setRelationSubclassesIncluded(rri.isRelationSubclassesIncluded());
+    mrr.setType(rri.getType());
+    mrr.setSubclassesIncluded(rri.isSubclassesIncluded());
+    mrr.setQualifiersCondition(rri.getQualifiersCondition());
+    mrr.setRelationClass((AgeRelationClass) state.classMap.get(rri.getRelationClass()));
+    mrr.setTargetClass((AgeClass) state.classMap.get(rri.getTargetClass()));
+
+    if(rri.getQualifiers() != null)
+    {
+     for(QualifierRuleImprint clrl : rri.getQualifiers())
+     {
+      QualifierRuleWritable qrul = state.model.createQualifierRule();
+
+      qrul.setType(clrl.getType());
+      qrul.setAttributeClass((AgeAttributeClass) state.classMap.get(clrl.getAttributeClassImprint()));
+
+      mrr.addQualifier(qrul);
+     }
+    }
+
+    cls.addRelationRule(mrr);
+   }
+  }
+
+  if(acls.getAttributeAttachmentRules() != null)
+  {
+   for(AttributeAttachmentRule atatrl : acls.getAttributeAttachmentRules())
+   {
+    AttributeRule arimp = state.modelImprint.createAttributeRuleImprint(atatrl.getRestrictionType());
+
+    arimp.setAttributeClass((AgeAttributeClassImprint) state.classMap.get(atatrl.getAttrbuteClass()));
+    arimp.setCardinality(atatrl.getCardinality());
+    arimp.setCardinalityType(atatrl.getCardinalityType());
+    arimp.setQualifiersCondition(atatrl.getQualifiersCondition());
+    arimp.setQualifiersUnique(atatrl.isQualifiersUnique());
+    arimp.setSubclassesIncluded(atatrl.isSubclassesIncluded());
+    arimp.setType(atatrl.getType());
+    arimp.setValueUnique(atatrl.isValueUnique());
+
+    if(atatrl.getQualifiers() != null)
+    {
+     for(QualifierRule clrl : atatrl.getQualifiers())
+     {
+      QualifierRuleImprint qrimp = state.modelImprint.createQualifierRuleImprint();
+
+      qrimp.setType(clrl.getType());
+      qrimp.setAttributeClassImprint((AgeAttributeClassImprint) state.classMap.get(clrl.getAttrbuteClass()));
+
+      arimp.addQualifier(qrimp);
+     }
+    }
+    cImp.addAttributeRule(arimp);
+   }
+  }
+ }
+
+ public static ModelImprint convertModelToImprint( SemanticModel sm )
  {
   final StateA2I state = new StateA2I();
   
@@ -305,7 +375,7 @@ public class Age2ImprintConverter
   AgeAnnotationClass ageAnntRoot = sm.getRootAgeAnnotationClass();
 
   AgeAnnotationClassImprint aImp =  state.modelImprint.getRootAnnotationClass();
-  aImp.setName("AgeAnnotation");
+  aImp.setName(ModelImprint.ROOT_ANNOT_NAME);
   aImp.setAbstract(true);
 
   state.classMap.put(ageAnntRoot, aImp);
@@ -336,7 +406,7 @@ public class Age2ImprintConverter
   AgeClass ageRoot = sm.getRootAgeClass();
 
   AgeClassImprint rImp =  state.modelImprint.getRootClass();
-  rImp.setName("AgeClass");
+  rImp.setName(ModelImprint.ROOT_CLASS_NAME);
   rImp.setAbstract(true);
 
   state.classMap.put(ageRoot, rImp);
@@ -369,7 +439,7 @@ public class Age2ImprintConverter
 
   AgeAttributeClassImprint atImp = state.modelImprint.getRootAttributeClass();
 
-  atImp.setName("AgeAttribute");
+  atImp.setName(ModelImprint.ROOT_ATTR_NAME);
   atImp.setAbstract(true);
 
   state.classMap.put(attrRoot, atImp);
@@ -435,7 +505,7 @@ public class Age2ImprintConverter
 
   AgeRelationClassImprint relImp = state.modelImprint.getRootRelationClass();
 
-  relImp.setName("AgeRelation");
+  relImp.setName(ModelImprint.ROOT_REL_NAME);
   relImp.setAbstract(true);
   
   
@@ -483,13 +553,13 @@ public class Age2ImprintConverter
    }
    
    if( me.getKey() instanceof AgeClass )
-    transferRestrictions((AgeClass) me.getKey(), (AgeClassImprint)me.getValue(), state);
+    transferRestrictionsM2I((AgeClass) me.getKey(), (AgeClassImprint)me.getValue(), state);
    else if( me.getKey() instanceof AgeRelationClass )
    {
     AgeRelationClass arc  = (AgeRelationClass)me.getKey();
     
-    if( arc.getInverseClass() != null )
-     ((AgeRelationClassImprint)me.getValue()).setInverseRelation((AgeRelationClassImprint)state.classMap.get(arc.getInverseClass()));
+    if( arc.getInverseRelationClass() != null )
+     ((AgeRelationClassImprint)me.getValue()).setInverseRelation((AgeRelationClassImprint)state.classMap.get(arc.getInverseRelationClass()));
    }
 
   }
@@ -515,7 +585,7 @@ public class Age2ImprintConverter
  }
 
  
- private static void transferRestrictions(AgeClass acls, AgeClassImprint cImp, StateA2I state)
+ private static void transferRestrictionsM2I(AgeClass acls, AgeClassImprint cImp, StateA2I state)
  {
   if( acls.getRelationRules() != null )
   {
@@ -757,7 +827,7 @@ public class Age2ImprintConverter
   }
  }
 
- private interface AgeCreator<ImpC, AgeC extends AgeAbstractClass>
+ private interface AgeCreator<ImpC, AgeC extends AgeAbstractClassWritable>
  {
   AgeC create( ImpC parent, AgeC mCls );
   Collection<ImpC> getSubclasses(ImpC parent);
@@ -765,7 +835,7 @@ public class Age2ImprintConverter
  }
 
  
- private static <ImpC extends Annotated, AgeC extends AgeAbstractClass> void convertImprintToAge(ImpC imp, AgeC parent,  StateI2A state, AgeCreator<ImpC,AgeC> cr)
+ private static <ImpC extends Annotated, AgeC extends AgeAbstractClassWritable> void convertImprintToAge(ImpC imp, AgeC parent,  StateI2A state, AgeCreator<ImpC,AgeC> cr)
  {
   if( cr.getSubclasses(imp) != null )
   {
