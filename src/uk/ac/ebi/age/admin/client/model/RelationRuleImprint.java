@@ -6,12 +6,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
-import uk.ac.ebi.age.model.Cardinality;
-import uk.ac.ebi.age.model.QualifiersCondition;
-import uk.ac.ebi.age.model.RestrictionType;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
-import com.pri.util.collection.CollectionsUnion;
 
 public class RelationRuleImprint implements Serializable, IsSerializable
 {
@@ -77,13 +72,13 @@ public class RelationRuleImprint implements Serializable, IsSerializable
   return qualifiers;
  }
 
- public Collection<QualifierRuleImprint> getQualifiers()
- {
-  if( qualifiers == null )
-   return null;
-  
-  return new CollectionsUnion<QualifierRuleImprint>( qualifiers.values() );
- }
+// public Collection<QualifierRuleImprint> getQualifiers()
+// {
+//  if( qualifiers == null )
+//   return null;
+//  
+//  return new CollectionsUnion<QualifierRuleImprint>( qualifiers.values() );
+// }
  
  public void addQualifier( QualifierRuleImprint qr )
  {

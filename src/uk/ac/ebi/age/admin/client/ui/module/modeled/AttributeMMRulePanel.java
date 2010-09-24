@@ -5,13 +5,13 @@ import java.util.LinkedHashMap;
 
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint;
-import uk.ac.ebi.age.admin.client.model.AttributeRule;
+import uk.ac.ebi.age.admin.client.model.AttributeRuleImprint;
+import uk.ac.ebi.age.admin.client.model.Cardinality;
 import uk.ac.ebi.age.admin.client.model.QualifierRuleImprint;
+import uk.ac.ebi.age.admin.client.model.RestrictionType;
 import uk.ac.ebi.age.admin.client.ui.AttributeMetaClassDef;
 import uk.ac.ebi.age.admin.client.ui.ClassSelectedCallback;
 import uk.ac.ebi.age.admin.client.ui.QualifiersRecord;
-import uk.ac.ebi.age.model.Cardinality;
-import uk.ac.ebi.age.model.RestrictionType;
 
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.ListGridFieldType;
@@ -39,7 +39,7 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
 public class AttributeMMRulePanel extends AttributeRulePanel
 {
- private AttributeRule rule;
+ private AttributeRuleImprint rule;
  private AgeAttributeClassImprint targetClass;
  private RadioGroupItem cardType;
  private final StaticTextItem attrTgClass;
@@ -49,7 +49,7 @@ public class AttributeMMRulePanel extends AttributeRulePanel
  private CheckboxItem valUniq;
  private CheckboxItem qualUniq;
  
- AttributeMMRulePanel( AttributeRule rl )
+ AttributeMMRulePanel( AttributeRuleImprint rl )
  {
   setWidth100();
   setHeight100();
@@ -260,7 +260,7 @@ public class AttributeMMRulePanel extends AttributeRulePanel
   
  }
  
- public void setRule(AttributeRule rule)
+ public void setRule(AttributeRuleImprint rule)
  {
   this.rule = rule;
   
@@ -357,7 +357,7 @@ public class AttributeMMRulePanel extends AttributeRulePanel
  }
 
  
- public AttributeRule getRule()
+ public AttributeRuleImprint getRule()
  {
   return rule;
  }

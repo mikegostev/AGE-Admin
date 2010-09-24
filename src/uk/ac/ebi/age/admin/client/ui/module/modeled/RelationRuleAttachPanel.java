@@ -2,8 +2,8 @@ package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
 import uk.ac.ebi.age.admin.client.model.RelationRuleImprint;
+import uk.ac.ebi.age.admin.client.model.RestrictionType;
 import uk.ac.ebi.age.admin.client.ui.SelectedRelationRule;
-import uk.ac.ebi.age.model.RestrictionType;
 
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.ListGridFieldType;

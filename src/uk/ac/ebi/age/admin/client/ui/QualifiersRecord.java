@@ -1,7 +1,7 @@
 package uk.ac.ebi.age.admin.client.ui;
 
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
-import uk.ac.ebi.age.model.RestrictionType;
+import uk.ac.ebi.age.admin.client.model.RestrictionType;
 
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 

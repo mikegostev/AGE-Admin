@@ -32,6 +32,8 @@ public class AgeRelationClassImprint implements AgeAbstractClassImprint, IsSeria
 
  private transient Object auxData;
 
+ AgeRelationClassImprint()
+ {}
  
  AgeRelationClassImprint(ModelImprint modelImprint)
  {

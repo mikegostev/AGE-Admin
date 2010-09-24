@@ -1,6 +1,5 @@
 package uk.ac.ebi.age.admin.client.model;
 
-import uk.ac.ebi.age.model.RestrictionType;
 
 public class QualifierRuleImprint
 {

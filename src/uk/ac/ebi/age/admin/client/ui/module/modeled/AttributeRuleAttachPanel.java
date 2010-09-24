@@ -1,9 +1,9 @@
 package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
-import uk.ac.ebi.age.admin.client.model.AttributeRule;
+import uk.ac.ebi.age.admin.client.model.AttributeRuleImprint;
+import uk.ac.ebi.age.admin.client.model.RestrictionType;
 import uk.ac.ebi.age.admin.client.ui.SelectedAttrubuteRule;
-import uk.ac.ebi.age.model.RestrictionType;
 
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.ListGridFieldType;
@@ -59,7 +59,7 @@ public class AttributeRuleAttachPanel extends VLayout
     AttributeMMRuleDialog.show(cls.getModel().createAttributeRuleImprint(RestrictionType.MAY), cls.getModel(), new SelectedAttrubuteRule(){
 
      @Override
-     public void attributeRuleSelected(AttributeRule ar)
+     public void attributeRuleSelected(AttributeRuleImprint ar)
      {
       ruleList.addData(new RuleRecord(ar));
       cls.addAttributeRule(ar);
@@ -79,7 +79,7 @@ public class AttributeRuleAttachPanel extends VLayout
     AttributeMMRuleDialog.show(cls.getModel().createAttributeRuleImprint(RestrictionType.MUST), cls.getModel(), new SelectedAttrubuteRule(){
 
      @Override
-     public void attributeRuleSelected(AttributeRule ar)
+     public void attributeRuleSelected(AttributeRuleImprint ar)
      {
       ruleList.addData(new RuleRecord(ar));
       cls.addAttributeRule(ar);
@@ -100,7 +100,7 @@ public class AttributeRuleAttachPanel extends VLayout
     AttributeMNOTRuleDialog.show(cls.getModel().createAttributeRuleImprint(RestrictionType.MUSTNOT), cls.getModel(), new SelectedAttrubuteRule(){
 
      @Override
-     public void attributeRuleSelected(AttributeRule ar)
+     public void attributeRuleSelected(AttributeRuleImprint ar)
      {
       ruleList.addData(new RuleRecord(ar));
       cls.addAttributeRule(ar);
@@ -123,7 +123,7 @@ public class AttributeRuleAttachPanel extends VLayout
     if( rr == null )
      return;
     
-    AttributeRule atrl = rr.getRule();
+    AttributeRuleImprint atrl = rr.getRule();
     
     if( atrl.getType() == RestrictionType.MUSTNOT )
     {
@@ -131,7 +131,7 @@ public class AttributeRuleAttachPanel extends VLayout
      {
 
       @Override
-      public void attributeRuleSelected(AttributeRule ar)
+      public void attributeRuleSelected(AttributeRuleImprint ar)
       {
        rr.update();
        ruleList.refreshCell(ruleList.getRecordIndex(rr), 1);
@@ -144,7 +144,7 @@ public class AttributeRuleAttachPanel extends VLayout
      {
 
       @Override
-      public void attributeRuleSelected(AttributeRule ar)
+      public void attributeRuleSelected(AttributeRuleImprint ar)
       {
        rr.update();
        ruleList.refreshCell(ruleList.getRecordIndex(rr), 1);
@@ -183,9 +183,9 @@ public class AttributeRuleAttachPanel extends VLayout
 
  static class RuleRecord extends ListGridRecord
  {
-  private AttributeRule rule;
+  private AttributeRuleImprint rule;
   
-  RuleRecord( AttributeRule r )
+  RuleRecord( AttributeRuleImprint r )
   {
    super();
    
@@ -200,7 +200,7 @@ public class AttributeRuleAttachPanel extends VLayout
    setAttribute("name", rule.toString() );
   }
 
-  public AttributeRule getRule()
+  public AttributeRuleImprint getRule()
   {
    return rule;
   }

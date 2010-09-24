@@ -1,6 +1,6 @@
 package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
-import uk.ac.ebi.age.admin.client.model.AttributeRule;
+import uk.ac.ebi.age.admin.client.model.AttributeRuleImprint;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.ui.SelectedAttrubuteRule;
 
@@ -112,7 +112,7 @@ public abstract class AttributeRuleDialog extends Window
   listener = selectedAttrubuteRule;
  }
 
- public void setRule(AttributeRule rule)
+ public void setRule(AttributeRuleImprint rule)
  {
   ruleForm.setRule(rule);
  }

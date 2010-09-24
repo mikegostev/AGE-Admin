@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import uk.ac.ebi.age.admin.client.common.ModelPath;
-import uk.ac.ebi.age.model.RestrictionType;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
@@ -166,9 +165,9 @@ public class ModelImprint  implements IsSerializable, Serializable, Annotated
   return ncls;
  }
 
- public AttributeRule createAttributeRuleImprint(RestrictionType may)
+ public AttributeRuleImprint createAttributeRuleImprint(RestrictionType may)
  {
-  return new AttributeRule(may, this);
+  return new AttributeRuleImprint(may, this);
  }
 
 

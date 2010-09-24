@@ -22,7 +22,7 @@ public class AgeClassImprint implements IsSerializable, Serializable, AgeAbstrac
  private Collection<AgeClassImprint> children;
  
  private Collection<RelationRuleImprint> objectRestrictions;
- private Collection<AttributeRule> attributeRestrictions;
+ private Collection<AttributeRuleImprint> attributeRestrictions;
  
  private Collection<String> aliases;
  private Collection<AgeAnnotationImprint> annotations;
@@ -31,6 +31,10 @@ public class AgeClassImprint implements IsSerializable, Serializable, AgeAbstrac
  
  private transient Object auxData;
 
+ private AgeClassImprint()
+ {
+ }
+ 
  AgeClassImprint(ModelImprint m)
  {
   model = m;
@@ -86,12 +90,12 @@ public class AgeClassImprint implements IsSerializable, Serializable, AgeAbstrac
   this.objectRestrictions = restrictions;
  }
 
- public Collection<AttributeRule> getAttributeRule()
+ public Collection<AttributeRuleImprint> getAttributeRules()
  {
   return attributeRestrictions;
  }
 
- public void setAttributeRestrictions(Collection<AttributeRule> attributeRestrictions)
+ public void setAttributeRestrictions(Collection<AttributeRuleImprint> attributeRestrictions)
  {
   this.attributeRestrictions = attributeRestrictions;
  }
@@ -133,10 +137,10 @@ public class AgeClassImprint implements IsSerializable, Serializable, AgeAbstrac
   objectRestrictions.add(rst);
  }
  
- public void addAttributeRule(AttributeRule rst)
+ public void addAttributeRule(AttributeRuleImprint rst)
  {
   if( attributeRestrictions == null )
-   attributeRestrictions = new ArrayList<AttributeRule>(10);
+   attributeRestrictions = new ArrayList<AttributeRuleImprint>(10);
   
   attributeRestrictions.add(rst);
  }
@@ -214,7 +218,7 @@ public class AgeClassImprint implements IsSerializable, Serializable, AgeAbstrac
   addSuperClass((AgeClassImprint)superClass);
  }
 
- public void removeAttribiteRule(AttributeRule rule)
+ public void removeAttribiteRule(AttributeRuleImprint rule)
  {
   if( attributeRestrictions != null )
    attributeRestrictions.remove(rule);
