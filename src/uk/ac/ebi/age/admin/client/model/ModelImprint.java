@@ -20,6 +20,8 @@ public class ModelImprint  implements IsSerializable, Serializable, Annotated
  private static final long serialVersionUID = 1L;
 
 
+ private int idGen=1;
+ 
  private transient ModelPath storePath; 
 
  private AgeClassImprint rootClass;
@@ -256,6 +258,20 @@ public class ModelImprint  implements IsSerializable, Serializable, Annotated
   this.storePath = storePath;
  }
 
+ public int getIdGen()
+ {
+  return idGen;
+ }
+
+ public void setIdGen(int idGen)
+ {
+  this.idGen = idGen;
+ }
+
+ public int generateId()
+ {
+  return idGen++;
+ }
 
 
 // private void addClass( AgeClassImprint rootClass )

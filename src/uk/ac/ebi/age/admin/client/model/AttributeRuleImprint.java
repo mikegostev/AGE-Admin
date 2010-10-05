@@ -22,6 +22,8 @@ public class AttributeRuleImprint implements IsSerializable, Serializable
  private boolean subclassesIncluded=true;
  private QualifiersCondition qualifiersCondition = QualifiersCondition.ANY ;
 
+ private int id;
+ 
  private ModelImprint model;
  
  AttributeRuleImprint( RestrictionType typ, ModelImprint m )
@@ -280,5 +282,15 @@ public class AttributeRuleImprint implements IsSerializable, Serializable
  public ModelImprint getModel()
  {
   return model;
+ }
+
+ public int getId()
+ {
+  return id;
+ }
+
+ public void setId(int id)
+ {
+  this.id = id;
  }
 }

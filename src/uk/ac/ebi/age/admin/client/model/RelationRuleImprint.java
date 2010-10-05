@@ -28,6 +28,8 @@ public class RelationRuleImprint implements Serializable, IsSerializable
 
  private QualifiersCondition qualifiersCondition = QualifiersCondition.ANY ;
  
+ private int id;
+ 
  private ModelImprint model;
 
  public RelationRuleImprint(RestrictionType typ, ModelImprint modelImprint)
@@ -301,6 +303,18 @@ public class RelationRuleImprint implements Serializable, IsSerializable
  public ModelImprint getModel()
  {
   return model;
+ }
+
+
+ public int getId()
+ {
+  return id;
+ }
+
+
+ public void setId(int id)
+ {
+  this.id = id;
  }
 
 

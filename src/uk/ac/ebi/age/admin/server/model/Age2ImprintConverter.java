@@ -61,6 +61,8 @@ public class Age2ImprintConverter
   
   state.model = SemanticManager.createModelInstance();
   
+  state.model.setIdGen(mimp.getIdGen());
+  
   AgeAnnotationClassImprint anCImp = mimp.getRootAnnotationClass();
   
   AgeAnnotationClassWritable aACls =  state.model.createAgeAnnotationClass(ModelImprint.ROOT_ANNOT_NAME, anCImp.getId());
