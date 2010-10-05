@@ -26,7 +26,7 @@ public class RelationRuleImprint implements Serializable, IsSerializable
  private boolean subclassesIncluded=true;
  private boolean relSubclassesIncluded=true;
 
- private QualifiersCondition qualifiersCondition = QualifiersCondition.ANY ;
+// private QualifiersCondition qualifiersCondition = QualifiersCondition.ANY ;
  
  private int id;
  

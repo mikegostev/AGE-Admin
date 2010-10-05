@@ -3,8 +3,6 @@ package uk.ac.ebi.age.admin.client.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
-import java.util.TreeMap;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
@@ -16,11 +14,10 @@ public class AttributeRuleImprint implements IsSerializable, Serializable
  private Cardinality cardType = Cardinality.ANY;
  private AgeAttributeClassImprint attributeClass;
  private int cardinality=1;
- private Map<RestrictionType,Collection<QualifierRuleImprint>> qualifiers;
+ private Collection<QualifierRuleImprint> qualifiers;
  private boolean valueUnique;
- private boolean qualifiersUnique;
  private boolean subclassesIncluded=true;
- private QualifiersCondition qualifiersCondition = QualifiersCondition.ANY ;
+// private QualifiersCondition qualifiersCondition = QualifiersCondition.ANY ;
 
  private int id;
  
@@ -67,7 +64,7 @@ public class AttributeRuleImprint implements IsSerializable, Serializable
   this.cardinality = cardinality;
  }
 
- public Map<RestrictionType,Collection<QualifierRuleImprint>> getQualifiersMap()
+ public Collection<QualifierRuleImprint> getQualifiers()
  {
   return qualifiers;
  }
@@ -83,24 +80,9 @@ public class AttributeRuleImprint implements IsSerializable, Serializable
  public void addQualifier( QualifierRuleImprint qr )
  {
   if( qualifiers == null )
-  {
-   qualifiers=new TreeMap<RestrictionType, Collection<QualifierRuleImprint>>();
-   Collection<QualifierRuleImprint> coll = new ArrayList<QualifierRuleImprint>(5);
-   coll.add(qr);
-   qualifiers.put(qr.getType(), coll);
-   return;
-  }
-  
-  Collection<QualifierRuleImprint> coll = qualifiers.get(qr.getType());
-  
-  if( coll == null )
-  {
-   coll = new ArrayList<QualifierRuleImprint>(5);
-   qualifiers.put(qr.getType(), coll);
-  }
- 
-  coll.add(qr);
- 
+   qualifiers=new ArrayList<QualifierRuleImprint>();
+
+  qualifiers.add(qr);
  }
  
  public void setAttributeClass(AgeAttributeClassImprint attributeClass)
@@ -112,8 +94,14 @@ public class AttributeRuleImprint implements IsSerializable, Serializable
  {
   StringBuilder sb = new StringBuilder();
   
-  sb.append("object ").append(type.getTitle()).append(" have ");
-  sb.append("attributes of class <b>").append(attributeClass.getName()).append("</b> (");
+  boolean singleAttr = cardinality == 1 && cardType != Cardinality.MIN;
+  
+  sb.append("entity ").append(type.getTitle()).append(" have ");
+  sb.append("attribute");
+  if( !singleAttr )
+   sb.append('s');
+  
+  sb.append(" of class <b>").append(attributeClass.getName()).append("</b> (");
 
   if( subclassesIncluded )
    sb.append("including subclasses)");
@@ -130,63 +118,13 @@ public class AttributeRuleImprint implements IsSerializable, Serializable
    else
     sb.append(" that must have ").append(cardType.getTitle()).append(" ").append(cardinality).append(" value").append(cardinality>1?"s ":" ");
    
-   if( ( cardinality > 1 || cardType == Cardinality.MIN ) && (valueUnique || qualifiersUnique) )
-   {
-    sb.append("(all ");
-    
-    if( valueUnique )
-    {
-     sb.append("values");
-     
-     if(qualifiersUnique)
-      sb.append(" and ");
-    }
-
-    if(qualifiersUnique)
-     sb.append("qualifiers");
-    
-    sb.append(" must be unique) ");
-    
-   }
+   if( ( ! singleAttr ) && valueUnique )
+    sb.append("(all values must be unique) ");
    
-   if( qualifiers != null )
-   {
-    boolean hasQ=false;
-  
-    sb.append("and ");
-    
-    for( RestrictionType rt : RestrictionType.values() )
-    {
-     Collection<QualifierRuleImprint> qcoll = qualifiers.get(rt);
-     
-     if( qcoll != null && qcoll.size() > 0 )
-     {
-      hasQ=true;
-      sb.append(rt.getTitle()).append(" have qualifiers of class");
-      
-      if( qcoll.size() > 1 )
-       sb.append("es");
-      
-      sb.append(" ");
-      
-      for( QualifierRuleImprint qr : qcoll )
-       sb.append("<b>").append(qr.getAttributeClassImprint().getName()).append("</b>, ");
-      
-      sb.setLength( sb.length()-2 );
-      
-      sb.append(" and ");
-     }
-    }
-
-    if( hasQ )
-     sb.setLength( sb.length()-5 );
-    else
-     sb.setLength( sb.length()-6 );
-   }
   }
   else
   {
-   if( cardType != Cardinality.ANY )
+   if( !singleAttr )
    {
     sb.append(" if they have ");
     
@@ -208,27 +146,42 @@ public class AttributeRuleImprint implements IsSerializable, Serializable
       break;
     }
    }
-   
-   if( qualifiersCondition != QualifiersCondition.ANY )
-   {
-    if( cardType != Cardinality.ANY )
-     sb.append(" and");
-    
-    if( qualifiersCondition == QualifiersCondition.NONE )
-     sb.append(" if they have no qualifiers");
-    else if( qualifiers != null && qualifiers.size() > 0 )
-    {
-     sb.append(" if they have the following qualifier");
-     
-     sb.append( qualifiers.size() > 1?"s ":" ");
-     
-     for( QualifierRuleImprint qr : qualifiers.get(RestrictionType.MUST) )
-      sb.append("<b>").append(qr.getAttributeClassImprint().getName()).append("</b>, ");
 
-     sb.setLength(sb.length()-2);
-    }
-   }
   }
+  
+  sb.append('.');
+  
+
+  if( qualifiers != null && qualifiers.size() > 0 )
+  {
+ 
+   sb.append(" Rule is applied only if attribute");
+   if( !singleAttr )
+    sb.append("s have");
+   else
+    sb.append(" has");
+   
+   sb.append(" qualifier(s) of class");
+   
+   if( qualifiers.size() > 1 )
+    sb.append("es");
+    
+   sb.append(" ");
+    
+   for( QualifierRuleImprint qr : qualifiers )
+   {
+    sb.append("<b>").append(qr.getAttributeClassImprint().getName()).append("</b>");
+    
+    if(  qr.isUnique() )
+     sb.append(" (unique)");
+
+     sb.append(", ");
+   }
+
+   sb.setLength( sb.length()-2 );
+  }
+  
+  sb.append('.');
   
   return sb.toString();
  }
@@ -244,29 +197,9 @@ public class AttributeRuleImprint implements IsSerializable, Serializable
   return valueUnique;
  }
  
- public boolean isQualifiersUnique()
- {
-  return qualifiersUnique;
- }
-
  public void setValueUnique(boolean valueUnique)
  {
   this.valueUnique = valueUnique;
- }
-
- public void setQualifiersUnique(boolean qualifiersUnique)
- {
-  this.qualifiersUnique = qualifiersUnique;
- }
-
- public void setQualifiersCondition(QualifiersCondition qc)
- {
-  qualifiersCondition = qc;
- }
-
- public QualifiersCondition getQualifiersCondition()
- {
-  return qualifiersCondition;
  }
 
  public boolean isSubclassesIncluded()

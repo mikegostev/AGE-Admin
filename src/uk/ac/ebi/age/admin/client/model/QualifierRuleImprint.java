@@ -4,7 +4,8 @@ package uk.ac.ebi.age.admin.client.model;
 public class QualifierRuleImprint
 {
  private AgeAttributeClassImprint attr;
- private RestrictionType type;
+// private RestrictionType type;
+ private boolean unique;
 
  private ModelImprint model;
  
@@ -20,19 +21,19 @@ public class QualifierRuleImprint
   return attr;
  }
 
- public RestrictionType getType()
- {
-  return type;
- }
+// public RestrictionType getType()
+// {
+//  return type;
+// }
+//
+// public void setType(RestrictionType type)
+// {
+//  this.type = type;
+// }
 
  public void setAttributeClassImprint(AgeAttributeClassImprint attr)
  {
   this.attr = attr;
- }
-
- public void setType(RestrictionType type)
- {
-  this.type = type;
  }
 
  public ModelImprint getModel()
@@ -48,5 +49,15 @@ public class QualifierRuleImprint
  public void setId(int id)
  {
   this.id = id;
+ }
+
+ public boolean isUnique()
+ {
+  return unique;
+ }
+
+ public void setUnique(boolean unique)
+ {
+  this.unique = unique;
  }
 }

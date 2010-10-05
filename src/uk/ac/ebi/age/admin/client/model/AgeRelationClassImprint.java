@@ -21,6 +21,7 @@ public class AgeRelationClassImprint implements AgeAbstractClassImprint, IsSeria
 
  private Collection<String> aliases;
  private Collection<AgeAnnotationImprint> annotations;
+ private Collection<AttributeRuleImprint> attributeRestrictions;
  
  private boolean functional;
  private boolean inverseFunctional;
@@ -292,4 +293,19 @@ public class AgeRelationClassImprint implements AgeAbstractClassImprint, IsSeria
  {
   this.inverseRelation = inverseRelation;
  }
+ 
+ public void addAttributeRule(AttributeRuleImprint rst)
+ {
+  if( attributeRestrictions == null )
+   attributeRestrictions = new ArrayList<AttributeRuleImprint>(10);
+  
+  attributeRestrictions.add(rst);
+ }
+
+ public void removeAttribiteRule(AttributeRuleImprint rule)
+ {
+  if( attributeRestrictions != null )
+   attributeRestrictions.remove(rule);
+ }
+
 }

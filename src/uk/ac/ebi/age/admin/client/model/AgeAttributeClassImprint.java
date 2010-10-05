@@ -20,6 +20,9 @@ public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSeria
  private Collection<String> aliases;
  private Collection<AgeAnnotationImprint> annotations;
 
+ private Collection<AttributeRuleImprint> attributeRestrictions;
+
+ 
 // private Collection<RestrictionImprint> qualifierRestrictions;
  private ModelImprint model;
 
@@ -246,4 +249,24 @@ public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSeria
   
   annotations.remove(a);
  }
+ 
+ public Collection<AttributeRuleImprint> getAttributeRules()
+ {
+  return attributeRestrictions;
+ }
+ 
+ public void addAttributeRule(AttributeRuleImprint rst)
+ {
+  if( attributeRestrictions == null )
+   attributeRestrictions = new ArrayList<AttributeRuleImprint>(10);
+  
+  attributeRestrictions.add(rst);
+ }
+
+ public void removeAttribiteRule(AttributeRuleImprint rule)
+ {
+  if( attributeRestrictions != null )
+   attributeRestrictions.remove(rule);
+ }
+
 }
