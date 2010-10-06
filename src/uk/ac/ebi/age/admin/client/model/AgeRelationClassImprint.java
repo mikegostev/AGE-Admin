@@ -6,7 +6,7 @@ import java.util.Collection;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class AgeRelationClassImprint implements AgeAbstractClassImprint, IsSerializable, Serializable
+public class AgeRelationClassImprint implements AttributedImprintClass, AgeAbstractClassImprint, IsSerializable, Serializable
 {
  private static final long serialVersionUID = 1L;
 
@@ -293,7 +293,12 @@ public class AgeRelationClassImprint implements AgeAbstractClassImprint, IsSeria
  {
   this.inverseRelation = inverseRelation;
  }
- 
+
+ public Collection<AttributeRuleImprint> getAttributeRules()
+ {
+  return attributeRestrictions;
+ }
+
  public void addAttributeRule(AttributeRuleImprint rst)
  {
   if( attributeRestrictions == null )
@@ -308,4 +313,5 @@ public class AgeRelationClassImprint implements AgeAbstractClassImprint, IsSeria
    attributeRestrictions.remove(rule);
  }
 
+ 
 }

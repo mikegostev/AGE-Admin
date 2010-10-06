@@ -1,6 +1,5 @@
 package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
-import java.util.Collection;
 import java.util.LinkedHashMap;
 
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
@@ -8,8 +7,6 @@ import uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint;
 import uk.ac.ebi.age.admin.client.model.AttributeRuleImprint;
 import uk.ac.ebi.age.admin.client.model.Cardinality;
 import uk.ac.ebi.age.admin.client.model.QualifierRuleImprint;
-import uk.ac.ebi.age.admin.client.model.QualifiersCondition;
-import uk.ac.ebi.age.admin.client.model.RestrictionType;
 import uk.ac.ebi.age.admin.client.ui.AttributeMetaClassDef;
 import uk.ac.ebi.age.admin.client.ui.ClassSelectedCallback;
 import uk.ac.ebi.age.admin.client.ui.QualifiersRecord;
@@ -32,13 +29,11 @@ import com.smartgwt.client.widgets.form.validator.IntegerRangeValidator;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
-import com.smartgwt.client.widgets.grid.events.CellClickEvent;
-import com.smartgwt.client.widgets.grid.events.CellClickHandler;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
-public class AttributeMNOTRulePanel extends AttributeRulePanel
+public class AttributeMNOTRulePanel2 extends AttributeRulePanel
 {
  private AttributeRuleImprint rule;
 
@@ -49,10 +44,9 @@ public class AttributeMNOTRulePanel extends AttributeRulePanel
  private RadioGroupItem rangeSelect;
  private TextItem cardVal;
  
- private RadioGroupItem qualCondition;
  private ListGrid qTbl;
  
- AttributeMNOTRulePanel( AttributeRuleImprint rl )
+ AttributeMNOTRulePanel2( AttributeRuleImprint rl )
  {
   setWidth100();
   setHeight100();
@@ -151,29 +145,14 @@ public class AttributeMNOTRulePanel extends AttributeRulePanel
   addMember(rangeForm);
   
 
-
   DynamicForm qualifiersForm = new DynamicForm();
   qualifiersForm.setGroupTitle("Qualifiers");
   qualifiersForm.setIsGroup(true);
-  qualifiersForm.setHeight(210);
-//  qualifiersForm.setNumCols(6);
+//  qualifiersForm.setPadding(1);
+//  qualifiersForm.setWidth100();
+  qualifiersForm.setHeight(200);
 
-  qualCondition = new RadioGroupItem();
-  qualCondition.setTitle("Qualifiers");
-  qualCondition.setVertical(false);
-  qualCondition.setWidth(1);
-  
-  valueMap = new LinkedHashMap<String, String>();
-  
-  valueMap.put(QualifiersCondition.ANY.name(),"regardless");
-  valueMap.put(QualifiersCondition.NONE.name(),"none");
-  valueMap.put(QualifiersCondition.SPECIFIED.name(),"selected");
-  
-  qualCondition.setValueMap(valueMap);
-
-  
   CanvasItem qTblItem = new CanvasItem();
-  qTblItem.setColSpan(2);
   
   VLayout qLay = new VLayout();
   qLay.setWidth("98%");
@@ -200,7 +179,7 @@ public class AttributeMNOTRulePanel extends AttributeRulePanel
      @Override
      public void classSelected(AgeAbstractClassImprint cls)
      {
-      qTbl.addData(new QualifiersRecord(RestrictionType.MAY, (AgeAttributeClassImprint)cls));
+      qTbl.addData(new QualifiersRecord(cls.getModel().generateId(), false, (AgeAttributeClassImprint)cls));
      }
     }).show();
 
@@ -210,7 +189,7 @@ public class AttributeMNOTRulePanel extends AttributeRulePanel
   qTools.addButton(chldBut);
   
   ToolStripButton sibBut = new ToolStripButton();
-  sibBut.setTitle("Remove qualifier");
+  sibBut.setTitle("Remode qualifier");
   sibBut.setIcon("../images/icons/qualifier/qdel.png");
   sibBut.addClickHandler( new ClickHandler()
   {
@@ -233,39 +212,25 @@ public class AttributeMNOTRulePanel extends AttributeRulePanel
   qTblItem.setShowTitle(false);
   
   qTbl.setWidth100();
-  qTbl.setHeight(150);
   qTbl.setShowHeader(false);
 
-  ListGridField typeIconField = new ListGridField("type", "Type", 40);
-  typeIconField.setAlign(Alignment.CENTER);
-  typeIconField.setType(ListGridFieldType.IMAGE);
-  typeIconField.setImageURLPrefix("../images/icons/qualifier/");
-  typeIconField.setImageURLSuffix(".png");
+  ListGridField idField = new ListGridField("id", "ID", 60);
+  idField.setType(ListGridFieldType.INTEGER);
+  idField.setAlign(Alignment.RIGHT);
+ 
+  ListGridField uniqField = new ListGridField("uniq", "Unique", 40);
+  uniqField.setType(ListGridFieldType.BOOLEAN);
+  uniqField.setAlign(Alignment.CENTER);
 
   ListGridField subclassNameField = new ListGridField("name", "Class");
 
-  qTbl.setFields(typeIconField, subclassNameField);
+  qTbl.setFields(idField, uniqField, subclassNameField);
 
-  qTbl.addCellClickHandler(new CellClickHandler()
-  {
-   @Override
-   public void onCellClick(CellClickEvent event)
-   {
-    if( event.getColNum() == 0 )
-    {
-     QualifiersRecord rec = (QualifiersRecord) event.getRecord();
-     
-     rec.toggleType();
-    
-     qTbl.refreshCell(event.getRowNum(), event.getColNum());
-    }
-   }
-  });
-  
-  qTblItem.setCanvas(qLay);
+ 
   qLay.addMember(qTbl);
+  qTblItem.setCanvas(qLay);
   
-  qualifiersForm.setItems(qualCondition,qTblItem);
+  qualifiersForm.setItems(qTblItem);
 
   addMember(qualifiersForm);
  
@@ -288,17 +253,12 @@ public class AttributeMNOTRulePanel extends AttributeRulePanel
   rangeSelect.setValue( rule.getCardinalityType().name() );
   cardVal.setValue(rule.getCardinality());
   
-  qualCondition.setValue(rule.getQualifiersCondition().name());
-  
-  if( rule.getQualifiersMap() != null )
+  if( rule.getQualifiers() != null )
   {
-   for( Collection<QualifierRuleImprint> qrc : rule.getQualifiersMap().values() )
-   {
-    if( qrc != null)
-     for(QualifierRuleImprint qr : qrc )
-      qTbl.addData( new QualifiersRecord(qr.getType(), qr.getAttributeClassImprint()) );
-   }
+   for(QualifierRuleImprint qr : rule.getQualifiers() )
+    qTbl.addData(new QualifiersRecord(qr.getId(), qr.isUnique(), qr.getAttributeClassImprint()));
   }
+
  }
 
  public boolean updateRule()
@@ -345,8 +305,6 @@ public class AttributeMNOTRulePanel extends AttributeRulePanel
   rule.setCardinality(card);
   rule.setAttributeClass(targetClass);
 
-  rule.setQualifiersCondition(QualifiersCondition.valueOf(qualCondition.getValue().toString()));
-  
   ListGridRecord[] recs = qTbl.getRecords();
 
   rule.clearQualifiers();
@@ -356,8 +314,11 @@ public class AttributeMNOTRulePanel extends AttributeRulePanel
    {
     QualifierRuleImprint qr = rule.getModel().createQualifierRuleImprint();
 
-    qr.setType(RestrictionType.MUST);
-    qr.setAttributeClassImprint((AgeAttributeClassImprint)((QualifiersRecord) r).getAgeAbstractClassImprint());
+    QualifiersRecord qRec = (QualifiersRecord) r;
+    
+    qr.setId(qRec.getId());
+    qr.setUnique(qRec.isUniq() );
+    qr.setAttributeClassImprint((AgeAttributeClassImprint)qRec.getAgeAbstractClassImprint());
 
     rule.addQualifier(qr);
    }

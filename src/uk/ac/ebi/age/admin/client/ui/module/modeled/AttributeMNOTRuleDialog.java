@@ -19,7 +19,7 @@ public class AttributeMNOTRuleDialog extends AttributeRuleDialog
 
  public AttributeRulePanel getRulePanel()
  {
-  return new AttributeMNOTRulePanel(getModel().createAttributeRuleImprint(RestrictionType.MUSTNOT));
+  return new AttributeMNOTRulePanel2(getModel().createAttributeRuleImprint(RestrictionType.MUSTNOT));
  }
  
  

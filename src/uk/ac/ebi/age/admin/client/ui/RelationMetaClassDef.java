@@ -6,6 +6,7 @@ import java.util.Collection;
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeRelationClassImprint;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
+import uk.ac.ebi.age.admin.client.ui.module.modeled.AttributeRuleAttachPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.XCommonsPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.XEditorPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.XSubclassesPanel;
@@ -37,6 +38,9 @@ public class RelationMetaClassDef extends MetaClassDef
   panels.add(pnl);
 
   pnl = new XSubclassesPanel(cls, editor);
+  panels.add(pnl);
+
+  pnl = new AttributeRuleAttachPanel( (AgeRelationClassImprint)cls, editor );
   panels.add(pnl);
 
 //  pnl = new AttributeAttachPanel( cls, editor );

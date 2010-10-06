@@ -1,6 +1,5 @@
 package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
-import java.util.Collection;
 import java.util.LinkedHashMap;
 
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
@@ -8,7 +7,6 @@ import uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint;
 import uk.ac.ebi.age.admin.client.model.AttributeRuleImprint;
 import uk.ac.ebi.age.admin.client.model.Cardinality;
 import uk.ac.ebi.age.admin.client.model.QualifierRuleImprint;
-import uk.ac.ebi.age.admin.client.model.RestrictionType;
 import uk.ac.ebi.age.admin.client.ui.AttributeMetaClassDef;
 import uk.ac.ebi.age.admin.client.ui.ClassSelectedCallback;
 import uk.ac.ebi.age.admin.client.ui.QualifiersRecord;
@@ -31,13 +29,11 @@ import com.smartgwt.client.widgets.form.validator.IntegerRangeValidator;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
-import com.smartgwt.client.widgets.grid.events.CellClickEvent;
-import com.smartgwt.client.widgets.grid.events.CellClickHandler;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
-public class AttributeMMRulePanel extends AttributeRulePanel
+public class AttributeMMRulePanel2 extends AttributeRulePanel
 {
  private AttributeRuleImprint rule;
  private AgeAttributeClassImprint targetClass;
@@ -47,9 +43,9 @@ public class AttributeMMRulePanel extends AttributeRulePanel
  private TextItem cardVal;
  private CheckboxItem subclCb;
  private CheckboxItem valUniq;
- private CheckboxItem qualUniq;
+// private CheckboxItem qualUniq;
  
- AttributeMMRulePanel( AttributeRuleImprint rl )
+ AttributeMMRulePanel2( AttributeRuleImprint rl )
  {
   setWidth100();
   setHeight100();
@@ -145,10 +141,7 @@ public class AttributeMMRulePanel extends AttributeRulePanel
   valUniq = new CheckboxItem("valuniq");
   valUniq.setTitle("Values must be unique");
   
-  qualUniq = new CheckboxItem("qualuniq");
-  qualUniq.setTitle("Qualifiers' value set must be unique");
- 
-  rangeForm.setItems(cardType,cardVal,valUniq,qualUniq);
+  rangeForm.setItems(cardType,cardVal,valUniq);
   
   addMember(rangeForm);
   
@@ -188,7 +181,7 @@ public class AttributeMMRulePanel extends AttributeRulePanel
      @Override
      public void classSelected(AgeAbstractClassImprint cls)
      {
-      qTbl.addData(new QualifiersRecord(RestrictionType.MAY, (AgeAttributeClassImprint)cls));
+      qTbl.addData(new QualifiersRecord(cls.getModel().generateId(), false, (AgeAttributeClassImprint)cls));
      }
     }).show();
 
@@ -223,32 +216,19 @@ public class AttributeMMRulePanel extends AttributeRulePanel
   qTbl.setWidth100();
   qTbl.setShowHeader(false);
 
-  ListGridField typeIconField = new ListGridField("type", "Type", 40);
-  typeIconField.setAlign(Alignment.CENTER);
-  typeIconField.setType(ListGridFieldType.IMAGE);
-  typeIconField.setImageURLPrefix("../images/icons/restriction/");
-  typeIconField.setImageURLSuffix(".png");
+  ListGridField idField = new ListGridField("id", "ID", 60);
+  idField.setType(ListGridFieldType.INTEGER);
+  idField.setAlign(Alignment.RIGHT);
+ 
+  ListGridField uniqField = new ListGridField("uniq", "Unique", 40);
+  uniqField.setType(ListGridFieldType.BOOLEAN);
+  uniqField.setAlign(Alignment.CENTER);
 
   ListGridField subclassNameField = new ListGridField("name", "Class");
 
-  qTbl.setFields(typeIconField, subclassNameField);
+  qTbl.setFields(idField, uniqField, subclassNameField);
 
-  qTbl.addCellClickHandler(new CellClickHandler()
-  {
-   @Override
-   public void onCellClick(CellClickEvent event)
-   {
-    if( event.getColNum() == 0 )
-    {
-     QualifiersRecord rec = (QualifiersRecord) event.getRecord();
-     
-     rec.toggleType();
-    
-     qTbl.refreshCell(event.getRowNum(), event.getColNum());
-    }
-   }
-  });
-  
+ 
   qLay.addMember(qTbl);
   qTblItem.setCanvas(qLay);
   
@@ -276,16 +256,11 @@ public class AttributeMMRulePanel extends AttributeRulePanel
   cardVal.setValue(rule.getCardinality());
   
   valUniq.setValue(rule.isValueUnique());
-  qualUniq.setValue(rule.isQualifiersUnique());
   
-  if( rule.getQualifiersMap() != null )
+  if( rule.getQualifiers() != null )
   {
-   for( Collection<QualifierRuleImprint> qrc : rule.getQualifiersMap().values() )
-   {
-    if( qrc != null)
-     for(QualifierRuleImprint qr : qrc )
-      qTbl.addData( new QualifiersRecord(qr.getType(), qr.getAttributeClassImprint()) );
-   }
+   for(QualifierRuleImprint qr : rule.getQualifiers() )
+    qTbl.addData(new QualifiersRecord(qr.getId(), qr.isUnique(), qr.getAttributeClassImprint()));
   }
  }
 
@@ -335,7 +310,6 @@ public class AttributeMMRulePanel extends AttributeRulePanel
   rule.setAttributeClass(targetClass);
 
   rule.setValueUnique(valUniq.getValueAsBoolean());
-  rule.setQualifiersUnique(qualUniq.getValueAsBoolean());
   
   ListGridRecord[] recs = qTbl.getRecords();
 
@@ -346,8 +320,11 @@ public class AttributeMMRulePanel extends AttributeRulePanel
    {
     QualifierRuleImprint qr = rule.getModel().createQualifierRuleImprint();
 
-    qr.setType(((QualifiersRecord) r).getType());
-    qr.setAttributeClassImprint((AgeAttributeClassImprint)((QualifiersRecord) r).getAgeAbstractClassImprint());
+    QualifiersRecord qRec = (QualifiersRecord) r;
+    
+    qr.setId(qRec.getId());
+    qr.setUnique(qRec.isUniq() );
+    qr.setAttributeClassImprint((AgeAttributeClassImprint)qRec.getAgeAbstractClassImprint());
 
     rule.addQualifier(qr);
    }

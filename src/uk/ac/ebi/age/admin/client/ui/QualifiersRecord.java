@@ -1,24 +1,24 @@
 package uk.ac.ebi.age.admin.client.ui;
 
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
-import uk.ac.ebi.age.admin.client.model.RestrictionType;
 
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 
 public class QualifiersRecord extends ListGridRecord
 {
  private AgeAbstractClassImprint cls;
- private RestrictionType rtype;
+ private int id;
  
- public QualifiersRecord( RestrictionType rt, AgeAbstractClassImprint ci )
+ public QualifiersRecord( int id, boolean uq, AgeAbstractClassImprint ci )
  {
   super();
   
-  rtype=rt;
+  this.id=id;
   cls=ci;
   
-  setAttribute("type", rt.name() );
+  setAttribute("id", id );
   setAttribute("name", ci.getName() );
+  setAttribute("uniq", uq );
  }
  
  public AgeAbstractClassImprint getAgeAbstractClassImprint()
@@ -26,27 +26,32 @@ public class QualifiersRecord extends ListGridRecord
   return cls;
  }
  
- public RestrictionType getType()
+ public int getId()
  {
-  return rtype;
+  return id;
  }
  
- public void toggleType()
+ public boolean isUniq()
  {
-  RestrictionType[] vals = RestrictionType.values();
-  
-  for(int i=0; i < vals.length; i++ )
-  {
-   if( vals[i] == rtype )
-   {
-    if( i == (vals.length-1) )
-     rtype=vals[0];
-    else
-     rtype = vals[i+1];
-    
-    setAttribute("type", rtype.name() );
-    return;
-   }
-  }
+  return getAttributeAsBoolean("uniq");
  }
+ 
+// public void toggleType()
+// {
+//  RestrictionType[] vals = RestrictionType.values();
+//  
+//  for(int i=0; i < vals.length; i++ )
+//  {
+//   if( vals[i] == rtype )
+//   {
+//    if( i == (vals.length-1) )
+//     rtype=vals[0];
+//    else
+//     rtype = vals[i+1];
+//    
+//    setAttribute("type", rtype.name() );
+//    return;
+//   }
+//  }
+// }
 }

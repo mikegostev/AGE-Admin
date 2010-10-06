@@ -8,6 +8,7 @@ import uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint;
 import uk.ac.ebi.age.admin.client.model.AttributeType;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.AttributeCommonsPanel;
+import uk.ac.ebi.age.admin.client.ui.module.modeled.AttributeRuleAttachPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.XEditorPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.XSubclassesPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.XSuperclassesPanel;
@@ -38,6 +39,9 @@ public class AttributeMetaClassDef extends MetaClassDef
   panels.add(pnl);
 
   pnl = new XSubclassesPanel(cls, editor);
+  panels.add(pnl);
+
+  pnl = new AttributeRuleAttachPanel( (AgeAttributeClassImprint)cls, editor );
   panels.add(pnl);
 
 //  pnl = new AttributeAttachPanel( cls, editor );

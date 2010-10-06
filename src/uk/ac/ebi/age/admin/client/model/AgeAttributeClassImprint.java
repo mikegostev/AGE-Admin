@@ -6,7 +6,7 @@ import java.util.Collection;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class AgeAttributeClassImprint implements AgeAbstractClassImprint,IsSerializable, Serializable
+public class AgeAttributeClassImprint implements AttributedImprintClass, AgeAbstractClassImprint, IsSerializable, Serializable
 {
 
  private static final long serialVersionUID = 1L;

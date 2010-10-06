@@ -12,10 +12,10 @@ import uk.ac.ebi.age.admin.client.model.AgeRelationClassImprint;
 import uk.ac.ebi.age.admin.client.model.Annotated;
 import uk.ac.ebi.age.admin.client.model.AttributeRuleImprint;
 import uk.ac.ebi.age.admin.client.model.AttributeType;
+import uk.ac.ebi.age.admin.client.model.AttributedImprintClass;
 import uk.ac.ebi.age.admin.client.model.Cardinality;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.QualifierRuleImprint;
-import uk.ac.ebi.age.admin.client.model.QualifiersCondition;
 import uk.ac.ebi.age.admin.client.model.RelationRuleImprint;
 import uk.ac.ebi.age.admin.client.model.RestrictionType;
 import uk.ac.ebi.age.mng.SemanticManager;
@@ -26,6 +26,7 @@ import uk.ac.ebi.age.model.AgeAttributeClass;
 import uk.ac.ebi.age.model.AgeClass;
 import uk.ac.ebi.age.model.AgeRelationClass;
 import uk.ac.ebi.age.model.AttributeAttachmentRule;
+import uk.ac.ebi.age.model.AttributedClass;
 import uk.ac.ebi.age.model.DataType;
 import uk.ac.ebi.age.model.QualifierRule;
 import uk.ac.ebi.age.model.RelationRule;
@@ -273,8 +274,11 @@ public class Age2ImprintConverter
     }
    }
    
+   if( me.getKey() instanceof AttributedImprintClass )
+    transferAttributeRulesI2M((AttributedImprintClass) me.getKey(), (AgeClassWritable)me.getValue(), state);
+   
    if( me.getKey() instanceof AgeClassImprint )
-    transferRestrictionsI2M((AgeClassImprint) me.getKey(), (AgeClassWritable)me.getValue(), state);
+    transferRelationRulesI2M((AgeClassImprint) me.getKey(), (AgeClassWritable)me.getValue(), state);
    else if( me.getKey() instanceof AgeRelationClassImprint )
    {
     AgeRelationClassImprint arc  = (AgeRelationClassImprint)me.getKey();
@@ -301,7 +305,43 @@ public class Age2ImprintConverter
   return state.model;
  }
  
- private static void transferRestrictionsI2M(AgeClassImprint impr, AgeClassWritable cls, StateI2A state)
+ private static void transferAttributeRulesI2M(AttributedImprintClass impr, AgeClassWritable cls, StateI2A state)
+ {
+  if(impr.getAttributeRules() != null)
+  {
+   for(AttributeRuleImprint atrl : impr.getAttributeRules())
+   {
+    AttributeAttachmentRuleWritable atatRule = state.model.createAttributeAttachmentRule( convertRestrictionTypeI2M( atrl.getType() ) );
+
+    atatRule.setRuleId( atrl.getId() );
+    atatRule.setAttributeClass((AgeAttributeClass) state.classMap.get(atrl.getAttributeClass()));
+    atatRule.setCardinality(atrl.getCardinality());
+    atatRule.setCardinalityType( convertCardinalityI2M( atrl.getCardinalityType() ) );
+    atatRule.setSubclassesIncluded(atrl.isSubclassesIncluded());
+    atatRule.setType( convertRestrictionTypeI2M( atrl.getType() ) );
+    atatRule.setValueUnique(atrl.isValueUnique());
+
+    if(atrl.getQualifiers() != null)
+    {
+     for(QualifierRuleImprint crimp : atrl.getQualifiers())
+     {
+      QualifierRuleWritable qrul = state.model.createQualifierRule();
+
+      qrul.setRuleId(crimp.getId());
+      qrul.setUnique(crimp.isUnique());
+      qrul.setAttributeClass((AgeAttributeClass) state.classMap.get(crimp.getAttributeClassImprint()));
+
+      atatRule.addQualifier(qrul);
+     }
+    }
+   
+    cls.addAttributeAttachmentRule(atatRule);
+   }
+  }
+ }
+
+ 
+ private static void transferRelationRulesI2M(AgeClassImprint impr, AgeClassWritable cls, StateI2A state)
  {
   if(impr.getRelationRules() != null)
   {
@@ -309,30 +349,26 @@ public class Age2ImprintConverter
    {
     RelationRuleWritable mrr = state.model.createRelationRule( convertRestrictionTypeI2M(rri.getType()) );
     
-    
+    mrr.setRuleId(rri.getId());
     mrr.setCardinality(rri.getCardinality());
     mrr.setCardinalityType(convertCardinalityI2M(rri.getCardinalityType()));
-    mrr.setQualifiersUnique(rri.isQualifiersUnique());
     mrr.setRelationSubclassesIncluded(rri.isRelationSubclassesIncluded());
     mrr.setType( convertRestrictionTypeI2M( rri.getType() ) );
     mrr.setSubclassesIncluded(rri.isSubclassesIncluded());
-    mrr.setQualifiersCondition( convertQualifiersConditionI2M( rri.getQualifiersCondition() ) );
     mrr.setRelationClass((AgeRelationClass) state.classMap.get(rri.getRelationClass()));
     mrr.setTargetClass((AgeClass) state.classMap.get(rri.getTargetClass()));
 
-    if(rri.getQualifiersMap() != null)
+    if(rri.getQualifiers() != null)
     {
-     for( Collection<QualifierRuleImprint> qColl : rri.getQualifiersMap().values() )
+     for(QualifierRuleImprint crimp : rri.getQualifiers())
      {
-      for(QualifierRuleImprint clrl : qColl)
-      {
-       QualifierRuleWritable qrul = state.model.createQualifierRule();
+      QualifierRuleWritable qrul = state.model.createQualifierRule();
 
-       qrul.setType(convertRestrictionTypeI2M(clrl.getType()));
-       qrul.setAttributeClass((AgeAttributeClass) state.classMap.get(clrl.getAttributeClassImprint()));
+      qrul.setRuleId(crimp.getId());
+      qrul.setUnique(crimp.isUnique());
+      qrul.setAttributeClass((AgeAttributeClass) state.classMap.get(crimp.getAttributeClassImprint()));
 
-       mrr.addQualifier(qrul);
-      }
+      mrr.addQualifier(qrul);
      }
     }
 
@@ -340,40 +376,7 @@ public class Age2ImprintConverter
    }
   }
 
-  if(impr.getAttributeRules() != null)
-  {
-   for(AttributeRuleImprint atrl : impr.getAttributeRules())
-   {
-    AttributeAttachmentRuleWritable atatRule = state.model.createAttributeAttachmentRule( convertRestrictionTypeI2M( atrl.getType() ) );
 
-    atatRule.setAttributeClass((AgeAttributeClass) state.classMap.get(atrl.getAttributeClass()));
-    atatRule.setCardinality(atrl.getCardinality());
-    atatRule.setCardinalityType( convertCardinalityI2M( atrl.getCardinalityType() ) );
-    atatRule.setQualifiersCondition( convertQualifiersConditionI2M( atrl.getQualifiersCondition() ) );
-    atatRule.setQualifiersUnique(atrl.isQualifiersUnique());
-    atatRule.setSubclassesIncluded(atrl.isSubclassesIncluded());
-    atatRule.setType( convertRestrictionTypeI2M( atrl.getType() ) );
-    atatRule.setValueUnique(atrl.isValueUnique());
-
-    if(atrl.getQualifiersMap() != null)
-    {
-     for( Collection<QualifierRuleImprint> qColl : atrl.getQualifiersMap().values() )
-     {
-      for(QualifierRuleImprint crimp : qColl)
-      {
-       QualifierRuleWritable qrul = state.model.createQualifierRule();
-
-       qrul.setType(convertRestrictionTypeI2M(crimp.getType()));
-       qrul.setAttributeClass((AgeAttributeClass) state.classMap.get(crimp.getAttributeClassImprint()));
-
-       atatRule.addQualifier(qrul);
-      }
-     }
-    }
-   
-    cls.addAttributeAttachmentRule(atatRule);
-   }
-  }
  }
 
  public static ModelImprint convertModelToImprint( SemanticModel sm )
@@ -565,8 +568,12 @@ public class Age2ImprintConverter
     }
    }
    
+   if( me.getKey() instanceof AttributedClass )
+    transferAttributeRulesM2I((AttributedClass) me.getKey(), (AgeClassImprint)me.getValue(), state);
+
+   
    if( me.getKey() instanceof AgeClass )
-    transferRestrictionsM2I((AgeClass) me.getKey(), (AgeClassImprint)me.getValue(), state);
+    transferRelationRulesM2I((AgeClass) me.getKey(), (AgeClassImprint)me.getValue(), state);
    else if( me.getKey() instanceof AgeRelationClass )
    {
     AgeRelationClass arc  = (AgeRelationClass)me.getKey();
@@ -597,8 +604,43 @@ public class Age2ImprintConverter
   return state.modelImprint;
  }
 
+ private static void transferAttributeRulesM2I(AttributedClass acls, AgeClassImprint cImp, StateA2I state)
+ {
+  if(acls.getAttributeAttachmentRules() != null)
+  {
+   for(AttributeAttachmentRule atatrl : acls.getAttributeAttachmentRules())
+   {
+    AttributeRuleImprint arimp = state.modelImprint.createAttributeRuleImprint(convertRestrictionTypeM2I(atatrl.getRestrictionType()));
+
+    arimp.setId(atatrl.getRuleId());
+    arimp.setAttributeClass((AgeAttributeClassImprint) state.classMap.get(atatrl.getAttributeClass()));
+    arimp.setCardinality(atatrl.getCardinality());
+    arimp.setCardinalityType(convertCardinalityM2I(atatrl.getCardinalityType()));
+    arimp.setSubclassesIncluded(atatrl.isSubclassesIncluded());
+    arimp.setType(convertRestrictionTypeM2I(atatrl.getType()));
+    arimp.setValueUnique(atatrl.isValueUnique());
+
+    
+    if(atatrl.getQualifiers() != null)
+    {
+     for(QualifierRule cr : atatrl.getQualifiers())
+     {
+      QualifierRuleImprint qrimp = state.modelImprint.createQualifierRuleImprint();
+
+      qrimp.setId(cr.getRuleId());
+      qrimp.setUnique(cr.isUnique());
+      qrimp.setAttributeClassImprint((AgeAttributeClassImprint) state.classMap.get(cr.getAttributeClass()));
+      
+      arimp.addQualifier(qrimp);
+     }
+    }
+
+    cImp.addAttributeRule(arimp);
+   }
+  }
+ }
  
- private static void transferRestrictionsM2I(AgeClass acls, AgeClassImprint cImp, StateA2I state)
+ private static void transferRelationRulesM2I(AgeClass acls, AgeClassImprint cImp, StateA2I state)
  {
   if( acls.getRelationRules() != null )
   {
@@ -606,24 +648,24 @@ public class Age2ImprintConverter
    {
     RelationRuleImprint rrimp = state.modelImprint.createRelationRuleImprint( convertRestrictionTypeM2I( rr.getRestrictionType() ) );
     
+    rrimp.setId(rr.getRuleId());
     rrimp.setCardinality( rr.getCardinality() );
     rrimp.setCardinalityType( convertCardinalityM2I( rr.getCardinalityType() ) );
-    rrimp.setQualifiersUnique( rr.isQualifiersUnique() );
     rrimp.setRelationSubclassesIncluded( rr.isRelationSubclassesIncluded() );
     rrimp.setType( convertRestrictionTypeM2I( rr.getType() ) );
     rrimp.setSubclassesIncluded(rr.isSubclassesIncluded());
-    rrimp.setQualifiersCondition( convertQualifiersConditionM2I( rr.getQualifiersCondition() ) );
     rrimp.setRelationClass((AgeRelationClassImprint)state.classMap.get(rr.getRelationClass()));
     rrimp.setTargetClass((AgeClassImprint)state.classMap.get(rr.getTargetClass()));
     
-    if( rr.getQualifiers() != null )
+    if(rr.getQualifiers() != null)
     {
-     for( QualifierRule clrl : rr.getQualifiers() )
+     for(QualifierRule cr : rr.getQualifiers())
      {
       QualifierRuleImprint qrimp = state.modelImprint.createQualifierRuleImprint();
-      
-      qrimp.setType( convertRestrictionTypeM2I( clrl.getType() ) );
-      qrimp.setAttributeClassImprint((AgeAttributeClassImprint)state.classMap.get(clrl.getAttributeClass()));
+
+      qrimp.setId(cr.getRuleId());
+      qrimp.setUnique(cr.isUnique());
+      qrimp.setAttributeClassImprint((AgeAttributeClassImprint) state.classMap.get(cr.getAttributeClass()));
       
       rrimp.addQualifier(qrimp);
      }
@@ -632,37 +674,7 @@ public class Age2ImprintConverter
     cImp.addRelationRule(rrimp);
    }
   }
-  
-  if( acls.getAttributeAttachmentRules() != null )
-  {
-   for( AttributeAttachmentRule atatrl : acls.getAttributeAttachmentRules() )
-   {
-    AttributeRuleImprint arimp = state.modelImprint.createAttributeRuleImprint( convertRestrictionTypeM2I( atatrl.getRestrictionType() ) );
-    
-    arimp.setAttributeClass((AgeAttributeClassImprint)state.classMap.get(atatrl.getAttributeClass()));
-    arimp.setCardinality( atatrl.getCardinality() );
-    arimp.setCardinalityType( convertCardinalityM2I( atatrl.getCardinalityType() ) );
-    arimp.setQualifiersCondition( convertQualifiersConditionM2I( atatrl.getQualifiersCondition() ) );
-    arimp.setQualifiersUnique( atatrl.isQualifiersUnique() );
-    arimp.setSubclassesIncluded( atatrl.isSubclassesIncluded() );
-    arimp.setType( convertRestrictionTypeM2I( atatrl.getType() ) );
-    arimp.setValueUnique( atatrl.isValueUnique() );
 
-    if( atatrl.getQualifiers() != null )
-    {
-     for( QualifierRule clrl : atatrl.getQualifiers() )
-     {
-      QualifierRuleImprint qrimp = state.modelImprint.createQualifierRuleImprint();
-      
-      qrimp.setType( convertRestrictionTypeM2I( clrl.getType() ) );
-      qrimp.setAttributeClassImprint((AgeAttributeClassImprint)state.classMap.get(clrl.getAttributeClass()));
-      
-      arimp.addQualifier(qrimp);
-     }
-    }
-    cImp.addAttributeRule(arimp);
-   }
-  }
   
  }
 
@@ -890,14 +902,14 @@ public class Age2ImprintConverter
   return uk.ac.ebi.age.model.RestrictionType.valueOf(card.name());
  }
 
- private static QualifiersCondition convertQualifiersConditionM2I( uk.ac.ebi.age.model.QualifiersCondition card )
- {
-  return QualifiersCondition.valueOf(card.name());
- }
-
- private static uk.ac.ebi.age.model.QualifiersCondition convertQualifiersConditionI2M( QualifiersCondition card )
- {
-  return uk.ac.ebi.age.model.QualifiersCondition.valueOf(card.name());
- }
+// private static QualifiersCondition convertQualifiersConditionM2I( uk.ac.ebi.age.model.QualifiersCondition card )
+// {
+//  return QualifiersCondition.valueOf(card.name());
+// }
+//
+// private static uk.ac.ebi.age.model.QualifiersCondition convertQualifiersConditionI2M( QualifiersCondition card )
+// {
+//  return uk.ac.ebi.age.model.QualifiersCondition.valueOf(card.name());
+// }
 
 }

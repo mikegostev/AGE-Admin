@@ -17,7 +17,7 @@ public class AttributeMMRuleDialog extends AttributeRuleDialog
 
  public AttributeRulePanel getRulePanel()
  {
-  return new AttributeMMRulePanel(getModel().createAttributeRuleImprint(RestrictionType.MAY));
+  return new AttributeMMRulePanel2(getModel().createAttributeRuleImprint(RestrictionType.MAY));
  }
  
  

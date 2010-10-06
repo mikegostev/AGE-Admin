@@ -1,7 +1,7 @@
 package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
-import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
 import uk.ac.ebi.age.admin.client.model.AttributeRuleImprint;
+import uk.ac.ebi.age.admin.client.model.AttributedImprintClass;
 import uk.ac.ebi.age.admin.client.model.RestrictionType;
 import uk.ac.ebi.age.admin.client.ui.SelectedAttrubuteRule;
 
@@ -20,7 +20,7 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 public class AttributeRuleAttachPanel extends VLayout
 {
 
- public AttributeRuleAttachPanel( final AgeClassImprint cls, final XEditorPanel editor)
+ public AttributeRuleAttachPanel( final AttributedImprintClass cls, final XEditorPanel editor)
  {
   setTitle("Attributes");
   
