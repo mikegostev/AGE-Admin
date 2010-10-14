@@ -7,10 +7,10 @@ import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeRelationClassImprint;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.AttributeRuleAttachPanel;
+import uk.ac.ebi.age.admin.client.ui.module.modeled.RangeDomainPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.XCommonsPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.XEditorPanel;
-import uk.ac.ebi.age.admin.client.ui.module.modeled.XSubclassesPanel;
-import uk.ac.ebi.age.admin.client.ui.module.modeled.XSuperclassesPanel;
+import uk.ac.ebi.age.admin.client.ui.module.modeled.XHierarchyPanel;
 
 import com.smartgwt.client.widgets.Canvas;
 
@@ -34,10 +34,16 @@ public class RelationMetaClassDef extends MetaClassDef
   Canvas pnl = new XCommonsPanel((AgeRelationClassImprint)cls, editor);
   panels.add(pnl);
 
-  pnl = new XSuperclassesPanel(cls, editor);
+//  pnl = new XSuperclassesPanel(cls, editor);
+//  panels.add(pnl);
+//
+//  pnl = new XSubclassesPanel(cls, editor);
+//  panels.add(pnl);
+  
+  pnl = new XHierarchyPanel(cls, editor);
   panels.add(pnl);
-
-  pnl = new XSubclassesPanel(cls, editor);
+ 
+  pnl = new RangeDomainPanel((AgeRelationClassImprint)cls, editor);
   panels.add(pnl);
 
   pnl = new AttributeRuleAttachPanel( (AgeRelationClassImprint)cls, editor );

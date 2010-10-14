@@ -7,11 +7,9 @@ import java.io.PrintWriter;
 
 import uk.ac.ebi.age.admin.server.service.UploadRequest;
 import uk.ac.ebi.age.admin.server.user.Session;
-import uk.ac.ebi.age.mng.SemanticManager;
+import uk.ac.ebi.age.log.impl.BufferLogger;
+import uk.ac.ebi.age.mng.SubmissionManager;
 import uk.ac.ebi.age.model.writable.SubmissionWritable;
-import uk.ac.ebi.age.parser.AgeTabSemanticValidator;
-import uk.ac.ebi.age.parser.AgeTabSubmission;
-import uk.ac.ebi.age.parser.AgeTabSyntaxParser;
 import uk.ac.ebi.age.storage.AgeStorageAdm;
 
 import com.pri.util.stream.StreamPump;
@@ -56,14 +54,23 @@ public class SubmissionUploader implements UploadCommandListener
    }
    text = new String(bais.toByteArray());
 
-   AgeTabSubmission sbm = AgeTabSyntaxParser.getInstance().parse(text);
-   
-   SubmissionWritable submission = AgeTabSemanticValidator.getInstance().parse(sbm,
-     SemanticManager.getInstance().getContextModel(sess.getUserProfile()));
+//   AgeTabSubmission sbm = AgeTabSyntaxParser.getInstance().parse(text);
+//   
+//   SubmissionWritable submission = AgeTabSemanticValidator.getInstance().parse(sbm,
+//     SemanticManager.getInstance().getContextModel(sess.getUserProfile()));
 
-   storAdm.storeSubmission(submission);
+   BufferLogger log = new BufferLogger();
    
-   out.println("OK");
+   SubmissionWritable submission = SubmissionManager.getInstance().prepareSubmission(text, sess.getUserProfile(), log.getRootNode());
+   
+   if( submission != null )
+   {
+    storAdm.storeSubmission(submission);
+   
+    out.println("OK");
+   }
+   else
+    out.println("ERROR");
   }
   catch(Exception e)
   {

@@ -8,8 +8,7 @@ import uk.ac.ebi.age.admin.client.model.AgeAnnotationClassImprint;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.AnnotationCommonsPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.XEditorPanel;
-import uk.ac.ebi.age.admin.client.ui.module.modeled.XSubclassesPanel;
-import uk.ac.ebi.age.admin.client.ui.module.modeled.XSuperclassesPanel;
+import uk.ac.ebi.age.admin.client.ui.module.modeled.XHierarchyPanel;
 
 import com.smartgwt.client.widgets.Canvas;
 
@@ -33,12 +32,16 @@ public class AnnotationMetaClassDef extends MetaClassDef
   Canvas pnl = new AnnotationCommonsPanel((AgeAnnotationClassImprint)cls, editor);
   panels.add(pnl);
 
-  pnl = new XSuperclassesPanel(cls, editor);
+//  pnl = new XSuperclassesPanel(cls, editor);
+//  panels.add(pnl);
+//
+//  pnl = new XSubclassesPanel(cls, editor);
+//  panels.add(pnl);
+
+  pnl = new XHierarchyPanel(cls, editor);
   panels.add(pnl);
 
-  pnl = new XSubclassesPanel(cls, editor);
-  panels.add(pnl);
-
+  
 //  pnl = new AttributeAttachPanel( cls, editor );
 //  panels.add(pnl);
 

@@ -8,5 +8,6 @@ public enum AttributeType
  INTEGER,
  REAL,
  URI, 
- TEXT
+ TEXT, 
+ OBJECT
 }

@@ -114,12 +114,12 @@ public class AttributeRuleImprint implements IsSerializable, Serializable
 //   sb.append(" that have ").append(cardType.name());
    
    if( cardType == Cardinality.ANY)
-    sb.append(" that may have any number of values ");
+    sb.append(" that may have any number of values");
    else
-    sb.append(" that must have ").append(cardType.getTitle()).append(" ").append(cardinality).append(" value").append(cardinality>1?"s ":" ");
+    sb.append(" that must have ").append(cardType.getTitle()).append(" ").append(cardinality).append(" value").append(cardinality>1?"s":"");
    
    if( ( ! singleAttr ) && valueUnique )
-    sb.append("(all values must be unique) ");
+    sb.append("(all values must be unique)");
    
   }
   else
@@ -149,25 +149,38 @@ public class AttributeRuleImprint implements IsSerializable, Serializable
 
   }
   
-  sb.append('.');
   
 
   if( qualifiers != null && qualifiers.size() > 0 )
   {
+   sb.append('.');
  
-   sb.append(" Rule is applied only if attribute");
-   if( !singleAttr )
-    sb.append("s have");
+   if( type != RestrictionType.MUST )
+   {
+    sb.append(" This rule is applicable to only attributes value");
+    if( !singleAttr )
+     sb.append("s of witch are");
+    else
+     sb.append(" of witch is");
+    
+    sb.append(" qualified by attribute of class");
+   }
    else
-    sb.append(" has");
-   
-   sb.append(" qualifier(s) of class");
-   
+   {
+    sb.append(" Value");
+    if( !singleAttr )
+     sb.append("s ");
+    else
+     sb.append(" ");
+    
+    sb.append("must be qualified by attribute of class");
+   }
+
    if( qualifiers.size() > 1 )
-    sb.append("es");
-    
+    sb.append("es ");
+   
    sb.append(" ");
-    
+  
    for( QualifierRuleImprint qr : qualifiers )
    {
     sb.append("<b>").append(qr.getAttributeClassImprint().getName()).append("</b>");

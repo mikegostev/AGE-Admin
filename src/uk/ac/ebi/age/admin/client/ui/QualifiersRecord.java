@@ -35,6 +35,11 @@ public class QualifiersRecord extends ListGridRecord
  {
   return getAttributeAsBoolean("uniq");
  }
+
+ public void toggleUnique( )
+ {
+  setAttribute("uniq", ! getAttributeAsBoolean("uniq") );
+ }
  
 // public void toggleType()
 // {

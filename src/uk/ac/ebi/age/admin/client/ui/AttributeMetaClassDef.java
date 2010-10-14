@@ -10,8 +10,7 @@ import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.AttributeCommonsPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.AttributeRuleAttachPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.XEditorPanel;
-import uk.ac.ebi.age.admin.client.ui.module.modeled.XSubclassesPanel;
-import uk.ac.ebi.age.admin.client.ui.module.modeled.XSuperclassesPanel;
+import uk.ac.ebi.age.admin.client.ui.module.modeled.XHierarchyPanel;
 
 import com.smartgwt.client.widgets.Canvas;
 
@@ -35,10 +34,13 @@ public class AttributeMetaClassDef extends MetaClassDef
   Canvas pnl = new AttributeCommonsPanel((AgeAttributeClassImprint)cls, editor);
   panels.add(pnl);
 
-  pnl = new XSuperclassesPanel(cls, editor);
-  panels.add(pnl);
+//  pnl = new XSuperclassesPanel(cls, editor);
+//  panels.add(pnl);
+//
+//  pnl = new XSubclassesPanel(cls, editor);
+//  panels.add(pnl);
 
-  pnl = new XSubclassesPanel(cls, editor);
+  pnl = new XHierarchyPanel(cls, editor);
   panels.add(pnl);
 
   pnl = new AttributeRuleAttachPanel( (AgeAttributeClassImprint)cls, editor );

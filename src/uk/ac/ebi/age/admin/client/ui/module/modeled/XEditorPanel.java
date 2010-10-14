@@ -2,6 +2,7 @@ package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
+import uk.ac.ebi.age.admin.client.ui.ClassSelectedAdapter;
 import uk.ac.ebi.age.admin.client.ui.ClassSelectedCallback;
 import uk.ac.ebi.age.admin.client.ui.ImprintTreeNode;
 import uk.ac.ebi.age.admin.client.ui.MetaClassDef;
@@ -282,7 +283,7 @@ public class XEditorPanel extends HLayout
  
  public void addSubclass( final AgeAbstractClassImprint superClass, final ClassSelectedCallback extCB )
  {
-  new XSelectDialog<AgeAbstractClassImprint>(metaDef.getRoot(model), metaDef, new ClassSelectedCallback()
+  new XSelectDialog<AgeAbstractClassImprint>(metaDef.getRoot(model), metaDef, new ClassSelectedAdapter()
   {
    @Override
    public void classSelected(AgeAbstractClassImprint cls)
@@ -306,7 +307,7 @@ public class XEditorPanel extends HLayout
 
  public void addSuperclass( final AgeAbstractClassImprint subClass, final ClassSelectedCallback extCB  )
  {
-  new XSelectDialog<AgeAbstractClassImprint>(metaDef.getRoot(model), metaDef, new ClassSelectedCallback()
+  new XSelectDialog<AgeAbstractClassImprint>(metaDef.getRoot(model), metaDef, new ClassSelectedAdapter()
   {
    @Override
    public void classSelected(AgeAbstractClassImprint cls)

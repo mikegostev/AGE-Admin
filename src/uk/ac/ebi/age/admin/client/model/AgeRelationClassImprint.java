@@ -14,6 +14,9 @@ public class AgeRelationClassImprint implements AttributedImprintClass, AgeAbstr
  private String id;
  private Collection<AgeRelationClassImprint> children;
  private Collection<AgeRelationClassImprint> parents;
+
+ private Collection<AgeClassImprint> range;
+ private Collection<AgeClassImprint> domain;
  
 // private Collection<RestrictionImprint> qualifierRestrictions;
  private ModelImprint model;
@@ -313,5 +316,43 @@ public class AgeRelationClassImprint implements AttributedImprintClass, AgeAbstr
    attributeRestrictions.remove(rule);
  }
 
+ public Collection<AgeClassImprint> getRange()
+ {
+  return range;
+ }
  
+ public Collection<AgeClassImprint> getDomain()
+ {
+  return domain;
+ }
+
+ 
+ public void addRangeClass(AgeClassImprint simp)
+ {
+  if( range == null )
+   range = new ArrayList<AgeClassImprint>(10);
+  
+  range.add(simp);
+ }
+
+ public void addDomainClass(AgeClassImprint simp)
+ {
+  if( domain == null )
+   domain = new ArrayList<AgeClassImprint>(10);
+  
+  domain.add(simp);
+ }
+
+ public void removeRangeClass( AgeClassImprint simp )
+ {
+  if( range != null )
+   range.remove(simp);
+ }
+ 
+ public void removeDomainClass( AgeClassImprint simp )
+ {
+  if( domain != null )
+   domain.remove(simp);
+ }
+
 }

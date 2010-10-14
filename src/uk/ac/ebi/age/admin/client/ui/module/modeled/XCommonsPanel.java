@@ -33,7 +33,6 @@ public class XCommonsPanel extends HLayout
 
   nameField.addKeyPressHandler(new KeyPressHandler()
   {
-
    @Override
    public void onKeyPress(KeyPressEvent event)
    {
@@ -45,7 +44,6 @@ public class XCommonsPanel extends HLayout
 
   nameField.addBlurHandler(new BlurHandler()
   {
-
    @Override
    public void onBlur(BlurEvent event)
    {

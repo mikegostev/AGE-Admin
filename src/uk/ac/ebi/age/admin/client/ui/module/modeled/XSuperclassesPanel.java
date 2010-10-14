@@ -1,9 +1,10 @@
 package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
-import uk.ac.ebi.age.admin.client.ui.ClassSelectedCallback;
+import uk.ac.ebi.age.admin.client.ui.ClassSelectedAdapter;
 
 import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -21,6 +22,12 @@ public class XSuperclassesPanel extends VLayout
   ToolStrip superTS = new ToolStrip();
   superTS.setWidth100();
 
+  Label lbl = new Label("Superclasses");
+  lbl.setMargin(5);
+  superTS.addMember( lbl );
+  superTS.addFill();
+
+  
   final RelativesListPanel superClsList = new RelativesListPanel(editor.getMetaClassDef().getMetaClassName(), cls.getParents());
 
   ToolStripButton btadd = new ToolStripButton();
@@ -30,7 +37,7 @@ public class XSuperclassesPanel extends VLayout
    @Override
    public void onClick(ClickEvent event)
    {
-    editor.addSuperclass(cls, new ClassSelectedCallback()
+    editor.addSuperclass(cls, new ClassSelectedAdapter()
     {
      @Override
      public void classSelected(AgeAbstractClassImprint cls)

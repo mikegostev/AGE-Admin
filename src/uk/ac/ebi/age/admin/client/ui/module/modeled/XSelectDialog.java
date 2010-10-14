@@ -71,6 +71,7 @@ public class XSelectDialog<T extends AgeAbstractClassImprint> extends Window
    public void onClick(ClickEvent event)
    {
     destroy();
+    cb.selectionCanceled();
    }
   });
   btnPanel.addMember(button);

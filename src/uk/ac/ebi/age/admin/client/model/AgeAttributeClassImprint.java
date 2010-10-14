@@ -28,6 +28,8 @@ public class AgeAttributeClassImprint implements AttributedImprintClass, AgeAbst
 
  private AttributeType type;
  
+ private AgeClassImprint targetClass;
+ 
  private transient Object auxData;
  
  
@@ -267,6 +269,16 @@ public class AgeAttributeClassImprint implements AttributedImprintClass, AgeAbst
  {
   if( attributeRestrictions != null )
    attributeRestrictions.remove(rule);
+ }
+
+ public void setTargetClass(AgeClassImprint tCls )
+ {
+  targetClass = tCls;
+ }
+ 
+ public AgeClassImprint getTargetClass()
+ {
+  return targetClass;
  }
 
 }

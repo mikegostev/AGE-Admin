@@ -37,6 +37,10 @@ public class AttributeRuleAttachPanel extends VLayout
   ruleList.setBodyOverflow(Overflow.VISIBLE);
   ruleList.setOverflow(Overflow.VISIBLE);
 
+  ListGridField idField = new ListGridField("id", "ID", 60);
+  idField.setType(ListGridFieldType.INTEGER);
+  idField.setAlign(Alignment.RIGHT);
+
   
   ListGridField typeIconField = new ListGridField("type", "Type", 40);
   typeIconField.setAlign(Alignment.CENTER);
@@ -46,7 +50,7 @@ public class AttributeRuleAttachPanel extends VLayout
 
   ListGridField ruleField = new ListGridField("name", "Rule");
 
-  ruleList.setFields(typeIconField, ruleField);
+  ruleList.setFields(idField, typeIconField, ruleField);
 
   ToolStripButton btaddMay = new ToolStripButton();
   btaddMay.setIcon("../images/icons/attribute/attach.png");
@@ -56,7 +60,11 @@ public class AttributeRuleAttachPanel extends VLayout
    @Override
    public void onClick(ClickEvent event)
    {
-    AttributeMMRuleDialog.show(cls.getModel().createAttributeRuleImprint(RestrictionType.MAY), cls.getModel(), new SelectedAttrubuteRule(){
+    AttributeRuleImprint rule = cls.getModel().createAttributeRuleImprint(RestrictionType.MAY);
+    
+    rule.setId( cls.getModel().generateId() );
+    
+    AttributeMMRuleDialog.show(rule, cls.getModel(), new SelectedAttrubuteRule(){
 
      @Override
      public void attributeRuleSelected(AttributeRuleImprint ar)
@@ -76,7 +84,11 @@ public class AttributeRuleAttachPanel extends VLayout
    @Override
    public void onClick(ClickEvent event)
    {
-    AttributeMMRuleDialog.show(cls.getModel().createAttributeRuleImprint(RestrictionType.MUST), cls.getModel(), new SelectedAttrubuteRule(){
+    AttributeRuleImprint rule = cls.getModel().createAttributeRuleImprint(RestrictionType.MUST);
+    
+    rule.setId( cls.getModel().generateId() );
+    
+    AttributeMMRuleDialog.show(rule, cls.getModel(), new SelectedAttrubuteRule(){
 
      @Override
      public void attributeRuleSelected(AttributeRuleImprint ar)
@@ -97,7 +109,11 @@ public class AttributeRuleAttachPanel extends VLayout
    @Override
    public void onClick(ClickEvent event)
    {
-    AttributeMNOTRuleDialog.show(cls.getModel().createAttributeRuleImprint(RestrictionType.MUSTNOT), cls.getModel(), new SelectedAttrubuteRule(){
+    AttributeRuleImprint rule = cls.getModel().createAttributeRuleImprint(RestrictionType.MUSTNOT);
+
+    rule.setId( cls.getModel().generateId() );
+
+    AttributeMNOTRuleDialog.show(rule, cls.getModel(), new SelectedAttrubuteRule(){
 
      @Override
      public void attributeRuleSelected(AttributeRuleImprint ar)
@@ -191,6 +207,7 @@ public class AttributeRuleAttachPanel extends VLayout
    
    rule=r;
    
+   setAttribute("id", rule.getId() );
    setAttribute("type", rule.getType().name() );
    setAttribute("name", r.toString() );
   }
@@ -225,6 +242,11 @@ public class AttributeRuleAttachPanel extends VLayout
      return;
     }
    }
+  }
+  
+  public int getId()
+  {
+   return getAttributeAsInt("id");
   }
  }
 }

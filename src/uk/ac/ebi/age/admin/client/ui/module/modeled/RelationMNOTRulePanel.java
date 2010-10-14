@@ -11,7 +11,7 @@ import uk.ac.ebi.age.admin.client.model.QualifierRuleImprint;
 import uk.ac.ebi.age.admin.client.model.RelationRuleImprint;
 import uk.ac.ebi.age.admin.client.ui.AttributeMetaClassDef;
 import uk.ac.ebi.age.admin.client.ui.ClassMetaClassDef;
-import uk.ac.ebi.age.admin.client.ui.ClassSelectedCallback;
+import uk.ac.ebi.age.admin.client.ui.ClassSelectedAdapter;
 import uk.ac.ebi.age.admin.client.ui.QualifiersRecord;
 import uk.ac.ebi.age.admin.client.ui.RelationMetaClassDef;
 
@@ -80,7 +80,7 @@ public class RelationMNOTRulePanel extends RelationRulePanel
     @Override
     public void onFormItemClick(FormItemIconClickEvent event)
     {
-     new XSelectDialog<AgeRelationClassImprint>(rule.getModel().getRootRelationClass(), RelationMetaClassDef.getInstance(), new ClassSelectedCallback()
+     new XSelectDialog<AgeRelationClassImprint>(rule.getModel().getRootRelationClass(), RelationMetaClassDef.getInstance(), new ClassSelectedAdapter()
      {
       
       @Override
@@ -122,7 +122,7 @@ public class RelationMNOTRulePanel extends RelationRulePanel
     @Override
     public void onFormItemClick(FormItemIconClickEvent event)
     {
-     new XSelectDialog<AgeClassImprint>(rule.getModel().getRootClass(), ClassMetaClassDef.getInstance(), new ClassSelectedCallback()
+     new XSelectDialog<AgeClassImprint>(rule.getModel().getRootClass(), ClassMetaClassDef.getInstance(), new ClassSelectedAdapter()
      {
       
       @Override
@@ -205,7 +205,7 @@ public class RelationMNOTRulePanel extends RelationRulePanel
    @Override
    public void onClick(ClickEvent event)
    {
-    new XSelectDialog<AgeAttributeClassImprint>(rule.getModel().getRootAttributeClass(), AttributeMetaClassDef.getInstance(), new ClassSelectedCallback()
+    new XSelectDialog<AgeAttributeClassImprint>(rule.getModel().getRootAttributeClass(), AttributeMetaClassDef.getInstance(), new ClassSelectedAdapter()
     {
      
      @Override

@@ -5,7 +5,7 @@ import uk.ac.ebi.age.admin.client.model.AgeAnnotationClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeAnnotationImprint;
 import uk.ac.ebi.age.admin.client.model.Annotated;
 import uk.ac.ebi.age.admin.client.ui.AnnotationMetaClassDef;
-import uk.ac.ebi.age.admin.client.ui.ClassSelectedCallback;
+import uk.ac.ebi.age.admin.client.ui.ClassSelectedAdapter;
 
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.ListGridEditEvent;
@@ -121,7 +121,7 @@ public class AnnotationPanel extends VLayout
  
  private void addAnnotation()
  {
-  new XSelectDialog<AgeAnnotationClassImprint>(AnnotationMetaClassDef.getInstance().getRoot(anntObj.getModel()), AnnotationMetaClassDef.getInstance(), new ClassSelectedCallback()
+  new XSelectDialog<AgeAnnotationClassImprint>(AnnotationMetaClassDef.getInstance().getRoot(anntObj.getModel()), AnnotationMetaClassDef.getInstance(), new ClassSelectedAdapter()
   {
    @Override
    public void classSelected(AgeAbstractClassImprint cls)

@@ -32,7 +32,6 @@ public class ClassCommonsPanel extends DynamicForm
     if( "Enter".equals(event.getKeyName()) )
      nameField.blurItem();
    }
-
   });
   
   nameField.addBlurHandler(new BlurHandler()

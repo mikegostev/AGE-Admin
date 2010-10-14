@@ -11,7 +11,7 @@ import uk.ac.ebi.age.admin.client.model.QualifierRuleImprint;
 import uk.ac.ebi.age.admin.client.model.RelationRuleImprint;
 import uk.ac.ebi.age.admin.client.ui.AttributeMetaClassDef;
 import uk.ac.ebi.age.admin.client.ui.ClassMetaClassDef;
-import uk.ac.ebi.age.admin.client.ui.ClassSelectedCallback;
+import uk.ac.ebi.age.admin.client.ui.ClassSelectedAdapter;
 import uk.ac.ebi.age.admin.client.ui.QualifiersRecord;
 import uk.ac.ebi.age.admin.client.ui.RelationMetaClassDef;
 
@@ -33,6 +33,8 @@ import com.smartgwt.client.widgets.form.validator.IntegerRangeValidator;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.events.CellClickEvent;
+import com.smartgwt.client.widgets.grid.events.CellClickHandler;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
@@ -50,7 +52,7 @@ public class RelationMMRulePanel extends RelationRulePanel
  private CheckboxItem relSubclCb;
  private CheckboxItem tagSubclCb;
  
- private CheckboxItem qualUniq;
+// private CheckboxItem qualUniq;
  
  RelationMMRulePanel( final RelationRuleImprint rl )
  {
@@ -77,7 +79,7 @@ public class RelationMMRulePanel extends RelationRulePanel
     @Override
     public void onFormItemClick(FormItemIconClickEvent event)
     {
-     new XSelectDialog<AgeRelationClassImprint>(rule.getModel().getRootRelationClass(), RelationMetaClassDef.getInstance(), new ClassSelectedCallback()
+     new XSelectDialog<AgeRelationClassImprint>(rule.getModel().getRootRelationClass(), RelationMetaClassDef.getInstance(), new ClassSelectedAdapter()
      {
       
       @Override
@@ -119,7 +121,7 @@ public class RelationMMRulePanel extends RelationRulePanel
     @Override
     public void onFormItemClick(FormItemIconClickEvent event)
     {
-     new XSelectDialog<AgeClassImprint>(rule.getModel().getRootClass(), ClassMetaClassDef.getInstance(), new ClassSelectedCallback()
+     new XSelectDialog<AgeClassImprint>(rule.getModel().getRootClass(), ClassMetaClassDef.getInstance(), new ClassSelectedAdapter()
      {
       
       @Override
@@ -168,10 +170,10 @@ public class RelationMMRulePanel extends RelationRulePanel
 //  cardVal.setHint("empty or zero means infinity");
 
   
-  qualUniq = new CheckboxItem("qualuniq");
-  qualUniq.setTitle("Qualifiers' value set must be unique");
+//  qualUniq = new CheckboxItem("qualuniq");
+//  qualUniq.setTitle("Qualifiers' value set must be unique");
  
-  rangeForm.setItems(cardType,cardVal,qualUniq);
+  rangeForm.setItems(cardType,cardVal);
   
   addMember(rangeForm);
   
@@ -204,7 +206,7 @@ public class RelationMMRulePanel extends RelationRulePanel
    @Override
    public void onClick(ClickEvent event)
    {
-    new XSelectDialog<AgeAttributeClassImprint>(rule.getModel().getRootAttributeClass(), AttributeMetaClassDef.getInstance(), new ClassSelectedCallback()
+    new XSelectDialog<AgeAttributeClassImprint>(rule.getModel().getRootAttributeClass(), AttributeMetaClassDef.getInstance(), new ClassSelectedAdapter()
     {
      
      @Override
@@ -243,7 +245,7 @@ public class RelationMMRulePanel extends RelationRulePanel
   qTblItem.setShowTitle(false);
   
   qTbl.setWidth100();
-  qTbl.setShowHeader(false);
+  qTbl.setShowHeader(true);
 
   ListGridField idField = new ListGridField("id", "ID", 60);
   idField.setType(ListGridFieldType.INTEGER);
@@ -257,6 +259,14 @@ public class RelationMMRulePanel extends RelationRulePanel
 
   qTbl.setFields(idField, uniqField, subclassNameField);
 
+  qTbl.addCellClickHandler( new CellClickHandler()
+  {
+   @Override
+   public void onCellClick(CellClickEvent event)
+   {
+    System.out.println(event.getColNum());
+   }
+  });
  
   qLay.addMember(qTbl);
   qTblItem.setCanvas(qLay);
