@@ -184,6 +184,10 @@ public class Age2ImprintConverter
      case URI:
       typ = DataType.URI;
       break;
+      
+     case OBJECT:
+      typ = DataType.OBJECT;
+      break;
    }
     
     AgeAttributeClassWritable aac = mCls.getSemanticModel().createAgeAttributeClass( parent.getName(), parent.getId(), typ );
@@ -195,6 +199,14 @@ public class Age2ImprintConverter
     }
     
     aac.setAbstract( parent.isAbstract() );
+    
+    if( parent.getType() == AttributeType.OBJECT && parent.getTargetClass() != null )
+    {
+     AgeAbstractClass tc = state.classMap.get(parent.getTargetClass());
+     
+     if( tc != null && tc instanceof AgeClass)
+      aac.setTargetClass( (AgeClass) tc );
+    }
     
     return aac;
    }
@@ -237,11 +249,33 @@ public class Age2ImprintConverter
      aac.setAbstract(parent.isAbstract());
 
 
-     parent.setFunctional(mCls.isFunctional());
-     parent.setInverseFunctional(mCls.isInverseFunctional());
-     parent.setSymmetric(mCls.isSymmetric());
-     parent.setTransitive(mCls.isTransitive());
+     mCls.setFunctional(parent.isFunctional());
+     mCls.setInverseFunctional(parent.isInverseFunctional());
+     mCls.setSymmetric(parent.isSymmetric());
+     mCls.setTransitive(parent.isTransitive());
      
+     if( parent.getDomain() != null )
+     {
+      for( AgeClassImprint dc : parent.getDomain() )
+      {
+       AgeAbstractClass tc = state.classMap.get(dc);
+       
+       if( tc != null && tc instanceof AgeClass)
+        aac.addDomainClass( (AgeClass) tc );
+      }
+     }
+     
+     if( parent.getRange() != null )
+     {
+      for( AgeClassImprint rc : parent.getRange() )
+      {
+       AgeAbstractClass tc = state.classMap.get(rc);
+       
+       if( tc != null && tc instanceof AgeClass)
+        aac.addRangeClass( (AgeClass) tc );
+      }
+     }
+    
      return aac;
     }
 

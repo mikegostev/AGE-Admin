@@ -8,7 +8,7 @@ import uk.ac.ebi.age.admin.client.model.AgeRelationClassImprint;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.AttributeRuleAttachPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.RangeDomainPanel;
-import uk.ac.ebi.age.admin.client.ui.module.modeled.XCommonsPanel;
+import uk.ac.ebi.age.admin.client.ui.module.modeled.RelationCommonsPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.XEditorPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.XHierarchyPanel;
 
@@ -31,7 +31,7 @@ public class RelationMetaClassDef extends MetaClassDef
  {
   ArrayList<Canvas> panels = new ArrayList<Canvas>(5);
 
-  Canvas pnl = new XCommonsPanel((AgeRelationClassImprint)cls, editor);
+  Canvas pnl = new RelationCommonsPanel((AgeRelationClassImprint)cls, editor);
   panels.add(pnl);
 
 //  pnl = new XSuperclassesPanel(cls, editor);
