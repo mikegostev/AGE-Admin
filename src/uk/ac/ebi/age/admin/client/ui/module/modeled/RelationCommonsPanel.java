@@ -1,22 +1,14 @@
 package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
-import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeRelationClassImprint;
-import uk.ac.ebi.age.admin.client.ui.ClassSelectedAdapter;
-import uk.ac.ebi.age.admin.client.ui.RelationMetaClassDef;
 
-import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.CheckboxItem;
-import com.smartgwt.client.widgets.form.fields.FormItemIcon;
-import com.smartgwt.client.widgets.form.fields.StaticTextItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.form.fields.events.BlurEvent;
 import com.smartgwt.client.widgets.form.fields.events.BlurHandler;
 import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
 import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
-import com.smartgwt.client.widgets.form.fields.events.FormItemClickHandler;
-import com.smartgwt.client.widgets.form.fields.events.FormItemIconClickEvent;
 import com.smartgwt.client.widgets.form.fields.events.KeyPressEvent;
 import com.smartgwt.client.widgets.form.fields.events.KeyPressHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
@@ -135,12 +127,12 @@ public class RelationCommonsPanel extends HLayout
   form.setFields(nameField, abstractCB, symmetricCB, transCB, functionalCB, invFuncCB);
 
   addMember(form);
-  addMember( new InvRelForm(cls) );
+  addMember( new InverseRelationPanel(cls) );
   addMember(new AliasesPanel(cls));
   addMember( new AnnotationPanel(cls) );
   
  }
-
+/*
  static class InvRelForm extends DynamicForm
  {
   public InvRelForm( final AgeRelationClassImprint relCls )
@@ -182,5 +174,5 @@ public class RelationCommonsPanel extends HLayout
 
   }
  }
- 
+ */
 }
