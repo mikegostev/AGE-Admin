@@ -23,6 +23,8 @@ public class AgeAnnotationClassImprint implements AgeAbstractClassImprint,IsSeri
 
  private transient Object auxData;
 
+ AgeAnnotationClassImprint()
+ {}
  
  AgeAnnotationClassImprint(ModelImprint modelImprint)
  {

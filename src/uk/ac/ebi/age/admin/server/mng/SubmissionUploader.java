@@ -61,7 +61,7 @@ public class SubmissionUploader implements UploadCommandListener
 
    BufferLogger log = new BufferLogger();
    
-   SubmissionWritable submission = SubmissionManager.getInstance().prepareSubmission(text, sess.getUserProfile(), log.getRootNode());
+   SubmissionWritable submission = SubmissionManager.getInstance().prepareSubmission(text, sess.getUserProfile(), storAdm, log.getRootNode());
    
    if( submission != null )
    {

@@ -20,6 +20,7 @@ import uk.ac.ebi.age.admin.server.user.UserDatabase;
 import uk.ac.ebi.age.admin.server.user.UserProfile;
 import uk.ac.ebi.age.admin.server.user.impl.SessionPoolImpl;
 import uk.ac.ebi.age.admin.server.user.impl.TestUserDataBase;
+import uk.ac.ebi.age.log.impl.BufferLogger;
 import uk.ac.ebi.age.model.SemanticModel;
 import uk.ac.ebi.age.storage.AgeStorageAdm;
 
@@ -185,10 +186,16 @@ public class AgeAdmin
 
  public static StoreNode imprintDirectory( File d )
  {
-  if( ! d.isDirectory() )
+  if( ! d.exists() )
+   d.mkdirs();
+  else if( ! d.isDirectory() )
+  {
+   System.out.println("Model directory file is not directory: "+d.getAbsolutePath());
    return null;
+  }
   
   StoreNode dir = new StoreNode( M2codec.decode(d.getName()) );
+  dir.setDirectory(true);
   
   for( File f : d.listFiles() )
    if( f.isDirectory() )
@@ -206,27 +213,47 @@ public class AgeAdmin
   if( ! modelFile.exists() )
    throw new ModelStorageException("Model doesn't exist");
   
+  FileInputStream fis=null;
+  
   try
   {
-   FileInputStream fis = new FileInputStream(modelFile);
+   fis = new FileInputStream(modelFile);
    ObjectInputStream ois = new ObjectInputStream( fis );
    
    ModelImprint mod = (ModelImprint)ois.readObject();
-   
-   fis.close();
-   
+
    return mod;
   }
   catch(Exception e)
   {
    throw new ModelStorageException(e.getMessage());
   }
+  finally
+  {
+   if( fis != null )
+   {
+    try
+    {
+     fis.close();
+    }
+    catch(IOException e)
+    {
+     System.out.println("Can't close model file: "+modelFile.getAbsolutePath());
+    }
+   }
+  }
  }
 
- public void installModel(ModelPath modelPath, Session userSession)
+ public void installModel(ModelPath modelPath, Session userSession) throws ModelStorageException
  {
-  // TODO Auto-generated method stub
+  ModelImprint modImp = getModel(modelPath, userSession);
+
+  SemanticModel sm = Age2ImprintConverter.convertImprintToModel(modImp);
   
+  BufferLogger bLog = new BufferLogger();
+  
+  if( ! storage.updateSemanticModel(sm, bLog.getRootNode()) )
+   throw new ModelStorageException("Model installation failed");
  }
  
 }

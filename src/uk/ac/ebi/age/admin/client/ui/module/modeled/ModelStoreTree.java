@@ -283,20 +283,24 @@ public class ModelStoreTree extends VLayout
    return;
   }
   
-  pEls: for( String pEl : path.getPathElements() )
+  if( path.getPathElements() != null )
   {
-   for( TreeNode snd : treeGrid.getData().getChildren( cNode ) )
+   pEls: for(String pEl : path.getPathElements())
    {
-    if( ((FileTreeNode)snd).getStoreNode().getName().equals(pEl) )
+    for(TreeNode snd : treeGrid.getData().getChildren(cNode))
     {
-     cNode = (FileTreeNode)snd;
-     continue pEls;
+     if(((FileTreeNode) snd).getStoreNode().getName().equals(pEl))
+     {
+      cNode = (FileTreeNode) snd;
+      continue pEls;
+     }
     }
+
+    SC.warn("Can't found '" + pEl + "' node in the tree");
+    return;
    }
-   
-   SC.warn("Can't found '"+pEl+"' node in the tree");
-   return;
   }
+  
   
   for( TreeNode snd : treeGrid.getData().getChildren( cNode ) )
   {

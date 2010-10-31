@@ -31,7 +31,7 @@ public class AgeClassImprint implements IsSerializable, Serializable, AgeAbstrac
  
  private transient Object auxData;
 
- private AgeClassImprint()
+ AgeClassImprint()
  {
  }
  

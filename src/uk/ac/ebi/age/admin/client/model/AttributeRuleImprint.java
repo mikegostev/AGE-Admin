@@ -23,6 +23,9 @@ public class AttributeRuleImprint implements IsSerializable, Serializable
  
  private ModelImprint model;
  
+ AttributeRuleImprint()
+ {}
+ 
  AttributeRuleImprint( RestrictionType typ, ModelImprint m )
  {
   type=typ;

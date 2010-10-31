@@ -38,8 +38,10 @@ import uk.ac.ebi.age.model.writable.AgeAttributeClassWritable;
 import uk.ac.ebi.age.model.writable.AgeClassWritable;
 import uk.ac.ebi.age.model.writable.AgeRelationClassWritable;
 import uk.ac.ebi.age.model.writable.AttributeAttachmentRuleWritable;
+import uk.ac.ebi.age.model.writable.AttributedClassWritable;
 import uk.ac.ebi.age.model.writable.QualifierRuleWritable;
 import uk.ac.ebi.age.model.writable.RelationRuleWritable;
+import uk.ac.ebi.age.service.IdGenerator;
 
 public class Age2ImprintConverter
 {
@@ -101,6 +103,7 @@ public class Age2ImprintConverter
     prnt.addSubClass(chld);
     
    }} );
+  
   
   {
    AgeClassImprint rootClsImp = mimp.getRootClass();
@@ -309,7 +312,7 @@ public class Age2ImprintConverter
    }
    
    if( me.getKey() instanceof AttributedImprintClass )
-    transferAttributeRulesI2M((AttributedImprintClass) me.getKey(), (AgeClassWritable)me.getValue(), state);
+    transferAttributeRulesI2M((AttributedImprintClass) me.getKey(), (AttributedClassWritable)me.getValue(), state);
    
    if( me.getKey() instanceof AgeClassImprint )
     transferRelationRulesI2M((AgeClassImprint) me.getKey(), (AgeClassWritable)me.getValue(), state);
@@ -319,6 +322,16 @@ public class Age2ImprintConverter
     
     if( arc.getInverseRelation() != null )
      ((AgeRelationClassWritable)me.getValue()).setInverseRelationClass((AgeRelationClass)state.classMap.get(arc.getInverseRelation()));
+    else
+    {
+     AgeRelationClassWritable dirRelCls = (AgeRelationClassWritable)me.getValue();
+     AgeRelationClassWritable invRelCls = state.model.createAgeRelationClass( "!"+arc.getName(), "InvImpRelClass-"+IdGenerator.getInstance().getStringId("classId") );
+     
+     invRelCls.setImplicit(true);
+     
+     dirRelCls.setInverseRelationClass( invRelCls );
+     invRelCls.setInverseRelationClass(dirRelCls);
+    }
    }
    
 
@@ -339,7 +352,7 @@ public class Age2ImprintConverter
   return state.model;
  }
  
- private static void transferAttributeRulesI2M(AttributedImprintClass impr, AgeClassWritable cls, StateI2A state)
+ private static void transferAttributeRulesI2M(AttributedImprintClass impr, AttributedClassWritable cls, StateI2A state)
  {
   if(impr.getAttributeRules() != null)
   {
@@ -909,8 +922,8 @@ public class Age2ImprintConverter
      state.classMap.put(scls, subCls);
      convertImprintToAge(scls, subCls, state, cr);
     }
-    else
-     cr.addSubClass(parent, subCls);
+
+    cr.addSubClass(parent, subCls);
     
    }
   }

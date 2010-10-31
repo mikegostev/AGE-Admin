@@ -70,7 +70,6 @@ public class ModelPanel extends TabSet implements ModelMngr
    @Override
    public void onDraw(DrawEvent event)
    {
-    System.out.println("Master panel draw");
     AgeAdminService.Util.getInstance().getModelImprint(new AsyncCallback<ModelImprint>()
     {
      
@@ -121,7 +120,7 @@ public class ModelPanel extends TabSet implements ModelMngr
    @Override
    public void onFailure(Throwable arg0)
    {
-    SC.warn("Error occured while saving the model:<br> "+arg0.getMessage());
+    SC.warn("Error occured while saving model:<br> "+arg0.getMessage());
    }
 
    @Override
@@ -142,6 +141,12 @@ public class ModelPanel extends TabSet implements ModelMngr
   else
   {
    StoreNode nd = generalPanel.getSelectedNode();
+   
+   if( nd == null )
+   {
+    SC.say("Please select destination directory");
+    return;
+   }
    
    if( ! nd.isDirectory() )
     nd = nd.getParent();
@@ -203,7 +208,7 @@ public class ModelPanel extends TabSet implements ModelMngr
  @Override
  public void installModel(ModelPath modelPath)
  {
-  AgeAdminService.Util.getInstance().installModel( modelPath,new AsyncCallback<Void>(){
+  AgeAdminService.Util.getInstance().installModel( modelPath, new AsyncCallback<Void>(){
 
    @Override
    public void onFailure(Throwable arg0)
@@ -214,7 +219,7 @@ public class ModelPanel extends TabSet implements ModelMngr
    @Override
    public void onSuccess( Void arg)
    {
-
+    SC.say("Model installed");
    }
    });
  }

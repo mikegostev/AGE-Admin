@@ -29,6 +29,9 @@ public class RelationRuleImprint implements Serializable, IsSerializable
  
  private ModelImprint model;
 
+ RelationRuleImprint()
+ {}
+ 
  public RelationRuleImprint(RestrictionType typ, ModelImprint modelImprint)
  {
   type=typ;

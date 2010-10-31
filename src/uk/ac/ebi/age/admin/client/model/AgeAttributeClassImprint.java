@@ -32,6 +32,8 @@ public class AgeAttributeClassImprint implements AttributedImprintClass, AgeAbst
  
  private transient Object auxData;
  
+ AgeAttributeClassImprint()
+ {}
  
  AgeAttributeClassImprint(ModelImprint modelImprint)
  {

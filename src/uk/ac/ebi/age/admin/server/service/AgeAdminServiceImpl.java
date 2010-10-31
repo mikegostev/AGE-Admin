@@ -84,7 +84,7 @@ public class AgeAdminServiceImpl extends RemoteServiceServlet implements AgeAdmi
  }
 
  @Override
- public void installModel(ModelPath modelPath) throws UserAuthException
+ public void installModel(ModelPath modelPath) throws UserAuthException, ModelStorageException
  {
   adm.installModel(modelPath, getUserSession() );
  }

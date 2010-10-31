@@ -11,6 +11,9 @@ public class AgeAnnotationImprint implements IsSerializable, Serializable
  private AgeAnnotationClassImprint annotClass;
  private String text;
  
+ AgeAnnotationImprint()
+ {}
+ 
  AgeAnnotationImprint( AgeAnnotationClassImprint cls )
  {
   annotClass=cls;

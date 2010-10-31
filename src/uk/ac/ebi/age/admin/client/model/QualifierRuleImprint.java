@@ -1,7 +1,11 @@
 package uk.ac.ebi.age.admin.client.model;
 
+import java.io.Serializable;
 
-public class QualifierRuleImprint
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+
+public class QualifierRuleImprint implements Serializable, IsSerializable
 {
  private AgeAttributeClassImprint attr;
 // private RestrictionType type;
@@ -10,6 +14,9 @@ public class QualifierRuleImprint
  private ModelImprint model;
  
  private int id;
+ 
+ QualifierRuleImprint()
+ {}
  
  QualifierRuleImprint(ModelImprint modelImprint)
  {
