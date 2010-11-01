@@ -68,8 +68,7 @@ public class Age2ImprintConverter
   
   AgeAnnotationClassImprint anCImp = mimp.getRootAnnotationClass();
   
-  AgeAnnotationClassWritable aACls =  state.model.createAgeAnnotationClass(ModelImprint.ROOT_ANNOT_NAME, anCImp.getId());
-  aACls.setAbstract(true);
+  AgeAnnotationClassWritable aACls =  (AgeAnnotationClassWritable)state.model.getRootAgeAnnotationClass();
   
   state.classMap.put(anCImp, aACls);
 
@@ -78,7 +77,7 @@ public class Age2ImprintConverter
    @Override
    public AgeAnnotationClassWritable create(AgeAnnotationClassImprint parent, AgeAnnotationClassWritable mCls)
    {
-    AgeAnnotationClassWritable aac = mCls.getSemanticModel().createAgeAnnotationClass( parent.getName(), parent.getId() );
+    AgeAnnotationClassWritable aac = mCls.getSemanticModel().createAgeAnnotationClass( parent.getName(), parent.getId(), mCls );
 
     if( parent.getAliases() != null )
     {
@@ -108,9 +107,9 @@ public class Age2ImprintConverter
   {
    AgeClassImprint rootClsImp = mimp.getRootClass();
 
-   AgeClassWritable aCls = state.model.createAgeClass(ModelImprint.ROOT_CLASS_NAME, rootClsImp.getName(), rootClsImp.getPrefix());
+   AgeClassWritable aCls = (AgeClassWritable)state.model.getRootAgeClass();
    aCls.setAbstract(true);
-
+ 
    state.classMap.put(rootClsImp, aCls);
 
    convertImprintToAge(rootClsImp, aCls, state, new AgeCreator<AgeClassImprint, AgeClassWritable>()
@@ -119,7 +118,7 @@ public class Age2ImprintConverter
     @Override
     public AgeClassWritable create(AgeClassImprint parent, AgeClassWritable mCls)
     {
-     AgeClassWritable aac = mCls.getSemanticModel().createAgeClass(parent.getName(), parent.getId(), parent.getPrefix());
+     AgeClassWritable aac = mCls.getSemanticModel().createAgeClass(parent.getName(), parent.getId(), parent.getPrefix(),mCls);
 
      if(parent.getAliases() != null)
      {
@@ -150,7 +149,7 @@ public class Age2ImprintConverter
   
   AgeAttributeClassImprint rootAttrImp = mimp.getRootAttributeClass();
 
-  AgeAttributeClassWritable atrCls =  state.model.createAgeAttributeClass(ModelImprint.ROOT_ATTR_NAME, rootAttrImp.getName(), null );
+  AgeAttributeClassWritable atrCls =  (AgeAttributeClassWritable)state.model.getRootAgeAttributeClass();
   atrCls.setAbstract(true);
   
   state.classMap.put(rootAttrImp, atrCls);
@@ -193,7 +192,7 @@ public class Age2ImprintConverter
       break;
    }
     
-    AgeAttributeClassWritable aac = mCls.getSemanticModel().createAgeAttributeClass( parent.getName(), parent.getId(), typ );
+    AgeAttributeClassWritable aac = mCls.getSemanticModel().createAgeAttributeClass( parent.getName(), parent.getId(), typ, mCls );
 
     if( parent.getAliases() != null )
     {
@@ -230,9 +229,9 @@ public class Age2ImprintConverter
   {
    AgeRelationClassImprint rootRlClsImp = mimp.getRootRelationClass();
 
-   AgeRelationClassWritable aCls = state.model.createAgeRelationClass(ModelImprint.ROOT_REL_NAME, rootRlClsImp.getName());
+   AgeRelationClassWritable aCls = (AgeRelationClassWritable)state.model.getRootAgeRelationClass();
    aCls.setAbstract(true);
-
+ 
    state.classMap.put(rootRlClsImp, aCls);
 
    convertImprintToAge(rootRlClsImp, aCls, state, new AgeCreator<AgeRelationClassImprint, AgeRelationClassWritable>()
@@ -241,7 +240,7 @@ public class Age2ImprintConverter
     @Override
     public AgeRelationClassWritable create(AgeRelationClassImprint parent, AgeRelationClassWritable mCls)
     {
-     AgeRelationClassWritable aac = mCls.getSemanticModel().createAgeRelationClass(parent.getName(), parent.getId());
+     AgeRelationClassWritable aac = mCls.getSemanticModel().createAgeRelationClass(parent.getName(), parent.getId(), mCls);
 
      if(parent.getAliases() != null)
      {
@@ -325,7 +324,8 @@ public class Age2ImprintConverter
     else
     {
      AgeRelationClassWritable dirRelCls = (AgeRelationClassWritable)me.getValue();
-     AgeRelationClassWritable invRelCls = state.model.createAgeRelationClass( "!"+arc.getName(), "InvImpRelClass-"+IdGenerator.getInstance().getStringId("classId") );
+     AgeRelationClassWritable invRelCls = state.model.createAgeRelationClass( "!"+arc.getName(),
+       "InvImpRelClass-"+IdGenerator.getInstance().getStringId("classId"), null );
      
      invRelCls.setImplicit(true);
      
@@ -616,7 +616,7 @@ public class Age2ImprintConverter
    }
    
    if( me.getKey() instanceof AttributedClass )
-    transferAttributeRulesM2I((AttributedClass) me.getKey(), (AgeClassImprint)me.getValue(), state);
+    transferAttributeRulesM2I((AttributedClass) me.getKey(), (AttributedImprintClass)me.getValue(), state);
 
    
    if( me.getKey() instanceof AgeClass )
@@ -651,7 +651,7 @@ public class Age2ImprintConverter
   return state.modelImprint;
  }
 
- private static void transferAttributeRulesM2I(AttributedClass acls, AgeClassImprint cImp, StateA2I state)
+ private static void transferAttributeRulesM2I(AttributedClass acls, AttributedImprintClass cImp, StateA2I state)
  {
   if(acls.getAttributeAttachmentRules() != null)
   {
@@ -922,8 +922,8 @@ public class Age2ImprintConverter
      state.classMap.put(scls, subCls);
      convertImprintToAge(scls, subCls, state, cr);
     }
-
-    cr.addSubClass(parent, subCls);
+    else
+     cr.addSubClass(parent, subCls);
     
    }
   }

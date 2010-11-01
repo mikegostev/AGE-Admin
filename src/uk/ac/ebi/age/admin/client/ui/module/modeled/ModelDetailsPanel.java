@@ -29,57 +29,52 @@ public class ModelDetailsPanel extends VLayout
  
  public void setModel(ModelImprint mod)
  {
-  if( model == null )
+  model = mod;
+
+  DynamicForm form = new DynamicForm();
+  form.setNumCols(3);
+  form.setWidth100();
+
+  final TextItem nameField = new TextItem("Name");
+  nameField.setWidth(200);
+  nameField.setValue(mod.getName());
+
+  nameField.addKeyPressHandler(new KeyPressHandler()
   {
-   model = mod;
-   
-   DynamicForm form = new DynamicForm();
-   form.setNumCols(3);
-   form.setWidth100();
-   
-   final TextItem nameField = new TextItem("Name");
-   nameField.setWidth(200);
-   nameField.setValue(mod.getName());
-
-   nameField.addKeyPressHandler(new KeyPressHandler()
+   @Override
+   public void onKeyPress(KeyPressEvent event)
    {
-    @Override
-    public void onKeyPress(KeyPressEvent event)
-    {
-     if("Enter".equals(event.getKeyName()))
-      nameField.blurItem();
-    }
-   });
+    if("Enter".equals(event.getKeyName()))
+     nameField.blurItem();
+   }
+  });
 
-   nameField.addBlurHandler(new BlurHandler()
+  nameField.addBlurHandler(new BlurHandler()
+  {
+   @Override
+   public void onBlur(BlurEvent event)
    {
-    @Override
-    public void onBlur(BlurEvent event)
-    {
-     model.setName((String) event.getItem().getValue());
-    }
-   });
-   
-   ButtonItem saveBt = new ButtonItem("save","Save");
-   saveBt.setStartRow(false);
-   saveBt.addClickHandler(new ClickHandler()
-   {
-    @Override
-    public void onClick(ClickEvent event)
-    {
-     mngr.saveModel(model);
-    }
-   });
-   
-   form.setFields( nameField, saveBt);
-  
-   annotPanel = new AnnotationPanel(mod);
-   annotPanel.setWidth100();
+    model.setName((String) event.getItem().getValue());
+   }
+  });
 
-   setMembers(form,annotPanel);
-  }
-  
-  
+  ButtonItem saveBt = new ButtonItem("save", "Save");
+  saveBt.setStartRow(false);
+  saveBt.addClickHandler(new ClickHandler()
+  {
+   @Override
+   public void onClick(ClickEvent event)
+   {
+    mngr.saveModel(model);
+   }
+  });
+
+  form.setFields(nameField, saveBt);
+
+  annotPanel = new AnnotationPanel(mod);
+  annotPanel.setWidth100();
+
+  setMembers(form, annotPanel);
  }
 
 }

@@ -59,6 +59,8 @@ public class ModelImprint  implements IsSerializable, Serializable, Annotated
  {
   AgeClassImprint ncls = new AgeClassImprint( this );
   
+  ncls.setId("Class"+(idGen++));
+  
   classes.add(ncls);
   
   ncls.setModel(this);
@@ -107,6 +109,8 @@ public class ModelImprint  implements IsSerializable, Serializable, Annotated
  {
   AgeAttributeClassImprint ncls = new AgeAttributeClassImprint( this );
   
+  ncls.setId("Attribute"+(idGen++));
+ 
   attributes.add(ncls);
   
   ncls.setModel(this);
@@ -139,6 +143,8 @@ public class ModelImprint  implements IsSerializable, Serializable, Annotated
  AgeRelationClassImprint createAgeRelationClassImprint()
  {
   AgeRelationClassImprint ncls = new AgeRelationClassImprint( this );
+
+  ncls.setId("Relation"+(idGen++));
   
   relations.add(ncls);
   
@@ -151,6 +157,8 @@ public class ModelImprint  implements IsSerializable, Serializable, Annotated
  public AgeAnnotationClassImprint createAgeAnnotationClassImprint()
  {
   AgeAnnotationClassImprint ncls = new AgeAnnotationClassImprint( this );
+  
+  ncls.setId("Annotation"+(idGen++));
   
   annotationClasses.add(ncls);
   
@@ -271,31 +279,5 @@ public class ModelImprint  implements IsSerializable, Serializable, Annotated
  public int generateId()
  {
   return idGen++;
- }
-
-
-// private void addClass( AgeClassImprint rootClass )
-// {
-//  classes.add(rootClass);
-//  
-//  rootClass.setModel(this);
-//  
-//  if( rootClass.getChildren() != null )
-//  {
-//   for( AgeClassImprint sc : rootClass.getChildren() )
-//    addClass( sc );
-//  }
-// }
- 
-
-
-
-// public void registerClass()
-// {
-//  classes.add(rootClass);
-//  
-//  rootClass.setModel(this);
-// }
- 
- 
+ } 
 }
