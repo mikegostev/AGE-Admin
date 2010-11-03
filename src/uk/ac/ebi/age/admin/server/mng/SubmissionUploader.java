@@ -63,7 +63,7 @@ public class SubmissionUploader implements UploadCommandListener
    
    SubmissionWritable submission = SubmissionManager.getInstance().prepareSubmission(text, sess.getUserProfile(), storAdm, log.getRootNode());
    
-   BufferLogger.printBranch(log.getRootNode());
+//   BufferLogger.printBranch(log.getRootNode());
    
    if( submission != null )
    {
@@ -72,7 +72,10 @@ public class SubmissionUploader implements UploadCommandListener
     out.println("OK");
    }
    else
+   {
     out.println("ERROR");
+    BufferLogger.printBranch(log.getRootNode(),out);
+   }
   }
   catch(Exception e)
   {
