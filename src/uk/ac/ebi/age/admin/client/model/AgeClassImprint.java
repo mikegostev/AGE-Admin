@@ -289,4 +289,10 @@ public class AgeClassImprint implements IsSerializable, Serializable, AgeAbstrac
  {
   this.prefix = prefix;
  }
+
+ @Override
+ public void generateId()
+ {
+  setId("Class"+model.generateId());
+ }
 }

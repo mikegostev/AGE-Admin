@@ -59,8 +59,6 @@ public class ModelImprint  implements IsSerializable, Serializable, Annotated
  {
   AgeClassImprint ncls = new AgeClassImprint( this );
   
-  ncls.setId("Class"+(idGen++));
-  
   classes.add(ncls);
   
   ncls.setModel(this);
@@ -108,9 +106,7 @@ public class ModelImprint  implements IsSerializable, Serializable, Annotated
  AgeAttributeClassImprint createAgeAttributClassImprint()
  {
   AgeAttributeClassImprint ncls = new AgeAttributeClassImprint( this );
-  
-  ncls.setId("Attribute"+(idGen++));
- 
+
   attributes.add(ncls);
   
   ncls.setModel(this);
@@ -140,12 +136,10 @@ public class ModelImprint  implements IsSerializable, Serializable, Annotated
  }
 
 
- AgeRelationClassImprint createAgeRelationClassImprint()
+ AgeRelationClassImprint createAgeRelationClassImprint( )
  {
   AgeRelationClassImprint ncls = new AgeRelationClassImprint( this );
 
-  ncls.setId("Relation"+(idGen++));
-  
   relations.add(ncls);
   
   ncls.setModel(this);
@@ -154,11 +148,9 @@ public class ModelImprint  implements IsSerializable, Serializable, Annotated
   return ncls;
  }
  
- public AgeAnnotationClassImprint createAgeAnnotationClassImprint()
+ public AgeAnnotationClassImprint createAgeAnnotationClassImprint( )
  {
   AgeAnnotationClassImprint ncls = new AgeAnnotationClassImprint( this );
-  
-  ncls.setId("Annotation"+(idGen++));
   
   annotationClasses.add(ncls);
   

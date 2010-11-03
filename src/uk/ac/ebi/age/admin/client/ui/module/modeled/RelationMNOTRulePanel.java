@@ -69,7 +69,7 @@ public class RelationMNOTRulePanel extends RelationRulePanel
    relForm.setPadding(5);
    
    relClassItm = new StaticTextItem();
-   relClassItm.setTitle("Attribute class");
+   relClassItm.setTitle("Relation class");
    relClassItm.setWidth(50);
    relClassItm.setAlign(Alignment.CENTER);
    

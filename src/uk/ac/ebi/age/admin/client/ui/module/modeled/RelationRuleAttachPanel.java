@@ -51,6 +51,12 @@ public class RelationRuleAttachPanel extends VLayout
 
   ruleList.setFields(idField, typeIconField, ruleField);
 
+  if( cls.getRelationRules() != null )
+  {
+   for( RelationRuleImprint rr : cls.getRelationRules() )
+    ruleList.addData(new RuleRecord(rr));
+  }
+  
   ToolStripButton btaddMay = new ToolStripButton();
   btaddMay.setIcon("../images/icons/attribute/attach.png");
   btaddMay.setTitle("Add MAY rule");
@@ -149,7 +155,7 @@ public class RelationRuleAttachPanel extends VLayout
       public void relationRuleSelected(RelationRuleImprint ar)
       {
        rr.update();
-       ruleList.refreshCell(ruleList.getRecordIndex(rr), 1);
+       ruleList.refreshCell(ruleList.getRecordIndex(rr), 2);
       }
      });
     }
@@ -162,7 +168,7 @@ public class RelationRuleAttachPanel extends VLayout
       public void relationRuleSelected(RelationRuleImprint ar)
       {
        rr.update();
-       ruleList.refreshCell(ruleList.getRecordIndex(rr), 1);
+       ruleList.refreshCell(ruleList.getRecordIndex(rr), 2);
       }
      });
     }

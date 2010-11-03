@@ -210,6 +210,7 @@ public class XEditorPanel extends HLayout
 
     AgeAbstractClassImprint subCls = cImp.createSubClass();
     subCls.setName(value);
+    subCls.generateId();
 
     treePanel.addBranch(cImp, subCls);
     

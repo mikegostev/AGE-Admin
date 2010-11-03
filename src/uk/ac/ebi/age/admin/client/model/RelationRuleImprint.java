@@ -102,7 +102,7 @@ public class RelationRuleImprint implements Serializable, IsSerializable
 //    
 //   }
    
-   sb.append("of class <b>").append(targetClass.getName()).append("</b> (");
+   sb.append("of class <b>").append(relationClass.getName()).append("</b> (");
    
    if( subclassesIncluded )
     sb.append("including subclasses) ");

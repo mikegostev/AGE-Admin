@@ -283,4 +283,10 @@ public class AgeAttributeClassImprint implements AttributedImprintClass, AgeAbst
   return targetClass;
  }
 
+ @Override
+ public void generateId()
+ {
+  setId("Attribute"+model.generateId());
+ }
+
 }

@@ -25,7 +25,7 @@ public abstract class RelationRuleDialog extends Window
  public RelationRuleDialog(ModelImprint mod)
  {
   setWidth(600);
-  setHeight(600);
+  setHeight(630);
   setTitle("Edit rule");
   setShowMinimizeButton(false);
   setIsModal(true);

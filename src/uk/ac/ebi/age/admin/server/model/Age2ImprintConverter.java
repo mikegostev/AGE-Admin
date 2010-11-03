@@ -432,13 +432,16 @@ public class Age2ImprintConverter
   
   state.modelImprint = new ModelImprint();
 
+  state.modelImprint.setIdGen( sm.getIdGen() );
+  
 //  Map<AgeAbstractClass, Object> clMap = new HashMap<AgeAbstractClass, Object>();
 
   
   AgeAnnotationClass ageAnntRoot = sm.getRootAgeAnnotationClass();
 
   AgeAnnotationClassImprint aImp =  state.modelImprint.getRootAnnotationClass();
-  aImp.setName(ModelImprint.ROOT_ANNOT_NAME);
+  aImp.setName(ageAnntRoot.getName());
+  aImp.setId(ageAnntRoot.getId());
   aImp.setAbstract(true);
 
   state.classMap.put(ageAnntRoot, aImp);
@@ -468,13 +471,14 @@ public class Age2ImprintConverter
   
   AgeClass ageRoot = sm.getRootAgeClass();
 
-  AgeClassImprint rImp =  state.modelImprint.getRootClass();
-  rImp.setName(ModelImprint.ROOT_CLASS_NAME);
-  rImp.setAbstract(true);
+  AgeClassImprint cImp =  state.modelImprint.getRootClass();
+  cImp.setName(ModelImprint.ROOT_CLASS_NAME);
+  cImp.setId(ageRoot.getId());
+  cImp.setAbstract(true);
 
-  state.classMap.put(ageRoot, rImp);
+  state.classMap.put(ageRoot, cImp);
 
-  convertAgeToImprint(ageRoot, rImp, state, new ImprintCreator<AgeClassImprint>()
+  convertAgeToImprint(ageRoot, cImp, state, new ImprintCreator<AgeClassImprint>()
   {
 
    @Override
@@ -503,6 +507,7 @@ public class Age2ImprintConverter
   AgeAttributeClassImprint atImp = state.modelImprint.getRootAttributeClass();
 
   atImp.setName(ModelImprint.ROOT_ATTR_NAME);
+  atImp.setId(attrRoot.getId());
   atImp.setAbstract(true);
 
   state.classMap.put(attrRoot, atImp);
@@ -552,6 +557,12 @@ public class Age2ImprintConverter
 
       case TEXT:
        cImp.setType(AttributeType.TEXT);
+       break;
+      case OBJECT:
+       cImp.setType(AttributeType.OBJECT);
+       cImp.setTargetClass((AgeClassImprint) state.classMap.get(((AgeAttributeClass)acls).getTargetClass()));
+       break;
+      case GUESS: // Must be class of type GUESS
        break;
      }
 

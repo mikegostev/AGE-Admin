@@ -52,6 +52,12 @@ public class AttributeRuleAttachPanel extends VLayout
 
   ruleList.setFields(idField, typeIconField, ruleField);
 
+  if( cls.getAttributeRules() != null )
+  {
+   for( AttributeRuleImprint rule : cls.getAttributeRules() )
+    ruleList.addData(new RuleRecord(rule));
+  }
+  
   ToolStripButton btaddMay = new ToolStripButton();
   btaddMay.setIcon("../images/icons/attribute/attach.png");
   btaddMay.setTitle("Add MAY rule");
@@ -150,7 +156,7 @@ public class AttributeRuleAttachPanel extends VLayout
       public void attributeRuleSelected(AttributeRuleImprint ar)
       {
        rr.update();
-       ruleList.refreshCell(ruleList.getRecordIndex(rr), 1);
+       ruleList.refreshCell(ruleList.getRecordIndex(rr), 2);
       }
      });
     }
@@ -163,7 +169,7 @@ public class AttributeRuleAttachPanel extends VLayout
       public void attributeRuleSelected(AttributeRuleImprint ar)
       {
        rr.update();
-       ruleList.refreshCell(ruleList.getRecordIndex(rr), 1);
+       ruleList.refreshCell(ruleList.getRecordIndex(rr), 2);
       }
      });
     }

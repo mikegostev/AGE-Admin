@@ -43,4 +43,6 @@ public interface AgeAbstractClassImprint extends IsSerializable, Annotated
  Collection<AgeAnnotationImprint> getAnnotations();
  void addAnnotation( AgeAnnotationImprint a);
  void removeAnnotation( AgeAnnotationImprint a);
+
+ void generateId();
 }

@@ -215,4 +215,10 @@ public class AgeAnnotationClassImprint implements AgeAbstractClassImprint,IsSeri
   
   annotations.remove(a);
  }
+
+ @Override
+ public void generateId()
+ {
+  setId("Annotation"+model.generateId());
+ }
 }

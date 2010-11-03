@@ -355,4 +355,10 @@ public class AgeRelationClassImprint implements AttributedImprintClass, AgeAbstr
    domain.remove(simp);
  }
 
+ @Override
+ public void generateId()
+ {
+  setId("Relation"+model.generateId());
+ }
+
 }
