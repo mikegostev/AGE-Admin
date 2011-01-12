@@ -16,9 +16,9 @@ import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.form.fields.UploadItem;
 import com.smartgwt.client.widgets.layout.HLayout;
 
-public class SubmissionPanel extends HLayout
+public class TestEntryPanel extends HLayout
 {
- public SubmissionPanel()
+ public TestEntryPanel()
  {
 
   setAutoWidth();

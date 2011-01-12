@@ -16,7 +16,7 @@ public class RootTabPanel extends TabSet
 
   
   Tab submTab = new Tab("Submission");
-  submTab.setPane( new SubmissionPanel() );
+  submTab.setPane( new TestEntryPanel() );
   
   addTab(submTab);
 
@@ -25,5 +25,11 @@ public class RootTabPanel extends TabSet
   
   addTab(modelTab);
 
+  Tab submitTab = new Tab("Submit");
+  submitTab.setPane( new SubmissionPreparePanel() );
+  
+  addTab(submitTab);
+
+  
  }
 }
