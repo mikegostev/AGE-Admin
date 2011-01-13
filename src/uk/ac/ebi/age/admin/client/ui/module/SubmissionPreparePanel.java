@@ -1,5 +1,6 @@
 package uk.ac.ebi.age.admin.client.ui.module;
 
+import com.smartgwt.client.types.Encoding;
 import com.smartgwt.client.types.TitleOrientation;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.form.DynamicForm;
@@ -7,7 +8,6 @@ import com.smartgwt.client.widgets.form.fields.ButtonItem;
 import com.smartgwt.client.widgets.form.fields.CanvasItem;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.form.fields.TextAreaItem;
-import com.smartgwt.client.widgets.form.fields.UploadItem;
 import com.smartgwt.client.widgets.form.fields.events.ClickEvent;
 import com.smartgwt.client.widgets.form.fields.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
@@ -34,10 +34,15 @@ public class SubmissionPreparePanel extends HLayout
   
   form.setMargin(5);
   
-  form.setNumCols(1);  
+  form.setNumCols(2);  
   form.setHeight("*");  
 //  form.setColWidths(60, "*",60, "*");
   form.setTitleOrientation(TitleOrientation.TOP);
+  form.setAction("upload");
+  form.setTarget("_blank");
+  form.setEncoding(Encoding.MULTIPART);
+
+  
   addMember(form);
   
   
@@ -45,32 +50,42 @@ public class SubmissionPreparePanel extends HLayout
   descriptionItem.setName("descriptionItem");  
   descriptionItem.setTitle("Submission Description");
   descriptionItem.setWidth("100%");
+  descriptionItem.setColSpan(2);
   
   ButtonItem btSbm = new ButtonItem("Submit");
-  ButtonItem addDM = new ButtonItem("AddDataModule");
+  btSbm.setEndRow(false);
   
-  UploadItem upl = new UploadItem("file1", "Upload submission");
-  upl.setHeight(50);
-
+  ButtonItem addDM = new ButtonItem("AddDataModule");
+  addDM.setStartRow(false);
+  
   CanvasItem cnv = new CanvasItem();
+  cnv.setShowTitle(false);
   
   VLayout vl = new VLayout();
-  
-  
   cnv.setCanvas(vl);
   
-  Canvas c = new Canvas();
-  c.setContents("<i>Hello</i> world<br><input type='file' name='aaa'>");
+//  Canvas c = new Canvas();
+//  c.setContents("<i>Hello</i> world<br><input type='file' name='aaa'>");
   
-  vl.addMember(c);
+  vl.addMember( new DMPanel(1) );
 
-  form.setFields(descriptionItem, btSbm, addDM, upl, cnv );
+  form.setFields( btSbm, addDM, cnv, descriptionItem );
   
 //  items.add(descriptionItem);
 //  items.add(btSbm);
 //  items.add(addDM);
 //  items.add(upl);
   
+  btSbm.addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler()
+  {
+
+   @Override
+   public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event)
+   {
+    form.submitForm();
+   }
+  });
+
   
   addDM.addClickHandler( new ClickHandler()
   {

@@ -1,8 +1,7 @@
 package uk.ac.ebi.age.admin.server.service;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -10,7 +9,7 @@ public class UploadRequest
 {
  private String command;
  private Map<String,String> params = new TreeMap<String,String>();
- private List<File> files  = new ArrayList<File>(2);
+ private Map<String, File> files  = new HashMap<String, File>();
  
  public String getCommand()
  {
@@ -27,14 +26,19 @@ public class UploadRequest
   return params;
  }
  
- public List<File> getFiles()
+ public Map<String, File> getFiles()
  {
   return files;
  }
  
- public void addFile(File file)
+ public void addFile(String name, File file)
  {
-  files.add(file);
+  files.put(name, file);
+ }
+ 
+ public void clearFiles()
+ {
+  files.clear();
  }
  
  public void addParam( String name, String val )

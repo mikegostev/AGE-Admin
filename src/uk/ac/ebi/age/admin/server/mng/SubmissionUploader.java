@@ -42,7 +42,7 @@ public class SubmissionUploader implements UploadCommandListener
    }
    else
    {
-    for(File f : upReq.getFiles())
+    for(File f : upReq.getFiles().values() )
     {
      FileInputStream fis = new FileInputStream(f);
      StreamPump.doPump(fis, bais, false);

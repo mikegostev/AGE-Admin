@@ -79,7 +79,7 @@ public class UploadSvc extends ServiceServlet
      
      StreamPump.doPump(uploadedStream, new FileOutputStream(tmpf), true);
 
-     upReq.addFile(tmpf);
+     upReq.addFile(name, tmpf);
     }
    }
   }

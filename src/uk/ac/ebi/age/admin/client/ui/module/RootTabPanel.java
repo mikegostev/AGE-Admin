@@ -29,6 +29,11 @@ public class RootTabPanel extends TabSet
   submitTab.setPane( new SubmissionPreparePanel() );
   
   addTab(submitTab);
+  
+  submitTab = new Tab("Submit GWT");
+  submitTab.setPane( new SubmissionPreparePanelGWT() );
+  
+  addTab(submitTab);
 
   
  }

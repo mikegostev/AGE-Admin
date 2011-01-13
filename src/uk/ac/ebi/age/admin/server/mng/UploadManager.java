@@ -14,15 +14,30 @@ public class UploadManager
 
  public void processUpload(UploadRequest upReq, Session sess, PrintWriter printWriter)
  {
-  UploadCommandListener lsnr = lsnrs.get(upReq.getCommand());
-  
-  if( lsnr != null )
+  try
   {
-   if( lsnr.processUpload(upReq,sess,printWriter) && upReq.getFiles() != null )
+   if(upReq.getCommand() == null)
+    return;
+
+   UploadCommandListener lsnr = lsnrs.get(upReq.getCommand());
+
+   if(lsnr != null)
    {
-    for( File f : upReq.getFiles() )
-     f.delete();
+    lsnr.processUpload(upReq, sess, printWriter);
+
+    // if( lsnr.processUpload(upReq,sess,printWriter) && upReq.getFiles() !=
+    // null )
+    // {
+    // for( File f : upReq.getFiles().values() )
+    // f.delete();
+    // }
    }
+
+  }
+  finally
+  {
+   for(File f : upReq.getFiles().values())
+    f.delete();
   }
  }
 
