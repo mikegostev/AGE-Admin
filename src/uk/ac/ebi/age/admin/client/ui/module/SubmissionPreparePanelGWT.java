@@ -1,5 +1,7 @@
 package uk.ac.ebi.age.admin.client.ui.module;
 
+import uk.ac.ebi.age.admin.client.log.LogNode;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
@@ -24,7 +26,6 @@ import com.smartgwt.client.widgets.layout.HLayout;
 
 public class SubmissionPreparePanelGWT extends HLayout
 {
- // private ArrayList<FormItem> items = new ArrayList<FormItem>();
  private int n = 1;
 
  public SubmissionPreparePanelGWT()
@@ -40,15 +41,17 @@ public class SubmissionPreparePanelGWT extends HLayout
   setBorder("1px solid #6a6a6a");
 
   DecoratorPanel decp = new DecoratorPanel();
+//  decp.setWidth("500px");
 
-  final FormPanel form = new FormPanel("_blank");
+  final FormPanel form = new FormPanel();
   form.setAction("upload");
   form.setEncoding(FormPanel.ENCODING_MULTIPART);
   form.setMethod(FormPanel.METHOD_POST);
+//  form.setWidth("500px");
 
-  // Create a panel to hold all of the form widgets.
   final VerticalPanel panel = new VerticalPanel();
-  panel.setSpacing(5);
+  panel.setSpacing(10);
+  panel.setWidth("500px");
   form.setWidget(panel);
 
   panel.add( new Hidden("Command","Submission") );
@@ -60,7 +63,6 @@ public class SubmissionPreparePanelGWT extends HLayout
 
   panel.add(btPan);
 
-  // Add a 'submit' button.
   btPan.setWidget(0, 0, new Button("Submit", new com.google.gwt.event.dom.client.ClickHandler()
   {
    public void onClick(com.google.gwt.event.dom.client.ClickEvent event)
@@ -79,7 +81,7 @@ public class SubmissionPreparePanelGWT extends HLayout
   });
   btPan.setWidget(0, 1, addBt);
 
-  panel.add(new Label("Submission description"));
+  panel.add(new Label("Submission description:"));
 
   final TextArea tb = new TextArea();
   tb.setName("submDescr");
@@ -88,7 +90,6 @@ public class SubmissionPreparePanelGWT extends HLayout
 
   panel.add(new DMPanel(n++));
 
-  // Add an event handler to the form.
   form.addSubmitHandler(new FormPanel.SubmitHandler()
   {
    public void onSubmit(SubmitEvent event)
@@ -132,129 +133,23 @@ public class SubmissionPreparePanelGWT extends HLayout
   {
    public void onSubmitComplete(SubmitCompleteEvent event)
    {
-    // When the form submission is successfully completed, this event is
-    // fired. Assuming the service returned a response of type text/html,
-    // we can get the result text here (see the FormPanel documentation for
-    // further explanation).
-    Window.alert(event.getResults());
+    String txt = event.getResults();
+    
+    int posB = txt.indexOf("<pre>");
+    int posE = txt.lastIndexOf("</pre>");
+    
+    txt = txt.substring(posB+5,posE);
+    
+    System.out.println(txt);
+    
+    LogNode rLn = LogNode.convert(txt); 
+    
+    System.out.println(rLn.getSubnodes().get(0).getMessage());
    }
   });
 
   decp.setWidget(form);
   addMember(decp);
-  // final DynamicForm form = new DynamicForm();
-  //
-  // form.setMargin(5);
-  //
-  // form.setNumCols(2);
-  // form.setHeight("*");
-  // // form.setColWidths(60, "*",60, "*");
-  // form.setTitleOrientation(TitleOrientation.TOP);
-  // form.setAction("upload");
-  // form.setTarget("_blank");
-  // form.setEncoding(Encoding.MULTIPART);
-  //
-  //
-  // addMember(form);
-  //
-  //
-  // TextAreaItem descriptionItem = new TextAreaItem();
-  // descriptionItem.setName("descriptionItem");
-  // descriptionItem.setTitle("Submission Description");
-  // descriptionItem.setWidth("100%");
-  // descriptionItem.setColSpan(2);
-  //
-  // ButtonItem btSbm = new ButtonItem("Submit");
-  // btSbm.setEndRow(false);
-  //
-  // ButtonItem addDM = new ButtonItem("AddDataModule");
-  // addDM.setStartRow(false);
-  //
-  // CanvasItem cnv = new CanvasItem();
-  // cnv.setShowTitle(false);
-  //
-  // VLayout vl = new VLayout();
-  // cnv.setCanvas(vl);
-  //
-  // // Canvas c = new Canvas();
-  // // c.setContents("<i>Hello</i> world<br><input type='file' name='aaa'>");
-  //
-  // vl.addMember( new DMPanel(1) );
-  //
-  // form.setFields( btSbm, addDM, cnv, descriptionItem );
-  //
-  // // items.add(descriptionItem);
-  // // items.add(btSbm);
-  // // items.add(addDM);
-  // // items.add(upl);
-  //
-  // btSbm.addClickHandler(new
-  // com.smartgwt.client.widgets.form.fields.events.ClickHandler()
-  // {
-  //
-  // @Override
-  // public void
-  // onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event)
-  // {
-  // form.submitForm();
-  // }
-  // });
-  //
-  //
-  // addDM.addClickHandler( new ClickHandler()
-  // {
-  // @Override
-  // public void onClick(ClickEvent event)
-  // {
-  // for( FormItem it : form.getFields())
-  // {
-  // if( it instanceof CanvasItem )
-  // {
-  // CanvasItem cnv = (CanvasItem)it;
-  //
-  // Canvas c = cnv.getCanvas();
-  //
-  // if( c instanceof VLayout )
-  // {
-  // ((VLayout)c).addMember( new DMPanel(((VLayout)c).getMembers().length) );
-  // }
-  // }
-  // }
-  //
-  // // FormItem[] oitms = form.getFields();
-  // // FormItem[] nitms = new FormItem[oitms.length+1];
-  // //
-  // // TextAreaItem descriptionItem = new TextAreaItem();
-  // // descriptionItem.setName("descriptionItem");
-  // // descriptionItem.setTitle("Description");
-  // // descriptionItem.setWidth("100%");
-  // //
-  // // descriptionItem.setValue(oitms[0].getValue());
-  // //
-  // // nitms[0] = descriptionItem;
-  // //
-  // // nitms[1] = new ButtonItem("Submit");
-  // // nitms[2] = new ButtonItem("AddDataModule");
-  // //
-  // //
-  // // for(int i=3; i < oitms.length; i++ )
-  // // {
-  // //// nitms[i]=new UploadItem("file"+i, "Upload submission");
-  // //// nitms[i].setValue(oitms[i].getValue());
-  // //
-  // //
-  // // }
-  // //
-  // // UploadItem upl = new UploadItem("file"+nitms.length,
-  // "Upload submission");
-  // //
-  // // nitms[oitms.length]=upl;
-  // //
-  // // form.setFields(nitms);
-  // //
-  // // form.redraw();
-  // }
-  // });
  }
 
  private static class DMPanel extends CaptionPanel
@@ -264,17 +159,21 @@ public class SubmissionPreparePanelGWT extends HLayout
   
   DMPanel(int n)
   {
+   //setWidth("*");
+   setWidth("auto");
    setCaptionText("Data Module");
 
    FlexTable layout = new FlexTable();
+   layout.setWidth("100%");
    FlexCellFormatter cellFormatter = layout.getFlexCellFormatter();
 
-   layout.setWidget(0, 0, new Label("Description"));
+   layout.setWidget(0, 0, new Label("Description:"));
 
    dsc = new TextArea();
    dsc.setName("dmdesc" + n);
    dsc.setWidth("97%");
 
+   cellFormatter.setColSpan(1, 0, 2);
    layout.setWidget(1, 0, dsc);
 
    cellFormatter.setVerticalAlignment(0, 1, HasVerticalAlignment.ALIGN_TOP);
