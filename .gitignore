@@ -1,7 +1,8 @@
 .classpath
 .project
 .settings
-test
 scrap
 /lib
 .externalToolBuilders
+
+.gwt

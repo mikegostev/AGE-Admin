@@ -11,7 +11,7 @@ import uk.ac.ebi.age.log.Log2JSON;
 import uk.ac.ebi.age.log.LogNode.Level;
 import uk.ac.ebi.age.log.impl.BufferLogger;
 import uk.ac.ebi.age.mng.SubmissionManager;
-import uk.ac.ebi.age.model.writable.SubmissionWritable;
+import uk.ac.ebi.age.model.writable.DataModuleWritable;
 import uk.ac.ebi.age.storage.AgeStorageAdm;
 
 import com.pri.util.stream.StreamPump;
@@ -58,14 +58,14 @@ public class SubmissionUploader implements UploadCommandListener
 //   SubmissionWritable submission = AgeTabSemanticValidator.getInstance().parse(sbm,
 //     SemanticManager.getInstance().getContextModel(sess.getUserProfile()));
 
-   SubmissionWritable submission = SubmissionManager.getInstance().prepareSubmission(text, null, false, sess.getUserProfile(), storAdm, log.getRootNode());
+   DataModuleWritable submission = SubmissionManager.getInstance().prepareSubmission(text, null, false, sess.getUserProfile(), storAdm, log.getRootNode());
    
 //   BufferLogger.printBranch(log.getRootNode());
    
    try
    {
     if( submission != null )
-     storAdm.storeSubmission(submission);
+     storAdm.storeDataModule(submission);
    }
    catch(Exception e)
    {
