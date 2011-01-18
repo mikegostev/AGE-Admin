@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 
 import uk.ac.ebi.age.admin.client.common.ModelPath;
 import uk.ac.ebi.age.admin.client.common.StoreNode;
+import uk.ac.ebi.age.admin.client.common.SubmissionConstants;
 import uk.ac.ebi.age.admin.client.common.user.exception.UserAuthException;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
@@ -60,7 +61,7 @@ public class AgeAdmin
    conf.setUploadManager(new UploadManager());
 
   conf.getUploadManager().addUploadCommandListener("SetModel", new SemanticUploader(storage));
-  conf.getUploadManager().addUploadCommandListener("Submission", new SubmissionUploader(storage));
+  conf.getUploadManager().addUploadCommandListener(SubmissionConstants.SUBMISSON_COMMAND, new SubmissionUploader(storage));
 
   if(instance == null)
    instance = this;

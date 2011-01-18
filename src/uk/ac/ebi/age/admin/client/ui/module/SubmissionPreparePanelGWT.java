@@ -1,5 +1,6 @@
 package uk.ac.ebi.age.admin.client.ui.module;
 
+import uk.ac.ebi.age.admin.client.common.SubmissionConstants;
 import uk.ac.ebi.age.admin.client.log.LogNode;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -54,7 +55,7 @@ public class SubmissionPreparePanelGWT extends HLayout
   panel.setWidth("500px");
   form.setWidget(panel);
 
-  panel.add( new Hidden("Command","Submission") );
+  panel.add( new Hidden("Command",SubmissionConstants.SUBMISSON_COMMAND) );
   
   FlexTable btPan = new FlexTable();
   btPan.setCellSpacing(6);
@@ -84,7 +85,7 @@ public class SubmissionPreparePanelGWT extends HLayout
   panel.add(new Label("Submission description:"));
 
   final TextArea tb = new TextArea();
-  tb.setName("submDescr");
+  tb.setName(SubmissionConstants.SUBMISSON_DESCR);
   tb.setWidth("97%");
   panel.add(tb);
 
@@ -170,7 +171,7 @@ public class SubmissionPreparePanelGWT extends HLayout
    layout.setWidget(0, 0, new Label("Description:"));
 
    dsc = new TextArea();
-   dsc.setName("dmdesc" + n);
+   dsc.setName(SubmissionConstants.MODULE_NAME + n);
    dsc.setWidth("97%");
 
    cellFormatter.setColSpan(1, 0, 2);
@@ -194,7 +195,7 @@ public class SubmissionPreparePanelGWT extends HLayout
    cellFormatter.setColSpan(2, 0, 2);
 
    upload = new FileUpload();
-   upload.setName("file" + n);
+   upload.setName(SubmissionConstants.MODULE_FILE + n);
    upload.getElement().setAttribute("size", "80");
    layout.setWidget(2, 0, upload);
 
