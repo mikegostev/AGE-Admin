@@ -1,6 +1,7 @@
 package uk.ac.ebi.age.admin.server.mng;
 
 import java.io.File;
+import java.sql.Connection;
 
 import uk.ac.ebi.age.admin.client.common.Constants;
 import uk.ac.ebi.age.admin.server.user.SessionPool;
@@ -13,6 +14,7 @@ public class Configuration
  public static final String pubResRelPath="public";
  public static final String modelRelPath="model";
  public static final String userRelPath="user";
+ public static final String h2DbPath = "h2db";
  
  private static Configuration defaultConfig = new Configuration();
  
@@ -24,11 +26,14 @@ public class Configuration
  private UserDatabase userDatabase;
  private SessionPool sessionPool;
  private UploadManager uploadManager;
+
  private File tmpDir;
  private File baseDir;
  private File userBaseDir;
  
  private File publicModelDir;
+
+ private Connection dBconnection;
  
  
  
@@ -110,5 +115,25 @@ public class Configuration
  {
   return modelRelPath;
  }
+
+
+ public File getDbDir()
+ {
+  return new File(baseDir,h2DbPath);
+ }
+ 
+ public void setDbConnection(Connection conn)
+ {
+  dBconnection = conn;
+ }
+
+
+ public Connection getDbConnection()
+ {
+  return dBconnection;
+ }
+
+ 
+ 
 
 }

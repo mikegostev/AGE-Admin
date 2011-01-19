@@ -6,6 +6,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import uk.ac.ebi.age.admin.client.common.ModelPath;
 import uk.ac.ebi.age.admin.client.common.StoreNode;
@@ -63,8 +67,38 @@ public class AgeAdmin
   conf.getUploadManager().addUploadCommandListener("SetModel", new SemanticUploader(storage));
   conf.getUploadManager().addUploadCommandListener(SubmissionConstants.SUBMISSON_COMMAND, new SubmissionUploader(storage));
 
+  try
+  {
+   Class.forName("org.h2.Driver");
+   Connection conn = DriverManager.getConnection("jdbc:h2:"+conf.getDbDir().getAbsolutePath(), "sa", "");
+   conf.setDbConnection(conn);
+   
+   initSubmissionDb();
+  }
+  catch(Exception e)
+  {
+   e.printStackTrace();
+   
+   throw new RuntimeException("Database initialization error: "+e.getMessage(),e);
+  }
+
+  
+
+  
   if(instance == null)
    instance = this;
+ }
+
+ private void initSubmissionDb() throws SQLException
+ {
+  Statement stmt = configuration.getDbConnection().createStatement();
+  
+  stmt.executeUpdate("CREATE SCHEMA IF NOT EXISTS submissiondb");
+
+  stmt.executeUpdate("CREATE TABLE IF NOT EXISTS submissiondb.submission (");
+
+  stmt.executeUpdate("CREATE TABLE IF NOT EXISTS submissiondb.module (");
+ 
  }
 
  public void shutdown()
@@ -74,6 +108,15 @@ public class AgeAdmin
 
   if(udb != null)
    udb.shutdown();
+  
+  try
+  {
+   configuration.getDbConnection().close();
+  }
+  catch(SQLException e)
+  {
+   e.printStackTrace();
+  }
  }
 
  public Session login(String userName, String password, String clientAddr) throws UserAuthException
