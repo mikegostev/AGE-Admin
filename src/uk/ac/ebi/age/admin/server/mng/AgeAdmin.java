@@ -93,12 +93,24 @@ public class AgeAdmin
  {
   Statement stmt = configuration.getDbConnection().createStatement();
   
-  stmt.executeUpdate("CREATE SCHEMA IF NOT EXISTS submissiondb");
+  stmt.executeUpdate("CREATE SCHEMA IF NOT EXISTS "+Configuration.submissionDB);
 
-  stmt.executeUpdate("CREATE TABLE IF NOT EXISTS submissiondb.submission (");
+  stmt.executeUpdate("CREATE TABLE IF NOT EXISTS "+Configuration.submissionDB+'.'+Configuration.submissionTable+" ("+
+    "id VARCHAR PRIMARY KEY, desc VARCHAR, ctime BIGINT, mtime BIGINT, creator VARCHAR, modifier VARCHAR, object BINARY)");
 
-  stmt.executeUpdate("CREATE TABLE IF NOT EXISTS submissiondb.module (");
- 
+  stmt.executeUpdate("CREATE INDEX IF NOT EXISTS ctimeIdx ON "+Configuration.submissionDB+'.'+Configuration.submissionTable+"(ctime)");
+  stmt.executeUpdate("CREATE INDEX IF NOT EXISTS mtimeIdx ON "+Configuration.submissionDB+'.'+Configuration.submissionTable+"(mtime)");
+  stmt.executeUpdate("CREATE INDEX IF NOT EXISTS creatorIdx ON "+Configuration.submissionDB+'.'+Configuration.submissionTable+"(creator)");
+  stmt.executeUpdate("CREATE INDEX IF NOT EXISTS modifierIdx ON "+Configuration.submissionDB+'.'+Configuration.submissionTable+"(modifier)");
+
+  stmt.executeUpdate("CREATE TABLE IF NOT EXISTS "+Configuration.submissionDB+'.'+Configuration.moduleTable+" ("+
+    "id VARCHAR PRIMARY KEY, desc VARCHAR, mtime BIGINT, modifier VARCHAR, object BINARY, FOREIGN KEY(id) REFERENCES "
+    +Configuration.submissionDB+'.'+Configuration.submissionTable+"(id) )");
+
+  stmt.executeUpdate("CREATE ALIAS IF NOT EXISTS FTL_INIT FOR \"org.h2.fulltext.FullTextLucene.init\"");
+  stmt.executeUpdate("CALL FTL_INIT()");
+
+  stmt.close();
  }
 
  public void shutdown()

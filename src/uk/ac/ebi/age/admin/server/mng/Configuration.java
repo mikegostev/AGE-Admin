@@ -11,6 +11,10 @@ public class Configuration
 {
  public static final String SESSION_COOKIE_NAME = "AGEADMSESS";
  
+ public static final String submissionDB = "submissiondb";
+ public static final String submissionTable = "submission";
+ public static final String moduleTable = "module";
+ 
  public static final String pubResRelPath="public";
  public static final String modelRelPath="model";
  public static final String userRelPath="user";
