@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.util.Map;
 
 import uk.ac.ebi.age.admin.client.common.SubmissionConstants;
-import uk.ac.ebi.age.admin.server.model.DataModuleMeta;
 import uk.ac.ebi.age.admin.server.model.SubmissionMeta;
 import uk.ac.ebi.age.admin.server.service.UploadRequest;
 import uk.ac.ebi.age.admin.server.user.Session;
@@ -15,6 +14,7 @@ import uk.ac.ebi.age.log.Log2JSON;
 import uk.ac.ebi.age.log.LogNode.Level;
 import uk.ac.ebi.age.log.impl.BufferLogger;
 import uk.ac.ebi.age.mng.SubmissionManager;
+import uk.ac.ebi.age.model.DataModuleMeta;
 import uk.ac.ebi.age.model.writable.DataModuleWritable;
 import uk.ac.ebi.age.service.IdGenerator;
 import uk.ac.ebi.age.storage.AgeStorageAdm;
@@ -53,7 +53,7 @@ public class SubmissionUploader implements UploadCommandListener
     
     SubmissionMeta sMeta = new SubmissionMeta();
     
-    sMeta.setId( IdGenerator.getInstance().getStringId("submission") );
+    sMeta.setId( SubmissionConstants.SUBM_ID_PFX+IdGenerator.getInstance().getStringId("submission") );
     
     sMeta.setDescription( upReq.getParams().get(SubmissionConstants.SUBMISSON_DESCR) );
     sMeta.setSubmitter( sess.getUserProfile().getUserName() );
@@ -79,38 +79,33 @@ public class SubmissionUploader implements UploadCommandListener
      
      DataModuleMeta dmMeta = new DataModuleMeta();
      
-     dmMeta.setId( IdGenerator.getInstance().getStringId("datamodule") );
+     dmMeta.setId( SubmissionConstants.MOD_ID_PFX+IdGenerator.getInstance().getStringId("datamodule") );
      dmMeta.setDescription( dmDesc );
      
+     dmMeta.setModificationTime(time);
+     
      sMeta.addDataModule( dmMeta );
-    }
-    
-    String text = null;
-
-    ByteArrayOutputStream bais = new ByteArrayOutputStream();
-
-    for(File f : upReq.getFiles().values())
-    {
-     FileInputStream fis = new FileInputStream(f);
+     
+     ByteArrayOutputStream bais = new ByteArrayOutputStream();
+     
+     FileInputStream fis = new FileInputStream(me.getValue());
      StreamPump.doPump(fis, bais, false);
      fis.close();
 
      bais.write('\n');
-     bais.write('\n');
+     bais.close();
+     
+     byte[] barr = bais.toByteArray();
+     String enc = "UTF-8";
+     
+     if( barr.length >= 2 && (barr[0] == -1 && barr[1] == -2) || (barr[0] == -2 && barr[1] == -1) )  
+      enc="UTF-16";
+
+     dmMeta.setText(new String(bais.toByteArray(),enc));
     }
 
-    bais.close();
-
-    text = new String(bais.toByteArray());
-
-    // AgeTabSubmission sbm = AgeTabSyntaxParser.getInstance().parse(text);
-    //
-    // SubmissionWritable submission =
-    // AgeTabSemanticValidator.getInstance().parse(sbm,
-    // SemanticManager.getInstance().getContextModel(sess.getUserProfile()));
-
     DataModuleWritable submission = SubmissionManager.getInstance()
-      .prepareSubmission(text, null, false, sess.getUserProfile(), storAdm, log.getRootNode());
+      .prepareSubmission(sMeta.getDataModules(), null, false, sess.getUserProfile(), storAdm, log.getRootNode());
 
     // BufferLogger.printBranch(log.getRootNode());
 
