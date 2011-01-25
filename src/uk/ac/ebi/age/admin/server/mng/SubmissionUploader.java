@@ -15,7 +15,6 @@ import uk.ac.ebi.age.log.LogNode.Level;
 import uk.ac.ebi.age.log.impl.BufferLogger;
 import uk.ac.ebi.age.mng.SubmissionManager;
 import uk.ac.ebi.age.model.DataModuleMeta;
-import uk.ac.ebi.age.model.writable.DataModuleWritable;
 import uk.ac.ebi.age.service.IdGenerator;
 import uk.ac.ebi.age.storage.AgeStorageAdm;
 
@@ -79,7 +78,6 @@ public class SubmissionUploader implements UploadCommandListener
      
      DataModuleMeta dmMeta = new DataModuleMeta();
      
-     dmMeta.setId( SubmissionConstants.MOD_ID_PFX+IdGenerator.getInstance().getStringId("datamodule") );
      dmMeta.setDescription( dmDesc );
      
      dmMeta.setModificationTime(time);
@@ -104,20 +102,13 @@ public class SubmissionUploader implements UploadCommandListener
      dmMeta.setText(new String(bais.toByteArray(),enc));
     }
 
-    DataModuleWritable submission = SubmissionManager.getInstance()
-      .prepareSubmission(sMeta.getDataModules(), null, false, sess.getUserProfile(), storAdm, log.getRootNode());
-
-    // BufferLogger.printBranch(log.getRootNode());
-
-    try
+    if(  SubmissionManager.getInstance()
+      .storeSubmission(sMeta.getDataModules(), false, sess.getUserProfile(), storAdm, log.getRootNode()) )
     {
-     if(submission != null)
-      storAdm.storeDataModule(submission);
+     sMeta.setId(SubmissionConstants.submissionIDPrefix+IdGenerator.getInstance().getStringId(SubmissionConstants.submissionIDDomain));
     }
-    catch(Exception e)
-    {
-     log.getRootNode().log(Level.ERROR, e.getMessage());
-    }
+     
+     // BufferLogger.printBranch(log.getRootNode());
 
    }
    catch(Exception e)

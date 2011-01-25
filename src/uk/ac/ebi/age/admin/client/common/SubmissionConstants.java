@@ -8,6 +8,6 @@ public class SubmissionConstants
  public static final String MODULE_NAME = "dmName";
  public static final String MODULE_FILE = "dmFile";
 
- public static final String SUBM_ID_PFX = "SBM";
- public static final String MOD_ID_PFX = "MOD";
+ public static final String submissionIDPrefix = "SBM";
+ public static final String submissionIDDomain = "submission";
 }
