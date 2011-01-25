@@ -9,6 +9,7 @@ import java.util.Map;
 import uk.ac.ebi.age.admin.client.common.SubmissionConstants;
 import uk.ac.ebi.age.admin.server.model.SubmissionMeta;
 import uk.ac.ebi.age.admin.server.service.UploadRequest;
+import uk.ac.ebi.age.admin.server.submission.SubmissionDB;
 import uk.ac.ebi.age.admin.server.user.Session;
 import uk.ac.ebi.age.log.Log2JSON;
 import uk.ac.ebi.age.log.LogNode.Level;
@@ -51,8 +52,6 @@ public class SubmissionUploader implements UploadCommandListener
     }
     
     SubmissionMeta sMeta = new SubmissionMeta();
-    
-    sMeta.setId( SubmissionConstants.SUBM_ID_PFX+IdGenerator.getInstance().getStringId("submission") );
     
     sMeta.setDescription( upReq.getParams().get(SubmissionConstants.SUBMISSON_DESCR) );
     sMeta.setSubmitter( sess.getUserProfile().getUserName() );
@@ -106,6 +105,8 @@ public class SubmissionUploader implements UploadCommandListener
       .storeSubmission(sMeta.getDataModules(), false, sess.getUserProfile(), storAdm, log.getRootNode()) )
     {
      sMeta.setId(SubmissionConstants.submissionIDPrefix+IdGenerator.getInstance().getStringId(SubmissionConstants.submissionIDDomain));
+    
+     SubmissionDB.getInstance().storeSubmission( sMeta );
     }
      
      // BufferLogger.printBranch(log.getRootNode());

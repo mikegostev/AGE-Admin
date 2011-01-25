@@ -8,6 +8,8 @@ import javax.servlet.ServletContextListener;
 import uk.ac.ebi.age.admin.server.mng.AgeAdmin;
 import uk.ac.ebi.age.admin.server.mng.AgeAdminConfigManager;
 import uk.ac.ebi.age.admin.server.mng.Configuration;
+import uk.ac.ebi.age.admin.server.submission.SubmissionDB;
+import uk.ac.ebi.age.admin.server.submission.impl.H2SubmissionDB;
 import uk.ac.ebi.age.mng.AgeStorageManager;
 import uk.ac.ebi.age.mng.AgeStorageManager.DB_TYPE;
 import uk.ac.ebi.age.service.IdGenerator;
@@ -21,6 +23,8 @@ public class Init implements ServletContextListener
  @Override
  public void contextDestroyed(ServletContextEvent arg0)
  {
+  SubmissionDB.getInstance().shutdown();
+  
   if( adm != null )
    adm.shutdown();
  }
@@ -31,12 +35,22 @@ public class Init implements ServletContextListener
   AgeAdminConfigManager cfg = new AgeAdminConfigManager(arg0.getServletContext());
   AgeStorageAdm storage;
   
+  Configuration conf = Configuration.getDefaultConfiguration();
+  
+  conf.setBaseDir( new File(cfg.getBasePath()) );
+  conf.setTmpDir( new File(cfg.getTmpPath()) );
+
   try
   {
    boolean master = cfg.isMaster();
    
    if( master )
+   {
     IdGenerator.setInstance( new SeqIdGeneratorImpl(cfg.getServicesPath()+"/SeqIdGen") );
+   
+    SubmissionDB.setInstance( new H2SubmissionDB() );
+   }
+   
    
    storage = AgeStorageManager.createInstance( DB_TYPE.AgeDB, cfg.getDBPath(), master );
   }
@@ -46,10 +60,6 @@ public class Init implements ServletContextListener
    return;
   }
   
-  Configuration conf = Configuration.getDefaultConfiguration();
-  
-  conf.setBaseDir( new File(cfg.getBasePath()) );
-  conf.setTmpDir( new File(cfg.getTmpPath()) );
 
   conf.getPublicModelDir().mkdirs();
   conf.getUserBaseDir().mkdirs();
