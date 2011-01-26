@@ -1,4 +1,4 @@
-package uk.ac.ebi.age.admin.client.ui.module;
+package uk.ac.ebi.age.admin.client.ui.module.submission;
 
 import uk.ac.ebi.age.admin.client.common.SubmissionConstants;
 import uk.ac.ebi.age.admin.client.log.LogNode;

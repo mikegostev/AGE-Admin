@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.sql.SQLException;
 
 import uk.ac.ebi.age.admin.client.common.ModelPath;
 import uk.ac.ebi.age.admin.client.common.StoreNode;
@@ -16,6 +15,9 @@ import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
 import uk.ac.ebi.age.admin.client.model.ModelStorageException;
 import uk.ac.ebi.age.admin.server.model.Age2ImprintConverter;
+import uk.ac.ebi.age.admin.server.model.SubmissionMeta;
+import uk.ac.ebi.age.admin.server.submission.SubmissionDB;
+import uk.ac.ebi.age.admin.server.submission.impl.H2SubmissionDB;
 import uk.ac.ebi.age.admin.server.user.Session;
 import uk.ac.ebi.age.admin.server.user.SessionPool;
 import uk.ac.ebi.age.admin.server.user.UserDatabase;
@@ -41,6 +43,8 @@ public class AgeAdmin
  private SessionPool   spool;
  private UserDatabase  udb;
  private AgeStorageAdm storage;
+ private SubmissionDB submissionDB;
+ 
  private Configuration configuration;
 
  public AgeAdmin(Configuration conf, AgeStorageAdm storage)
@@ -61,8 +65,11 @@ public class AgeAdmin
   if(conf.getUploadManager() == null)
    conf.setUploadManager(new UploadManager());
 
+  if(conf.getSubmissionDB() == null)
+   conf.setSubmissionDB(submissionDB = new H2SubmissionDB(conf.getSubmissionDbDir()) );
+  
   conf.getUploadManager().addUploadCommandListener("SetModel", new SemanticUploader(storage));
-  conf.getUploadManager().addUploadCommandListener(SubmissionConstants.SUBMISSON_COMMAND, new SubmissionUploader(storage));
+  conf.getUploadManager().addUploadCommandListener(SubmissionConstants.SUBMISSON_COMMAND, new SubmissionUploader(this));
 
   
   if(instance == null)
@@ -78,15 +85,10 @@ public class AgeAdmin
 
   if(udb != null)
    udb.shutdown();
-  
-  try
-  {
-   configuration.getDbConnection().close();
-  }
-  catch(SQLException e)
-  {
-   e.printStackTrace();
-  }
+
+  if(submissionDB != null)
+   submissionDB.shutdown();
+
  }
 
  public Session login(String userName, String password, String clientAddr) throws UserAuthException
@@ -268,6 +270,18 @@ public class AgeAdmin
   
   if( ! storage.updateSemanticModel(sm, bLog.getRootNode()) )
    throw new ModelStorageException("Model installation failed");
+ }
+
+
+
+ public AgeStorageAdm getStorageAdmin()
+ {
+  return storage;
+ }
+
+ public void storeSubmission(SubmissionMeta sMeta)
+ {
+  submissionDB.storeSubmission(sMeta);
  }
  
 }

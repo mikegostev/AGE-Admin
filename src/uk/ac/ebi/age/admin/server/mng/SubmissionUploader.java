@@ -9,7 +9,6 @@ import java.util.Map;
 import uk.ac.ebi.age.admin.client.common.SubmissionConstants;
 import uk.ac.ebi.age.admin.server.model.SubmissionMeta;
 import uk.ac.ebi.age.admin.server.service.UploadRequest;
-import uk.ac.ebi.age.admin.server.submission.SubmissionDB;
 import uk.ac.ebi.age.admin.server.user.Session;
 import uk.ac.ebi.age.log.Log2JSON;
 import uk.ac.ebi.age.log.LogNode.Level;
@@ -17,17 +16,16 @@ import uk.ac.ebi.age.log.impl.BufferLogger;
 import uk.ac.ebi.age.mng.SubmissionManager;
 import uk.ac.ebi.age.model.DataModuleMeta;
 import uk.ac.ebi.age.service.IdGenerator;
-import uk.ac.ebi.age.storage.AgeStorageAdm;
 
 import com.pri.util.stream.StreamPump;
 
 public class SubmissionUploader implements UploadCommandListener
 {
- private AgeStorageAdm storAdm;
+ private AgeAdmin admin;
 
- public SubmissionUploader(AgeStorageAdm storage)
+ public SubmissionUploader(AgeAdmin storage)
  {
-  storAdm=storage;
+  admin=storage;
  }
 
  @Override
@@ -102,11 +100,11 @@ public class SubmissionUploader implements UploadCommandListener
     }
 
     if(  SubmissionManager.getInstance()
-      .storeSubmission(sMeta.getDataModules(), false, sess.getUserProfile(), storAdm, log.getRootNode()) )
+      .storeSubmission(sMeta.getDataModules(), false, sess.getUserProfile(), admin.getStorageAdmin(), log.getRootNode()) )
     {
      sMeta.setId(SubmissionConstants.submissionIDPrefix+IdGenerator.getInstance().getStringId(SubmissionConstants.submissionIDDomain));
     
-     SubmissionDB.getInstance().storeSubmission( sMeta );
+     admin.storeSubmission( sMeta );
     }
      
      // BufferLogger.printBranch(log.getRootNode());

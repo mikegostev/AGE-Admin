@@ -10,16 +10,18 @@ import javax.servlet.ServletContext;
 public class AgeAdminConfigManager
 {
  public static final String BASE_PATH_PARAM="basePath";
- public static final String DB_PATH_PARAM="dbPath";
+ public static final String AGEDB_PATH_PARAM="dbPath";
  public static final String TMP_PATH_PARAM="tmpPath";
  public static final String SERVICES_PATH_PARAM="servicesPath";
+ public static final String IDGEN_PATH_PARAM="IDGenPath";
  
  @SuppressWarnings("serial")
  private Map<String,String> configMap = new HashMap<String,String>(){{
   put(BASE_PATH_PARAM,      "var/biosd/");
-  put(DB_PATH_PARAM,        "agedb");
+  put(AGEDB_PATH_PARAM,        "agedb");
   put(TMP_PATH_PARAM,       "tmp");
   put(SERVICES_PATH_PARAM,  "services");
+  put(IDGEN_PATH_PARAM,     "SeqIdGen");
  }};
  
 // private static AgeAdminConfigManager instance = null;
@@ -52,9 +54,9 @@ public class AgeAdminConfigManager
  }
 
  
- public String getDBPath()
+ public String getAgeDBPath()
  {
-  return getPathParam(DB_PATH_PARAM);
+  return getPathParam(AGEDB_PATH_PARAM);
  }
 
  public String getTmpPath()
@@ -67,6 +69,12 @@ public class AgeAdminConfigManager
   return getPathParam(SERVICES_PATH_PARAM);
  }
 
+ public String getIDGenPath()
+ {
+  return getPathParam(IDGEN_PATH_PARAM);
+ }
+
+ 
  public String getPathParam( String key )
  {
   String basePath = getBasePath();

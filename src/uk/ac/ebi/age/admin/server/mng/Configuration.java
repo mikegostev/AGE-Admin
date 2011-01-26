@@ -1,9 +1,9 @@
 package uk.ac.ebi.age.admin.server.mng;
 
 import java.io.File;
-import java.sql.Connection;
 
 import uk.ac.ebi.age.admin.client.common.Constants;
+import uk.ac.ebi.age.admin.server.submission.SubmissionDB;
 import uk.ac.ebi.age.admin.server.user.SessionPool;
 import uk.ac.ebi.age.admin.server.user.UserDatabase;
 
@@ -11,14 +11,10 @@ public class Configuration
 {
  public static final String SESSION_COOKIE_NAME = "AGEADMSESS";
  
- public static final String submissionDB = "submissiondb";
- public static final String submissionTable = "submission";
- public static final String moduleTable = "module";
- 
  public static final String pubResRelPath="public";
  public static final String modelRelPath="model";
  public static final String userRelPath="user";
- public static final String h2DbPath = "h2db";
+ public static final String submissionRelPath="submission";
  
  private static Configuration defaultConfig = new Configuration();
  
@@ -30,15 +26,13 @@ public class Configuration
  private UserDatabase userDatabase;
  private SessionPool sessionPool;
  private UploadManager uploadManager;
-
+ private SubmissionDB submissionDB;
 
  private File tmpDir;
  private File baseDir;
  private File userBaseDir;
  
  private File publicModelDir;
-
- private Connection dBconnection;
 
  public UserDatabase getUserDatabase()
  {
@@ -119,27 +113,24 @@ public class Configuration
   return modelRelPath;
  }
 
- public File getDbDir()
+ public File getSubmissionDbDir()
  {
-  return new File(baseDir,h2DbPath);
- }
- 
- public void setDbConnection(Connection conn)
- {
-  dBconnection = conn;
+  return new File(baseDir,submissionRelPath);
  }
 
 
- public Connection getDbConnection()
+ public SubmissionDB getSubmissionDB()
  {
-  return dBconnection;
+  return submissionDB;
  }
 
- 
+
+ public void setSubmissionDB(SubmissionDB submissionDB)
+ {
+  this.submissionDB = submissionDB;
+ }
  
 
- 
- 
 
 }
 
