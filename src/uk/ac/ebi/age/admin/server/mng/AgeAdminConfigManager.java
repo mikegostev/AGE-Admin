@@ -9,6 +9,8 @@ import javax.servlet.ServletContext;
 
 public class AgeAdminConfigManager
 {
+ public static final String ISMASTER_WEBAPP_PARAM="isMaster";
+ 
  public static final String BASE_PATH_PARAM="basePath";
  public static final String DB_PATH_PARAM="dbPath";
  public static final String TMP_PATH_PARAM="tmpPath";
@@ -96,7 +98,7 @@ public class AgeAdminConfigManager
 
  public boolean isMaster()
  {
-  String mval = configMap.get("isMaster");
+  String mval = configMap.get(ISMASTER_WEBAPP_PARAM);
  
   return mval != null && ( "true".equalsIgnoreCase(mval) || "yes".equalsIgnoreCase(mval) || "1".equalsIgnoreCase(mval) ); 
  }
