@@ -1,6 +1,6 @@
 package uk.ac.ebi.age.admin.client.model;
 
-import uk.ac.ebi.age.admin.client.common.StoreNode;
+import uk.ac.ebi.age.admin.shared.StoreNode;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 

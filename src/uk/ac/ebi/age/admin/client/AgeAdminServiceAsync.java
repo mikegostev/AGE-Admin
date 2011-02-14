@@ -1,8 +1,8 @@
 package uk.ac.ebi.age.admin.client;
 
-import uk.ac.ebi.age.admin.client.common.ModelPath;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
+import uk.ac.ebi.age.admin.shared.ModelPath;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

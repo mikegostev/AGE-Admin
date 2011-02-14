@@ -1,6 +1,6 @@
 package uk.ac.ebi.age.admin.client;
 
-import uk.ac.ebi.age.admin.client.common.Constants;
+import uk.ac.ebi.age.admin.shared.Constants;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Cookies;

@@ -13,9 +13,9 @@ import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
 
-import uk.ac.ebi.age.admin.client.common.UploadService;
 import uk.ac.ebi.age.admin.server.mng.Configuration;
 import uk.ac.ebi.age.admin.server.user.Session;
+import uk.ac.ebi.age.admin.shared.UploadService;
 
 import com.pri.util.stream.StreamPump;
 

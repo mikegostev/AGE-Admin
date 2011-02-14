@@ -7,8 +7,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import uk.ac.ebi.age.admin.client.common.Constants;
 import uk.ac.ebi.age.admin.server.mng.AgeAdmin;
+import uk.ac.ebi.age.admin.shared.Constants;
 
 public class LoginSvc extends HttpServlet
 {

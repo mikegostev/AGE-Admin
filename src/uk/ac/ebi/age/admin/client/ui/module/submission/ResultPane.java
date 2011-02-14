@@ -123,7 +123,7 @@ public class ResultPane extends VLayout implements ResultRenderer
 //  addMember(lb);
  }
  
- public void showResult( Report res, String qry, boolean sSmp, boolean sGrp, boolean sAtrNm, boolean sAtrVl, int cpage )
+ public void showResult( SubmissionReport res, String qry, boolean sSmp, boolean sGrp, boolean sAtrNm, boolean sAtrVl, int cpage )
  {
   query = qry;
   searchSamples=sSmp;

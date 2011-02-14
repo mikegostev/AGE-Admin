@@ -1,7 +1,7 @@
 package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
-import uk.ac.ebi.age.admin.client.common.ModelPath;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
+import uk.ac.ebi.age.admin.shared.ModelPath;
 
 public interface ModelMngr
 {

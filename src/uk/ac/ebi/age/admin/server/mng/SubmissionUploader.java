@@ -6,10 +6,10 @@ import java.io.FileInputStream;
 import java.io.PrintWriter;
 import java.util.Map;
 
-import uk.ac.ebi.age.admin.client.common.SubmissionConstants;
 import uk.ac.ebi.age.admin.server.model.SubmissionMeta;
 import uk.ac.ebi.age.admin.server.service.UploadRequest;
 import uk.ac.ebi.age.admin.server.user.Session;
+import uk.ac.ebi.age.admin.shared.SubmissionConstants;
 import uk.ac.ebi.age.log.Log2JSON;
 import uk.ac.ebi.age.log.LogNode.Level;
 import uk.ac.ebi.age.log.impl.BufferLogger;

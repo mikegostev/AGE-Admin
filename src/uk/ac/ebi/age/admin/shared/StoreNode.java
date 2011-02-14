@@ -1,4 +1,4 @@
-package uk.ac.ebi.age.admin.client.common;
+package uk.ac.ebi.age.admin.shared;
 
 import java.util.ArrayList;
 import java.util.List;

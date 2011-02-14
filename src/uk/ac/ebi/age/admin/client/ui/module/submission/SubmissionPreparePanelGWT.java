@@ -1,7 +1,7 @@
 package uk.ac.ebi.age.admin.client.ui.module.submission;
 
-import uk.ac.ebi.age.admin.client.common.SubmissionConstants;
 import uk.ac.ebi.age.admin.client.log.LogNode;
+import uk.ac.ebi.age.admin.shared.SubmissionConstants;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;

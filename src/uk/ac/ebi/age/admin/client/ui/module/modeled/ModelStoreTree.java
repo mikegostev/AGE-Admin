@@ -2,9 +2,9 @@ package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import java.util.LinkedList;
 
-import uk.ac.ebi.age.admin.client.common.ModelPath;
-import uk.ac.ebi.age.admin.client.common.StoreNode;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
+import uk.ac.ebi.age.admin.shared.ModelPath;
+import uk.ac.ebi.age.admin.shared.StoreNode;
 
 import com.smartgwt.client.types.TreeModelType;
 import com.smartgwt.client.util.SC;

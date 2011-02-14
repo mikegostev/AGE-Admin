@@ -2,7 +2,7 @@ package uk.ac.ebi.age.admin.server.util;
 
 import java.io.File;
 
-import uk.ac.ebi.age.admin.client.common.StoreNode;
+import uk.ac.ebi.age.admin.shared.StoreNode;
 
 public class DirectoryTools
 {

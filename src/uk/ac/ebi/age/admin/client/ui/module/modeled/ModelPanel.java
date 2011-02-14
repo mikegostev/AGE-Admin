@@ -1,8 +1,6 @@
 package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import uk.ac.ebi.age.admin.client.AgeAdminService;
-import uk.ac.ebi.age.admin.client.common.ModelPath;
-import uk.ac.ebi.age.admin.client.common.StoreNode;
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.ui.AnnotationMetaClassDef;
@@ -10,6 +8,8 @@ import uk.ac.ebi.age.admin.client.ui.AttributeMetaClassDef;
 import uk.ac.ebi.age.admin.client.ui.ClassAuxData;
 import uk.ac.ebi.age.admin.client.ui.ClassMetaClassDef;
 import uk.ac.ebi.age.admin.client.ui.RelationMetaClassDef;
+import uk.ac.ebi.age.admin.shared.ModelPath;
+import uk.ac.ebi.age.admin.shared.StoreNode;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.types.Side;

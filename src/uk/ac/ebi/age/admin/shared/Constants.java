@@ -1,4 +1,4 @@
-package uk.ac.ebi.age.admin.client.common;
+package uk.ac.ebi.age.admin.shared;
 
 public class Constants
 {

@@ -1,4 +1,4 @@
-package uk.ac.ebi.age.admin.client.common.user.exception;
+package uk.ac.ebi.age.admin.shared.user.exception;
 
 public class UserAuthException extends Exception
 {

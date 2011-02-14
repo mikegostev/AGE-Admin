@@ -5,14 +5,14 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import uk.ac.ebi.age.admin.client.AgeAdminService;
-import uk.ac.ebi.age.admin.client.common.ModelPath;
-import uk.ac.ebi.age.admin.client.common.user.exception.UserAuthException;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
 import uk.ac.ebi.age.admin.client.model.ModelStorageException;
 import uk.ac.ebi.age.admin.server.mng.AgeAdmin;
 import uk.ac.ebi.age.admin.server.mng.Configuration;
 import uk.ac.ebi.age.admin.server.user.Session;
+import uk.ac.ebi.age.admin.shared.ModelPath;
+import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 

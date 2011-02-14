@@ -10,5 +10,7 @@
 	<inherits name="com.smartgwt.SmartGwt"/>
 	
 	<source path="client" />
+	<source path="shared" />
+
 	<entry-point class="uk.ac.ebi.age.admin.client.Entry"></entry-point>
 </module>

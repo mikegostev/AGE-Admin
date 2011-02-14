@@ -1,10 +1,9 @@
 package uk.ac.ebi.age.admin.client.ui.module.submission;
 
-import uk.ac.ebi.biosd.client.LinkManager;
-import uk.ac.ebi.biosd.client.query.GroupImprint;
-import uk.ac.ebi.biosd.client.query.Report;
-import uk.ac.ebi.biosd.client.shared.AttributeReport;
-import uk.ac.ebi.biosd.client.ui.ResultRenderer;
+import uk.ac.ebi.age.admin.shared.submission.SubmissionImprint;
+import uk.ac.ebi.age.admin.shared.submission.SubmissionReport;
+import uk.ac.ebi.age.ui.client.LinkManager;
+import uk.ac.ebi.age.ui.client.module.PagingRuler;
 
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
@@ -20,7 +19,7 @@ import com.smartgwt.client.widgets.grid.events.RecordCollapseEvent;
 import com.smartgwt.client.widgets.grid.events.RecordCollapseHandler;
 import com.smartgwt.client.widgets.layout.VLayout;
 
-public class SubmissionsPane extends VLayout implements ResultRenderer
+public class SubmissionsPane extends VLayout
 {
  public final static int MAX_SUBMISSIONS_PER_PAGE=20;
  
@@ -118,26 +117,22 @@ public class SubmissionsPane extends VLayout implements ResultRenderer
 //  addMember(lb);
  }
  
- public void showResult( Report res, String qry, boolean sSmp, boolean sGrp, boolean sAtrNm, boolean sAtrVl, int cpage )
+ public void showResult( SubmissionReport res, String qry, int cpage )
  {
   query = qry;
-  searchSamples=sSmp;
-  searchGroups=sGrp;
-  searchAtNames=sAtrNm;
-  searchAtValues=sAtrVl;
   
   resultGrid.selectAllRecords();
   resultGrid.removeSelectedData();
   
-  if( res.getTotalRecords() > MAX_GROUPS_PER_PAGE )
+  if( res.getTotalSubmissions() > MAX_SUBMISSIONS_PER_PAGE )
   {
-   pagingRuler.setPagination(cpage, res.getTotalRecords(), MAX_GROUPS_PER_PAGE);
+   pagingRuler.setContents(cpage, res.getTotalSubmissions(), MAX_SUBMISSIONS_PER_PAGE, null, null);
    pagingRuler.setVisible(true);
   }
   else
    pagingRuler.setVisible(false);
   
-  for( GroupImprint sgr : res.getObjects() )
+  for( SubmissionImprint sgr : res.getObjects() )
   {
    ListGridRecord rec = new ListGridRecord();
    

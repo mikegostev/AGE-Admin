@@ -1,7 +1,7 @@
 package uk.ac.ebi.age.admin.client.ui.module;
 
 import uk.ac.ebi.age.admin.client.AgeAdminService;
-import uk.ac.ebi.age.admin.client.common.Constants;
+import uk.ac.ebi.age.admin.shared.Constants;
 
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.rpc.AsyncCallback;
