@@ -6,7 +6,6 @@ import uk.ac.ebi.age.ui.client.LinkManager;
 import uk.ac.ebi.age.ui.client.module.PagingRuler;
 
 import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.Record;
 import com.smartgwt.client.data.fields.DataSourceDateField;
 import com.smartgwt.client.data.fields.DataSourceTextField;
 import com.smartgwt.client.types.ExpansionMode;
@@ -137,31 +136,12 @@ public class SubmissionsPane extends VLayout
    ListGridRecord rec = new ListGridRecord();
    
    rec.setAttribute("id", sgr.getId());
-   rec.setAttribute("sampCnt", sgr.getRefCount());
+   rec.setAttribute("submitter", sgr.getSubmitter());
+   rec.setAttribute("modifier", sgr.getModifier());
    rec.setAttribute("desc", sgr.getDescription());
+   rec.setAttribute("ctime", sgr.getCtime());
+   rec.setAttribute("mtime", sgr.getMtime());
 
-   Record det = new ListGridRecord();
-   
-   for( AttributeReport ar : sgr.getAttributes() )
-   {
-//    System.out.println("Attr: "+ar.getName()+" "+ar.getValue());
-    det.setAttribute( ar.getName(), ar.getValue() );
-   }
-  
-   if( sgr.getOtherInfo() != null )
-    det.setAttribute("__other", sgr.getOtherInfo());
-
-   if( sgr.getPublications() != null )
-    det.setAttribute("__publ", sgr.getPublications() );
-
-   if( sgr.getContacts() != null )
-    det.setAttribute("__contact", sgr.getContacts() );
-   
-   det.setAttribute("__summary", String.valueOf(sgr.getRefCount())+"/"+sgr.getMatchedCount());
-//   det.setAttribute("Selected samples", sgr.getMatchedCount());
-  
-   rec.setAttribute("details", new Record[]{det});
-   
    resultGrid.addData(rec);
   }
  }
@@ -217,7 +197,7 @@ public class SubmissionsPane extends VLayout
  {
   protected Canvas getExpansionComponent(final ListGridRecord record)
   {
-   return new GroupDetailsPanel(record.getAttributeAsRecordArray("details")[0], query, searchAtNames, searchAtValues );
+   return new SubmissionDetailsPanel( record );
   }
  }
  
