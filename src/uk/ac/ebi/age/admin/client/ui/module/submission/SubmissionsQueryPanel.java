@@ -2,19 +2,22 @@ package uk.ac.ebi.age.admin.client.ui.module.submission;
 
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.ButtonItem;
 import com.smartgwt.client.widgets.form.fields.PickerIcon;
 import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.form.fields.events.FormItemClickHandler;
 import com.smartgwt.client.widgets.form.fields.events.FormItemIconClickEvent;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.TabSet;
 
-public class SubmissionsQueryPanel extends TabSet
+public class SubmissionsQueryPanel extends HLayout
 {
 
- public SubmissionsQueryPanel(SubmissionsPane resultPane)
+ public SubmissionsQueryPanel(SubmissionsListPane resultPane)
  {
-  setHeight("5%");
+  setHeight("100");
   setWidth100();
   
   setOverflow(Overflow.VISIBLE);
@@ -44,7 +47,10 @@ public class SubmissionsQueryPanel extends TabSet
   queryField.setIcons(searchPicker);
 //  queryField.addKeyPressHandler(act);
 
-  simpQForm.setFields(queryField);
+  ButtonItem searchBt=new ButtonItem();
+  searchBt.setTitle("Search");
+  
+  simpQForm.setFields(queryField,searchBt);
   
   simpQ.setPane(simpQForm);
   
@@ -70,8 +76,8 @@ public class SubmissionsQueryPanel extends TabSet
   advQ.setPane(advQForm);
 
   
-  addTab(simpQ);
-  addTab(advQ);
+  addMember(simpQForm);
+  addMember(advQForm);
  }
 
  public void executeQuery()

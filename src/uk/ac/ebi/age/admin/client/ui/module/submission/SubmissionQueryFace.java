@@ -6,7 +6,7 @@ import com.smartgwt.client.widgets.layout.VLayout;
 
 public class SubmissionQueryFace extends VLayout
 {
- private SubmissionsPane resultPane;
+ private SubmissionsListPane resultPane;
  private SubmissionsQueryPanel queryPanel;
  
  public SubmissionQueryFace()
@@ -14,7 +14,7 @@ public class SubmissionQueryFace extends VLayout
   setWidth100();
   setHeight100();
 
-  resultPane = new SubmissionsPane();
+  resultPane = new SubmissionsListPane();
 
   queryPanel = new SubmissionsQueryPanel(resultPane);
 

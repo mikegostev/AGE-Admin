@@ -16,7 +16,7 @@ import com.smartgwt.client.widgets.grid.events.RecordCollapseEvent;
 import com.smartgwt.client.widgets.grid.events.RecordCollapseHandler;
 import com.smartgwt.client.widgets.layout.VLayout;
 
-public class SubmissionsPane extends VLayout
+public class SubmissionsListPane extends VLayout
 {
  public final static int MAX_SUBMISSIONS_PER_PAGE=20;
  
@@ -25,7 +25,7 @@ public class SubmissionsPane extends VLayout
  private ListGrid resultGrid = new SubmissionList();
  private PagingRuler pagingRuler = new PagingRuler("submPage");
  
- public SubmissionsPane()
+ public SubmissionsListPane()
  {
   setHeight("100%");
   
