@@ -6,8 +6,6 @@ import uk.ac.ebi.age.ui.client.LinkManager;
 import uk.ac.ebi.age.ui.client.module.PagingRuler;
 
 import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.fields.DataSourceDateField;
-import com.smartgwt.client.data.fields.DataSourceTextField;
 import com.smartgwt.client.types.ExpansionMode;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.Canvas;
@@ -48,24 +46,14 @@ public class SubmissionsPane extends VLayout
   
   resultGrid.setStyleName("reportGrid");
   
-//  setBaseStyle("reportGrid");
-  
-  DataSource ds = new DataSource();
+  DataSource ds = SubmissionFields.createSubmissionDataSource();
   
   ds.setClientOnly(true);
   
-  ds.addField(new DataSourceTextField("id", "ID"));
-  ds.addField(new DataSourceTextField("desc", "Description", 2000));
-  ds.addField(new DataSourceDateField("ctime", "Submitted"));
-  ds.addField(new DataSourceDateField("mtime", "Modified"));
-  ds.addField(new DataSourceTextField("submitter", "ID"));
-  
-//  setDataSource(ds);
-  
   resultGrid.setCanExpandRecords(true); 
   
-  ListGridField idField = new ListGridField("id","ID", 200);  
-  ListGridField descField = new ListGridField("desc","Description");
+  ListGridField idField = new ListGridField(SubmissionFields.SUBM_ID.name(),"ID", 200);  
+  ListGridField descField = new ListGridField(SubmissionFields.COMM.name(),"Description");
 //  ListGridField propField = new ListGridField("prop","AdditionalProp");
   
 //  propField.setHidden(true);
@@ -135,13 +123,15 @@ public class SubmissionsPane extends VLayout
   {
    ListGridRecord rec = new ListGridRecord();
    
-   rec.setAttribute("id", sgr.getId());
-   rec.setAttribute("submitter", sgr.getSubmitter());
-   rec.setAttribute("modifier", sgr.getModifier());
-   rec.setAttribute("desc", sgr.getDescription());
-   rec.setAttribute("ctime", sgr.getCtime());
-   rec.setAttribute("mtime", sgr.getMtime());
+   rec.setAttribute(SubmissionFields.SUBM_ID.name(), sgr.getId());
+   rec.setAttribute(SubmissionFields.CRTR.name(), sgr.getSubmitter());
+   rec.setAttribute(SubmissionFields.MDFR.name(), sgr.getModifier());
+   rec.setAttribute(SubmissionFields.COMM.name(), sgr.getDescription());
+   rec.setAttribute(SubmissionFields.CTIME.name(), sgr.getCtime());
+   rec.setAttribute(SubmissionFields.MTIME.name(), sgr.getMtime());
 
+   rec.setAttribute("__obj", sgr);
+   
    resultGrid.addData(rec);
   }
  }

@@ -2,6 +2,7 @@ package uk.ac.ebi.age.admin.client.ui.module;
 
 import uk.ac.ebi.age.admin.client.ui.module.modeled.ModelPanel;
 import uk.ac.ebi.age.admin.client.ui.module.submission.SubmissionPreparePanelGWT;
+import uk.ac.ebi.age.admin.client.ui.module.submission.SubmissionQueryFace;
 
 import com.smartgwt.client.types.Side;
 import com.smartgwt.client.widgets.tab.Tab;
@@ -35,6 +36,11 @@ public class RootTabPanel extends TabSet
   submitTab.setPane( new SubmissionPreparePanelGWT() );
   
   addTab(submitTab);
+
+  Tab submittionListTab = new Tab("Submissions");
+  submittionListTab.setPane( new SubmissionQueryFace() );
+  
+  addTab(submittionListTab);
 
   
  }
