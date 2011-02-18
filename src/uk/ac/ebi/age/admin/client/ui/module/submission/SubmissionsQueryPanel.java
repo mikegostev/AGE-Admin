@@ -123,7 +123,11 @@ public class SubmissionsQueryPanel extends HLayout
   SubmissionQuery q = new SubmissionQuery();
  
   q.setQuery( queryField.getValueAsString() );
-  
+  q.setSubmissionID( submissionIDField.getValueAsString() );
+  q.setModuleID( moduleIDField.getValueAsString() );
+
+  q.setSubmitter( submitterField.getValueAsString() );
+  q.setModifier( modifierField.getValueAsString() );
  }
 
 }
