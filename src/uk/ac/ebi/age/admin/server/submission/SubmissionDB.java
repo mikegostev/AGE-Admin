@@ -1,6 +1,10 @@
 package uk.ac.ebi.age.admin.server.submission;
 
+import java.util.List;
+
 import uk.ac.ebi.age.admin.server.model.SubmissionMeta;
+import uk.ac.ebi.age.admin.shared.submission.SubmissionImprint;
+import uk.ac.ebi.age.admin.shared.submission.SubmissionQuery;
 
 public abstract class SubmissionDB
 {
@@ -22,5 +26,7 @@ public abstract class SubmissionDB
  public abstract void storeSubmission(SubmissionMeta sMeta);
 
  public abstract void shutdown();
+
+ public abstract List<SubmissionImprint> getSubmissions(SubmissionQuery q);
 
 }

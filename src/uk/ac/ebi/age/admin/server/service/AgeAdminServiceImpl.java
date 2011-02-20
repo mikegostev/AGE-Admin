@@ -1,5 +1,7 @@
 package uk.ac.ebi.age.admin.server.service;
 
+import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +14,8 @@ import uk.ac.ebi.age.admin.server.mng.AgeAdmin;
 import uk.ac.ebi.age.admin.server.mng.Configuration;
 import uk.ac.ebi.age.admin.server.user.Session;
 import uk.ac.ebi.age.admin.shared.ModelPath;
+import uk.ac.ebi.age.admin.shared.submission.SubmissionImprint;
+import uk.ac.ebi.age.admin.shared.submission.SubmissionQuery;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -87,5 +91,11 @@ public class AgeAdminServiceImpl extends RemoteServiceServlet implements AgeAdmi
  public void installModel(ModelPath modelPath) throws UserAuthException, ModelStorageException
  {
   adm.installModel(modelPath, getUserSession() );
+ }
+
+ @Override
+ public List<SubmissionImprint> getSubmissions(SubmissionQuery q)
+ {
+  return adm.getSubmissions(q);
  }
 }

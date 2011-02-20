@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.List;
 
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
@@ -23,6 +24,8 @@ import uk.ac.ebi.age.admin.server.user.impl.TestUserDataBase;
 import uk.ac.ebi.age.admin.shared.ModelPath;
 import uk.ac.ebi.age.admin.shared.StoreNode;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
+import uk.ac.ebi.age.admin.shared.submission.SubmissionImprint;
+import uk.ac.ebi.age.admin.shared.submission.SubmissionQuery;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
 import uk.ac.ebi.age.log.impl.BufferLogger;
 import uk.ac.ebi.age.model.SemanticModel;
@@ -282,6 +285,12 @@ public class AgeAdmin
  public void storeSubmission(SubmissionMeta sMeta)
  {
   submissionDB.storeSubmission(sMeta);
+ }
+
+
+ public List<SubmissionImprint> getSubmissions(SubmissionQuery q)
+ {
+  return submissionDB.getSubmissions(q);
  }
  
 }

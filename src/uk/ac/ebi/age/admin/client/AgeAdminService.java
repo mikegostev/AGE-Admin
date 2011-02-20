@@ -1,9 +1,13 @@
 package uk.ac.ebi.age.admin.client;
 
+import java.util.List;
+
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
 import uk.ac.ebi.age.admin.client.model.ModelStorageException;
 import uk.ac.ebi.age.admin.shared.ModelPath;
+import uk.ac.ebi.age.admin.shared.submission.SubmissionImprint;
+import uk.ac.ebi.age.admin.shared.submission.SubmissionQuery;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
 
 import com.google.gwt.core.client.GWT;
@@ -39,4 +43,6 @@ public interface AgeAdminService extends RemoteService
  ModelImprint getModel(ModelPath path) throws ModelStorageException, UserAuthException;
 
  void installModel(ModelPath modelPath) throws UserAuthException, ModelStorageException;
+
+ List<SubmissionImprint> getSubmissions(SubmissionQuery q);
 }

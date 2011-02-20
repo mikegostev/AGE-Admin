@@ -1,8 +1,15 @@
 package uk.ac.ebi.age.admin.client.ui.module.submission;
 
+import java.util.Date;
+import java.util.List;
+
+import uk.ac.ebi.age.admin.client.AgeAdminService;
+import uk.ac.ebi.age.admin.shared.submission.SubmissionImprint;
 import uk.ac.ebi.age.admin.shared.submission.SubmissionQuery;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.TitleOrientation;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.form.DynamicForm;
@@ -11,6 +18,8 @@ import com.smartgwt.client.widgets.form.fields.MiniDateRangeItem;
 import com.smartgwt.client.widgets.form.fields.PickerIcon;
 import com.smartgwt.client.widgets.form.fields.SpacerItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
+import com.smartgwt.client.widgets.form.fields.events.ClickEvent;
+import com.smartgwt.client.widgets.form.fields.events.ClickHandler;
 import com.smartgwt.client.widgets.form.fields.events.FormItemClickHandler;
 import com.smartgwt.client.widgets.form.fields.events.FormItemIconClickEvent;
 import com.smartgwt.client.widgets.layout.HLayout;
@@ -30,11 +39,12 @@ public class SubmissionsQueryPanel extends HLayout
 //  setHeight("100");
 //  setWidth("800");
   setMembersMargin(20);
+  setPadding(5);
   setAlign(Alignment.CENTER);
   
   setBorder("1px dotted green");
   
-//  setOverflow(Overflow.VISIBLE);
+  setOverflow(Overflow.VISIBLE);
   
   DynamicForm simpQForm = new DynamicForm();
   simpQForm.setHeight("120");
@@ -62,6 +72,14 @@ public class SubmissionsQueryPanel extends HLayout
   searchBt.setTitle("Search");
   searchBt.setAlign(Alignment.RIGHT);
   searchBt.setEndRow(true);
+  searchBt.addClickHandler( new ClickHandler()
+  {
+   @Override
+   public void onClick(ClickEvent event)
+   {
+    executeQuery();
+   }
+  });
   
   SpacerItem spIt = new SpacerItem();
   spIt.setHeight(10);
@@ -128,6 +146,52 @@ public class SubmissionsQueryPanel extends HLayout
 
   q.setSubmitter( submitterField.getValueAsString() );
   q.setModifier( modifierField.getValueAsString() );
+  
+  Date dt = createdRangeField.getFromDate();
+  
+  if( dt != null )
+   q.setCreatedFrom(dt.getTime());
+  else
+   q.setCreatedFrom(-1);
+
+  dt = createdRangeField.getToDate();
+  
+  if( dt != null )
+   q.setCreatedTo(dt.getTime()+24L*3600L*1000L);
+  else
+   q.setCreatedTo(-1);
+
+  dt = modifiedRangeField.getFromDate();
+  
+  if( dt != null )
+   q.setModifiedFrom(dt.getTime());
+  else
+   q.setModifiedFrom(-1);
+
+  dt = modifiedRangeField.getToDate();
+  
+  if( dt != null )
+   q.setModifiedTo(dt.getTime()+24L*3600L*1000L);
+  else
+   q.setModifiedTo(-1);
+  
+  AgeAdminService.Util.getInstance().getSubmissions( q, new AsyncCallback<List<SubmissionImprint>>()
+  {
+   
+   @Override
+   public void onSuccess(List<SubmissionImprint> result)
+   {
+    System.out.println("Submissions: "+result.size());
+    
+   }
+   
+   @Override
+   public void onFailure(Throwable caught)
+   {
+    // TODO Auto-generated method stub
+    
+   }
+  });
  }
 
 }

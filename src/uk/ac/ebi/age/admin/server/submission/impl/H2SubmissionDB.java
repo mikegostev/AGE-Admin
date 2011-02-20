@@ -9,11 +9,16 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 import uk.ac.ebi.age.admin.server.model.SubmissionMeta;
 import uk.ac.ebi.age.admin.server.submission.SubmissionDB;
+import uk.ac.ebi.age.admin.shared.submission.SubmissionImprint;
+import uk.ac.ebi.age.admin.shared.submission.SubmissionQuery;
 import uk.ac.ebi.age.model.DataModuleMeta;
 import uk.ac.ebi.mg.filedepot.FileDepot;
+
+import com.pri.util.StringUtils;
 
 public class H2SubmissionDB extends SubmissionDB
 {
@@ -134,6 +139,23 @@ public class H2SubmissionDB extends SubmissionDB
   stmt.executeUpdate("CREATE ALIAS IF NOT EXISTS FTL_INIT FOR \"org.h2.fulltext.FullTextLucene.init\"");
   stmt.executeUpdate("CALL FTL_INIT()");
 
+  try
+  {
+   stmt.executeUpdate("CALL FTL_CREATE_INDEX('"+submissionDB+"', '"+submissionTable+"', 'desc')");
+  }
+  catch (Exception e)
+  {
+  }
+  
+  try
+  {
+   stmt.executeUpdate("CALL FTL_CREATE_INDEX('"+submissionDB+"', '"+moduleTable+"', 'desc')");
+  }
+  catch (Exception e)
+  {
+  }
+
+  
   stmt.close();
  }
 
@@ -157,5 +179,46 @@ public class H2SubmissionDB extends SubmissionDB
  @Override
  public void init()
  {
+ }
+
+ @Override
+ public List<SubmissionImprint> getSubmissions(SubmissionQuery q)
+ {
+  String query = q.getQuery();
+  
+  if( query != null )
+  {
+   query = query.trim();
+   if( query.length() == 0 )
+    query = null;
+  }
+  
+  boolean needJoin = query != null || q.getModuleID() != null || q.getModifiedFrom() != -1 || q.getModifiedTo() != -1 || q.getModifier() != null;
+  
+  
+  StringBuilder sql = new StringBuilder(800);
+  
+//  sql.append("SELECT S.id FROM ").append(submissionDB).append('.').append(submissionTable).append(" S, ")
+//  .append(submissionDB).append('.').append(moduleTable).append(" M");
+  
+  sql.append("SELECT distinct S.* FROM "+submissionDB+'.'+submissionTable+" S");
+  
+  if( needJoin )
+   sql.append(" INNER JOIN "+submissionDB+'.'+submissionTable+" M ON S.id=M.submid");
+  
+  if( q.getQuery() != null && q.getQuery().length() > 0 )
+  {
+   sql.append(", FTL_SEARCH_DATA('");
+   StringUtils.appendEscaped(sql, q.getQuery(), '\'', '\'');
+   sql.append("', 0, 0) FT");
+  }
+  
+
+  //select * from FTL_SEARCH_DATA('Hello seva world', 0, 0) FT join tbl S ON  S.ID=FT.KEYS[0] left join stbl M on S.id=m.pid  where  FT.TABLE='TBL' and m.txt like '%va%';
+  //select distinct S.id from  tbl S left join stbl M on S.id=M.pid join FTL_SEARCH_DATA('Seva world', 0, 0) FT ON ( FT.TABLE='TBL' AND S.ID=FT.KEYS[0] ) OR (  FT.TABLE='STBL' AND M.ID=FT.KEYS[0]) limit 1,1
+  //SELECT T.*,S.* FROM FTL_SEARCH_DATA('Hello AND external', 0, 0) FT, AAA.TBL T, AAA.STBL S WHERE ( FT.TABLE='TBL' AND T.ID=FT.KEYS[0] ) OR (  FT.TABLE='STBL' AND S.ID=FT.KEYS[0] AND S.PID=T.ID)
+
+  
+  return null;
  }
 }
