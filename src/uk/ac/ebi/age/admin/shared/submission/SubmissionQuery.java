@@ -15,6 +15,9 @@ public class SubmissionQuery implements IsSerializable
  private long createdTo;
  private long modifiedTo;
  
+ private int limit;
+ private int offset;
+ 
  public String getQuery()
  {
   return query;
@@ -65,7 +68,7 @@ public class SubmissionQuery implements IsSerializable
   this.modifier = modifier;
  }
 
- public long getCreateedFrom()
+ public long getCreatedFrom()
  {
   return createedFrom;
  }
@@ -103,6 +106,26 @@ public class SubmissionQuery implements IsSerializable
  public void setModifiedTo(long modifiedTo)
  {
   this.modifiedTo = modifiedTo;
+ }
+
+ public int getLimit()
+ {
+  return limit;
+ }
+
+ public void setLimit(int limit)
+ {
+  this.limit = limit;
+ }
+
+ public int getOffset()
+ {
+  return offset;
+ }
+
+ public void setOffset(int offset)
+ {
+  this.offset = offset;
  }
 
 }

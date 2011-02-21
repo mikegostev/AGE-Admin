@@ -1,5 +1,6 @@
 package uk.ac.ebi.age.admin.shared.submission;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
@@ -83,6 +84,14 @@ public class SubmissionImprint implements IsSerializable
  public void getModules( List<DataModuleImprint> mds )
  {
   modules=mds;
+ }
+
+ public void addDataModule(DataModuleImprint dimp)
+ {
+  if( modules == null )
+   modules = new ArrayList<DataModuleImprint>(5);
+  
+  modules.add(dimp);
  }
 
 }
