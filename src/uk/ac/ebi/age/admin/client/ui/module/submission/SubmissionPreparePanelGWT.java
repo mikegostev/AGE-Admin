@@ -1,6 +1,7 @@
 package uk.ac.ebi.age.admin.client.ui.module.submission;
 
 import uk.ac.ebi.age.admin.client.log.LogNode;
+import uk.ac.ebi.age.admin.client.ui.module.log.LogTree;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -146,6 +147,14 @@ public class SubmissionPreparePanelGWT extends HLayout
     LogNode rLn = LogNode.convert(txt); 
     
     System.out.println(rLn.getSubnodes().get(0).getMessage());
+    
+    com.smartgwt.client.widgets.Window logW = new com.smartgwt.client.widgets.Window();
+    logW.setWidth(1000);
+    logW.setHeight(600);
+    
+    logW.addItem( new LogTree(rLn) );
+    
+    logW.show();
    }
   });
 
