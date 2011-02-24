@@ -12,4 +12,8 @@ public class SubmissionConstants
  public static final String submissionIDDomain = "submission";
 
  public static final String SUBMISSON_KEY = "Key";
+
+ public static final String ATTACHMENT_ID = "attachName";
+ public static final String ATTACHMENT_DESC = "attachDesc";
+ public static final String ATTACHMENT_FILE = "attachFile";
 }

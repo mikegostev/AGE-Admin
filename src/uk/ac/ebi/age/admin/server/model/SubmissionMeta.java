@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.ebi.age.model.DataModuleMeta;
+import uk.ac.ebi.age.model.FileAttachmentMeta;
 
 public class SubmissionMeta implements Serializable
 {
@@ -20,6 +21,7 @@ public class SubmissionMeta implements Serializable
  private long modificationTime;
  
  private List<DataModuleMeta> mods = new ArrayList<DataModuleMeta>(3);
+ private List<FileAttachmentMeta> atts ;
  
  public String getSubmitter()
  {
@@ -92,5 +94,16 @@ public class SubmissionMeta implements Serializable
   return mods;
  }
 
+ public void addAttachment(FileAttachmentMeta fAtMeta)
+ {
+  if( atts == null )
+   atts = new ArrayList<FileAttachmentMeta>(3);
 
+  atts.add( fAtMeta );
+ }
+
+ public List<FileAttachmentMeta> getAttachments()
+ {
+  return atts;
+ }
 }

@@ -15,6 +15,7 @@ import uk.ac.ebi.age.log.LogNode.Level;
 import uk.ac.ebi.age.log.impl.BufferLogger;
 import uk.ac.ebi.age.mng.SubmissionManager;
 import uk.ac.ebi.age.model.DataModuleMeta;
+import uk.ac.ebi.age.model.FileAttachmentMeta;
 import uk.ac.ebi.age.service.IdGenerator;
 
 import com.pri.util.stream.StreamPump;
@@ -59,44 +60,71 @@ public class SubmissionUploader implements UploadCommandListener
     sMeta.setSubmissionTime(time);
     sMeta.setModificationTime(time);
     
+    int atN=0;
+    
     for(Map.Entry<String, File> me : upReq.getFiles().entrySet())
     {
      String fName = me.getKey();
      
-     if( ! fName.startsWith(SubmissionConstants.MODULE_FILE) )
+     if(  fName.startsWith(SubmissionConstants.MODULE_FILE) )
      {
-      log.getRootNode().log(Level.ERROR, "Invalid name of module file field: '"+fName+"'. Must start with '"+SubmissionConstants.MODULE_FILE+"'");
-      return false;
+      // log.getRootNode().log(Level.ERROR,
+      // "Invalid name of module file field: '"+fName+"'. Must start with '"+SubmissionConstants.MODULE_FILE+"'");
+      // return false;
+
+      String dmRId = fName.substring(SubmissionConstants.MODULE_FILE.length());
+
+      String dmDesc = upReq.getParams().get(SubmissionConstants.MODULE_NAME + dmRId);
+
+      DataModuleMeta dmMeta = new DataModuleMeta();
+
+      dmMeta.setDescription(dmDesc);
+
+      dmMeta.setModificationTime(time);
+
+      sMeta.addDataModule(dmMeta);
+
+      ByteArrayOutputStream bais = new ByteArrayOutputStream();
+
+      FileInputStream fis = new FileInputStream(me.getValue());
+      StreamPump.doPump(fis, bais, false);
+      fis.close();
+
+      bais.write('\n');
+      bais.close();
+
+      byte[] barr = bais.toByteArray();
+      String enc = "UTF-8";
+
+      if(barr.length >= 2 && (barr[0] == -1 && barr[1] == -2) || (barr[0] == -2 && barr[1] == -1))
+       enc = "UTF-16";
+
+      dmMeta.setText(new String(bais.toByteArray(), enc));
      }
-     
-     String dmRId = fName.substring(SubmissionConstants.MODULE_FILE.length());
-     
-     String dmDesc = upReq.getParams().get(SubmissionConstants.MODULE_NAME+dmRId);
-     
-     DataModuleMeta dmMeta = new DataModuleMeta();
-     
-     dmMeta.setDescription( dmDesc );
-     
-     dmMeta.setModificationTime(time);
-     
-     sMeta.addDataModule( dmMeta );
-     
-     ByteArrayOutputStream bais = new ByteArrayOutputStream();
-     
-     FileInputStream fis = new FileInputStream(me.getValue());
-     StreamPump.doPump(fis, bais, false);
-     fis.close();
+     else if( fName.startsWith(SubmissionConstants.ATTACHMENT_FILE) )
+     {
+      atN++;
+      
+      String atRId = fName.substring(SubmissionConstants.ATTACHMENT_FILE.length());
+      
+      String atID = upReq.getParams().get(SubmissionConstants.ATTACHMENT_ID+atRId);
+      
+      if( atID == null )
+      {
+       log.getRootNode().log(Level.ERROR,
+        "Attachment file "+atN+" has no ID so it can't be referenced");
+       return false;
+      }
+      
+      FileAttachmentMeta fAtMeta = new FileAttachmentMeta();
+      
+      fAtMeta.setId(atID);
+      fAtMeta.setDescription(upReq.getParams().get(SubmissionConstants.ATTACHMENT_DESC+atRId));
+      fAtMeta.setFile(me.getValue());
+      
+      sMeta.addAttachment( fAtMeta );
+     }
 
-     bais.write('\n');
-     bais.close();
-     
-     byte[] barr = bais.toByteArray();
-     String enc = "UTF-8";
-     
-     if( barr.length >= 2 && (barr[0] == -1 && barr[1] == -2) || (barr[0] == -2 && barr[1] == -1) )  
-      enc="UTF-16";
-
-     dmMeta.setText(new String(bais.toByteArray(),enc));
     }
 
     if(  SubmissionManager.getInstance()

@@ -37,7 +37,10 @@ public class UploadManager
   finally
   {
    for(File f : upReq.getFiles().values())
-    f.delete();
+   {
+    if( f.exists() )
+     f.delete();
+   }
   }
  }
 

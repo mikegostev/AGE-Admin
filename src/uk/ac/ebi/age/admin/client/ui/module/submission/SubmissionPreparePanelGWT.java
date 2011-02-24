@@ -22,15 +22,18 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.smartgwt.client.util.SC;
-import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.WidgetCanvas;
+import com.smartgwt.client.widgets.layout.VLayout;
 
-public class SubmissionPreparePanelGWT extends HLayout
+public class SubmissionPreparePanelGWT extends VLayout
 {
  private int n = 1;
  private long key = System.currentTimeMillis();
+ private int nMods = 1;
 
  public SubmissionPreparePanelGWT()
  {
@@ -45,12 +48,16 @@ public class SubmissionPreparePanelGWT extends HLayout
   setBorder("1px solid #6a6a6a");
 
   DecoratorPanel decp = new DecoratorPanel();
+  decp.setHeight("100%");
 //  decp.setWidth("500px");
+  final WidgetCanvas wc = new WidgetCanvas(decp);
+  wc.setHeight100();
 
   final FormPanel form = new FormPanel();
   form.setAction("upload");
   form.setEncoding(FormPanel.ENCODING_MULTIPART);
   form.setMethod(FormPanel.METHOD_POST);
+
 //  form.setWidth("500px");
 
   final VerticalPanel panel = new VerticalPanel();
@@ -68,20 +75,24 @@ public class SubmissionPreparePanelGWT extends HLayout
 
   panel.add(btPan);
 
-  btPan.setWidget(0, 0, new Button("Submit", new com.google.gwt.event.dom.client.ClickHandler()
+  cellFormatter.setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_CENTER);
+  Button addBt = new Button("Add File", new com.google.gwt.event.dom.client.ClickHandler()
   {
    public void onClick(com.google.gwt.event.dom.client.ClickEvent event)
    {
-    form.submit();
+    panel.insert(new FilePanel(n++), panel.getWidgetCount()-1);
    }
-  }));
-
-  cellFormatter.setHorizontalAlignment(0, 1, HasHorizontalAlignment.ALIGN_RIGHT);
-  Button addBt = new Button("Add Data Module", new com.google.gwt.event.dom.client.ClickHandler()
+  });
+  btPan.setWidget(0, 0, addBt);
+  
+  cellFormatter.setHorizontalAlignment(0, 1, HasHorizontalAlignment.ALIGN_CENTER);
+  addBt = new Button("Add Data Module", new com.google.gwt.event.dom.client.ClickHandler()
   {
    public void onClick(com.google.gwt.event.dom.client.ClickEvent event)
    {
-    panel.add(new DMPanel(n++));
+    panel.insert(new DMPanel(n++), nMods+5);
+    nMods++;
+    wc.adjustForContent(true);
    }
   });
   btPan.setWidget(0, 1, addBt);
@@ -95,6 +106,17 @@ public class SubmissionPreparePanelGWT extends HLayout
 
   panel.add(new DMPanel(n++));
 
+  Button sbmBt = new Button("Submit", new com.google.gwt.event.dom.client.ClickHandler()
+  {
+   public void onClick(com.google.gwt.event.dom.client.ClickEvent event)
+   {
+    form.submit();
+   }
+  });
+  
+  panel.add(sbmBt);
+  panel.setCellHorizontalAlignment(sbmBt, HasHorizontalAlignment.ALIGN_RIGHT);
+  
   form.addSubmitHandler(new FormPanel.SubmitHandler()
   {
    public void onSubmit(SubmitEvent event)
@@ -113,6 +135,18 @@ public class SubmissionPreparePanelGWT extends HLayout
       
       if( dmp.getDescription().trim().length() == 0 )
        err+="Description of data module "+ndm+" is empty\n";
+      
+      if( dmp.getFile().trim().length() == 0 )
+       err+="File for data module "+ndm+" is not selected\n";
+     }
+     else if( w instanceof FilePanel )
+     {
+      ndm++;
+      
+      FilePanel dmp = (FilePanel)w;
+      
+      if( dmp.getID().trim().length() == 0 )
+       err+="ID for file "+ndm+" is not specified\n";
       
       if( dmp.getFile().trim().length() == 0 )
        err+="File for data module "+ndm+" is not selected\n";
@@ -169,10 +203,90 @@ public class SubmissionPreparePanelGWT extends HLayout
   });
 
   decp.setWidget(form);
-  addMember(decp);
+
+  
+  addMember(wc);
+
+  
  }
 
- private static class DMPanel extends CaptionPanel
+ private static class FilePanel extends CaptionPanel
+ {
+  private TextBox id;
+  private TextArea dsc;
+  private FileUpload upload;
+  
+  FilePanel(int n)
+  {
+   //setWidth("*");
+   setWidth("auto");
+   setCaptionText("Attached file");
+
+   FlexTable layout = new FlexTable();
+   layout.setWidth("100%");
+   FlexCellFormatter cellFormatter = layout.getFlexCellFormatter();
+
+   id = new TextBox();
+   id.setName(SubmissionConstants.ATTACHMENT_ID + n);
+   id.setWidth("97%");
+
+   layout.setWidget(0, 0, new Label("ID:"));
+   layout.setWidget(0, 1, id );
+
+   
+   cellFormatter.setColSpan(1, 0, 3);
+   layout.setWidget(1, 0, new Label("Description:"));
+
+   dsc = new TextArea();
+   dsc.setName(SubmissionConstants.ATTACHMENT_DESC + n);
+   dsc.setWidth("97%");
+
+   cellFormatter.setColSpan(2, 0, 3);
+   layout.setWidget(2, 0, dsc);
+
+   cellFormatter.setVerticalAlignment(0, 2, HasVerticalAlignment.ALIGN_TOP);
+   cellFormatter.setHorizontalAlignment(0, 2, HasHorizontalAlignment.ALIGN_RIGHT);
+
+   HTML clsBt = new HTML("<img src='images/icons/delete.png'>");
+   clsBt.addClickHandler(new ClickHandler()
+   {
+    @Override
+    public void onClick(ClickEvent arg0)
+    {
+     removeFromParent();
+    }
+   });
+
+   layout.setWidget(0, 2, clsBt);
+
+   cellFormatter.setColSpan(3, 0, 3);
+
+   upload = new FileUpload();
+   upload.setName(SubmissionConstants.ATTACHMENT_FILE + n);
+   upload.getElement().setAttribute("size", "80");
+   layout.setWidget(3, 0, upload);
+
+   add(layout);
+  }
+  
+  public String getDescription()
+  {
+   return dsc.getText();
+  }
+
+  public String getFile()
+  {
+   return upload.getFilename();
+  }
+  
+  public String getID()
+  {
+   return id.getText();
+  }
+
+ }
+ 
+ private class DMPanel extends CaptionPanel
  {
   private TextArea dsc;
   private FileUpload upload;
@@ -206,6 +320,7 @@ public class SubmissionPreparePanelGWT extends HLayout
     public void onClick(ClickEvent arg0)
     {
      removeFromParent();
+     nMods--;
     }
    });
 
