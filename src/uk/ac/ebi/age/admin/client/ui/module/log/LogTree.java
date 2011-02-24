@@ -9,13 +9,16 @@ import com.smartgwt.client.widgets.tree.TreeNode;
 
 public class LogTree extends TreeGrid
 {
+ Tree data = new Tree();
+ 
  public LogTree( LogNode root )
  {
   setWidth100();
   setHeight100();
   
+  setShowConnectors(true);
+  
   Tree data = new Tree();
-  setData(data);
   
   
   if( root == null )
@@ -30,6 +33,7 @@ public class LogTree extends TreeGrid
   
 
   LogTreeNode  clsRoot = new LogTreeNode(root);
+  clsRoot.setTitle("Log");
   
   createTreeStructure(root, clsRoot);
 
@@ -37,6 +41,8 @@ public class LogTree extends TreeGrid
   
   data.addList(new TreeNode[] { clsRoot } , rootNode);
   
+  setData(data);
+
 //  data.openAll();
 
  }
@@ -57,11 +63,11 @@ public class LogTree extends TreeGrid
    LogNode subLn = subNodes.get(i);
    
    LogTreeNode snd = new LogTreeNode( subLn );
-   children[i++] = snd;
+   children[i] = snd;
 
    createTreeStructure(subLn, snd);
   }
   
-  getData().addList(children, node);
+  data.addList(children, node);
  }
 }

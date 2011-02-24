@@ -11,6 +11,7 @@ public class LogTreeNode extends TreeNode
  {
 //  setTitle(ln.getMessage());
   setIcon("../images/icons/log/"+ln.getLevel()+".png");
+  setTitle("<span class='logMsg"+ln.getLevel()+"'>"+ln.getMessage()+"</span>");
   setAttribute("Name", "<span class='logMsg"+ln.getLevel()+"'>"+ln.getMessage()+"</span>");
  }
 

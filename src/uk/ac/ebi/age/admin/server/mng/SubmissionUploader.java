@@ -119,7 +119,7 @@ public class SubmissionUploader implements UploadCommandListener
   }
   finally
   {
-   out.print("<html><body><pre>(");
+   out.print("<html><body>OK-"+upReq.getParams().get(SubmissionConstants.SUBMISSON_KEY)+"<pre>(");
    out.print(Log2JSON.convert(log.getRootNode()));
    out.print(")</pre></body></html>");
   }

@@ -10,4 +10,6 @@ public class SubmissionConstants
 
  public static final String submissionIDPrefix = "SBM";
  public static final String submissionIDDomain = "submission";
+
+ public static final String SUBMISSON_KEY = "Key";
 }

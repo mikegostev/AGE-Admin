@@ -24,11 +24,13 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.layout.HLayout;
 
 public class SubmissionPreparePanelGWT extends HLayout
 {
  private int n = 1;
+ private long key = System.currentTimeMillis();
 
  public SubmissionPreparePanelGWT()
  {
@@ -57,6 +59,7 @@ public class SubmissionPreparePanelGWT extends HLayout
   form.setWidget(panel);
 
   panel.add( new Hidden("Command",SubmissionConstants.SUBMISSON_COMMAND) );
+  panel.add( new Hidden(SubmissionConstants.SUBMISSON_KEY,String.valueOf(key) ) );
   
   FlexTable btPan = new FlexTable();
   btPan.setCellSpacing(6);
@@ -137,6 +140,12 @@ public class SubmissionPreparePanelGWT extends HLayout
    {
     String txt = event.getResults();
     
+    if( txt.indexOf("OK-"+key) == -1 )
+    {
+     SC.warn("Error occured. Possibly you are not logged on or your session is expired");
+     return;
+    }
+    
     int posB = txt.indexOf("<pre>");
     int posE = txt.lastIndexOf("</pre>");
     
@@ -151,6 +160,7 @@ public class SubmissionPreparePanelGWT extends HLayout
     com.smartgwt.client.widgets.Window logW = new com.smartgwt.client.widgets.Window();
     logW.setWidth(1000);
     logW.setHeight(600);
+    logW.centerInPage();
     
     logW.addItem( new LogTree(rLn) );
     
