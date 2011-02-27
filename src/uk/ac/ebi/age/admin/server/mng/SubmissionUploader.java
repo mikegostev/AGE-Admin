@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.PrintWriter;
 import java.util.Map;
 
-import uk.ac.ebi.age.admin.server.model.SubmissionMeta;
 import uk.ac.ebi.age.admin.server.service.UploadRequest;
 import uk.ac.ebi.age.admin.server.user.Session;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
@@ -16,7 +15,7 @@ import uk.ac.ebi.age.log.impl.BufferLogger;
 import uk.ac.ebi.age.mng.SubmissionManager;
 import uk.ac.ebi.age.model.DataModuleMeta;
 import uk.ac.ebi.age.model.FileAttachmentMeta;
-import uk.ac.ebi.age.service.IdGenerator;
+import uk.ac.ebi.age.model.SubmissionMeta;
 
 import com.pri.util.stream.StreamPump;
 
@@ -118,8 +117,11 @@ public class SubmissionUploader implements UploadCommandListener
       
       FileAttachmentMeta fAtMeta = new FileAttachmentMeta();
       
-      fAtMeta.setId(atID);
+      fAtMeta.setOriginalId(atID);
       fAtMeta.setDescription(upReq.getParams().get(SubmissionConstants.ATTACHMENT_DESC+atRId));
+      
+      String glbPrm = upReq.getParams().get(SubmissionConstants.ATTACHMENT_GLOBAL+atRId);
+      fAtMeta.setGlobal( glbPrm != null && "on".equals(glbPrm) );
       fAtMeta.setFile(me.getValue());
       
       sMeta.addAttachment( fAtMeta );
@@ -127,13 +129,15 @@ public class SubmissionUploader implements UploadCommandListener
 
     }
 
-    if(  SubmissionManager.getInstance()
-      .storeSubmission(sMeta.getDataModules(), false, sess.getUserProfile(), admin.getStorageAdmin(), log.getRootNode()) )
-    {
-     sMeta.setId(SubmissionConstants.submissionIDPrefix+IdGenerator.getInstance().getStringId(SubmissionConstants.submissionIDDomain));
+    SubmissionManager.getInstance().storeSubmission(sMeta, sess.getUserProfile(), admin.getStorageAdmin(), log.getRootNode());
     
-     admin.storeSubmission( sMeta );
-    }
+//    if(  SubmissionManager.getInstance()
+//      .storeSubmission(sMeta, sess.getUserProfile(), admin.getStorageAdmin(), log.getRootNode()) )
+//    {
+//     sMeta.setId(SubmissionConstants.submissionIDPrefix+IdGenerator.getInstance().getStringId(SubmissionConstants.submissionIDDomain));
+//    
+//     admin.storeSubmission( sMeta );
+//    }
      
      // BufferLogger.printBranch(log.getRootNode());
 

@@ -15,8 +15,8 @@ import uk.ac.ebi.age.admin.server.mng.Configuration;
 import uk.ac.ebi.age.admin.server.user.Session;
 import uk.ac.ebi.age.admin.shared.ModelPath;
 import uk.ac.ebi.age.admin.shared.submission.SubmissionImprint;
-import uk.ac.ebi.age.admin.shared.submission.SubmissionQuery;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
+import uk.ac.ebi.age.service.submission.SubmissionQuery;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 

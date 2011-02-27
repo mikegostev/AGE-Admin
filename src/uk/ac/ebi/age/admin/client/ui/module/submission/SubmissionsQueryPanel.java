@@ -5,7 +5,7 @@ import java.util.List;
 
 import uk.ac.ebi.age.admin.client.AgeAdminService;
 import uk.ac.ebi.age.admin.shared.submission.SubmissionImprint;
-import uk.ac.ebi.age.admin.shared.submission.SubmissionQuery;
+import uk.ac.ebi.age.service.submission.SubmissionQuery;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.types.Alignment;

@@ -6,15 +6,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.List;
 
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
 import uk.ac.ebi.age.admin.client.model.ModelStorageException;
 import uk.ac.ebi.age.admin.server.model.Age2ImprintConverter;
-import uk.ac.ebi.age.admin.server.model.SubmissionMeta;
-import uk.ac.ebi.age.admin.server.submission.SubmissionDB;
-import uk.ac.ebi.age.admin.server.submission.impl.H2SubmissionDB;
 import uk.ac.ebi.age.admin.server.user.Session;
 import uk.ac.ebi.age.admin.server.user.SessionPool;
 import uk.ac.ebi.age.admin.server.user.UserDatabase;
@@ -24,8 +20,6 @@ import uk.ac.ebi.age.admin.server.user.impl.TestUserDataBase;
 import uk.ac.ebi.age.admin.shared.ModelPath;
 import uk.ac.ebi.age.admin.shared.StoreNode;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
-import uk.ac.ebi.age.admin.shared.submission.SubmissionImprint;
-import uk.ac.ebi.age.admin.shared.submission.SubmissionQuery;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
 import uk.ac.ebi.age.log.impl.BufferLogger;
 import uk.ac.ebi.age.model.SemanticModel;
@@ -46,7 +40,7 @@ public class AgeAdmin
  private SessionPool   spool;
  private UserDatabase  udb;
  private AgeStorageAdm storage;
- private SubmissionDB submissionDB;
+// private SubmissionDB submissionDB;
  
  private Configuration configuration;
 
@@ -68,8 +62,8 @@ public class AgeAdmin
   if(conf.getUploadManager() == null)
    conf.setUploadManager(new UploadManager());
 
-  if(conf.getSubmissionDB() == null)
-   conf.setSubmissionDB(submissionDB = new H2SubmissionDB(conf.getSubmissionDbDir()) );
+//  if(conf.getSubmissionDB() == null)
+//   conf.setSubmissionDB(submissionDB = new H2SubmissionDB(conf.getSubmissionDbDir()) );
   
   conf.getUploadManager().addUploadCommandListener("SetModel", new SemanticUploader(storage));
   conf.getUploadManager().addUploadCommandListener(SubmissionConstants.SUBMISSON_COMMAND, new SubmissionUploader(this));
@@ -89,8 +83,8 @@ public class AgeAdmin
   if(udb != null)
    udb.shutdown();
 
-  if(submissionDB != null)
-   submissionDB.shutdown();
+//  if(submissionDB != null)
+//   submissionDB.shutdown();
 
  }
 
@@ -282,15 +276,15 @@ public class AgeAdmin
   return storage;
  }
 
- public void storeSubmission(SubmissionMeta sMeta)
- {
-  submissionDB.storeSubmission(sMeta);
- }
+// public void storeSubmission(SubmissionMeta sMeta)
+// {
+//  submissionDB.storeSubmission(sMeta);
+// }
 
 
- public List<SubmissionImprint> getSubmissions(SubmissionQuery q)
- {
-  return submissionDB.getSubmissions(q);
- }
+// public List<SubmissionImprint> getSubmissions(SubmissionQuery q)
+// {
+//  return submissionDB.getSubmissions(q);
+// }
  
 }

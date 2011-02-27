@@ -16,4 +16,6 @@ public class SubmissionConstants
  public static final String ATTACHMENT_ID = "attachName";
  public static final String ATTACHMENT_DESC = "attachDesc";
  public static final String ATTACHMENT_FILE = "attachFile";
+
+ public static final String ATTACHMENT_GLOBAL = "attachGlobal";
 }

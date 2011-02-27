@@ -6,7 +6,7 @@ import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
 import uk.ac.ebi.age.admin.shared.ModelPath;
 import uk.ac.ebi.age.admin.shared.submission.SubmissionImprint;
-import uk.ac.ebi.age.admin.shared.submission.SubmissionQuery;
+import uk.ac.ebi.age.service.submission.SubmissionQuery;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

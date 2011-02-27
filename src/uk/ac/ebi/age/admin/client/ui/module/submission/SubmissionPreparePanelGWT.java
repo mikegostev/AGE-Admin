@@ -9,6 +9,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CaptionPanel;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DecoratorPanel;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -215,6 +216,7 @@ public class SubmissionPreparePanelGWT extends VLayout
   private TextBox id;
   private TextArea dsc;
   private FileUpload upload;
+  private CheckBox isGlobal;
   
   FilePanel(int n)
   {
@@ -232,20 +234,14 @@ public class SubmissionPreparePanelGWT extends VLayout
 
    layout.setWidget(0, 0, new Label("ID:"));
    layout.setWidget(0, 1, id );
-
+   layout.setWidget(0, 2,  new Label("Global:"));
    
-   cellFormatter.setColSpan(1, 0, 3);
-   layout.setWidget(1, 0, new Label("Description:"));
-
-   dsc = new TextArea();
-   dsc.setName(SubmissionConstants.ATTACHMENT_DESC + n);
-   dsc.setWidth("97%");
-
-   cellFormatter.setColSpan(2, 0, 3);
-   layout.setWidget(2, 0, dsc);
-
-   cellFormatter.setVerticalAlignment(0, 2, HasVerticalAlignment.ALIGN_TOP);
-   cellFormatter.setHorizontalAlignment(0, 2, HasHorizontalAlignment.ALIGN_RIGHT);
+   isGlobal = new CheckBox();
+   isGlobal.setName(SubmissionConstants.ATTACHMENT_GLOBAL + n);
+   layout.setWidget(0, 3,  isGlobal);
+   
+   cellFormatter.setVerticalAlignment(0, 4, HasVerticalAlignment.ALIGN_TOP);
+   cellFormatter.setHorizontalAlignment(0, 4, HasHorizontalAlignment.ALIGN_RIGHT);
 
    HTML clsBt = new HTML("<img src='images/icons/delete.png'>");
    clsBt.addClickHandler(new ClickHandler()
@@ -257,9 +253,21 @@ public class SubmissionPreparePanelGWT extends VLayout
     }
    });
 
-   layout.setWidget(0, 2, clsBt);
+   layout.setWidget(0, 4, clsBt);
+   
+   cellFormatter.setColSpan(1, 0, 5);
+   layout.setWidget(1, 0, new Label("Description:"));
 
-   cellFormatter.setColSpan(3, 0, 3);
+   dsc = new TextArea();
+   dsc.setName(SubmissionConstants.ATTACHMENT_DESC + n);
+   dsc.setWidth("97%");
+
+   cellFormatter.setColSpan(2, 0, 5);
+   layout.setWidget(2, 0, dsc);
+
+
+
+   cellFormatter.setColSpan(3, 0, 5);
 
    upload = new FileUpload();
    upload.setName(SubmissionConstants.ATTACHMENT_FILE + n);

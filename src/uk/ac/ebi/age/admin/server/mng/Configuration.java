@@ -2,10 +2,10 @@ package uk.ac.ebi.age.admin.server.mng;
 
 import java.io.File;
 
-import uk.ac.ebi.age.admin.server.submission.SubmissionDB;
 import uk.ac.ebi.age.admin.server.user.SessionPool;
 import uk.ac.ebi.age.admin.server.user.UserDatabase;
 import uk.ac.ebi.age.admin.shared.Constants;
+import uk.ac.ebi.age.service.submission.SubmissionDB;
 
 public class Configuration
 {

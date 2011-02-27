@@ -10,8 +10,8 @@ import uk.ac.ebi.age.admin.server.mng.AgeAdminConfigManager;
 import uk.ac.ebi.age.admin.server.mng.Configuration;
 import uk.ac.ebi.age.mng.AgeStorageManager;
 import uk.ac.ebi.age.mng.AgeStorageManager.DB_TYPE;
-import uk.ac.ebi.age.service.IdGenerator;
-import uk.ac.ebi.age.service.impl.SeqIdGeneratorImpl;
+import uk.ac.ebi.age.service.id.IdGenerator;
+import uk.ac.ebi.age.service.id.impl.SeqIdGeneratorImpl;
 import uk.ac.ebi.age.storage.AgeStorageAdm;
 
 public class Init implements ServletContextListener

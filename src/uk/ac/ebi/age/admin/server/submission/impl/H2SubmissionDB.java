@@ -13,12 +13,12 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.ebi.age.admin.server.model.SubmissionMeta;
-import uk.ac.ebi.age.admin.server.submission.SubmissionDB;
 import uk.ac.ebi.age.admin.shared.submission.DataModuleImprint;
 import uk.ac.ebi.age.admin.shared.submission.SubmissionImprint;
-import uk.ac.ebi.age.admin.shared.submission.SubmissionQuery;
 import uk.ac.ebi.age.model.DataModuleMeta;
+import uk.ac.ebi.age.model.SubmissionMeta;
+import uk.ac.ebi.age.service.submission.SubmissionDB;
+import uk.ac.ebi.age.service.submission.SubmissionQuery;
 import uk.ac.ebi.mg.filedepot.FileDepot;
 
 import com.pri.util.StringUtils;
