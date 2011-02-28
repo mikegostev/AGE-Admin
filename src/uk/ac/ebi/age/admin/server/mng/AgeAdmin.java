@@ -26,6 +26,8 @@ import uk.ac.ebi.age.ext.submission.SubmissionMeta;
 import uk.ac.ebi.age.ext.submission.SubmissionQuery;
 import uk.ac.ebi.age.log.impl.BufferLogger;
 import uk.ac.ebi.age.model.SemanticModel;
+import uk.ac.ebi.age.service.submission.SubmissionDB;
+import uk.ac.ebi.age.service.submission.impl.H2SubmissionDB;
 import uk.ac.ebi.age.storage.AgeStorageAdm;
 
 import com.pri.util.M2codec;
@@ -43,7 +45,7 @@ public class AgeAdmin
  private SessionPool   spool;
  private UserDatabase  udb;
  private AgeStorageAdm storage;
-// private SubmissionDB submissionDB;
+ private SubmissionDB submissionDB;
  
  private Configuration configuration;
 
@@ -65,8 +67,8 @@ public class AgeAdmin
   if(conf.getUploadManager() == null)
    conf.setUploadManager(new UploadManager());
 
-//  if(conf.getSubmissionDB() == null)
-//   conf.setSubmissionDB(submissionDB = new H2SubmissionDB(conf.getSubmissionDbDir()) );
+  if(conf.getSubmissionDB() == null)
+   conf.setSubmissionDB(submissionDB = new H2SubmissionDB(conf.getSubmissionDbDir()) );
   
   conf.getUploadManager().addUploadCommandListener("SetModel", new SemanticUploader(storage));
   conf.getUploadManager().addUploadCommandListener(SubmissionConstants.SUBMISSON_COMMAND, new SubmissionUploader(this));
@@ -283,7 +285,7 @@ public class AgeAdmin
 
  public List<SubmissionMeta> getSubmissions(SubmissionQuery q)
  {
-  return storage.getSubmissions(q);
+  return submissionDB.getSubmissions(q);
  }
 
 // public void storeSubmission(SubmissionMeta sMeta)
