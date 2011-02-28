@@ -4,8 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import uk.ac.ebi.age.admin.client.AgeAdminService;
-import uk.ac.ebi.age.admin.shared.submission.SubmissionImprint;
-import uk.ac.ebi.age.service.submission.SubmissionQuery;
+import uk.ac.ebi.age.ext.submission.SubmissionMeta;
+import uk.ac.ebi.age.ext.submission.SubmissionQuery;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.types.Alignment;
@@ -175,11 +175,11 @@ public class SubmissionsQueryPanel extends HLayout
   else
    q.setModifiedTo(-1);
   
-  AgeAdminService.Util.getInstance().getSubmissions( q, new AsyncCallback<List<SubmissionImprint>>()
+  AgeAdminService.Util.getInstance().getSubmissions( q, new AsyncCallback<List<SubmissionMeta>>()
   {
    
    @Override
-   public void onSuccess(List<SubmissionImprint> result)
+   public void onSuccess(List<SubmissionMeta> result)
    {
     System.out.println("Submissions: "+result.size());
     

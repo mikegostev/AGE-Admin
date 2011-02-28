@@ -5,8 +5,8 @@ import java.util.List;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
 import uk.ac.ebi.age.admin.shared.ModelPath;
-import uk.ac.ebi.age.admin.shared.submission.SubmissionImprint;
-import uk.ac.ebi.age.service.submission.SubmissionQuery;
+import uk.ac.ebi.age.ext.submission.SubmissionMeta;
+import uk.ac.ebi.age.ext.submission.SubmissionQuery;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -25,6 +25,6 @@ public interface AgeAdminServiceAsync
 
  void installModel(ModelPath modelPath, AsyncCallback<Void> asyncCallback);
 
- void getSubmissions(SubmissionQuery q, AsyncCallback<List<SubmissionImprint>> asyncCallback);
+ void getSubmissions(SubmissionQuery q, AsyncCallback<List<SubmissionMeta>> asyncCallback);
 
 }

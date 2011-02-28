@@ -10,6 +10,8 @@
 	<inherits name="com.smartgwt.SmartGwt"/>
 
 	<inherits name="uk.ac.ebi.age.ui.AGE_Visual"/>
+	<inherits name="uk.ac.ebi.age.AGE"/>
+	
 	
 	<source path="client" />
 	<source path="shared" />

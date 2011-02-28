@@ -14,9 +14,9 @@ import uk.ac.ebi.age.admin.server.mng.AgeAdmin;
 import uk.ac.ebi.age.admin.server.mng.Configuration;
 import uk.ac.ebi.age.admin.server.user.Session;
 import uk.ac.ebi.age.admin.shared.ModelPath;
-import uk.ac.ebi.age.admin.shared.submission.SubmissionImprint;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
-import uk.ac.ebi.age.service.submission.SubmissionQuery;
+import uk.ac.ebi.age.ext.submission.SubmissionMeta;
+import uk.ac.ebi.age.ext.submission.SubmissionQuery;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -94,7 +94,7 @@ public class AgeAdminServiceImpl extends RemoteServiceServlet implements AgeAdmi
  }
 
  @Override
- public List<SubmissionImprint> getSubmissions(SubmissionQuery q)
+ public List<SubmissionMeta> getSubmissions(SubmissionQuery q)
  {
   return adm.getSubmissions(q);
  }

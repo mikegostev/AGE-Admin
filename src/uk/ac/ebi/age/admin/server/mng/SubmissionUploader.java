@@ -9,13 +9,13 @@ import java.util.Map;
 import uk.ac.ebi.age.admin.server.service.UploadRequest;
 import uk.ac.ebi.age.admin.server.user.Session;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
+import uk.ac.ebi.age.ext.submission.DataModuleMeta;
+import uk.ac.ebi.age.ext.submission.FileAttachmentMeta;
+import uk.ac.ebi.age.ext.submission.SubmissionMeta;
 import uk.ac.ebi.age.log.Log2JSON;
 import uk.ac.ebi.age.log.LogNode.Level;
 import uk.ac.ebi.age.log.impl.BufferLogger;
 import uk.ac.ebi.age.mng.SubmissionManager;
-import uk.ac.ebi.age.model.DataModuleMeta;
-import uk.ac.ebi.age.model.FileAttachmentMeta;
-import uk.ac.ebi.age.model.SubmissionMeta;
 
 import com.pri.util.stream.StreamPump;
 
@@ -122,7 +122,7 @@ public class SubmissionUploader implements UploadCommandListener
       
       String glbPrm = upReq.getParams().get(SubmissionConstants.ATTACHMENT_GLOBAL+atRId);
       fAtMeta.setGlobal( glbPrm != null && "on".equals(glbPrm) );
-      fAtMeta.setFile(me.getValue());
+      fAtMeta.setAux(me.getValue());
       
       sMeta.addAttachment( fAtMeta );
      }
