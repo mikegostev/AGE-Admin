@@ -51,6 +51,10 @@ public class SubmissionUploader implements UploadCommandListener
     
     SubmissionMeta sMeta = new SubmissionMeta();
     
+    sMeta.setForUpdate( "true".equals(upReq.getParams().get(SubmissionConstants.SUBMISSON_UPDATE)) );
+    
+    sMeta.setId(upReq.getParams().get(SubmissionConstants.SUBMISSON_ID));
+    
     sMeta.setDescription( upReq.getParams().get(SubmissionConstants.SUBMISSON_DESCR) );
     sMeta.setSubmitter( sess.getUserProfile().getUserName() );
     
@@ -77,6 +81,9 @@ public class SubmissionUploader implements UploadCommandListener
 
       DataModuleMeta dmMeta = new DataModuleMeta();
 
+      dmMeta.setId(upReq.getParams().get(SubmissionConstants.MODULE_ID + dmRId));
+      dmMeta.setForUpdate("true".equals(upReq.getParams().get(SubmissionConstants.MODULE_UPDATE + dmRId)));
+      
       dmMeta.setDescription(dmDesc);
 
       dmMeta.setModificationTime(time);
