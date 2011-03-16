@@ -49,6 +49,8 @@ public class SubmissionUploader implements UploadCommandListener
      return false;
     }
     
+    String userName = sess.getUserProfile().getUserName();
+    
     SubmissionMeta sMeta = new SubmissionMeta();
     
     sMeta.setForUpdate( "true".equals(upReq.getParams().get(SubmissionConstants.SUBMISSON_UPDATE)) );
@@ -56,7 +58,8 @@ public class SubmissionUploader implements UploadCommandListener
     sMeta.setId(upReq.getParams().get(SubmissionConstants.SUBMISSON_ID));
     
     sMeta.setDescription( upReq.getParams().get(SubmissionConstants.SUBMISSON_DESCR) );
-    sMeta.setSubmitter( sess.getUserProfile().getUserName() );
+    sMeta.setSubmitter( userName );
+    sMeta.setModifier( userName );
     
     long time = System.currentTimeMillis();
     
@@ -86,7 +89,10 @@ public class SubmissionUploader implements UploadCommandListener
       
       dmMeta.setDescription(dmDesc);
 
+      dmMeta.setSubmissionTime(time);
       dmMeta.setModificationTime(time);
+      dmMeta.setSubmitter(userName);
+      dmMeta.setModifier(userName);
 
       sMeta.addDataModule(dmMeta);
 
@@ -126,6 +132,12 @@ public class SubmissionUploader implements UploadCommandListener
       
       fAtMeta.setOriginalId(atID);
       fAtMeta.setDescription(upReq.getParams().get(SubmissionConstants.ATTACHMENT_DESC+atRId));
+      
+      fAtMeta.setSubmissionTime(time);
+      fAtMeta.setModificationTime(time);
+      
+      fAtMeta.setSubmitter( userName );
+      fAtMeta.setModifier( userName );
       
       String glbPrm = upReq.getParams().get(SubmissionConstants.ATTACHMENT_GLOBAL+atRId);
       fAtMeta.setGlobal( glbPrm != null && "on".equals(glbPrm) );
