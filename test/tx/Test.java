@@ -5,11 +5,6 @@ import java.io.PrintWriter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.transaction.file.FileResourceManager;
-import org.apache.commons.transaction.file.ResourceManagerException;
-import org.apache.commons.transaction.file.ResourceManagerSystemException;
-import org.apache.commons.transaction.util.CommonsLoggingLogger;
-import org.apache.commons.transaction.util.LoggerFacade;
 
 public class Test
 {
