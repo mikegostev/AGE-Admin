@@ -15,6 +15,7 @@ import uk.ac.ebi.age.admin.server.mng.Configuration;
 import uk.ac.ebi.age.admin.server.user.Session;
 import uk.ac.ebi.age.admin.shared.ModelPath;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
+import uk.ac.ebi.age.ext.submission.SubmissionDBException;
 import uk.ac.ebi.age.ext.submission.SubmissionMeta;
 import uk.ac.ebi.age.ext.submission.SubmissionQuery;
 
@@ -94,8 +95,8 @@ public class AgeAdminServiceImpl extends RemoteServiceServlet implements AgeAdmi
  }
 
  @Override
- public List<SubmissionMeta> getSubmissions(SubmissionQuery q)
+ public List<SubmissionMeta> getSubmissions(SubmissionQuery q) throws UserAuthException, SubmissionDBException
  {
-  return adm.getSubmissions(q);
+  return adm.getSubmissions(q, getUserSession());
  }
 }

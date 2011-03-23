@@ -22,9 +22,11 @@ import uk.ac.ebi.age.admin.shared.ModelPath;
 import uk.ac.ebi.age.admin.shared.StoreNode;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
+import uk.ac.ebi.age.ext.submission.SubmissionDBException;
 import uk.ac.ebi.age.ext.submission.SubmissionMeta;
 import uk.ac.ebi.age.ext.submission.SubmissionQuery;
 import uk.ac.ebi.age.log.impl.BufferLogger;
+import uk.ac.ebi.age.mng.SubmissionManager;
 import uk.ac.ebi.age.model.SemanticModel;
 import uk.ac.ebi.age.service.submission.SubmissionDB;
 import uk.ac.ebi.age.service.submission.impl.H2SubmissionDB;
@@ -60,18 +62,32 @@ public class AgeAdmin
 
   if(conf.getSessionPool() == null)
    conf.setSessionPool(spool = new SessionPoolImpl());
+  else
+   spool = conf.getSessionPool();
 
   if(conf.getUserDatabase() == null)
    conf.setUserDatabase(udb = new TestUserDataBase());
+  else
+   udb = conf.getUserDatabase();
 
   if(conf.getUploadManager() == null)
    conf.setUploadManager(new UploadManager());
-
+  
   if(conf.getSubmissionDB() == null)
-   conf.setSubmissionDB(submissionDB = new H2SubmissionDB(conf.getSubmissionDbDir()) );
+  {
+   if( conf.getSubmissionManager() != null )
+    conf.setSubmissionDB( conf.getSubmissionManager().getSubmissionDB() );
+   else
+    conf.setSubmissionDB( submissionDB = new H2SubmissionDB(conf.getSubmissionDbDir()) );
+  }
+  else
+   submissionDB=conf.getSubmissionDB();
+  
+  if( conf.getSubmissionManager() == null )
+   conf.setSubmissionManager( new SubmissionManager(storage, submissionDB ) );
   
   conf.getUploadManager().addUploadCommandListener("SetModel", new SemanticUploader(storage));
-  conf.getUploadManager().addUploadCommandListener(SubmissionConstants.SUBMISSON_COMMAND, new SubmissionUploader(this));
+  conf.getUploadManager().addUploadCommandListener(SubmissionConstants.SUBMISSON_COMMAND, new SubmissionUploader(conf.getSubmissionManager()));
 
   
   if(instance == null)
@@ -283,8 +299,10 @@ public class AgeAdmin
 
 
 
- public List<SubmissionMeta> getSubmissions(SubmissionQuery q)
+ public List<SubmissionMeta> getSubmissions(SubmissionQuery q, Session session) throws SubmissionDBException
  {
+  // TODO check permission to list all submissions
+  
   return submissionDB.getSubmissions(q);
  }
 

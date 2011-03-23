@@ -15,7 +15,7 @@ import uk.ac.ebi.age.admin.server.user.UserProfile;
 public class SessionPoolImpl implements SessionPool, Runnable
 {
  private static final int CHECK_INTERVAL = 30000;
- private static final int MAX_SESSION_IDLE_TIME = 300000;
+ private static final int MAX_SESSION_IDLE_TIME = 3000000;
  
  private Thread controlThread = new Thread( this );
  private boolean shutdown = false;

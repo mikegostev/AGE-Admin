@@ -1,8 +1,11 @@
 package uk.ac.ebi.age.admin.server.mng;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.ServletContext;
 
@@ -28,6 +31,24 @@ public class AgeAdminConfigManager
  
  public AgeAdminConfigManager(ServletContext servletContext)
  {
+  InputStream propis = getClass().getResourceAsStream("/default.properties");
+  
+  if( propis != null )
+  {
+   Properties prop = new Properties();
+   try
+   {
+    prop.load(propis);
+    
+    for( Map.Entry<Object, Object> me : prop.entrySet() )
+     configMap.put(me.getKey().toString(), me.getValue().toString() );
+   }
+   catch(IOException e)
+   {
+    e.printStackTrace();
+   }
+  }
+  
   Enumeration<?> pNames = servletContext.getInitParameterNames();
   
   while( pNames.hasMoreElements() )

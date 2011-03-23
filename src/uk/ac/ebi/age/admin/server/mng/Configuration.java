@@ -5,6 +5,7 @@ import java.io.File;
 import uk.ac.ebi.age.admin.server.user.SessionPool;
 import uk.ac.ebi.age.admin.server.user.UserDatabase;
 import uk.ac.ebi.age.admin.shared.Constants;
+import uk.ac.ebi.age.mng.SubmissionManager;
 import uk.ac.ebi.age.service.submission.SubmissionDB;
 
 public class Configuration
@@ -27,12 +28,14 @@ public class Configuration
  private SessionPool sessionPool;
  private UploadManager uploadManager;
  private SubmissionDB submissionDB;
+ private SubmissionManager submissionManager;
 
  private File tmpDir;
  private File baseDir;
  private File userBaseDir;
  
  private File publicModelDir;
+
 
  public UserDatabase getUserDatabase()
  {
@@ -128,6 +131,18 @@ public class Configuration
  public void setSubmissionDB(SubmissionDB submissionDB)
  {
   this.submissionDB = submissionDB;
+ }
+
+
+ public SubmissionManager getSubmissionManager()
+ {
+  return this.submissionManager;
+ }
+
+
+ public void setSubmissionManager(SubmissionManager submissionManager)
+ {
+  this.submissionManager = submissionManager;
  }
  
 

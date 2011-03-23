@@ -21,11 +21,11 @@ import com.pri.util.stream.StreamPump;
 
 public class SubmissionUploader implements UploadCommandListener
 {
- private AgeAdmin admin;
+ private SubmissionManager sbmManager;
 
- public SubmissionUploader(AgeAdmin storage)
+ public SubmissionUploader(SubmissionManager sm)
  {
-  admin=storage;
+  sbmManager=sm;
  }
 
  @Override
@@ -102,7 +102,6 @@ public class SubmissionUploader implements UploadCommandListener
       StreamPump.doPump(fis, bais, false);
       fis.close();
 
-      bais.write('\n');
       bais.close();
 
       byte[] barr = bais.toByteArray();
@@ -148,7 +147,7 @@ public class SubmissionUploader implements UploadCommandListener
 
     }
 
-    SubmissionManager.getInstance().storeSubmission(sMeta, sess.getUserProfile(), admin.getStorageAdmin(), log.getRootNode());
+    sbmManager.storeSubmission(sMeta, sess.getUserProfile(), log.getRootNode());
     
 //    if(  SubmissionManager.getInstance()
 //      .storeSubmission(sMeta, sess.getUserProfile(), admin.getStorageAdmin(), log.getRootNode()) )
