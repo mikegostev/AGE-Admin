@@ -162,7 +162,12 @@ public class SubmissionUploader implements UploadCommandListener
    }
    catch(Exception e)
    {
-    log.getRootNode().log(Level.ERROR, e.getMessage());
+    String msg = e.getMessage();
+    
+    if( msg == null )
+     msg = "Exception: "+e.getClass().getName();
+    
+    log.getRootNode().log(Level.ERROR, msg);
 
     e.printStackTrace();
    }
