@@ -5,7 +5,6 @@ import java.util.Date;
 import uk.ac.ebi.age.ext.submission.SubmissionMeta;
 import uk.ac.ebi.age.ext.submission.SubmissionQuery;
 import uk.ac.ebi.age.ext.submission.SubmissionReport;
-import uk.ac.ebi.age.ui.client.LinkManager;
 import uk.ac.ebi.age.ui.client.module.PagingRuler;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -16,8 +15,6 @@ import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
-import com.smartgwt.client.widgets.grid.events.RecordCollapseEvent;
-import com.smartgwt.client.widgets.grid.events.RecordCollapseHandler;
 import com.smartgwt.client.widgets.layout.VLayout;
 
 public class SubmissionsListPane extends VLayout
@@ -37,7 +34,7 @@ public class SubmissionsListPane extends VLayout
   
   setShowEdges(true);
   setEdgeSize(6);
-  setEdgeImage("gnframe.gif");
+//  setEdgeImage("gnframe.gif");
   setEdgeMarginSize(10);
   
   resultGrid.setShowAllRecords(true);  
@@ -76,15 +73,15 @@ public class SubmissionsListPane extends VLayout
   addMember(pagingRuler);
   addMember(resultGrid);
   
-  resultGrid.addRecordCollapseHandler( new RecordCollapseHandler()
-  {
-   
-   @Override
-   public void onRecordCollapse(RecordCollapseEvent event)
-   {
-    LinkManager.getInstance().removeLinkClickListener(event.getRecord().getAttribute("id"));
-   }
-  });
+//  resultGrid.addRecordCollapseHandler( new RecordCollapseHandler()
+//  {
+//   
+//   @Override
+//   public void onRecordCollapse(RecordCollapseEvent event)
+//   {
+//    LinkManager.getInstance().removeLinkClickListener(event.getRecord().getAttribute("id"));
+//   }
+//  });
 //  ListGridRecord rec = new ListGridRecord();
 //  
 //  rec.setAttribute("id", "SBM00000X");

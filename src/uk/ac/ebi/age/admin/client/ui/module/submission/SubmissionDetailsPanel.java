@@ -19,6 +19,7 @@ public class SubmissionDetailsPanel extends VLayout
  public SubmissionDetailsPanel(ListGridRecord record)
  {
   setMembersMargin(8);
+  setPadding(8);
   
   DataSource ds = SubmissionFields.createSubmissionDataSource();
   
@@ -79,12 +80,12 @@ public class SubmissionDetailsPanel extends VLayout
   {
    for(FileAttachmentMeta dmImp : simp.getAttachments())
    {
-    DataSource dmds = SubmissionFields.createDataModuleDataSource();
+    DataSource dmds = SubmissionFields.createAttachmentDataSource();
     dmds.setClientOnly(true);
 
     ListGridRecord rec = new ListGridRecord();
 
-    rec.setAttribute(SubmissionFields.MOD_ID.name(), dmImp.getId());
+    rec.setAttribute(SubmissionFields.FILE_ID.name(), dmImp.getId());
 
     rec.setAttribute(SubmissionFields.COMM.name(), dmImp.getDescription());
     rec.setAttribute(SubmissionFields.CRTR.name(), dmImp.getSubmitter());
@@ -100,7 +101,7 @@ public class SubmissionDetailsPanel extends VLayout
     dv = new DetailViewer();
     dv.setWidth("90%");
     dv.setDataSource(dmds);
-    dv.setStyleName("moduleDetails");
+    dv.setStyleName("fileDetails");
 
     dv.setAutoFetchData(true);
 

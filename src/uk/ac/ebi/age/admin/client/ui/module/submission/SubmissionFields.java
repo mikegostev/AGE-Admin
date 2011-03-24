@@ -8,6 +8,7 @@ public enum SubmissionFields
 {
  SUBM_ID("Submission ID"),
  MOD_ID("Module ID"),
+ FILE_ID("File ID"),
  SRC_FILE("Source File"),
  CTIME("Created"),
  MTIME("Modified"),
@@ -57,6 +58,20 @@ public enum SubmissionFields
   return ds;
  }
  
+ static DataSource createAttachmentDataSource()
+ {
+  DataSource ds = new DataSource();
+  
+  ds.addField(new DataSourceTextField(SubmissionFields.FILE_ID.name(), SubmissionFields.FILE_ID.title()));
+  ds.addField(new DataSourceTextField(SubmissionFields.COMM.name(), SubmissionFields.COMM.title()));
+  ds.addField(new DataSourceTextField(SubmissionFields.CRTR.name(), SubmissionFields.CRTR.title()));
+  ds.addField(new DataSourceTextField(SubmissionFields.MDFR.name(), SubmissionFields.MDFR.title()));
+  ds.addField(new DataSourceDateField(SubmissionFields.CTIME.name(), SubmissionFields.CTIME.title()));
+  ds.addField(new DataSourceDateField(SubmissionFields.MTIME.name(), SubmissionFields.MTIME.title()));
+  ds.addField(new DataSourceTextField(SubmissionFields.SRC_FILE.name(), SubmissionFields.SRC_FILE.title()));
+  
+  return ds;
+ }
 
 
 

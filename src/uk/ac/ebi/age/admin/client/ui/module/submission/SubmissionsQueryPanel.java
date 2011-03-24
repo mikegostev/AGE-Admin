@@ -41,11 +41,19 @@ public class SubmissionsQueryPanel extends HLayout
   
 //  setHeight("100");
 //  setWidth("800");
+  setMargin(5);
+
   setMembersMargin(20);
   setPadding(5);
   setAlign(Alignment.CENTER);
   
-  setBorder("1px dotted green");
+//  setBorder("1px solid black");
+  
+  setShowEdges(true);
+  setEdgeSize(6);
+//  setEdgeImage("gnframe.gif");
+  setEdgeMarginSize(10);
+
   
   setOverflow(Overflow.VISIBLE);
   

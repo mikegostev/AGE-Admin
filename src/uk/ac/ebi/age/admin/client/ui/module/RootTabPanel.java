@@ -17,7 +17,7 @@ public class RootTabPanel extends TabSet
   setHeight100();  
 
   
-  Tab submTab = new Tab("Submission");
+  Tab submTab = new Tab("Login");
   submTab.setPane( new TestEntryPanel() );
   
   addTab(submTab);
@@ -28,14 +28,15 @@ public class RootTabPanel extends TabSet
   addTab(modelTab);
 
   Tab submitTab = new Tab("Submit");
-  submitTab.setPane( new SubmissionPreparePanel() );
-  
-  addTab(submitTab);
-  
-  submitTab = new Tab("Submit GWT");
   submitTab.setPane( new SubmissionPreparePanelGWT() );
   
   addTab(submitTab);
+
+  //  Tab submitTab = new Tab("Submit");
+//  submitTab.setPane( new SubmissionPreparePanel() );
+//  
+//  addTab(submitTab);
+  
 
   Tab submittionListTab = new Tab("Submissions");
   submittionListTab.setPane( new SubmissionQueryFace() );
