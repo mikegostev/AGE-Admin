@@ -8,7 +8,7 @@ public enum SubmissionFields
 {
  SUBM_ID("Submission ID"),
  MOD_ID("Module ID"),
- MOD_FILE("Module File"),
+ SRC_FILE("Source File"),
  CTIME("Created"),
  MTIME("Modified"),
  CRTR("Created by"),
@@ -48,11 +48,16 @@ public enum SubmissionFields
   
   ds.addField(new DataSourceTextField(SubmissionFields.MOD_ID.name(), SubmissionFields.MOD_ID.title()));
   ds.addField(new DataSourceTextField(SubmissionFields.COMM.name(), SubmissionFields.COMM.title()));
+  ds.addField(new DataSourceTextField(SubmissionFields.CRTR.name(), SubmissionFields.CRTR.title()));
   ds.addField(new DataSourceTextField(SubmissionFields.MDFR.name(), SubmissionFields.MDFR.title()));
+  ds.addField(new DataSourceDateField(SubmissionFields.CTIME.name(), SubmissionFields.CTIME.title()));
   ds.addField(new DataSourceDateField(SubmissionFields.MTIME.name(), SubmissionFields.MTIME.title()));
-  ds.addField(new DataSourceTextField(SubmissionFields.MOD_FILE.name(), SubmissionFields.MOD_FILE.title()));
+  ds.addField(new DataSourceTextField(SubmissionFields.SRC_FILE.name(), SubmissionFields.SRC_FILE.title()));
   
   return ds;
  }
+ 
+
+
 
 };

@@ -1,7 +1,5 @@
 package uk.ac.ebi.age.admin.server.service;
 
-import java.util.List;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -16,8 +14,8 @@ import uk.ac.ebi.age.admin.server.user.Session;
 import uk.ac.ebi.age.admin.shared.ModelPath;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
 import uk.ac.ebi.age.ext.submission.SubmissionDBException;
-import uk.ac.ebi.age.ext.submission.SubmissionMeta;
 import uk.ac.ebi.age.ext.submission.SubmissionQuery;
+import uk.ac.ebi.age.ext.submission.SubmissionReport;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -95,7 +93,7 @@ public class AgeAdminServiceImpl extends RemoteServiceServlet implements AgeAdmi
  }
 
  @Override
- public List<SubmissionMeta> getSubmissions(SubmissionQuery q) throws UserAuthException, SubmissionDBException
+ public SubmissionReport getSubmissions(SubmissionQuery q) throws UserAuthException, SubmissionDBException
  {
   return adm.getSubmissions(q, getUserSession());
  }

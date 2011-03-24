@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.List;
 
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
@@ -23,8 +22,8 @@ import uk.ac.ebi.age.admin.shared.StoreNode;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
 import uk.ac.ebi.age.ext.submission.SubmissionDBException;
-import uk.ac.ebi.age.ext.submission.SubmissionMeta;
 import uk.ac.ebi.age.ext.submission.SubmissionQuery;
+import uk.ac.ebi.age.ext.submission.SubmissionReport;
 import uk.ac.ebi.age.log.impl.BufferLogger;
 import uk.ac.ebi.age.mng.SubmissionManager;
 import uk.ac.ebi.age.model.SemanticModel;
@@ -299,7 +298,7 @@ public class AgeAdmin
 
 
 
- public List<SubmissionMeta> getSubmissions(SubmissionQuery q, Session session) throws SubmissionDBException
+ public SubmissionReport getSubmissions(SubmissionQuery q, Session session) throws SubmissionDBException
  {
   // TODO check permission to list all submissions
   

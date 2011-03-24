@@ -1,10 +1,14 @@
 package uk.ac.ebi.age.admin.client.ui.module.submission;
 
-import uk.ac.ebi.age.admin.shared.submission.SubmissionImprint;
-import uk.ac.ebi.age.admin.shared.submission.SubmissionReport;
+import java.util.Date;
+
+import uk.ac.ebi.age.ext.submission.SubmissionMeta;
+import uk.ac.ebi.age.ext.submission.SubmissionQuery;
+import uk.ac.ebi.age.ext.submission.SubmissionReport;
 import uk.ac.ebi.age.ui.client.LinkManager;
 import uk.ac.ebi.age.ui.client.module.PagingRuler;
 
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.ExpansionMode;
 import com.smartgwt.client.types.Overflow;
@@ -20,7 +24,7 @@ public class SubmissionsListPane extends VLayout
 {
  public final static int MAX_SUBMISSIONS_PER_PAGE=20;
  
- private String query;
+ private SubmissionQuery query;
  
  private ListGrid resultGrid = new SubmissionList();
  private PagingRuler pagingRuler = new PagingRuler("submPage");
@@ -54,13 +58,17 @@ public class SubmissionsListPane extends VLayout
   
   ListGridField idField = new ListGridField(SubmissionFields.SUBM_ID.name(),"ID", 200);  
   ListGridField descField = new ListGridField(SubmissionFields.COMM.name(),"Description");
+  ListGridField crtrField = new ListGridField(SubmissionFields.CRTR.name(),"Submitter",100);
+  ListGridField mdfrField = new ListGridField(SubmissionFields.MDFR.name(),"Modifier",100);
+  ListGridField ctimeField = new ListGridField(SubmissionFields.CTIME.name(),"C. time",100);
+  ListGridField mtimeField = new ListGridField(SubmissionFields.MTIME.name(),"M. time",100);
 //  ListGridField propField = new ListGridField("prop","AdditionalProp");
   
 //  propField.setHidden(true);
   
 //  idField.setWidth(200);
      
-  resultGrid.setFields(idField, descField );
+  resultGrid.setFields(idField, descField,crtrField,mdfrField,ctimeField,mtimeField );
   resultGrid.setExpansionMode(ExpansionMode.DETAIL_FIELD);
   
   pagingRuler.setVisible(false);
@@ -104,22 +112,22 @@ public class SubmissionsListPane extends VLayout
 //  addMember(lb);
  }
  
- public void showResult( SubmissionReport res, String qry, int cpage )
+ public void showResult( SubmissionReport result , SubmissionQuery qry, int cpage )
  {
   query = qry;
   
   resultGrid.selectAllRecords();
   resultGrid.removeSelectedData();
   
-  if( res.getTotalSubmissions() > MAX_SUBMISSIONS_PER_PAGE )
+  if( result.getTotalSubmissions() > MAX_SUBMISSIONS_PER_PAGE )
   {
-   pagingRuler.setContents(cpage, res.getTotalSubmissions(), MAX_SUBMISSIONS_PER_PAGE, null, null);
+   pagingRuler.setContents(cpage, result.getTotalSubmissions(), MAX_SUBMISSIONS_PER_PAGE, null, null);
    pagingRuler.setVisible(true);
   }
   else
    pagingRuler.setVisible(false);
   
-  for( SubmissionImprint sgr : res.getObjects() )
+  for( SubmissionMeta sgr : result.getSubmissions() )
   {
    ListGridRecord rec = new ListGridRecord();
    
@@ -127,8 +135,8 @@ public class SubmissionsListPane extends VLayout
    rec.setAttribute(SubmissionFields.CRTR.name(), sgr.getSubmitter());
    rec.setAttribute(SubmissionFields.MDFR.name(), sgr.getModifier());
    rec.setAttribute(SubmissionFields.COMM.name(), sgr.getDescription());
-   rec.setAttribute(SubmissionFields.CTIME.name(), sgr.getCtime());
-   rec.setAttribute(SubmissionFields.MTIME.name(), sgr.getMtime());
+   rec.setAttribute(SubmissionFields.CTIME.name(), DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format( new Date(sgr.getSubmissionTime())));
+   rec.setAttribute(SubmissionFields.MTIME.name(), DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format( new Date(sgr.getModificationTime())));
 
    rec.setAttribute("__obj", sgr);
    

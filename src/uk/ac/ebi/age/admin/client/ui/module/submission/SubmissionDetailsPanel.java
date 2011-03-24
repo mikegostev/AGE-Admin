@@ -1,10 +1,13 @@
 package uk.ac.ebi.age.admin.client.ui.module.submission;
 
+import java.util.Date;
 import java.util.List;
 
-import uk.ac.ebi.age.admin.shared.submission.DataModuleImprint;
-import uk.ac.ebi.age.admin.shared.submission.SubmissionImprint;
+import uk.ac.ebi.age.ext.submission.DataModuleMeta;
+import uk.ac.ebi.age.ext.submission.FileAttachmentMeta;
+import uk.ac.ebi.age.ext.submission.SubmissionMeta;
 
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -32,37 +35,79 @@ public class SubmissionDetailsPanel extends VLayout
 
   addMember(dv);
   
-  SubmissionImprint simp = (SubmissionImprint)record.getAttributeAsObject("__obj");
+  SubmissionMeta simp = (SubmissionMeta)record.getAttributeAsObject("__obj");
   
-  List<DataModuleImprint> mods = simp.getModules();
+  List<DataModuleMeta> mods = simp.getDataModules();
   
-  for( DataModuleImprint dmImp : mods )
+  if( mods != null )
   {
-   DataSource dmds = SubmissionFields.createDataModuleDataSource();
-   dmds.setClientOnly(true);
-   
-   ListGridRecord rec = new ListGridRecord();
-   
-   rec.setAttribute(SubmissionFields.MOD_ID.name(), dmImp.getId());
 
-   rec.setAttribute(SubmissionFields.COMM.name(), dmImp.getDescription());
-   rec.setAttribute(SubmissionFields.MDFR.name(), dmImp.getModifier());
-   rec.setAttribute(SubmissionFields.MTIME.name(), dmImp.getMtime());
-   rec.setAttribute(SubmissionFields.MOD_FILE.name(), dmImp.getId());
-   
-   dmds.addData(rec);
-   
-   dv = new DetailViewer();
-   dv.setWidth("90%");
-   dv.setDataSource(dmds);
-   dv.setStyleName("moduleDetails");
-   
-   dv.setAutoFetchData(true);
+   for(DataModuleMeta dmImp : mods)
+   {
+    DataSource dmds = SubmissionFields.createDataModuleDataSource();
+    dmds.setClientOnly(true);
 
-   addMember(dv);
+    ListGridRecord rec = new ListGridRecord();
+
+    rec.setAttribute(SubmissionFields.MOD_ID.name(), dmImp.getId());
+
+    rec.setAttribute(SubmissionFields.COMM.name(), dmImp.getDescription());
+    rec.setAttribute(SubmissionFields.CRTR.name(), dmImp.getSubmitter());
+    rec.setAttribute(SubmissionFields.MDFR.name(), dmImp.getModifier());
+    rec.setAttribute(SubmissionFields.CTIME.name(),
+      DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format(new Date(dmImp.getSubmissionTime())));
+    rec.setAttribute(SubmissionFields.MTIME.name(),
+      DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format(new Date(dmImp.getModificationTime())));
+    rec.setAttribute(SubmissionFields.SRC_FILE.name(), dmImp.getId());
+
+    dmds.addData(rec);
+
+    dv = new DetailViewer();
+    dv.setWidth("90%");
+    dv.setDataSource(dmds);
+    dv.setStyleName("moduleDetails");
+
+    dv.setAutoFetchData(true);
+
+    addMember(dv);
+
+   }
 
   }
   
+  if( simp.getAttachments() != null )
+  {
+   for(FileAttachmentMeta dmImp : simp.getAttachments())
+   {
+    DataSource dmds = SubmissionFields.createDataModuleDataSource();
+    dmds.setClientOnly(true);
+
+    ListGridRecord rec = new ListGridRecord();
+
+    rec.setAttribute(SubmissionFields.MOD_ID.name(), dmImp.getId());
+
+    rec.setAttribute(SubmissionFields.COMM.name(), dmImp.getDescription());
+    rec.setAttribute(SubmissionFields.CRTR.name(), dmImp.getSubmitter());
+    rec.setAttribute(SubmissionFields.MDFR.name(), dmImp.getModifier());
+    rec.setAttribute(SubmissionFields.CTIME.name(),
+      DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format(new Date(dmImp.getSubmissionTime())));
+    rec.setAttribute(SubmissionFields.MTIME.name(),
+      DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format(new Date(dmImp.getModificationTime())));
+    rec.setAttribute(SubmissionFields.SRC_FILE.name(), dmImp.getId());
+
+    dmds.addData(rec);
+
+    dv = new DetailViewer();
+    dv.setWidth("90%");
+    dv.setDataSource(dmds);
+    dv.setStyleName("moduleDetails");
+
+    dv.setAutoFetchData(true);
+
+    addMember(dv);
+
+   }
+  }
 //  ListGrid 
  }
 

@@ -1,11 +1,10 @@
 package uk.ac.ebi.age.admin.client.ui.module.submission;
 
 import java.util.Date;
-import java.util.List;
 
 import uk.ac.ebi.age.admin.client.AgeAdminService;
-import uk.ac.ebi.age.ext.submission.SubmissionMeta;
 import uk.ac.ebi.age.ext.submission.SubmissionQuery;
+import uk.ac.ebi.age.ext.submission.SubmissionReport;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.types.Alignment;
@@ -34,8 +33,12 @@ public class SubmissionsQueryPanel extends HLayout
  private TextItem submitterField;
  private TextItem modifierField;
  
- public SubmissionsQueryPanel(SubmissionsListPane resultPane)
+ private SubmissionsListPane resultPane;
+ 
+ public SubmissionsQueryPanel(SubmissionsListPane rp)
  {
+  resultPane = rp;
+  
 //  setHeight("100");
 //  setWidth("800");
   setMembersMargin(20);
@@ -138,7 +141,7 @@ public class SubmissionsQueryPanel extends HLayout
 
  public void executeQuery()
  {
-  SubmissionQuery q = new SubmissionQuery();
+  final SubmissionQuery q = new SubmissionQuery();
  
   q.setQuery( queryField.getValueAsString() );
   q.setSubmissionID( submissionIDField.getValueAsString() );
@@ -175,14 +178,13 @@ public class SubmissionsQueryPanel extends HLayout
   else
    q.setModifiedTo(-1);
   
-  AgeAdminService.Util.getInstance().getSubmissions( q, new AsyncCallback<List<SubmissionMeta>>()
+  AgeAdminService.Util.getInstance().getSubmissions( q, new AsyncCallback<SubmissionReport>()
   {
    
    @Override
-   public void onSuccess(List<SubmissionMeta> result)
+   public void onSuccess(SubmissionReport result)
    {
-    System.out.println("Submissions: "+result.size());
-    
+    resultPane.showResult(result, q, 1);
    }
    
    @Override
