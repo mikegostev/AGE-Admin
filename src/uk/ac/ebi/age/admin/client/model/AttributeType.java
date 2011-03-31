@@ -9,5 +9,6 @@ public enum AttributeType
  REAL,
  URI, 
  TEXT, 
- OBJECT
+ OBJECT,
+ FILE
 }

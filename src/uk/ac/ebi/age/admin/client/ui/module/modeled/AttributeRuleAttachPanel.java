@@ -1,5 +1,6 @@
 package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
+import uk.ac.ebi.age.admin.client.ModeledIcons;
 import uk.ac.ebi.age.admin.client.model.AttributeRuleImprint;
 import uk.ac.ebi.age.admin.client.model.AttributedImprintClass;
 import uk.ac.ebi.age.admin.client.model.RestrictionType;
@@ -45,8 +46,8 @@ public class AttributeRuleAttachPanel extends VLayout
   ListGridField typeIconField = new ListGridField("type", "Type", 40);
   typeIconField.setAlign(Alignment.CENTER);
   typeIconField.setType(ListGridFieldType.IMAGE);
-  typeIconField.setImageURLPrefix("../images/icons/restriction/");
-  typeIconField.setImageURLSuffix(".png");
+//  typeIconField.setImageURLPrefix("../images/icons/restriction/");
+//  typeIconField.setImageURLSuffix(".png");
 
   ListGridField ruleField = new ListGridField("name", "Rule");
 
@@ -59,7 +60,8 @@ public class AttributeRuleAttachPanel extends VLayout
   }
   
   ToolStripButton btaddMay = new ToolStripButton();
-  btaddMay.setIcon("../images/icons/attribute/attach.png");
+  btaddMay.setIcon(ModeledIcons.get.attributeAddMayRule());
+  btaddMay.setSelected(true);
   btaddMay.setTitle("Add MAY rule");
   btaddMay.addClickHandler(new ClickHandler()
   {
@@ -80,10 +82,12 @@ public class AttributeRuleAttachPanel extends VLayout
      }});
    }
   });
+  superTS.addSpacer(4);
   superTS.addButton(btaddMay);
 
   ToolStripButton btaddMust = new ToolStripButton();
-  btaddMust.setIcon("../images/icons/attribute/attach.png");
+  btaddMust.setIcon(ModeledIcons.get.attributeAddMustRule());
+  btaddMust.setSelected(true);
   btaddMust.setTitle("Add MUST rule");
   btaddMust.addClickHandler(new ClickHandler()
   {
@@ -104,11 +108,13 @@ public class AttributeRuleAttachPanel extends VLayout
      }});
    }
   });
+  superTS.addSpacer(4);
   superTS.addButton(btaddMust);
 
 
   ToolStripButton btaddMustNot = new ToolStripButton();
-  btaddMustNot.setIcon("../images/icons/attribute/attach.png");
+  btaddMustNot.setIcon(ModeledIcons.get.attributeAddMustnotRule());
+  btaddMustNot.setSelected(true);
   btaddMustNot.setTitle("Add MUSTNOT rule");
   btaddMustNot.addClickHandler(new ClickHandler()
   {
@@ -129,11 +135,13 @@ public class AttributeRuleAttachPanel extends VLayout
      }});
    }
   });
+  superTS.addSpacer(4);
   superTS.addButton(btaddMustNot);
 
   
   ToolStripButton btEdit = new ToolStripButton();
-  btEdit.setIcon("../images/icons/attribute/attachEdit.png");
+  btEdit.setIcon(ModeledIcons.get.attributeEditRule());
+  btEdit.setSelected(true);
   btEdit.setTitle("Edit rule");
   btEdit.addClickHandler(new ClickHandler()
   {
@@ -176,11 +184,14 @@ public class AttributeRuleAttachPanel extends VLayout
      
    }
   });
+  superTS.addSpacer(4);
   superTS.addButton(btEdit);
  
   
   ToolStripButton btdel = new ToolStripButton();
-  btdel.setIcon("../images/icons/attribute/detach.png");
+  btdel.setTitle("Delete rule");
+  btdel.setSelected(true);
+  btdel.setIcon(ModeledIcons.get.attributeDeleteRule());
   btdel.addClickHandler(new ClickHandler()
   {
    @Override
@@ -195,6 +206,7 @@ public class AttributeRuleAttachPanel extends VLayout
     cls.removeAttribiteRule(rec.getRule());
    }
   });
+  superTS.addSpacer(4);
   superTS.addButton(btdel);
 
   addMember(superTS);
@@ -214,7 +226,7 @@ public class AttributeRuleAttachPanel extends VLayout
    rule=r;
    
    setAttribute("id", rule.getId() );
-   setAttribute("type", rule.getType().name() );
+   setAttribute("type", ModeledIcons.get.getString("attrRule"+rule.getType().name() ) );
    setAttribute("name", r.toString() );
   }
   

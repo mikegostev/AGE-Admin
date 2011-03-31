@@ -1,5 +1,6 @@
 package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
+import uk.ac.ebi.age.admin.client.ModeledIcons;
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeAnnotationClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeAnnotationImprint;
@@ -47,7 +48,7 @@ public class AnnotationPanel extends VLayout
   superTS.addFill();
   
   ToolStripButton btadd = new ToolStripButton();
-  btadd.setIcon("../images/icons/add.png");
+  btadd.setIcon(ModeledIcons.get.annotationAttach());
   btadd.addClickHandler(new ClickHandler()
   {
    @Override
@@ -59,7 +60,7 @@ public class AnnotationPanel extends VLayout
   superTS.addButton(btadd);
 
   ToolStripButton btdel = new ToolStripButton();
-  btdel.setIcon("../images/icons/delete.png");
+  btdel.setIcon(ModeledIcons.get.annotationDetach());
   btdel.addClickHandler(new ClickHandler()
   {
    @Override
@@ -84,8 +85,8 @@ public class AnnotationPanel extends VLayout
   ListGridField iconField = new ListGridField("icon", "", 40);
   iconField.setAlign(Alignment.CENTER);
   iconField.setType(ListGridFieldType.IMAGE);
-  iconField.setImageURLPrefix("../images/icons/annotation/");
-  iconField.setImageURLSuffix(".png");
+//  iconField.setImageURLPrefix("../images/icons/annotation/");
+//  iconField.setImageURLSuffix(".png");
   iconField.setCanEdit(false); 
   
   ListGridField annotField = new ListGridField("annotation", "Annotation",120);
@@ -165,7 +166,7 @@ public class AnnotationPanel extends VLayout
    
    annot=ant;
    
-   setAttribute("icon", "regular" );
+   setAttribute("icon", ModeledIcons.get.annotation() );
    setAttribute("annotation", ant.getAnnotationClass().getName() );
    setAttribute("text", ant.getText());
   }

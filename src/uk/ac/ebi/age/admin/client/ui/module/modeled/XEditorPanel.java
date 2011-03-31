@@ -1,5 +1,6 @@
 package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
+import uk.ac.ebi.age.admin.client.ModeledIcons;
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.ui.ClassSelectedAdapter;
@@ -48,7 +49,8 @@ public class XEditorPanel extends HLayout
   
   ToolStripButton chldBut = new ToolStripButton();
   chldBut.setTitle("Add child");
-  chldBut.setIcon("../images/icons/"+metaDef.getMetaClassName()+"/addchild.png");
+  chldBut.setSelected(true);
+  chldBut.setIcon( ModeledIcons.get.getString(metaDef.getMetaClassName()+"AddChild"));
   chldBut.addClickHandler( new ClickHandler()
   {
    @Override
@@ -58,12 +60,14 @@ public class XEditorPanel extends HLayout
    }
   });
   
+  
   clsTools.addSpacer(20);
   clsTools.addButton(chldBut);
   
   ToolStripButton sibBut = new ToolStripButton();
   sibBut.setTitle("Add sibling");
-  sibBut.setIcon("../images/icons/"+metaDef.getMetaClassName()+"/addsibling.png");
+  sibBut.setSelected(true);
+  sibBut.setIcon(ModeledIcons.get.getString(metaDef.getMetaClassName()+"AddSibling"));
   sibBut.addClickHandler( new ClickHandler()
   {
    @Override
@@ -73,11 +77,13 @@ public class XEditorPanel extends HLayout
    }
   });
   
+  clsTools.addSpacer(4);
   clsTools.addButton(sibBut);
  
   ToolStripButton delBut = new ToolStripButton();
   delBut.setTitle("Delete");
-  delBut.setIcon("../images/icons/"+metaDef.getMetaClassName()+"/del.png");
+  delBut.setSelected(true);
+  delBut.setIcon(ModeledIcons.get.getString(metaDef.getMetaClassName()+"Delete"));
   delBut.addClickHandler( new ClickHandler()
   {
    @Override
@@ -87,6 +93,7 @@ public class XEditorPanel extends HLayout
    }
   });
   
+  clsTools.addSpacer(4);
   clsTools.addButton(delBut);
 
   

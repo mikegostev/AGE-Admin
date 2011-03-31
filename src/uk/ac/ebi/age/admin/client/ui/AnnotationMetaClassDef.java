@@ -3,6 +3,7 @@ package uk.ac.ebi.age.admin.client.ui;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import uk.ac.ebi.age.admin.client.ModeledIcons;
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeAnnotationClassImprint;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
@@ -25,25 +26,26 @@ public class AnnotationMetaClassDef extends MetaClassDef
  {}
  
  @Override
- public Collection<Canvas> createDetailsPanels(AgeAbstractClassImprint cls, XEditorPanel editor)
+ public Collection<PanelInfo> createDetailsPanels(AgeAbstractClassImprint cls, XEditorPanel editor)
  {
-  ArrayList<Canvas> panels = new ArrayList<Canvas>(5);
+  ArrayList<PanelInfo> panels = new ArrayList<PanelInfo>(5);
+
+  PanelInfo pinf = null;
 
   Canvas pnl = new AnnotationCommonsPanel((AgeAnnotationClassImprint)cls, editor);
-  panels.add(pnl);
-
-//  pnl = new XSuperclassesPanel(cls, editor);
-//  panels.add(pnl);
-//
-//  pnl = new XSubclassesPanel(cls, editor);
-//  panels.add(pnl);
-
-  pnl = new XHierarchyPanel(cls, editor);
-  panels.add(pnl);
+  pinf = new PanelInfo();
+  panels.add(pinf);
+  pinf.setPanel(pnl);
+  pinf.setTitle("Common properties");
+  pinf.setIcon(ModeledIcons.get.commonProperties());
 
   
-//  pnl = new AttributeAttachPanel( cls, editor );
-//  panels.add(pnl);
+  pnl = new XHierarchyPanel(cls, editor);
+  pinf = new PanelInfo();
+  panels.add(pinf);
+  pinf.setPanel(pnl);
+  pinf.setTitle("Hierarchy");
+  pinf.setIcon(ModeledIcons.get.hierarchy());
 
   
   return panels;
@@ -73,9 +75,18 @@ public class AnnotationMetaClassDef extends MetaClassDef
   return mod.getRootAnnotationClass();
  }
 
- public static String getIcon(AgeAnnotationClassImprint classImprint)
+ public static String getIcon(AgeAbstractClassImprint classImprint)
  {
-  return "../images/icons/annotation/"+(classImprint.isAbstract()?"abstract.png":"regular.png");
+  if( classImprint.isAbstract() )
+   return ModeledIcons.get.annotationAbstract();
+  else
+   return ModeledIcons.get.annotation();
+ }
+
+ @Override
+ public String getClassIcon(AgeAbstractClassImprint classImprint)
+ {
+  return getIcon(classImprint);
  }
 
 }

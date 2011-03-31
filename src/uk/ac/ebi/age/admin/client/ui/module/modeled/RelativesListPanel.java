@@ -3,6 +3,7 @@ package uk.ac.ebi.age.admin.client.ui.module.modeled;
 import java.util.Collection;
 
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
+import uk.ac.ebi.age.admin.client.ui.MetaClassDef;
 
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.ListGridFieldType;
@@ -13,11 +14,11 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 
 public class RelativesListPanel extends ListGrid
 {
- private String metaClsName;
+ private MetaClassDef metaCls;
  
- RelativesListPanel( String metaClassName, Collection<? extends AgeAbstractClassImprint> nodes )
+ RelativesListPanel( MetaClassDef metaClassDef, Collection<? extends AgeAbstractClassImprint> nodes )
  {
-  metaClsName=metaClassName;
+  metaCls=metaClassDef;
   
   setHeight(30);
   setBodyOverflow(Overflow.VISIBLE);
@@ -27,8 +28,8 @@ public class RelativesListPanel extends ListGrid
   ListGridField subclassIconField = new ListGridField("type", "Type", 40);
   subclassIconField.setAlign(Alignment.CENTER);
   subclassIconField.setType(ListGridFieldType.IMAGE);
-  subclassIconField.setImageURLPrefix("../images/icons/"+metaClsName+"/");
-  subclassIconField.setImageURLSuffix(".png");
+//  subclassIconField.setImageURLPrefix("../images/icons/"+metaClsName+"/");
+//  subclassIconField.setImageURLSuffix(".png");
 
   ListGridField subclassNameField = new ListGridField("name", "Class");
 
@@ -82,7 +83,7 @@ public class RelativesListPanel extends ListGrid
    
    cls=ci;
    
-   setAttribute("type", ci.isAbstract()?"abstract":"regular" );
+   setAttribute("type", metaCls.getClassIcon(cls) );
    setAttribute("name", ci.getName() );
   }
   

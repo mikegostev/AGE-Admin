@@ -10,8 +10,6 @@ import uk.ac.ebi.age.admin.client.model.AgeRelationClassImprint;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.XEditorPanel;
 
-import com.smartgwt.client.widgets.Canvas;
-
 public abstract class MetaClassDef
 {
 
@@ -21,10 +19,12 @@ public abstract class MetaClassDef
 
  public abstract Collection<? extends AgeAbstractClassImprint> getXClasses(ModelImprint model);
 
- public abstract Collection<Canvas> createDetailsPanels(AgeAbstractClassImprint cls, XEditorPanel clsPanel);
+ public abstract Collection<PanelInfo> createDetailsPanels(AgeAbstractClassImprint cls, XEditorPanel clsPanel);
 
  public abstract AgeAbstractClassImprint getRoot(ModelImprint mod);
  
+ public abstract String getClassIcon(AgeAbstractClassImprint classImprint);
+
  public static MetaClassDef getMetaClass( AgeAbstractClassImprint cls )
  {
   if( cls instanceof AgeClassImprint )
@@ -38,6 +38,5 @@ public abstract class MetaClassDef
 
   return null;
  }
-
  
 }

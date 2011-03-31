@@ -2,6 +2,7 @@ package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import java.util.Collection;
 
+import uk.ac.ebi.age.admin.client.ModeledIcons;
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.ui.MetaClassDef;
 
@@ -42,7 +43,7 @@ public class AliasesPanel extends VLayout
   superTS.addFill();
   
   ToolStripButton btadd = new ToolStripButton();
-  btadd.setIcon("../images/icons/add.png");
+  btadd.setIcon(ModeledIcons.get.aliasAdd());
   btadd.addClickHandler(new ClickHandler()
   {
    @Override
@@ -54,7 +55,7 @@ public class AliasesPanel extends VLayout
   superTS.addButton(btadd);
 
   ToolStripButton btdel = new ToolStripButton();
-  btdel.setIcon("../images/icons/delete.png");
+  btdel.setIcon(ModeledIcons.get.aliasDelete());
   btdel.addClickHandler(new ClickHandler()
   {
    @Override
@@ -75,8 +76,8 @@ public class AliasesPanel extends VLayout
   ListGridField iconField = new ListGridField("icon", "", 40);
   iconField.setAlign(Alignment.CENTER);
   iconField.setType(ListGridFieldType.IMAGE);
-  iconField.setImageURLPrefix("../images/icons/");
-  iconField.setImageURLSuffix(".png");
+//  iconField.setImageURLPrefix(ModeledIcons.get.alias());
+//  iconField.setImageURLSuffix("");
 
   ListGridField aliasField = new ListGridField("alias", "Alias");
 
@@ -150,7 +151,7 @@ public class AliasesPanel extends VLayout
    super();
    
    
-   setAttribute("icon", "alias" );
+   setAttribute("icon", ModeledIcons.get.alias() );
    setAttribute("alias", alias );
   }
 

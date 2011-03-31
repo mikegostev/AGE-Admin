@@ -3,6 +3,7 @@ package uk.ac.ebi.age.admin.client.ui;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import uk.ac.ebi.age.admin.client.ModeledIcons;
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint;
 import uk.ac.ebi.age.admin.client.model.AttributeType;
@@ -27,24 +28,35 @@ public class AttributeMetaClassDef extends MetaClassDef
  {}
  
  @Override
- public Collection<Canvas> createDetailsPanels(AgeAbstractClassImprint cls, XEditorPanel editor)
+ public Collection<PanelInfo> createDetailsPanels(AgeAbstractClassImprint cls, XEditorPanel editor)
  {
-  ArrayList<Canvas> panels = new ArrayList<Canvas>(5);
+  ArrayList<PanelInfo> panels = new ArrayList<PanelInfo>(5);
 
+  PanelInfo pinf = new PanelInfo();
+  panels.add(pinf);
+  
   Canvas pnl = new AttributeCommonsPanel((AgeAttributeClassImprint)cls, editor);
-  panels.add(pnl);
+  pinf.setPanel(pnl);
+  pinf.setTitle("Common properties");
+  pinf.setIcon(ModeledIcons.get.commonProperties());
 
-//  pnl = new XSuperclassesPanel(cls, editor);
-//  panels.add(pnl);
-//
-//  pnl = new XSubclassesPanel(cls, editor);
-//  panels.add(pnl);
+  
+  pinf = new PanelInfo();
+  panels.add(pinf);
 
   pnl = new XHierarchyPanel(cls, editor);
-  panels.add(pnl);
+  pinf.setPanel(pnl);
+  pinf.setTitle("Hierarchy");
+  pinf.setIcon(ModeledIcons.get.hierarchy());
 
+  
+  pinf = new PanelInfo();
+  panels.add(pinf);
+ 
   pnl = new AttributeRuleAttachPanel( (AgeAttributeClassImprint)cls, editor );
-  panels.add(pnl);
+  pinf.setPanel(pnl);
+  pinf.setTitle("Attribute rules");
+  pinf.setIcon(ModeledIcons.get.attributeRules());
 
 //  pnl = new AttributeAttachPanel( cls, editor );
 //  panels.add(pnl);
@@ -84,18 +96,13 @@ public class AttributeMetaClassDef extends MetaClassDef
 
  public static String getIcon(AttributeType atyp)
  {
-  
-  switch(atyp)
-  {
-   case STRING:
-    return "../images/icons/attribute/regular.png";
- 
-   case ABSTRACT:
-    return "../images/icons/attribute/abstract.png";
+  return ModeledIcons.get.getString("attribute"+atyp.name());
+ }
 
-   default:
-    return "../images/icons/attribute/tag_green.png";
-  }
+ @Override
+ public String getClassIcon(AgeAbstractClassImprint classImprint)
+ {
+  return getIcon((AgeAttributeClassImprint)classImprint);
  }
 
 

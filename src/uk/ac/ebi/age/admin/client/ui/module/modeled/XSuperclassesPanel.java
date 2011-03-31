@@ -1,5 +1,6 @@
 package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
+import uk.ac.ebi.age.admin.client.ModeledIcons;
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.ui.ClassSelectedAdapter;
 
@@ -28,10 +29,10 @@ public class XSuperclassesPanel extends VLayout
   superTS.addFill();
 
   
-  final RelativesListPanel superClsList = new RelativesListPanel(editor.getMetaClassDef().getMetaClassName(), cls.getParents());
+  final RelativesListPanel superClsList = new RelativesListPanel(editor.getMetaClassDef(), cls.getParents());
 
   ToolStripButton btadd = new ToolStripButton();
-  btadd.setIcon("../images/icons/" + editor.getMetaClassDef().getMetaClassName() + "/add.png");
+  btadd.setIcon(ModeledIcons.get.getString(editor.getMetaClassDef().getMetaClassName()+"AddSuperclass"));
   btadd.addClickHandler(new ClickHandler()
   {
    @Override
@@ -50,7 +51,7 @@ public class XSuperclassesPanel extends VLayout
   superTS.addButton(btadd);
 
   ToolStripButton btdel = new ToolStripButton();
-  btdel.setIcon("../images/icons/" + editor.getMetaClassDef().getMetaClassName() + "/del.png");
+  btdel.setIcon(ModeledIcons.get.getString(editor.getMetaClassDef().getMetaClassName()+"DeleteSuperclass"));
   btdel.addClickHandler(new ClickHandler()
   {
    @Override

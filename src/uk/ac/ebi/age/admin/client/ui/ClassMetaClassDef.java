@@ -3,6 +3,7 @@ package uk.ac.ebi.age.admin.client.ui;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import uk.ac.ebi.age.admin.client.ModeledIcons;
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
@@ -22,27 +23,39 @@ public class ClassMetaClassDef extends MetaClassDef
  {}
  
  @Override
- public Collection<Canvas> createDetailsPanels(AgeAbstractClassImprint cls, XEditorPanel editor)
+ public Collection<PanelInfo> createDetailsPanels(AgeAbstractClassImprint cls, XEditorPanel editor)
  {
-  ArrayList<Canvas> panels = new ArrayList<Canvas>(5);
+  ArrayList<PanelInfo> panels = new ArrayList<PanelInfo>(5);
+
+  PanelInfo pinf = new PanelInfo();
+  panels.add(pinf);
 
   Canvas pnl = new XCommonsPanel(cls, editor);
-  panels.add(pnl);
+  pinf.setPanel(pnl);
+  pinf.setTitle("Common properties");
+  pinf.setIcon(ModeledIcons.get.commonProperties());
 
-//  pnl = new XSuperclassesPanel(cls, editor);
-//  panels.add(pnl);
-//
-//  pnl = new XSubclassesPanel(cls, editor);
-//  panels.add(pnl);
 
   pnl = new XHierarchyPanel(cls, editor);
-  panels.add(pnl);
+  pinf = new PanelInfo();
+  panels.add(pinf);
+  pinf.setPanel(pnl);
+  pinf.setTitle("Hierarchy");
+  pinf.setIcon(ModeledIcons.get.hierarchy());
   
   pnl = new RelationRuleAttachPanel( (AgeClassImprint)cls, editor );
-  panels.add(pnl);
+  pinf = new PanelInfo();
+  panels.add(pinf);
+  pinf.setPanel(pnl);
+  pinf.setTitle("Relation rules");
+  pinf.setIcon(ModeledIcons.get.relationRules());
 
   pnl = new AttributeRuleAttachPanel( (AgeClassImprint)cls, editor );
-  panels.add(pnl);
+  pinf = new PanelInfo();
+  panels.add(pinf);
+  pinf.setPanel(pnl);
+  pinf.setTitle("Attribute rules");
+  pinf.setIcon(ModeledIcons.get.attributeRules());
 
 
   
@@ -73,9 +86,22 @@ public class ClassMetaClassDef extends MetaClassDef
   return mod.getRootClass();
  }
 
- public static String getIcon(AgeClassImprint classImprint)
+ @Override
+ public String getClassIcon(AgeAbstractClassImprint classImprint)
  {
-  return "../images/icons/class/"+(classImprint.isAbstract()?"abstract.png":"regular.png");
+  return getIcon(classImprint);
+//  return "../images/icons/class/"+(classImprint.isAbstract()?"abstract.png":"regular.png");
+ }
+
+ 
+ public static String getIcon(AgeAbstractClassImprint classImprint)
+ {
+  if( classImprint.isAbstract() )
+   return ModeledIcons.get.ageAbstractClass();
+  else
+   return ModeledIcons.get.ageClass();
+  
+//  return "../images/icons/class/"+(classImprint.isAbstract()?"abstract.png":"regular.png");
  }
 
  public static MetaClassDef getInstance()

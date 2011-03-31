@@ -35,7 +35,7 @@ public class RangeOrDomainPanel extends VLayout
 
   final MetaClassDef meta = ClassMetaClassDef.getInstance();
   
-  final RelativesListPanel rangeClsList = new RelativesListPanel(meta.getMetaClassName(), isRange?cls.getRange():cls.getDomain());
+  final RelativesListPanel rangeClsList = new RelativesListPanel(meta, isRange?cls.getRange():cls.getDomain());
 
   ToolStripButton btadd = new ToolStripButton();
   btadd.setIcon("../images/icons/" + meta.getMetaClassName() + "/add.png");
