@@ -2,6 +2,7 @@ package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import java.util.LinkedHashMap;
 
+import uk.ac.ebi.age.admin.client.ModeledIcons;
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
@@ -14,7 +15,7 @@ import uk.ac.ebi.age.admin.client.ui.ClassSelectedCallback;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.form.DynamicForm;
-import com.smartgwt.client.widgets.form.fields.FormItemIcon;
+import com.smartgwt.client.widgets.form.fields.ButtonItem;
 import com.smartgwt.client.widgets.form.fields.SelectItem;
 import com.smartgwt.client.widgets.form.fields.StaticTextItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
@@ -22,8 +23,8 @@ import com.smartgwt.client.widgets.form.fields.events.BlurEvent;
 import com.smartgwt.client.widgets.form.fields.events.BlurHandler;
 import com.smartgwt.client.widgets.form.fields.events.ChangeEvent;
 import com.smartgwt.client.widgets.form.fields.events.ChangeHandler;
-import com.smartgwt.client.widgets.form.fields.events.FormItemClickHandler;
-import com.smartgwt.client.widgets.form.fields.events.FormItemIconClickEvent;
+import com.smartgwt.client.widgets.form.fields.events.ClickEvent;
+import com.smartgwt.client.widgets.form.fields.events.ClickHandler;
 import com.smartgwt.client.widgets.form.fields.events.KeyPressEvent;
 import com.smartgwt.client.widgets.form.fields.events.KeyPressHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
@@ -166,6 +167,7 @@ public class AttributeCommonsPanel extends HLayout
    setIsGroup(true);
    setPadding(4);
    setWidth(200);
+   setNumCols(2);
    
    targetClass = cls;
    attributeClass = attrClass;
@@ -178,16 +180,20 @@ public class AttributeCommonsPanel extends HLayout
    
    tagClassItm.setValue("<span class='clsRef'>" + cls.getName() + "</span>");
    
-   FormItemIcon icn = new FormItemIcon();
-   icn.setSrc("../images/icons/class/selbt.png");
-   icn.addFormItemClickHandler(new FormItemClickHandler()
+   tagClassItm.setEndRow(false);
+   
+   ButtonItem  selBtnItm = new ButtonItem();
+   selBtnItm.setTitle("Select class");
+   selBtnItm.setIcon(ModeledIcons.get.ageClass());
+   selBtnItm.setStartRow(false);
+   selBtnItm.addClickHandler(new ClickHandler()
    {
     @Override
-    public void onFormItemClick(FormItemIconClickEvent event)
+    public void onClick(ClickEvent event)
     {
      new XSelectDialog<AgeClassImprint>(targetClass.getModel().getRootClass(), ClassMetaClassDef.getInstance(), new ClassSelectedAdapter()
      {
-
+      
       @Override
       public void classSelected(AgeAbstractClassImprint cls)
       {
@@ -196,12 +202,11 @@ public class AttributeCommonsPanel extends HLayout
        attributeClass.setTargetClass(targetClass);
       }
      }).show();
-
+     
     }
    });
-   tagClassItm.setIcons(icn);
    
-   setItems(tagClassItm);
+   setItems(tagClassItm, selBtnItm);
 
   }
  }

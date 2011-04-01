@@ -85,8 +85,6 @@ public class AnnotationPanel extends VLayout
   ListGridField iconField = new ListGridField("icon", "", 40);
   iconField.setAlign(Alignment.CENTER);
   iconField.setType(ListGridFieldType.IMAGE);
-//  iconField.setImageURLPrefix("../images/icons/annotation/");
-//  iconField.setImageURLSuffix(".png");
   iconField.setCanEdit(false); 
   
   ListGridField annotField = new ListGridField("annotation", "Annotation",120);

@@ -90,7 +90,6 @@ public class ClassMetaClassDef extends MetaClassDef
  public String getClassIcon(AgeAbstractClassImprint classImprint)
  {
   return getIcon(classImprint);
-//  return "../images/icons/class/"+(classImprint.isAbstract()?"abstract.png":"regular.png");
  }
 
  

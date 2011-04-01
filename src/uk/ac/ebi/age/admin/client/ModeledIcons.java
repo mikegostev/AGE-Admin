@@ -102,4 +102,7 @@ public interface ModeledIcons extends ConstantsWithLookup
  String annotationDeleteSubclass();
  String annotationDeleteSuperclass();
 
+ String qualifierAdd();
+ String qualifierDelete();
+
 }

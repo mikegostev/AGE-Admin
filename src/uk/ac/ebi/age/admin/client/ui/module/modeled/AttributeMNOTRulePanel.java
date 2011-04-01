@@ -2,6 +2,7 @@ package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import java.util.LinkedHashMap;
 
+import uk.ac.ebi.age.admin.client.ModeledIcons;
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint;
 import uk.ac.ebi.age.admin.client.model.AttributeRuleImprint;
@@ -17,14 +18,12 @@ import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.ButtonItem;
 import com.smartgwt.client.widgets.form.fields.CanvasItem;
 import com.smartgwt.client.widgets.form.fields.CheckboxItem;
-import com.smartgwt.client.widgets.form.fields.FormItemIcon;
 import com.smartgwt.client.widgets.form.fields.RadioGroupItem;
 import com.smartgwt.client.widgets.form.fields.StaticTextItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
-import com.smartgwt.client.widgets.form.fields.events.FormItemClickHandler;
-import com.smartgwt.client.widgets.form.fields.events.FormItemIconClickEvent;
 import com.smartgwt.client.widgets.form.validator.IntegerRangeValidator;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
@@ -80,18 +79,23 @@ public class AttributeMNOTRulePanel extends AttributeRulePanel
    targetForm.setGroupTitle("Target attribute");
    targetForm.setIsGroup(true);
    targetForm.setPadding(5);
-   
+   targetForm.setNumCols(3);
+
    attrTgClass = new StaticTextItem();
    attrTgClass.setTitle("Attribute class");
    attrTgClass.setWidth(50);
    attrTgClass.setAlign(Alignment.CENTER);
    
-   FormItemIcon icn = new FormItemIcon();
-   icn.setSrc("../images/icons/attribute/selbt2.png");
-   icn.addFormItemClickHandler(new FormItemClickHandler()
+   attrTgClass.setEndRow(false);
+   
+   ButtonItem  selBtnItm = new ButtonItem();
+   selBtnItm.setTitle("Select attribute");
+   selBtnItm.setIcon(ModeledIcons.get.attributeRules());
+   selBtnItm.setStartRow(false);
+   selBtnItm.addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler()
    {
     @Override
-    public void onFormItemClick(FormItemIconClickEvent event)
+    public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event)
     {
      new XSelectDialog<AgeAttributeClassImprint>(rule.getModel().getRootAttributeClass(), AttributeMetaClassDef.getInstance(), new ClassSelectedAdapter()
      {
@@ -103,16 +107,14 @@ public class AttributeMNOTRulePanel extends AttributeRulePanel
        targetClass = (AgeAttributeClassImprint)cls;
       }
      }).show();
-
      
     }
    });
-   attrTgClass.setIcons(icn);
    
    subclCb = new CheckboxItem();
    subclCb.setTitle("Including subclasses");
    
-   targetForm.setItems(attrTgClass,subclCb);
+   targetForm.setItems(attrTgClass,selBtnItm,subclCb);
 
    addMember(targetForm);
   }
@@ -169,7 +171,8 @@ public class AttributeMNOTRulePanel extends AttributeRulePanel
   
   ToolStripButton chldBut = new ToolStripButton();
   chldBut.setTitle("Add Qualifier");
-  chldBut.setIcon("../images/icons/qualifier/qadd.png");
+  chldBut.setSelected(true);
+  chldBut.setIcon(ModeledIcons.get.qualifierAdd());
   chldBut.addClickHandler( new ClickHandler()
   {
    @Override
@@ -188,11 +191,13 @@ public class AttributeMNOTRulePanel extends AttributeRulePanel
    }
   });
   
+  qTools.addSpacer(5);
   qTools.addButton(chldBut);
   
   ToolStripButton sibBut = new ToolStripButton();
   sibBut.setTitle("Remode qualifier");
-  sibBut.setIcon("../images/icons/qualifier/qdel.png");
+  chldBut.setSelected(true);
+  sibBut.setIcon(ModeledIcons.get.qualifierDelete());
   sibBut.addClickHandler( new ClickHandler()
   {
    @Override
@@ -207,6 +212,7 @@ public class AttributeMNOTRulePanel extends AttributeRulePanel
    }
   });
   
+  qTools.addSpacer(5);
   qTools.addButton(sibBut);
 
   qLay.addMember(qTools);
@@ -214,7 +220,7 @@ public class AttributeMNOTRulePanel extends AttributeRulePanel
   qTblItem.setShowTitle(false);
   
   qTbl.setWidth100();
-  qTbl.setShowHeader(false);
+  qTbl.setShowHeader(true);
 
   ListGridField idField = new ListGridField("id", "ID", 60);
   idField.setType(ListGridFieldType.INTEGER);
