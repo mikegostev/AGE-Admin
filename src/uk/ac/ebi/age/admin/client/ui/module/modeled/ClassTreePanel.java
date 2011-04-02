@@ -66,17 +66,6 @@ public class ClassTreePanel extends TreeGrid
   TreeNode rootNode = new TreeNode( "Root" );
   data.setRoot(rootNode);
 
-//  if( mod == null )
-//  {
-//   ClassTreeNode classRoot =  new ClassTreeNode("AgeClass");
-//   classRoot.setIcon("../images/icons/class/abstract.png");
-//   
-//   rootNode.setChildren( new TreeNode[] { classRoot } );
-//  }
-//  else
-//  {
-//   setModel(root);
-//  }
   if( root != null )
    setRoot(root);
  

@@ -11,6 +11,8 @@ import com.smartgwt.client.widgets.IButton;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.grid.events.RecordDoubleClickEvent;
+import com.smartgwt.client.widgets.grid.events.RecordDoubleClickHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
@@ -79,5 +81,22 @@ public class XSelectDialog<T extends AgeAbstractClassImprint> extends Window
   winInter.addMember(btnPanel);
 
   addItem(winInter);
+ 
+  
+  cTree.addRecordDoubleClickHandler( new RecordDoubleClickHandler()
+  {
+   
+   @Override
+   public void onRecordDoubleClick(RecordDoubleClickEvent event)
+   {
+    ImprintTreeNode nd = (ImprintTreeNode) cTree.getSelectedRecord();
+
+    if(nd == null)
+     return;
+
+    destroy();
+    cb.classSelected(nd.getClassImprint());   }
+  });
+ 
  }
 }

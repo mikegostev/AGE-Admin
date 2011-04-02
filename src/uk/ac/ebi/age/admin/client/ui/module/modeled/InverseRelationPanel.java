@@ -1,5 +1,6 @@
 package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
+import uk.ac.ebi.age.admin.client.ModeledIcons;
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeRelationClassImprint;
 import uk.ac.ebi.age.admin.client.ui.ClassSelectedAdapter;
@@ -40,7 +41,7 @@ public class InverseRelationPanel extends VLayout
   superTS.addFill();
   
   ToolStripButton btadd = new ToolStripButton();
-  btadd.setIcon("../images/icons/add.png");
+  btadd.setIcon(ModeledIcons.get.inverseRelationAdd());
   btadd.addClickHandler(new ClickHandler()
   {
    @Override
@@ -52,7 +53,7 @@ public class InverseRelationPanel extends VLayout
   superTS.addButton(btadd);
 
   ToolStripButton btdel = new ToolStripButton();
-  btdel.setIcon("../images/icons/delete.png");
+  btdel.setIcon(ModeledIcons.get.inverseRelationDelete());
   btdel.addClickHandler(new ClickHandler()
   {
    @Override
@@ -73,8 +74,6 @@ public class InverseRelationPanel extends VLayout
   ListGridField iconField = new ListGridField("icon", "", 20);
   iconField.setAlign(Alignment.CENTER);
   iconField.setType(ListGridFieldType.IMAGE);
-  iconField.setImageURLPrefix("../images/icons/");
-  iconField.setImageURLSuffix(".png");
 
   ListGridField aliasField = new ListGridField("rel", "Relation");
 
@@ -85,7 +84,7 @@ public class InverseRelationPanel extends VLayout
   
   if( cls.getInverseRelation() != null )
   {
-   lst.addData( new RelRecord(cls.getInverseRelation().getName()) );
+   lst.addData( new RelRecord(cls.getInverseRelation()) );
   }
  }
  
@@ -99,7 +98,7 @@ public class InverseRelationPanel extends VLayout
     ListGridRecord[] recs = lst.getRecords();
     
     if( recs == null || recs.length == 0 )
-     lst.addData( new RelRecord(cls.getName()) );
+     lst.addData( new RelRecord(cls) );
     else
     {
      ((RelRecord)recs[0]).setName(cls.getName());
@@ -131,13 +130,12 @@ public class InverseRelationPanel extends VLayout
 
  class RelRecord extends ListGridRecord
  {
-  RelRecord( String alias )
+  RelRecord( AgeAbstractClassImprint ageRelationClassImprint )
   {
    super();
    
-   
-   setAttribute("icon", "invRel" );
-   setAttribute("rel", alias );
+   setAttribute("icon", RelationMetaClassDef.getIcon(ageRelationClassImprint) );
+   setAttribute("rel", ageRelationClassImprint.getName() );
   }
 
   public void setName(String name)

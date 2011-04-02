@@ -46,8 +46,6 @@ public class AttributeRuleAttachPanel extends VLayout
   ListGridField typeIconField = new ListGridField("type", "Type", 40);
   typeIconField.setAlign(Alignment.CENTER);
   typeIconField.setType(ListGridFieldType.IMAGE);
-//  typeIconField.setImageURLPrefix("../images/icons/restriction/");
-//  typeIconField.setImageURLSuffix(".png");
 
   ListGridField ruleField = new ListGridField("name", "Rule");
 

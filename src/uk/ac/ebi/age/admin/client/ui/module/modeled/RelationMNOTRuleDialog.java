@@ -13,7 +13,7 @@ public class RelationMNOTRuleDialog extends RelationRuleDialog
  public RelationMNOTRuleDialog(ModelImprint mod)
  {
   super(mod);
-  setHeight(600);
+  setHeight(620);
 
  }
 

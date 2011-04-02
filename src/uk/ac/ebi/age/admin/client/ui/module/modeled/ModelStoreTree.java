@@ -2,17 +2,18 @@ package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import java.util.LinkedList;
 
+import uk.ac.ebi.age.admin.client.ModeledIcons;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
 import uk.ac.ebi.age.admin.shared.ModelPath;
 import uk.ac.ebi.age.admin.shared.StoreNode;
 
 import com.smartgwt.client.types.TreeModelType;
 import com.smartgwt.client.util.SC;
-import com.smartgwt.client.widgets.ImgButton;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
+import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeGrid;
 import com.smartgwt.client.widgets.tree.TreeGridField;
@@ -33,14 +34,13 @@ public class ModelStoreTree extends VLayout
   
   ToolStrip toolStrip = new ToolStrip();  
   toolStrip.setWidth100();  
-  toolStrip.setHeight(24);  
+//  toolStrip.setHeight(24);  
      
-  ImgButton newButton = new ImgButton();  
-  newButton.setSize(16);  
-  newButton.setShowRollOver(false);  
-  newButton.setSrc("../images/icons/class/regular.png");
+  ToolStripButton newButton = new ToolStripButton();  
+  newButton.setTitle("New");  
+  newButton.setSelected(true);  
+  newButton.setIcon(ModeledIcons.get.newModel());
   newButton.setTooltip("Create new model");
-  toolStrip.addMember(newButton);  
   newButton.addClickHandler(new ClickHandler()
   {
    @Override
@@ -50,13 +50,15 @@ public class ModelStoreTree extends VLayout
    }
   });
   
+  toolStrip.addSpacer(4);
+  toolStrip.addMember(newButton);  
+
   
-  ImgButton editButton = new ImgButton();  
-  editButton.setSize(16);  
-  editButton.setShowRollOver(false);  
-  editButton.setSrc("../images/icons/class/regular.png");  
+  ToolStripButton editButton = new ToolStripButton();  
+  editButton.setTitle("Load");  
+  editButton.setSelected(true); 
+  editButton.setIcon(ModeledIcons.get.loadModel());  
   editButton.setTooltip("Load and edit model");
-  toolStrip.addMember(editButton);  
   editButton.addClickHandler(new ClickHandler()
   {
    @Override
@@ -73,13 +75,15 @@ public class ModelStoreTree extends VLayout
     mngr.loadModel( getModelPath() );
    }
   });
+
+  toolStrip.addSpacer(4);
+  toolStrip.addMember(editButton);  
   
-  ImgButton installButton = new ImgButton();  
-  installButton.setSize(16);  
-  installButton.setShowRollOver(false);  
-  installButton.setSrc("../images/icons/class/regular.png");  
+  ToolStripButton installButton = new ToolStripButton();  
+  installButton.setTitle("Install");  
+  installButton.setSelected(true);
+  installButton.setIcon(ModeledIcons.get.installModel());  
   installButton.setTooltip("Install selected model");
-  toolStrip.addMember(installButton);  
   installButton.addClickHandler(new ClickHandler()
   {
    @Override
@@ -97,6 +101,8 @@ public class ModelStoreTree extends VLayout
    }
   });
 
+  toolStrip.addSpacer(4);
+  toolStrip.addMember(installButton);  
   
   treeGrid = new TreeGrid();
   

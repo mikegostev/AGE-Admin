@@ -99,8 +99,6 @@ public class ClassMetaClassDef extends MetaClassDef
    return ModeledIcons.get.ageAbstractClass();
   else
    return ModeledIcons.get.ageClass();
-  
-//  return "../images/icons/class/"+(classImprint.isAbstract()?"abstract.png":"regular.png");
  }
 
  public static MetaClassDef getInstance()

@@ -28,8 +28,6 @@ public class RelativesListPanel extends ListGrid
   ListGridField subclassIconField = new ListGridField("type", "Type", 40);
   subclassIconField.setAlign(Alignment.CENTER);
   subclassIconField.setType(ListGridFieldType.IMAGE);
-//  subclassIconField.setImageURLPrefix("../images/icons/"+metaClsName+"/");
-//  subclassIconField.setImageURLSuffix(".png");
 
   ListGridField subclassNameField = new ListGridField("name", "Class");
 

@@ -105,4 +105,16 @@ public interface ModeledIcons extends ConstantsWithLookup
  String qualifierAdd();
  String qualifierDelete();
 
+ String inverseRelationAdd();
+ String inverseRelationDelete();
+
+ String newModel();
+ String loadModel();
+ String installModel();
+
+ String addRangeClass();
+ String deleteRangeClass();
+ String addDomainClass();
+ String deleteDomainClass();
+
 }

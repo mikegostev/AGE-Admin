@@ -2,6 +2,7 @@ package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
 import java.util.LinkedHashMap;
 
+import uk.ac.ebi.age.admin.client.ModeledIcons;
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeAttributeClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
@@ -21,14 +22,12 @@ import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.ButtonItem;
 import com.smartgwt.client.widgets.form.fields.CanvasItem;
 import com.smartgwt.client.widgets.form.fields.CheckboxItem;
-import com.smartgwt.client.widgets.form.fields.FormItemIcon;
 import com.smartgwt.client.widgets.form.fields.RadioGroupItem;
 import com.smartgwt.client.widgets.form.fields.StaticTextItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
-import com.smartgwt.client.widgets.form.fields.events.FormItemClickHandler;
-import com.smartgwt.client.widgets.form.fields.events.FormItemIconClickEvent;
 import com.smartgwt.client.widgets.form.validator.IntegerRangeValidator;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
@@ -66,18 +65,22 @@ public class RelationMMRulePanel extends RelationRulePanel
    relForm.setGroupTitle("Relation");
    relForm.setIsGroup(true);
    relForm.setPadding(5);
+   relForm.setNumCols(3);
    
    relClassItm = new StaticTextItem();
    relClassItm.setTitle("Relation class");
    relClassItm.setWidth(50);
    relClassItm.setAlign(Alignment.CENTER);
+   relClassItm.setEndRow(false);
    
-   FormItemIcon icn = new FormItemIcon();
-   icn.setSrc("../images/icons/relation/selbt.png");
-   icn.addFormItemClickHandler(new FormItemClickHandler()
+   ButtonItem  selBtnItm = new ButtonItem();
+   selBtnItm.setTitle("Select class");
+   selBtnItm.setIcon(ModeledIcons.get.relation());
+   selBtnItm.setStartRow(false);
+   selBtnItm.addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler()
    {
     @Override
-    public void onFormItemClick(FormItemIconClickEvent event)
+    public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event)
     {
      new XSelectDialog<AgeRelationClassImprint>(rule.getModel().getRootRelationClass(), RelationMetaClassDef.getInstance(), new ClassSelectedAdapter()
      {
@@ -93,12 +96,12 @@ public class RelationMMRulePanel extends RelationRulePanel
      
     }
    });
-   relClassItm.setIcons(icn);
+   
    
    relSubclCb = new CheckboxItem();
    relSubclCb.setTitle("Including subclasses");
    
-   relForm.setItems(relClassItm,relSubclCb);
+   relForm.setItems(relClassItm, selBtnItm, relSubclCb);
 
    addMember(relForm);
   }
@@ -108,18 +111,23 @@ public class RelationMMRulePanel extends RelationRulePanel
    targetForm.setGroupTitle("Target class");
    targetForm.setIsGroup(true);
    targetForm.setPadding(5);
+   targetForm.setNumCols(3);
    
    tagClassItm = new StaticTextItem();
    tagClassItm.setTitle("Target class");
    tagClassItm.setWidth(50);
    tagClassItm.setAlign(Alignment.CENTER);
    
-   FormItemIcon icn = new FormItemIcon();
-   icn.setSrc("../images/icons/class/selbt.png");
-   icn.addFormItemClickHandler(new FormItemClickHandler()
+   tagClassItm.setEndRow(false);
+   
+   ButtonItem  selBtnItm = new ButtonItem();
+   selBtnItm.setTitle("Select class");
+   selBtnItm.setIcon(ModeledIcons.get.ageClass());
+   selBtnItm.setStartRow(false);
+   selBtnItm.addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler()
    {
     @Override
-    public void onFormItemClick(FormItemIconClickEvent event)
+    public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event)
     {
      new XSelectDialog<AgeClassImprint>(rule.getModel().getRootClass(), ClassMetaClassDef.getInstance(), new ClassSelectedAdapter()
      {
@@ -131,16 +139,15 @@ public class RelationMMRulePanel extends RelationRulePanel
        targetClass = (AgeClassImprint)cls;
       }
      }).show();
-
      
     }
    });
-   tagClassItm.setIcons(icn);
+   
    
    tagSubclCb = new CheckboxItem();
    tagSubclCb.setTitle("Including subclasses");
    
-   targetForm.setItems(tagClassItm,tagSubclCb);
+   targetForm.setItems(tagClassItm, selBtnItm, tagSubclCb);
 
    addMember(targetForm);
   }
@@ -200,7 +207,8 @@ public class RelationMMRulePanel extends RelationRulePanel
   
   ToolStripButton chldBut = new ToolStripButton();
   chldBut.setTitle("Add Qualifier");
-  chldBut.setIcon("../images/icons/qualifier/qadd.png");
+  chldBut.setSelected(true);
+  chldBut.setIcon(ModeledIcons.get.qualifierAdd());
   chldBut.addClickHandler( new ClickHandler()
   {
    @Override
@@ -218,12 +226,13 @@ public class RelationMMRulePanel extends RelationRulePanel
 
    }
   });
-  
+  qTools.addSpacer(5);
   qTools.addButton(chldBut);
   
   ToolStripButton sibBut = new ToolStripButton();
   sibBut.setTitle("Remode qualifier");
-  sibBut.setIcon("../images/icons/qualifier/qdel.png");
+  sibBut.setSelected(true);
+  sibBut.setIcon(ModeledIcons.get.qualifierDelete());
   sibBut.addClickHandler( new ClickHandler()
   {
    @Override
@@ -238,6 +247,7 @@ public class RelationMMRulePanel extends RelationRulePanel
    }
   });
   
+  qTools.addSpacer(5);
   qTools.addButton(sibBut);
 
   qLay.addMember(qTools);

@@ -1,5 +1,6 @@
 package uk.ac.ebi.age.admin.client.ui.module.modeled;
 
+import uk.ac.ebi.age.admin.client.ModeledIcons;
 import uk.ac.ebi.age.admin.client.model.AgeAbstractClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeClassImprint;
 import uk.ac.ebi.age.admin.client.model.AgeRelationClassImprint;
@@ -38,7 +39,13 @@ public class RangeOrDomainPanel extends VLayout
   final RelativesListPanel rangeClsList = new RelativesListPanel(meta, isRange?cls.getRange():cls.getDomain());
 
   ToolStripButton btadd = new ToolStripButton();
-  btadd.setIcon("../images/icons/" + meta.getMetaClassName() + "/add.png");
+  
+  if( isRange )
+   btadd.setIcon(ModeledIcons.get.addRangeClass());
+  else
+   btadd.setIcon(ModeledIcons.get.addDomainClass());
+  
+  
   btadd.addClickHandler(new ClickHandler()
   {
    @Override
@@ -63,7 +70,12 @@ public class RangeOrDomainPanel extends VLayout
   superTS.addButton(btadd);
 
   ToolStripButton btdel = new ToolStripButton();
-  btdel.setIcon("../images/icons/" + meta.getMetaClassName() + "/del.png");
+
+  if( isRange )
+   btdel.setIcon(ModeledIcons.get.deleteRangeClass());
+  else
+   btdel.setIcon(ModeledIcons.get.deleteDomainClass());
+  
   btdel.addClickHandler(new ClickHandler()
   {
    @Override

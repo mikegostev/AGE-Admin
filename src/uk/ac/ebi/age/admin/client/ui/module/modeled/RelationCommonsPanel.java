@@ -132,47 +132,5 @@ public class RelationCommonsPanel extends HLayout
   addMember( new AnnotationPanel(cls) );
   
  }
-/*
- static class InvRelForm extends DynamicForm
- {
-  public InvRelForm( final AgeRelationClassImprint relCls )
-  {
-   setGroupTitle("Inverse Relation");
-   setIsGroup(true);
-   setPadding(5);
-   
-   final StaticTextItem relClassItm = new StaticTextItem();
-   relClassItm.setTitle("Relation class");
-   relClassItm.setShowTitle(false);
-   relClassItm.setWidth(50);
-   relClassItm.setAlign(Alignment.RIGHT);
-   
-   FormItemIcon icn = new FormItemIcon();
-   icn.setSrc("../images/icons/relation/selbt.png");
-   icn.addFormItemClickHandler(new FormItemClickHandler()
-   {
-    @Override
-    public void onFormItemClick(FormItemIconClickEvent event)
-    {
-     new XSelectDialog<AgeRelationClassImprint>(relCls.getModel().getRootRelationClass(), RelationMetaClassDef.getInstance(), new ClassSelectedAdapter()
-     {
-      
-      @Override
-      public void classSelected(AgeAbstractClassImprint cls)
-      {
-       relClassItm.setValue("<span class='relRef'>"+cls.getName()+"</span>");
-       relCls.setInverseRelation((AgeRelationClassImprint)cls);
-      }
-     }).show();
 
-     
-    }
-   });
-   relClassItm.setIcons(icn);
-   
-   setItems(relClassItm);
-
-  }
- }
- */
 }

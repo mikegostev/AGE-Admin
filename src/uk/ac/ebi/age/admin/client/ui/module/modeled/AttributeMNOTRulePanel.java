@@ -196,7 +196,7 @@ public class AttributeMNOTRulePanel extends AttributeRulePanel
   
   ToolStripButton sibBut = new ToolStripButton();
   sibBut.setTitle("Remode qualifier");
-  chldBut.setSelected(true);
+  sibBut.setSelected(true);
   sibBut.setIcon(ModeledIcons.get.qualifierDelete());
   sibBut.addClickHandler( new ClickHandler()
   {
