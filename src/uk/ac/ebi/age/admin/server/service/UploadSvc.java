@@ -15,25 +15,37 @@ import org.apache.commons.fileupload.util.Streams;
 
 import uk.ac.ebi.age.admin.server.mng.Configuration;
 import uk.ac.ebi.age.admin.server.user.Session;
-import uk.ac.ebi.age.admin.shared.UploadService;
+import uk.ac.ebi.age.admin.shared.Constants;
 
 import com.pri.util.stream.StreamPump;
 
 public class UploadSvc extends ServiceServlet
 {
- 
+
+ private static final long serialVersionUID = -4888846889606953616L;
+
  protected void service(HttpServletRequest req, HttpServletResponse resp, Session sess) throws IOException
  {
   if( ! req.getMethod().equals("POST") )
+  {
+   resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
    return;
+  }
   
   if( ! sess.getUserProfile().isUploadAllowed() )
+  {
    resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+   return;
+  }
   
   boolean isMultipart = ServletFileUpload.isMultipartContent(req);
 
   if( ! isMultipart )
+  {
+   resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
    return;
+  }
+
   
   // Create a new file upload handler
   ServletFileUpload upload = new ServletFileUpload();
@@ -53,7 +65,7 @@ public class UploadSvc extends ServiceServlet
     
     if(item.isFormField())
     {
-     if(UploadService.commandField.equals(name))
+     if(Constants.uploadHandlerParameter.equals(name))
      {
       try
       {

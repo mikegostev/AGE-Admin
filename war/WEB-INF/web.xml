@@ -32,6 +32,20 @@
   <servlet>
     <description>
   	</description>
+    <display-name>DownloadSvc</display-name>
+    <servlet-name>DownloadSvc</servlet-name>
+    <servlet-class>
+  	uk.ac.ebi.age.admin.server.service.DownloadSvc</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DownloadSvc</servlet-name>
+    <url-pattern>/download</url-pattern>
+  </servlet-mapping>
+
+
+  <servlet>
+    <description>
+  	</description>
     <display-name>LoginSvc</display-name>
     <servlet-name>LoginSvc</servlet-name>
     <servlet-class>

@@ -36,6 +36,8 @@ public class Configuration
  
  private File publicModelDir;
 
+ private FileSourceManager fileSourceManager;
+
 
  public UserDatabase getUserDatabase()
  {
@@ -143,6 +145,18 @@ public class Configuration
  public void setSubmissionManager(SubmissionManager submissionManager)
  {
   this.submissionManager = submissionManager;
+ }
+
+
+ public FileSourceManager getFileSourceManager()
+ {
+  return fileSourceManager;
+ }
+
+
+ public void setFileSourceManager(FileSourceManager fileSourceManager)
+ {
+  this.fileSourceManager = fileSourceManager;
  }
  
 

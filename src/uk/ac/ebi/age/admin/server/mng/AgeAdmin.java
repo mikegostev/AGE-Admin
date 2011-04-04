@@ -17,6 +17,7 @@ import uk.ac.ebi.age.admin.server.user.UserDatabase;
 import uk.ac.ebi.age.admin.server.user.UserProfile;
 import uk.ac.ebi.age.admin.server.user.impl.SessionPoolImpl;
 import uk.ac.ebi.age.admin.server.user.impl.TestUserDataBase;
+import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.ModelPath;
 import uk.ac.ebi.age.admin.shared.StoreNode;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
@@ -84,10 +85,16 @@ public class AgeAdmin
   
   if( conf.getSubmissionManager() == null )
    conf.setSubmissionManager( new SubmissionManager(storage, submissionDB ) );
+
+  if( conf.getFileSourceManager() == null )
+   conf.setFileSourceManager( new FileSourceManager() );
+
   
   conf.getUploadManager().addUploadCommandListener("SetModel", new SemanticUploader(storage));
   conf.getUploadManager().addUploadCommandListener(SubmissionConstants.SUBMISSON_COMMAND, new SubmissionUploader(conf.getSubmissionManager()));
 
+  conf.getFileSourceManager().addFileSource(Constants.attachmentRequestSubject, new AttachmentFileSource(conf.getSubmissionDB()) );
+  conf.getFileSourceManager().addFileSource(Constants.documentRequestSubject, new DocumentFileSource(conf.getSubmissionDB()) );
   
   if(instance == null)
    instance = this;

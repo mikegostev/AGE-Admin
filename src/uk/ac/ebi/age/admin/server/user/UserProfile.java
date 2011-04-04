@@ -9,6 +9,7 @@ public class UserProfile implements SubmissionContext
 {
  private int id;
  private boolean isUploadAllowed;
+ private boolean isDownloadAllowed;
  private String userName;
  private String passwordHash;
 
@@ -105,6 +106,11 @@ public class UserProfile implements SubmissionContext
  public void setUserId( int id )
  {
   this.id = id;
+ }
+
+ public boolean isDownloadsAllowed()
+ {
+  return true;
  }
 
 

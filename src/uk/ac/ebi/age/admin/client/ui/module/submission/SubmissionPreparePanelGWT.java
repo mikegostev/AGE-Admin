@@ -2,6 +2,7 @@ package uk.ac.ebi.age.admin.client.ui.module.submission;
 
 import uk.ac.ebi.age.admin.client.log.LogNode;
 import uk.ac.ebi.age.admin.client.ui.module.log.LogTree;
+import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -66,7 +67,7 @@ public class SubmissionPreparePanelGWT extends VLayout
   panel.setWidth("500px");
   form.setWidget(panel);
 
-  panel.add( new Hidden("Command",SubmissionConstants.SUBMISSON_COMMAND) );
+  panel.add( new Hidden(Constants.uploadHandlerParameter,SubmissionConstants.SUBMISSON_COMMAND) );
   panel.add( new Hidden(SubmissionConstants.SUBMISSON_KEY,String.valueOf(key) ) );
   
   FlexTable btPan = new FlexTable();

@@ -3,6 +3,7 @@ package uk.ac.ebi.age.admin.client.ui.module.submission;
 import java.util.Date;
 import java.util.List;
 
+import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.ext.submission.DataModuleMeta;
 import uk.ac.ebi.age.ext.submission.FileAttachmentMeta;
 import uk.ac.ebi.age.ext.submission.SubmissionMeta;
@@ -59,7 +60,13 @@ public class SubmissionDetailsPanel extends VLayout
       DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format(new Date(dmImp.getSubmissionTime())));
     rec.setAttribute(SubmissionFields.MTIME.name(),
       DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format(new Date(dmImp.getModificationTime())));
-    rec.setAttribute(SubmissionFields.SRC_FILE.name(), dmImp.getId());
+    rec.setAttribute(SubmissionFields.SRC_FILE.name(), "<a target='_blank' href='download?"
+      +Constants.downloadHandlerParameter+"="+Constants.documentRequestSubject
+      +"&"+Constants.clusterIdParameter+"="+simp.getId()
+      +"&"+Constants.documentIdParameter+"="+dmImp.getId()
+      +"&"+Constants.versionParameter+"="+dmImp.getModificationTime()
+      +"'>"+dmImp.getId()+"</a>"
+      );
 
     dmds.addData(rec);
 
