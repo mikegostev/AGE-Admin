@@ -71,7 +71,7 @@ public class SubmissionDetailsPanel extends VLayout
     dmds.addData(rec);
 
     dv = new DetailViewer();
-    dv.setWidth("90%");
+    dv.setWidth("70%");
     dv.setDataSource(dmds);
     dv.setStyleName("moduleDetails");
 
@@ -101,12 +101,19 @@ public class SubmissionDetailsPanel extends VLayout
       DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format(new Date(dmImp.getSubmissionTime())));
     rec.setAttribute(SubmissionFields.MTIME.name(),
       DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format(new Date(dmImp.getModificationTime())));
-    rec.setAttribute(SubmissionFields.SRC_FILE.name(), dmImp.getId());
+//    rec.setAttribute(SubmissionFields.SRC_FILE.name(), dmImp.getId());
+    rec.setAttribute(SubmissionFields.SRC_FILE.name(), "<a target='_blank' href='download?"
+      +Constants.downloadHandlerParameter+"="+Constants.attachmentRequestSubject
+      +"&"+Constants.clusterIdParameter+"="+simp.getId()
+      +"&"+Constants.fileIdParameter+"="+dmImp.getId()
+      +"&"+Constants.versionParameter+"="+dmImp.getModificationTime()
+      +"'>"+dmImp.getId()+"</a>"
+      );
 
     dmds.addData(rec);
 
     dv = new DetailViewer();
-    dv.setWidth("90%");
+    dv.setWidth("70%");
     dv.setDataSource(dmds);
     dv.setStyleName("fileDetails");
 

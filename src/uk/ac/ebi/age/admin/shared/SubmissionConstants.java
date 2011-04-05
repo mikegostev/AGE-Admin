@@ -23,6 +23,8 @@ public class SubmissionConstants
  public static final String ATTACHMENT_FILE = "attachFile";
 
  public static final String ATTACHMENT_GLOBAL = "attachGlobal";
+
+ public static final String UPDATE_DESCR = "updateDesc";
  
 
 }

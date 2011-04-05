@@ -4,6 +4,8 @@ import uk.ac.ebi.age.admin.client.log.LogNode;
 import uk.ac.ebi.age.admin.client.ui.module.log.LogTree;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
+import uk.ac.ebi.age.ext.submission.DataModuleMeta;
+import uk.ac.ebi.age.ext.submission.SubmissionMeta;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -31,13 +33,13 @@ import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.WidgetCanvas;
 import com.smartgwt.client.widgets.layout.VLayout;
 
-public class SubmissionPreparePanelGWT extends VLayout
+public class SubmissionUpdatePanelGWT extends VLayout
 {
  private int n = 1;
  private long key = System.currentTimeMillis();
  private int nMods = 1;
 
- public SubmissionPreparePanelGWT()
+ public SubmissionUpdatePanelGWT( SubmissionMeta sbmMeta )
  {
   setAutoWidth();
   setLayoutLeftMargin(15);
@@ -99,14 +101,29 @@ public class SubmissionPreparePanelGWT extends VLayout
   });
   btPan.setWidget(0, 1, addBt);
 
+  panel.add(new Label("Update description:"));
+
+  final TextArea updtDesc = new TextArea();
+  updtDesc.setName(SubmissionConstants.UPDATE_DESCR);
+  updtDesc.setWidth("97%");
+  panel.add(updtDesc);
+
+  
   panel.add(new Label("Submission description:"));
 
   final TextArea tb = new TextArea();
   tb.setName(SubmissionConstants.SUBMISSON_DESCR);
   tb.setWidth("97%");
+  tb.setValue(sbmMeta.getDescription());
   panel.add(tb);
 
-  panel.add(new DMPanel(n++));
+  if( sbmMeta.getDataModules() != null )
+  {
+   for( DataModuleMeta dmm : sbmMeta.getDataModules() )
+    
+    panel.add(new DMInfoPanel(dmm, n++));
+  }
+  
 
   Button sbmBt = new Button("Submit", new com.google.gwt.event.dom.client.ClickHandler()
   {
@@ -295,16 +312,16 @@ public class SubmissionPreparePanelGWT extends VLayout
 
  }
  
- private class DMPanel extends CaptionPanel
+ private class DMInfoPanel extends CaptionPanel
  {
   private TextArea dsc;
   private FileUpload upload;
   
-  DMPanel(int n)
+  DMInfoPanel( DataModuleMeta dmm, int n)
   {
    //setWidth("*");
    setWidth("auto");
-   setCaptionText("Data Module");
+   setCaptionText("Data Module. ID = "+dmm.getId());
 
    FlexTable layout = new FlexTable();
    layout.setWidth("100%");
@@ -314,6 +331,7 @@ public class SubmissionPreparePanelGWT extends VLayout
 
    dsc = new TextArea();
    dsc.setName(SubmissionConstants.MODULE_NAME + n);
+   dsc.setValue(dmm.getDescription());
    dsc.setWidth("97%");
 
    cellFormatter.setColSpan(1, 0, 2);

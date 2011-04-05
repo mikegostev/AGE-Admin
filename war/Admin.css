@@ -57,3 +57,23 @@ h1 {
 {
  font-weight: bold;
 }
+
+.fileDetails
+{
+ padding-left: 50px;
+}
+
+.fileDetails .detailLabel
+{
+ background-color: #AADDBB
+}
+
+.moduleDetails
+{
+ padding-left: 50px;
+}
+
+.moduleDetails .detailLabel
+{
+ background-color: #EEDDBB
+}
