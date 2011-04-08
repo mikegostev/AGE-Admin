@@ -38,6 +38,7 @@ public class SubmissionUpdatePanelGWT extends VLayout
  private int n = 1;
  private long key = System.currentTimeMillis();
  private int nMods = 1;
+ private VerticalPanel panel;
 
  public SubmissionUpdatePanelGWT( SubmissionMeta sbmMeta )
  {
@@ -64,7 +65,7 @@ public class SubmissionUpdatePanelGWT extends VLayout
 
 //  form.setWidth("500px");
 
-  final VerticalPanel panel = new VerticalPanel();
+  panel = new VerticalPanel();
   panel.setSpacing(10);
   panel.setWidth("500px");
   form.setWidget(panel);
@@ -94,14 +95,14 @@ public class SubmissionUpdatePanelGWT extends VLayout
   {
    public void onClick(com.google.gwt.event.dom.client.ClickEvent event)
    {
-    panel.insert(new DMPanel(n++), nMods+5);
+    panel.insert(new DMNewPanel(n++), nMods+5);
     nMods++;
     wc.adjustForContent(true);
    }
   });
   btPan.setWidget(0, 1, addBt);
 
-  panel.add(new Label("Update description:"));
+  panel.add(new Label("The update description:"));
 
   final TextArea updtDesc = new TextArea();
   updtDesc.setName(SubmissionConstants.UPDATE_DESCR);
@@ -146,11 +147,11 @@ public class SubmissionUpdatePanelGWT extends VLayout
     int ndm=0;
     for( Widget w : panel )
     {
-     if( w instanceof DMPanel )
+     if( w instanceof NewDMPanel )
      {
       ndm++;
       
-      DMPanel dmp = (DMPanel)w;
+      NewDMPanel dmp = (NewDMPanel)w;
       
       if( dmp.getDescription().trim().length() == 0 )
        err+="Description of data module "+ndm+" is empty\n";
@@ -321,7 +322,71 @@ public class SubmissionUpdatePanelGWT extends VLayout
   {
    //setWidth("*");
    setWidth("auto");
-   setCaptionText("Data Module. ID = "+dmm.getId());
+   setCaptionText("Data Module. ID = "+n);
+
+   FlexTable layout = new FlexTable();
+   layout.setWidth("100%");
+   FlexCellFormatter cellFormatter = layout.getFlexCellFormatter();
+
+   layout.setWidget(0, 0, new Label("ID: "+dmm.getId()));
+   layout.setWidget(1, 0, new Label("Description:"));
+
+   dsc = new TextArea();
+   dsc.setName(SubmissionConstants.MODULE_NAME + n);
+   dsc.setValue(dmm.getDescription());
+   dsc.setEnabled(false);
+   dsc.setWidth("97%");
+
+   cellFormatter.setColSpan(2, 0, 2);
+   layout.setWidget(2, 0, dsc);
+
+   cellFormatter.setVerticalAlignment(0, 1, HasVerticalAlignment.ALIGN_TOP);
+   cellFormatter.setHorizontalAlignment(0, 1, HasHorizontalAlignment.ALIGN_RIGHT);
+
+   HTML clsBt = new HTML("<img src='images/icons/delete.png'>");
+   clsBt.addClickHandler(new ClickHandler()
+   {
+    @Override
+    public void onClick(ClickEvent arg0)
+    {
+     removeFromParent();
+     nMods--;
+    }
+   });
+
+   layout.setWidget(0, 1, clsBt);
+
+   cellFormatter.setColSpan(3, 0, 2);
+
+   upload = new FileUpload();
+   upload.setName(SubmissionConstants.MODULE_FILE + n);
+   upload.getElement().setAttribute("size", "255");
+   layout.setWidget(3, 0, upload);
+
+   add(layout);
+  }
+  
+  public String getDescription()
+  {
+   return dsc.getText();
+  }
+
+  public String getFile()
+  {
+   return upload.getFilename();
+  }
+ }
+
+ private class DMNewPanel extends CaptionPanel
+ {
+  private TextArea dsc;
+  private FileUpload upload;
+  
+  DMNewPanel(int n)
+  {
+   //setWidth("*");
+   setWidth("auto");
+   setCaptionText("Data Module");
 
    FlexTable layout = new FlexTable();
    layout.setWidth("100%");
@@ -331,7 +396,6 @@ public class SubmissionUpdatePanelGWT extends VLayout
 
    dsc = new TextArea();
    dsc.setName(SubmissionConstants.MODULE_NAME + n);
-   dsc.setValue(dmm.getDescription());
    dsc.setWidth("97%");
 
    cellFormatter.setColSpan(1, 0, 2);
@@ -373,5 +437,4 @@ public class SubmissionUpdatePanelGWT extends VLayout
    return upload.getFilename();
   }
  }
-
 }

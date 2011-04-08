@@ -2,29 +2,22 @@ package uk.ac.ebi.age.admin.client.ui.module.submission;
 
 import uk.ac.ebi.age.admin.client.log.LogNode;
 import uk.ac.ebi.age.admin.client.ui.module.log.LogTree;
+import uk.ac.ebi.age.admin.client.ui.module.submission.NewDMPanel.RemoveListener;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CaptionPanel;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DecoratorPanel;
-import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.smartgwt.client.util.SC;
@@ -36,6 +29,7 @@ public class SubmissionPreparePanelGWT extends VLayout
  private int n = 1;
  private long key = System.currentTimeMillis();
  private int nMods = 1;
+ private VerticalPanel panel;
 
  public SubmissionPreparePanelGWT()
  {
@@ -62,7 +56,7 @@ public class SubmissionPreparePanelGWT extends VLayout
 
 //  form.setWidth("500px");
 
-  final VerticalPanel panel = new VerticalPanel();
+  panel = new VerticalPanel();
   panel.setSpacing(10);
   panel.setWidth("500px");
   form.setWidget(panel);
@@ -76,13 +70,24 @@ public class SubmissionPreparePanelGWT extends VLayout
   FlexCellFormatter cellFormatter = btPan.getFlexCellFormatter();
 
   panel.add(btPan);
+  
+  final NewDMPanel.RemoveListener rmListener = new RemoveListener()
+  {
+   @Override
+   public void removed(Widget w)
+   {
+    renumberPanels();
+   }
+  };
 
   cellFormatter.setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_CENTER);
   Button addBt = new Button("Add File", new com.google.gwt.event.dom.client.ClickHandler()
   {
    public void onClick(com.google.gwt.event.dom.client.ClickEvent event)
    {
-    panel.insert(new FilePanel(n++), panel.getWidgetCount()-1);
+    panel.insert(new NewFilePanel(n++,rmListener), panel.getWidgetCount()-1);
+
+    renumberPanels();
    }
   });
   btPan.setWidget(0, 0, addBt);
@@ -92,9 +97,11 @@ public class SubmissionPreparePanelGWT extends VLayout
   {
    public void onClick(com.google.gwt.event.dom.client.ClickEvent event)
    {
-    panel.insert(new DMPanel(n++), nMods+5);
+    panel.insert(new NewDMPanel(n++,rmListener), nMods+5);
     nMods++;
     wc.adjustForContent(true);
+    
+    renumberPanels();
    }
   });
   btPan.setWidget(0, 1, addBt);
@@ -106,7 +113,7 @@ public class SubmissionPreparePanelGWT extends VLayout
   tb.setWidth("97%");
   panel.add(tb);
 
-  panel.add(new DMPanel(n++));
+  panel.add(new NewDMPanel(n++,rmListener));
 
   Button sbmBt = new Button("Submit", new com.google.gwt.event.dom.client.ClickHandler()
   {
@@ -129,11 +136,11 @@ public class SubmissionPreparePanelGWT extends VLayout
     int ndm=0;
     for( Widget w : panel )
     {
-     if( w instanceof DMPanel )
+     if( w instanceof NewDMPanel )
      {
       ndm++;
       
-      DMPanel dmp = (DMPanel)w;
+      NewDMPanel dmp = (NewDMPanel)w;
       
       if( dmp.getDescription().trim().length() == 0 )
        err+="Description of data module "+ndm+" is empty\n";
@@ -141,11 +148,11 @@ public class SubmissionPreparePanelGWT extends VLayout
       if( dmp.getFile().trim().length() == 0 )
        err+="File for data module "+ndm+" is not selected\n";
      }
-     else if( w instanceof FilePanel )
+     else if( w instanceof NewFilePanel )
      {
       ndm++;
       
-      FilePanel dmp = (FilePanel)w;
+      NewFilePanel dmp = (NewFilePanel)w;
       
       if( dmp.getID().trim().length() == 0 )
        err+="ID for file "+ndm+" is not specified\n";
@@ -211,149 +218,37 @@ public class SubmissionPreparePanelGWT extends VLayout
 
   
  }
-
- private static class FilePanel extends CaptionPanel
- {
-  private TextBox id;
-  private TextArea dsc;
-  private FileUpload upload;
-  private CheckBox isGlobal;
-  
-  FilePanel(int n)
-  {
-   //setWidth("*");
-   setWidth("auto");
-   setCaptionText("Attached file");
-
-   FlexTable layout = new FlexTable();
-   layout.setWidth("100%");
-   FlexCellFormatter cellFormatter = layout.getFlexCellFormatter();
-
-   id = new TextBox();
-   id.setName(SubmissionConstants.ATTACHMENT_ID + n);
-   id.setWidth("97%");
-
-   layout.setWidget(0, 0, new Label("ID:"));
-   layout.setWidget(0, 1, id );
-   layout.setWidget(0, 2,  new Label("Global:"));
-   
-   isGlobal = new CheckBox();
-   isGlobal.setName(SubmissionConstants.ATTACHMENT_GLOBAL + n);
-   layout.setWidget(0, 3,  isGlobal);
-   
-   cellFormatter.setVerticalAlignment(0, 4, HasVerticalAlignment.ALIGN_TOP);
-   cellFormatter.setHorizontalAlignment(0, 4, HasHorizontalAlignment.ALIGN_RIGHT);
-
-   HTML clsBt = new HTML("<img src='images/icons/delete.png'>");
-   clsBt.addClickHandler(new ClickHandler()
-   {
-    @Override
-    public void onClick(ClickEvent arg0)
-    {
-     removeFromParent();
-    }
-   });
-
-   layout.setWidget(0, 4, clsBt);
-   
-   cellFormatter.setColSpan(1, 0, 5);
-   layout.setWidget(1, 0, new Label("Description:"));
-
-   dsc = new TextArea();
-   dsc.setName(SubmissionConstants.ATTACHMENT_DESC + n);
-   dsc.setWidth("97%");
-
-   cellFormatter.setColSpan(2, 0, 5);
-   layout.setWidget(2, 0, dsc);
-
-
-
-   cellFormatter.setColSpan(3, 0, 5);
-
-   upload = new FileUpload();
-   upload.setName(SubmissionConstants.ATTACHMENT_FILE + n);
-   upload.getElement().setAttribute("size", "80");
-   layout.setWidget(3, 0, upload);
-
-   add(layout);
-  }
-  
-  public String getDescription()
-  {
-   return dsc.getText();
-  }
-
-  public String getFile()
-  {
-   return upload.getFilename();
-  }
-  
-  public String getID()
-  {
-   return id.getText();
-  }
-
- }
  
- private class DMPanel extends CaptionPanel
+ private void renumberPanels()
  {
-  private TextArea dsc;
-  private FileUpload upload;
+  n=0;
+  nMods=0;
   
-  DMPanel(int n)
+  for( Widget w : panel )
   {
-   //setWidth("*");
-   setWidth("auto");
-   setCaptionText("Data Module");
-
-   FlexTable layout = new FlexTable();
-   layout.setWidth("100%");
-   FlexCellFormatter cellFormatter = layout.getFlexCellFormatter();
-
-   layout.setWidget(0, 0, new Label("Description:"));
-
-   dsc = new TextArea();
-   dsc.setName(SubmissionConstants.MODULE_NAME + n);
-   dsc.setWidth("97%");
-
-   cellFormatter.setColSpan(1, 0, 2);
-   layout.setWidget(1, 0, dsc);
-
-   cellFormatter.setVerticalAlignment(0, 1, HasVerticalAlignment.ALIGN_TOP);
-   cellFormatter.setHorizontalAlignment(0, 1, HasHorizontalAlignment.ALIGN_RIGHT);
-
-   HTML clsBt = new HTML("<img src='images/icons/delete.png'>");
-   clsBt.addClickHandler(new ClickHandler()
+   if( w instanceof NewDMPanel )
    {
-    @Override
-    public void onClick(ClickEvent arg0)
-    {
-     removeFromParent();
-     nMods--;
-    }
-   });
+    n++;
+    nMods++;
+    
+    NewDMPanel dmp = (NewDMPanel)w;
+    
+    dmp.setOrder(n);
+    
+   }
+   else if( w instanceof NewFilePanel )
+   {
+    n++;
 
-   layout.setWidget(0, 1, clsBt);
-
-   cellFormatter.setColSpan(2, 0, 2);
-
-   upload = new FileUpload();
-   upload.setName(SubmissionConstants.MODULE_FILE + n);
-   upload.getElement().setAttribute("size", "80");
-   layout.setWidget(2, 0, upload);
-
-   add(layout);
-  }
-  
-  public String getDescription()
-  {
-   return dsc.getText();
+    NewFilePanel fp = (NewFilePanel)w;
+    
+    fp.setOrder(n);
+   }
+   
   }
 
-  public String getFile()
-  {
-   return upload.getFilename();
-  }
  }
+
+
 
 }
