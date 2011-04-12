@@ -5,4 +5,7 @@ scrap
 /lib
 .externalToolBuilders
 
-.gwt
+.gwt/build
+/buildlib
+/dist
+/build

@@ -67,7 +67,7 @@ public class SubmissionUpdatePanelGWT extends VLayout
 
   panel = new VerticalPanel();
   panel.setSpacing(10);
-  panel.setWidth("500px");
+  panel.setWidth("800px");
   form.setWidget(panel);
 
   panel.add( new Hidden(Constants.uploadHandlerParameter,SubmissionConstants.SUBMISSON_COMMAND) );
@@ -122,7 +122,7 @@ public class SubmissionUpdatePanelGWT extends VLayout
   {
    for( DataModuleMeta dmm : sbmMeta.getDataModules() )
     
-    panel.add(new DMInfoPanel(dmm, n++));
+    panel.add(new DMInfoPanel(sbmMeta, dmm, n++));
   }
   
 
@@ -317,19 +317,24 @@ public class SubmissionUpdatePanelGWT extends VLayout
  {
   private TextArea dsc;
   private FileUpload upload;
+  private String edDesc;
   
-  DMInfoPanel( DataModuleMeta dmm, int n)
+  private int order;
+  
+  DMInfoPanel( final SubmissionMeta sMeta, final DataModuleMeta dmm, int n)
   {
+   order=n;
+   
    //setWidth("*");
    setWidth("auto");
-   setCaptionText("Data Module. ID = "+n);
+   setCaptionText("Data Module: "+n);
 
-   FlexTable layout = new FlexTable();
+   final FlexTable layout = new FlexTable();
    layout.setWidth("100%");
    FlexCellFormatter cellFormatter = layout.getFlexCellFormatter();
 
-   layout.setWidget(0, 0, new Label("ID: "+dmm.getId()));
-   layout.setWidget(1, 0, new Label("Description:"));
+   layout.setWidget(0, 1, new Label("ID: "+dmm.getId()));
+   layout.setWidget(1, 1, new Label("Description:"));
 
    dsc = new TextArea();
    dsc.setName(SubmissionConstants.MODULE_NAME + n);
@@ -337,11 +342,32 @@ public class SubmissionUpdatePanelGWT extends VLayout
    dsc.setEnabled(false);
    dsc.setWidth("97%");
 
-   cellFormatter.setColSpan(2, 0, 2);
-   layout.setWidget(2, 0, dsc);
+   final CheckBox dscCB = new CheckBox();
+   dscCB.setName(SubmissionConstants.MODULE_NAME_UPDATE + n);
+   dscCB.addClickHandler(new ClickHandler()
+   {
+    @Override
+    public void onClick(ClickEvent event)
+    {
+     dsc.setEnabled(dscCB.getValue());
+     
+     if( ! dscCB.getValue() )
+     {
+      edDesc = dsc.getValue();
+      dsc.setValue(dmm.getDescription());
+     }
+     else if( edDesc != null )
+      dsc.setValue(edDesc);
+    }
+   });
+   
+   layout.setWidget( 2, 0, dscCB );
+   
+   cellFormatter.setColSpan(2, 1, 2);
+   layout.setWidget(2, 1, dsc);
 
-   cellFormatter.setVerticalAlignment(0, 1, HasVerticalAlignment.ALIGN_TOP);
-   cellFormatter.setHorizontalAlignment(0, 1, HasHorizontalAlignment.ALIGN_RIGHT);
+   cellFormatter.setVerticalAlignment(0, 2, HasVerticalAlignment.ALIGN_TOP);
+   cellFormatter.setHorizontalAlignment(0, 2, HasHorizontalAlignment.ALIGN_RIGHT);
 
    HTML clsBt = new HTML("<img src='images/icons/delete.png'>");
    clsBt.addClickHandler(new ClickHandler()
@@ -354,14 +380,38 @@ public class SubmissionUpdatePanelGWT extends VLayout
     }
    });
 
-   layout.setWidget(0, 1, clsBt);
+   layout.setWidget(0, 2, clsBt);
 
-   cellFormatter.setColSpan(3, 0, 2);
+   cellFormatter.setColSpan(3, 1, 2);
 
-   upload = new FileUpload();
-   upload.setName(SubmissionConstants.MODULE_FILE + n);
-   upload.getElement().setAttribute("size", "255");
-   layout.setWidget(3, 0, upload);
+   final CheckBox fileCB = new CheckBox();
+   fileCB.setName(SubmissionConstants.MODULE_FILE_UPDATE + n);
+   fileCB.addClickHandler(new ClickHandler()
+   {
+    @Override
+    public void onClick(ClickEvent event)
+    {
+     if( fileCB.getValue() )
+     {
+      FileUpload upload = new FileUpload();
+      upload.setName(SubmissionConstants.MODULE_FILE + order);
+      upload.getElement().setAttribute("size", "80");
+
+      layout.setWidget(3, 1, upload);   
+     }
+     else
+      layout.setWidget(3, 1, createModuleLink(sMeta, dmm));
+    }
+   });
+   
+   layout.setWidget( 3, 0, fileCB );
+
+   layout.setWidget(3, 1, createModuleLink(sMeta, dmm));
+ 
+//   upload = new FileUpload();
+//   upload.setName(SubmissionConstants.MODULE_FILE + n);
+//   upload.getElement().setAttribute("size", "255");
+//   layout.setWidget(3, 0, upload);
 
    add(layout);
   }
@@ -375,6 +425,17 @@ public class SubmissionUpdatePanelGWT extends VLayout
   {
    return upload.getFilename();
   }
+ 
+ }
+
+ private static HTML createModuleLink(SubmissionMeta sMeta, final DataModuleMeta dmm)
+ {
+  return  new HTML("<a target='_blank' href='download?"
+    +Constants.downloadHandlerParameter+"="+Constants.documentRequestSubject
+    +"&"+Constants.clusterIdParameter+"="+sMeta.getId()
+    +"&"+Constants.documentIdParameter+"="+dmm.getId()
+    +"&"+Constants.versionParameter+"="+dmm.getModificationTime()
+    +"'>Module file</a>");
  }
 
  private class DMNewPanel extends CaptionPanel

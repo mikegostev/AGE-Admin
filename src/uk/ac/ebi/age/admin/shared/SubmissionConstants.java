@@ -25,6 +25,9 @@ public class SubmissionConstants
  public static final String ATTACHMENT_GLOBAL = "attachGlobal";
 
  public static final String UPDATE_DESCR = "updateDesc";
+
+ public static final String MODULE_NAME_UPDATE = "dmNameUpdate";
+ public static final String MODULE_FILE_UPDATE = "dmFileUpdate";
  
 
 }

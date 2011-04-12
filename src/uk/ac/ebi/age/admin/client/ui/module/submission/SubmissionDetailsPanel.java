@@ -3,6 +3,7 @@ package uk.ac.ebi.age.admin.client.ui.module.submission;
 import java.util.Date;
 import java.util.List;
 
+import uk.ac.ebi.age.admin.client.ui.PlacingManager;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.ext.submission.DataModuleMeta;
 import uk.ac.ebi.age.ext.submission.FileAttachmentMeta;
@@ -10,7 +11,12 @@ import uk.ac.ebi.age.ext.submission.SubmissionMeta;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.widgets.Button;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.viewer.DetailViewer;
 
@@ -37,7 +43,7 @@ public class SubmissionDetailsPanel extends VLayout
 
   addMember(dv);
   
-  SubmissionMeta simp = (SubmissionMeta)record.getAttributeAsObject("__obj");
+  final SubmissionMeta simp = (SubmissionMeta)record.getAttributeAsObject("__obj");
   
   List<DataModuleMeta> mods = simp.getDataModules();
   
@@ -123,7 +129,25 @@ public class SubmissionDetailsPanel extends VLayout
 
    }
   }
-//  ListGrid 
+  
+  HLayout btLay = new HLayout();
+  btLay.setAlign(Alignment.RIGHT);
+  btLay.setWidth100();
+  
+  Button b = new Button("Update");
+  
+  b.addClickHandler(new ClickHandler()
+  {
+   @Override
+   public void onClick(ClickEvent event)
+   {
+    PlacingManager.placeWidget(new SubmissionUpdatePanelGWT( simp ), "Update");
+   }
+  });
+  
+  btLay.addMember(b);
+  
+  addMember(btLay);
  }
 
 }

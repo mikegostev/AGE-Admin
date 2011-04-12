@@ -1,10 +1,12 @@
 package uk.ac.ebi.age.admin.client.ui.module;
 
+import uk.ac.ebi.age.admin.client.ui.PlacingManager;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.ModelPanel;
 import uk.ac.ebi.age.admin.client.ui.module.submission.SubmissionPreparePanelGWT;
 import uk.ac.ebi.age.admin.client.ui.module.submission.SubmissionQueryFace;
 
 import com.smartgwt.client.types.Side;
+import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.TabSet;
 
@@ -32,6 +34,7 @@ public class RootTabPanel extends TabSet
   
   addTab(submitTab);
 
+  
   //  Tab submitTab = new Tab("Submit");
 //  submitTab.setPane( new SubmissionPreparePanel() );
 //  
@@ -43,6 +46,19 @@ public class RootTabPanel extends TabSet
   
   addTab(submittionListTab);
 
+  PlacingManager.setManager( new PlacingManager() {
+   
+   protected void _placeWidget(Canvas pnl, String title)
+   {
+    Tab pTab = new Tab(title);
+    pTab.setPane( pnl );
+    pTab.setCanClose(true);
+    
+    addTab(pTab);
+    selectTab(pTab);
+   }
+
+  });
   
  }
 }

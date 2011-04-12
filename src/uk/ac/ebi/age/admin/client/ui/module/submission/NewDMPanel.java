@@ -91,6 +91,8 @@ public class NewDMPanel extends CaptionPanel
  {
   order = ndm;
   setCaptionText("Data Module: "+order);
+  dsc.setName(SubmissionConstants.MODULE_NAME + ndm);
+  upload.setName(SubmissionConstants.MODULE_FILE + ndm);
  }
 }
 
