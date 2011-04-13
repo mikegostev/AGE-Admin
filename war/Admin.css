@@ -77,3 +77,13 @@ h1 {
 {
  background-color: #EEDDBB
 }
+
+.dmPanelDELETE, .attPanelDELETE
+{
+	background-color: #FFDDDD
+}
+
+.dmPanelUPDATE, .attPanelUPDATE
+{
+	background-color: #DDDDFF
+}

@@ -34,13 +34,6 @@ public class RootTabPanel extends TabSet
   
   addTab(submitTab);
 
-  
-  //  Tab submitTab = new Tab("Submit");
-//  submitTab.setPane( new SubmissionPreparePanel() );
-//  
-//  addTab(submitTab);
-  
-
   Tab submittionListTab = new Tab("Submissions");
   submittionListTab.setPane( new SubmissionQueryFace() );
   

@@ -2,9 +2,11 @@ package uk.ac.ebi.age.admin.client.ui.module.submission;
 
 import uk.ac.ebi.age.admin.client.log.LogNode;
 import uk.ac.ebi.age.admin.client.ui.module.log.LogTree;
+import uk.ac.ebi.age.admin.client.ui.module.submission.NewDMPanel.RemoveListener;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
 import uk.ac.ebi.age.ext.submission.DataModuleMeta;
+import uk.ac.ebi.age.ext.submission.FileAttachmentMeta;
 import uk.ac.ebi.age.ext.submission.SubmissionMeta;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -35,6 +37,14 @@ import com.smartgwt.client.widgets.layout.VLayout;
 
 public class SubmissionUpdatePanelGWT extends VLayout
 {
+ private static enum Status
+ {
+  HOLD,
+  DELETE,
+  UPDATE,
+  NEW
+ }
+ 
  private int n = 1;
  private long key = System.currentTimeMillis();
  private int nMods = 1;
@@ -80,12 +90,22 @@ public class SubmissionUpdatePanelGWT extends VLayout
 
   panel.add(btPan);
 
+  final NewDMPanel.RemoveListener rmListener = new RemoveListener()
+  {
+   @Override
+   public void removed(Widget w)
+   {
+    renumberPanels();
+   }
+  };
+
+  
   cellFormatter.setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_CENTER);
   Button addBt = new Button("Add File", new com.google.gwt.event.dom.client.ClickHandler()
   {
    public void onClick(com.google.gwt.event.dom.client.ClickEvent event)
    {
-    panel.insert(new FilePanel(n++), panel.getWidgetCount()-1);
+    panel.insert(new NewFilePanel(n++, rmListener), panel.getWidgetCount()-1);
    }
   });
   btPan.setWidget(0, 0, addBt);
@@ -95,7 +115,7 @@ public class SubmissionUpdatePanelGWT extends VLayout
   {
    public void onClick(com.google.gwt.event.dom.client.ClickEvent event)
    {
-    panel.insert(new DMNewPanel(n++), nMods+5);
+    panel.insert(new NewDMPanel(n++, rmListener), nMods+6);
     nMods++;
     wc.adjustForContent(true);
    }
@@ -121,10 +141,21 @@ public class SubmissionUpdatePanelGWT extends VLayout
   if( sbmMeta.getDataModules() != null )
   {
    for( DataModuleMeta dmm : sbmMeta.getDataModules() )
-    
+   {
     panel.add(new DMInfoPanel(sbmMeta, dmm, n++));
+    nMods++;
+    panel.add( new Hidden(SubmissionConstants.MODULE_ID + n, dmm.getId()) );
+   }
   }
   
+  if( sbmMeta.getAttachments() != null )
+  {
+   for( FileAttachmentMeta fat : sbmMeta.getAttachments() )
+   {
+    panel.add(new AtInfoPanel(sbmMeta, fat, n++));
+    panel.add( new Hidden(SubmissionConstants.ATTACHMENT_ID + n, fat.getId()) );
+   }
+  }
 
   Button sbmBt = new Button("Submit", new com.google.gwt.event.dom.client.ClickHandler()
   {
@@ -159,11 +190,11 @@ public class SubmissionUpdatePanelGWT extends VLayout
       if( dmp.getFile().trim().length() == 0 )
        err+="File for data module "+ndm+" is not selected\n";
      }
-     else if( w instanceof FilePanel )
+     else if( w instanceof NewFilePanel )
      {
       ndm++;
       
-      FilePanel dmp = (FilePanel)w;
+      NewFilePanel dmp = (NewFilePanel)w;
       
       if( dmp.getID().trim().length() == 0 )
        err+="ID for file "+ndm+" is not specified\n";
@@ -230,71 +261,433 @@ public class SubmissionUpdatePanelGWT extends VLayout
   
  }
 
- private static class FilePanel extends CaptionPanel
+ private void renumberPanels()
  {
-  private TextBox id;
+  n=0;
+  nMods=0;
+  
+  for( Widget w : panel )
+  {
+   if( w instanceof DMInfoPanel )
+   {
+    n++;
+    nMods++;
+   }
+   else if( w instanceof NewDMPanel )
+   {
+    n++;
+    nMods++;
+    
+    NewDMPanel dmp = (NewDMPanel)w;
+    
+    dmp.setOrder(n);
+    
+   }
+   else if( w instanceof NewFilePanel )
+   {
+    n++;
+
+    NewFilePanel fp = (NewFilePanel)w;
+    
+    fp.setOrder(n);
+   }
+   else if( w instanceof AtInfoPanel )
+    n++;
+  }
+
+ }
+ 
+ private static HTML createModuleLink(SubmissionMeta sMeta, final DataModuleMeta dmm)
+ {
+  return  new HTML("<a target='_blank' href='download?"
+    +Constants.downloadHandlerParameter+"="+Constants.documentRequestSubject
+    +"&"+Constants.clusterIdParameter+"="+sMeta.getId()
+    +"&"+Constants.documentIdParameter+"="+dmm.getId()
+    +"&"+Constants.versionParameter+"="+dmm.getModificationTime()
+    +"'>Module file</a>");
+ }
+ 
+ private static HTML createAttachmentLink(SubmissionMeta sMeta, final FileAttachmentMeta atm)
+ {
+  return  new HTML("<a target='_blank' href='download?"
+    +Constants.downloadHandlerParameter+"="+Constants.attachmentRequestSubject
+    +"&"+Constants.clusterIdParameter+"="+sMeta.getId()
+    +"&"+Constants.fileIdParameter+"="+atm.getId()
+    +"&"+Constants.versionParameter+"="+atm.getModificationTime()
+    +"'>"+atm.getId()+"</a>");
+ }
+
+ 
+ private class DMInfoPanel extends CaptionPanel
+ {
   private TextArea dsc;
   private FileUpload upload;
-  private CheckBox isGlobal;
+  private String edDesc;
+  private Label statusLbl = new Label();
   
-  FilePanel(int n)
+  private CheckBox dscCB = new CheckBox();
+  private CheckBox fileCB = new CheckBox();
+  
+  private Status status = Status.HOLD;
+  
+  private int order;
+  
+  DMInfoPanel( final SubmissionMeta sMeta, final DataModuleMeta dmm, int n)
   {
+   order=n;
+   
    //setWidth("*");
    setWidth("auto");
-   setCaptionText("Attached file");
+   setCaptionText("Data Module: "+n+" ID="+dmm.getId());
 
-   FlexTable layout = new FlexTable();
+   updateStatus();
+   
+   int row=0;
+   
+   final FlexTable layout = new FlexTable();
    layout.setWidth("100%");
    FlexCellFormatter cellFormatter = layout.getFlexCellFormatter();
 
-   id = new TextBox();
-   id.setName(SubmissionConstants.ATTACHMENT_ID + n);
-   id.setWidth("97%");
-
-   layout.setWidget(0, 0, new Label("ID:"));
-   layout.setWidget(0, 1, id );
-   layout.setWidget(0, 2,  new Label("Global:"));
+   cellFormatter.setWidth(row, 0, "30");
+   statusLbl.setText("Status: "+status.name());
+   layout.setWidget(row, 1, statusLbl);
    
-   isGlobal = new CheckBox();
-   isGlobal.setName(SubmissionConstants.ATTACHMENT_GLOBAL + n);
-   layout.setWidget(0, 3,  isGlobal);
+   cellFormatter.setVerticalAlignment(row, 2, HasVerticalAlignment.ALIGN_TOP);
+   cellFormatter.setHorizontalAlignment(row, 2, HasHorizontalAlignment.ALIGN_RIGHT);
    
-   cellFormatter.setVerticalAlignment(0, 4, HasVerticalAlignment.ALIGN_TOP);
-   cellFormatter.setHorizontalAlignment(0, 4, HasHorizontalAlignment.ALIGN_RIGHT);
-
-   HTML clsBt = new HTML("<img src='images/icons/delete.png'>");
+   final HTML clsBt = new HTML("<img src='images/icons/delete.png'>");
    clsBt.addClickHandler(new ClickHandler()
    {
     @Override
     public void onClick(ClickEvent arg0)
     {
-     removeFromParent();
+     if( status == Status.DELETE )
+     {
+      clsBt.setHTML("<img src='images/icons/delete.png'>");
+      status = Status.HOLD;
+     }
+     else
+     {
+      clsBt.setHTML("<img src='images/icons/add.png'>");
+      status = Status.DELETE;
+     }
+     
+     updateStatus();
     }
    });
-
-   layout.setWidget(0, 4, clsBt);
    
-   cellFormatter.setColSpan(1, 0, 5);
-   layout.setWidget(1, 0, new Label("Description:"));
+   layout.setWidget(row, 2, clsBt);
+
+   row++;
+   
+   layout.setWidget(row++, 1, new Label("Description:"));
 
    dsc = new TextArea();
-   dsc.setName(SubmissionConstants.ATTACHMENT_DESC + n);
+   dsc.setName(SubmissionConstants.MODULE_NAME + n);
+   dsc.setValue(dmm.getDescription());
+   dsc.setEnabled(false);
    dsc.setWidth("97%");
 
-   cellFormatter.setColSpan(2, 0, 5);
-   layout.setWidget(2, 0, dsc);
+   dscCB.setName(SubmissionConstants.MODULE_NAME_UPDATE + n);
+   dscCB.addClickHandler(new ClickHandler()
+   {
+    @Override
+    public void onClick(ClickEvent event)
+    {
+     dsc.setEnabled(dscCB.getValue());
+     
+     if( ! dscCB.getValue() )
+     {
+      edDesc = dsc.getValue();
+      dsc.setValue(dmm.getDescription());
+     }
+     else if( edDesc != null )
+      dsc.setValue(edDesc);
+     
+     updateStatus();
+    }
+   });
+   
+   layout.setWidget( row, 0, dscCB );
+   
+   cellFormatter.setColSpan(row, 1, 2);
+   layout.setWidget(row, 1, dsc);
 
+   row++;
 
+   final int upRow = row;
+   
+   cellFormatter.setColSpan(row, 1, 2);
 
-   cellFormatter.setColSpan(3, 0, 5);
+   fileCB.setName(SubmissionConstants.MODULE_FILE_UPDATE + n);
+   fileCB.addClickHandler(new ClickHandler()
+   {
+    @Override
+    public void onClick(ClickEvent event)
+    {
+     if( fileCB.getValue() )
+     {
+      upload = new FileUpload();
+      upload.setName(SubmissionConstants.MODULE_FILE + order);
+      upload.getElement().setAttribute("size", "80");
 
-   upload = new FileUpload();
-   upload.setName(SubmissionConstants.ATTACHMENT_FILE + n);
-   upload.getElement().setAttribute("size", "80");
-   layout.setWidget(3, 0, upload);
+      layout.setWidget(upRow, 1, upload);   
+     }
+     else
+     {
+      layout.setWidget(upRow, 1, createModuleLink(sMeta, dmm));
+      upload = null;
+     }
+
+     updateStatus();
+    }
+   });
+   
+   layout.setWidget( row, 0, fileCB );
+
+   layout.setWidget(row, 1, createModuleLink(sMeta, dmm));
+ 
+//   upload = new FileUpload();
+//   upload.setName(SubmissionConstants.MODULE_FILE + n);
+//   upload.getElement().setAttribute("size", "255");
+//   layout.setWidget(3, 0, upload);
 
    add(layout);
   }
+  
+  private void updateStatus()
+  {
+   if( status != Status.DELETE )
+   {
+    if( dscCB.getValue() || fileCB.getValue() )
+     status = Status.UPDATE;
+    else
+     status = Status.HOLD;
+   }
+   
+   statusLbl.setText("Status: "+status.name());
+   setStylePrimaryName("dmPanel"+status.name());
+  }
+  
+  public String getDescription()
+  {
+   return dsc.getText();
+  }
+
+  public String getFile()
+  {
+   return upload.getFilename();
+  }
+ 
+ }
+
+
+ public class AtInfoPanel extends CaptionPanel
+ {
+  private TextBox id;
+  private CheckBox idCB = new CheckBox();
+
+  private TextArea dsc;
+  private CheckBox dscCB = new CheckBox();
+
+  private FileUpload upload;
+  private CheckBox fileCB = new CheckBox();
+
+  private CheckBox isGlobal = new CheckBox();
+  
+  private int order;
+  
+  private Label statusLbl = new Label();
+  
+  private Status status = Status.HOLD;
+
+  private FileAttachmentMeta fAtMeta;
+  
+  private String edDesc;
+  
+  AtInfoPanel( final SubmissionMeta sMeta, final FileAttachmentMeta fatMeta, int n)
+  {
+   order = n;
+   fAtMeta = fatMeta;
+   
+   //setWidth("*");
+   setWidth("auto");
+ 
+   setCaptionText("Attached file: "+n+" ID="+fatMeta.getId());
+
+   
+   updateStatus();
+
+   int row=0;
+   
+   final FlexTable layout = new FlexTable();
+   layout.setWidth("100%");
+   FlexCellFormatter cellFormatter = layout.getFlexCellFormatter();
+   
+
+   cellFormatter.setWidth(row, 0, "30");
+   cellFormatter.setColSpan(row, 1, 3);
+   layout.setWidget(row, 1, statusLbl);
+
+   cellFormatter.setVerticalAlignment(row, 4, HasVerticalAlignment.ALIGN_TOP);
+   cellFormatter.setHorizontalAlignment(row, 4, HasHorizontalAlignment.ALIGN_RIGHT);
+
+   final HTML clsBt = new HTML("<img src='images/icons/delete.png'>");
+   clsBt.addClickHandler(new ClickHandler()
+   {
+    @Override
+    public void onClick(ClickEvent arg0)
+    {
+     if(status == Status.DELETE)
+     {
+      clsBt.setHTML("<img src='images/icons/delete.png'>");
+      status = Status.HOLD;
+     }
+     else
+     {
+      clsBt.setHTML("<img src='images/icons/add.png'>");
+      status = Status.DELETE;
+     }
+
+     updateStatus();
+    }
+   });
+
+   layout.setWidget(row, 4, clsBt);
+
+   row++;
+   
+   id = new TextBox();
+   id.setValue(fatMeta.getId());
+   id.setEnabled(false);
+   id.setName(SubmissionConstants.ATTACHMENT_ID + n);
+//   id.setWidth("97%");
+
+   idCB.setName(SubmissionConstants.ATTACHMENT_ID_UPDATE + n);
+   idCB.addClickHandler(new ClickHandler()
+   {
+    @Override
+    public void onClick(ClickEvent event)
+    {
+     id.setEnabled(idCB.getValue());
+     
+     if( ! idCB.getValue() )
+      id.setValue(fAtMeta.getId());
+     
+     updateStatus();
+    }
+   });
+   
+   layout.setWidget(row, 0, idCB);
+   cellFormatter.setWidth(row, 1, "1");
+   layout.setWidget(row, 1, new Label("ID:"));
+   layout.setWidget(row, 2, id );
+   cellFormatter.setWidth(row, 3, "1");
+   layout.setWidget(row, 3,  new Label("Global:"));
+   
+   isGlobal.setValue(fatMeta.isGlobal());
+   isGlobal.setName(SubmissionConstants.ATTACHMENT_GLOBAL + n);
+   isGlobal.addClickHandler( new ClickHandler()
+   {
+    @Override
+    public void onClick(ClickEvent event)
+    {
+     updateStatus();
+    }
+   });
+   layout.setWidget(row, 4,  isGlobal);
+   
+   
+   row++;
+   
+   cellFormatter.setColSpan(row, 1, 4);
+   layout.setWidget(row, 1, new Label("Description:"));
+
+   dsc = new TextArea();
+   dsc.setEnabled(false);
+   dsc.setValue(fatMeta.getDescription());
+   dsc.setName(SubmissionConstants.ATTACHMENT_DESC + n);
+   dsc.setWidth("97%");
+
+   row++;
+   
+   dscCB.setName(SubmissionConstants.MODULE_NAME_UPDATE + n);
+   dscCB.addClickHandler(new ClickHandler()
+   {
+    @Override
+    public void onClick(ClickEvent event)
+    {
+     dsc.setEnabled(dscCB.getValue());
+     
+     if( ! dscCB.getValue() )
+     {
+      edDesc = dsc.getValue();
+      dsc.setValue(fAtMeta.getDescription());
+     }
+     else if( edDesc != null )
+      dsc.setValue(edDesc);
+     
+     updateStatus();
+    }
+   });
+   layout.setWidget(row, 0, dscCB);
+   
+   cellFormatter.setColSpan(row, 1, 4);
+   layout.setWidget(row, 1, dsc);
+
+   row++;
+
+   cellFormatter.setColSpan(row, 1, 4);
+
+   final int upRow = row;
+   
+
+   fileCB.setName(SubmissionConstants.ATTACHMENT_FILE_UPDATE + n);
+   fileCB.addClickHandler(new ClickHandler()
+   {
+    @Override
+    public void onClick(ClickEvent event)
+    {
+     if( fileCB.getValue() )
+     {
+      upload = new FileUpload();
+      upload.setName(SubmissionConstants.ATTACHMENT_FILE + order);
+      upload.getElement().setAttribute("size", "80");
+      upload.setWidth("100%");
+      
+      layout.setWidget(upRow, 1, upload);   
+     }
+     else
+     {
+      layout.setWidget(upRow, 1, createAttachmentLink(sMeta, fatMeta));
+      upload = null;
+     }
+
+     updateStatus();
+    }
+   });
+   
+   layout.setWidget( row, 0, fileCB );
+
+   layout.setWidget(row, 1, createAttachmentLink(sMeta, fatMeta));
+
+   add(layout);
+  }
+  
+  private void updateStatus()
+  {
+   if( status != Status.DELETE )
+   {
+    if( idCB.getValue() || dscCB.getValue() || fileCB.getValue() || isGlobal.getValue() != fAtMeta.isGlobal() )
+     status = Status.UPDATE;
+    else
+     status = Status.HOLD;
+   }
+   
+   statusLbl.setText("Status: "+status.name());
+   setStylePrimaryName("attPanel"+status.name());
+  }
+
   
   public String getDescription()
   {
@@ -311,191 +704,11 @@ public class SubmissionUpdatePanelGWT extends VLayout
    return id.getText();
   }
 
- }
- 
- private class DMInfoPanel extends CaptionPanel
- {
-  private TextArea dsc;
-  private FileUpload upload;
-  private String edDesc;
-  
-  private int order;
-  
-  DMInfoPanel( final SubmissionMeta sMeta, final DataModuleMeta dmm, int n)
+  public void setOrder(int ndm)
   {
-   order=n;
-   
-   //setWidth("*");
-   setWidth("auto");
-   setCaptionText("Data Module: "+n);
-
-   final FlexTable layout = new FlexTable();
-   layout.setWidth("100%");
-   FlexCellFormatter cellFormatter = layout.getFlexCellFormatter();
-
-   layout.setWidget(0, 1, new Label("ID: "+dmm.getId()));
-   layout.setWidget(1, 1, new Label("Description:"));
-
-   dsc = new TextArea();
-   dsc.setName(SubmissionConstants.MODULE_NAME + n);
-   dsc.setValue(dmm.getDescription());
-   dsc.setEnabled(false);
-   dsc.setWidth("97%");
-
-   final CheckBox dscCB = new CheckBox();
-   dscCB.setName(SubmissionConstants.MODULE_NAME_UPDATE + n);
-   dscCB.addClickHandler(new ClickHandler()
-   {
-    @Override
-    public void onClick(ClickEvent event)
-    {
-     dsc.setEnabled(dscCB.getValue());
-     
-     if( ! dscCB.getValue() )
-     {
-      edDesc = dsc.getValue();
-      dsc.setValue(dmm.getDescription());
-     }
-     else if( edDesc != null )
-      dsc.setValue(edDesc);
-    }
-   });
-   
-   layout.setWidget( 2, 0, dscCB );
-   
-   cellFormatter.setColSpan(2, 1, 2);
-   layout.setWidget(2, 1, dsc);
-
-   cellFormatter.setVerticalAlignment(0, 2, HasVerticalAlignment.ALIGN_TOP);
-   cellFormatter.setHorizontalAlignment(0, 2, HasHorizontalAlignment.ALIGN_RIGHT);
-
-   HTML clsBt = new HTML("<img src='images/icons/delete.png'>");
-   clsBt.addClickHandler(new ClickHandler()
-   {
-    @Override
-    public void onClick(ClickEvent arg0)
-    {
-     removeFromParent();
-     nMods--;
-    }
-   });
-
-   layout.setWidget(0, 2, clsBt);
-
-   cellFormatter.setColSpan(3, 1, 2);
-
-   final CheckBox fileCB = new CheckBox();
-   fileCB.setName(SubmissionConstants.MODULE_FILE_UPDATE + n);
-   fileCB.addClickHandler(new ClickHandler()
-   {
-    @Override
-    public void onClick(ClickEvent event)
-    {
-     if( fileCB.getValue() )
-     {
-      FileUpload upload = new FileUpload();
-      upload.setName(SubmissionConstants.MODULE_FILE + order);
-      upload.getElement().setAttribute("size", "80");
-
-      layout.setWidget(3, 1, upload);   
-     }
-     else
-      layout.setWidget(3, 1, createModuleLink(sMeta, dmm));
-    }
-   });
-   
-   layout.setWidget( 3, 0, fileCB );
-
-   layout.setWidget(3, 1, createModuleLink(sMeta, dmm));
- 
-//   upload = new FileUpload();
-//   upload.setName(SubmissionConstants.MODULE_FILE + n);
-//   upload.getElement().setAttribute("size", "255");
-//   layout.setWidget(3, 0, upload);
-
-   add(layout);
-  }
-  
-  public String getDescription()
-  {
-   return dsc.getText();
+   order = ndm;
+   setCaptionText("Attached file: "+order);
   }
 
-  public String getFile()
-  {
-   return upload.getFilename();
-  }
- 
- }
-
- private static HTML createModuleLink(SubmissionMeta sMeta, final DataModuleMeta dmm)
- {
-  return  new HTML("<a target='_blank' href='download?"
-    +Constants.downloadHandlerParameter+"="+Constants.documentRequestSubject
-    +"&"+Constants.clusterIdParameter+"="+sMeta.getId()
-    +"&"+Constants.documentIdParameter+"="+dmm.getId()
-    +"&"+Constants.versionParameter+"="+dmm.getModificationTime()
-    +"'>Module file</a>");
- }
-
- private class DMNewPanel extends CaptionPanel
- {
-  private TextArea dsc;
-  private FileUpload upload;
-  
-  DMNewPanel(int n)
-  {
-   //setWidth("*");
-   setWidth("auto");
-   setCaptionText("Data Module");
-
-   FlexTable layout = new FlexTable();
-   layout.setWidth("100%");
-   FlexCellFormatter cellFormatter = layout.getFlexCellFormatter();
-
-   layout.setWidget(0, 0, new Label("Description:"));
-
-   dsc = new TextArea();
-   dsc.setName(SubmissionConstants.MODULE_NAME + n);
-   dsc.setWidth("97%");
-
-   cellFormatter.setColSpan(1, 0, 2);
-   layout.setWidget(1, 0, dsc);
-
-   cellFormatter.setVerticalAlignment(0, 1, HasVerticalAlignment.ALIGN_TOP);
-   cellFormatter.setHorizontalAlignment(0, 1, HasHorizontalAlignment.ALIGN_RIGHT);
-
-   HTML clsBt = new HTML("<img src='images/icons/delete.png'>");
-   clsBt.addClickHandler(new ClickHandler()
-   {
-    @Override
-    public void onClick(ClickEvent arg0)
-    {
-     removeFromParent();
-     nMods--;
-    }
-   });
-
-   layout.setWidget(0, 1, clsBt);
-
-   cellFormatter.setColSpan(2, 0, 2);
-
-   upload = new FileUpload();
-   upload.setName(SubmissionConstants.MODULE_FILE + n);
-   upload.getElement().setAttribute("size", "80");
-   layout.setWidget(2, 0, upload);
-
-   add(layout);
-  }
-  
-  public String getDescription()
-  {
-   return dsc.getText();
-  }
-
-  public String getFile()
-  {
-   return upload.getFilename();
-  }
  }
 }
