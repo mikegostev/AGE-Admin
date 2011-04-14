@@ -85,5 +85,10 @@ h1 {
 
 .dmPanelUPDATE, .attPanelUPDATE
 {
-	background-color: #DDDDFF
+	background-color: #DDEEFF
+}
+
+.dmPanelNEW, .attPanelNEW
+{
+	background-color: #DDFFDD
 }

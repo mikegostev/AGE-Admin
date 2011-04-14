@@ -5,6 +5,7 @@ import uk.ac.ebi.age.admin.client.ui.module.log.LogTree;
 import uk.ac.ebi.age.admin.client.ui.module.submission.NewDMPanel.RemoveListener;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
+import uk.ac.ebi.age.admin.shared.SubmissionConstants.Status;
 import uk.ac.ebi.age.ext.submission.DataModuleMeta;
 import uk.ac.ebi.age.ext.submission.FileAttachmentMeta;
 import uk.ac.ebi.age.ext.submission.SubmissionMeta;
@@ -37,20 +38,16 @@ import com.smartgwt.client.widgets.layout.VLayout;
 
 public class SubmissionUpdatePanelGWT extends VLayout
 {
- private static enum Status
- {
-  HOLD,
-  DELETE,
-  UPDATE,
-  NEW
- }
  
  private int n = 1;
  private long key = System.currentTimeMillis();
  private int nMods = 1;
  private VerticalPanel panel;
 
- public SubmissionUpdatePanelGWT( SubmissionMeta sbmMeta )
+ private TextArea updateDescription;
+ private TextArea submissionDescription;
+ 
+ public SubmissionUpdatePanelGWT( final SubmissionMeta sbmMeta )
  {
   setAutoWidth();
   setLayoutLeftMargin(15);
@@ -60,7 +57,7 @@ public class SubmissionUpdatePanelGWT extends VLayout
   setHeight100();
   setWidth100();
 
-  setBorder("1px solid #6a5a6a");
+  setBorder("1px solid #0087BA");
 
   DecoratorPanel decp = new DecoratorPanel();
   decp.setHeight("100%");
@@ -82,6 +79,8 @@ public class SubmissionUpdatePanelGWT extends VLayout
 
   panel.add( new Hidden(Constants.uploadHandlerParameter,SubmissionConstants.SUBMISSON_COMMAND) );
   panel.add( new Hidden(SubmissionConstants.SUBMISSON_KEY,String.valueOf(key) ) );
+  panel.add( new Hidden(SubmissionConstants.SUBMISSON_ID, sbmMeta.getId() ) );
+  panel.add( new Hidden(SubmissionConstants.SUBMISSON_UPDATE, "true" ) );
   
   FlexTable btPan = new FlexTable();
   btPan.setCellSpacing(6);
@@ -105,7 +104,11 @@ public class SubmissionUpdatePanelGWT extends VLayout
   {
    public void onClick(com.google.gwt.event.dom.client.ClickEvent event)
    {
-    panel.insert(new NewFilePanel(n++, rmListener), panel.getWidgetCount()-1);
+    NewFilePanel fp = new NewFilePanel(n++, rmListener);
+    
+    fp.setStylePrimaryName("dmPanelNEW");
+    
+    panel.insert(fp, panel.getWidgetCount()-1);
    }
   });
   btPan.setWidget(0, 0, addBt);
@@ -115,36 +118,65 @@ public class SubmissionUpdatePanelGWT extends VLayout
   {
    public void onClick(com.google.gwt.event.dom.client.ClickEvent event)
    {
-    panel.insert(new NewDMPanel(n++, rmListener), nMods+6);
+    NewFilePanel atp = new NewFilePanel(n++, rmListener);
+    
+    atp.setStylePrimaryName("attPanelNEW");
+
+    panel.insert(atp, nMods+6);
     nMods++;
     wc.adjustForContent(true);
+    
+    renumberPanels();
    }
   });
   btPan.setWidget(0, 1, addBt);
 
   panel.add(new Label("The update description:"));
 
-  final TextArea updtDesc = new TextArea();
-  updtDesc.setName(SubmissionConstants.UPDATE_DESCR);
-  updtDesc.setWidth("97%");
-  panel.add(updtDesc);
+  updateDescription = new TextArea();
+  updateDescription.setName(SubmissionConstants.UPDATE_DESCR);
+  updateDescription.setWidth("97%");
+  panel.add(updateDescription);
 
   
-  panel.add(new Label("Submission description:"));
+  FlexTable sbmDesc = new FlexTable();
+  sbmDesc.setWidth("97%");
+  
+  sbmDesc.setWidget(0, 1, new Label("Submission description:"));
 
-  final TextArea tb = new TextArea();
-  tb.setName(SubmissionConstants.SUBMISSON_DESCR);
-  tb.setWidth("97%");
-  tb.setValue(sbmMeta.getDescription());
-  panel.add(tb);
+  final CheckBox sDscCB = new CheckBox();
+  sDscCB.setName(SubmissionConstants.SUBMISSON_DESCR_UPDATE);
+ 
+  submissionDescription = new TextArea();
+  submissionDescription.setEnabled(false);
+  submissionDescription.setName(SubmissionConstants.SUBMISSON_DESCR);
+  submissionDescription.setWidth("97%");
+  submissionDescription.setValue(sbmMeta.getDescription());
 
+  sDscCB.addClickHandler( new ClickHandler()
+  {
+   @Override
+   public void onClick(ClickEvent event)
+   {
+    submissionDescription.setEnabled( sDscCB.getValue() );
+    
+    if( ! sDscCB.getValue() )
+     submissionDescription.setValue(sbmMeta.getDescription());
+   }
+  });
+  
+  sbmDesc.setWidget(1, 0, sDscCB);
+
+  sbmDesc.setWidget(1,1,submissionDescription);
+
+  panel.add(sbmDesc);
+  
   if( sbmMeta.getDataModules() != null )
   {
    for( DataModuleMeta dmm : sbmMeta.getDataModules() )
    {
     panel.add(new DMInfoPanel(sbmMeta, dmm, n++));
     nMods++;
-    panel.add( new Hidden(SubmissionConstants.MODULE_ID + n, dmm.getId()) );
    }
   }
   
@@ -153,7 +185,6 @@ public class SubmissionUpdatePanelGWT extends VLayout
    for( FileAttachmentMeta fat : sbmMeta.getAttachments() )
    {
     panel.add(new AtInfoPanel(sbmMeta, fat, n++));
-    panel.add( new Hidden(SubmissionConstants.ATTACHMENT_ID + n, fat.getId()) );
    }
   }
 
@@ -174,6 +205,13 @@ public class SubmissionUpdatePanelGWT extends VLayout
    {
     String err = "";
     
+    if( updateDescription.getText().trim().length() == 0 )
+     err += "Update description is empty\n";
+    
+    if( submissionDescription.getText().trim().length() == 0 )
+     err += "Submission description is empty\n";
+
+   
     
     int ndm=0;
     for( Widget w : panel )
@@ -202,10 +240,31 @@ public class SubmissionUpdatePanelGWT extends VLayout
       if( dmp.getFile().trim().length() == 0 )
        err+="File for data module "+ndm+" is not selected\n";
      }
-     else if( w instanceof TextArea )
+     else if( w instanceof AtInfoPanel )
      {
-      if( ((TextArea)w).getText().trim().length() == 0 )
-       err += "Submission description is empty\n";
+      ndm++;
+      
+      AtInfoPanel atp = (AtInfoPanel)w;
+      
+      if( atp.getID().trim().length() == 0 )
+       err+="ID for file "+ndm+" is not specified\n";
+      
+      if( atp.isFileUpdated() && atp.getFile().trim().length() == 0 )
+       err+="File for data module "+ndm+" is not selected\n";
+
+     }
+     else if( w instanceof DMInfoPanel )
+     {
+      ndm++;
+      
+      DMInfoPanel dmp = (DMInfoPanel)w;
+
+      if( dmp.getDescription().trim().length() == 0 )
+       err+="Description of data module "+ndm+" is empty\n";
+      
+      if( dmp.isFileUpdated() && dmp.getFile().trim().length() == 0 )
+       err+="File for data module "+ndm+" is not selected\n";
+
      }
      
     }
@@ -263,8 +322,8 @@ public class SubmissionUpdatePanelGWT extends VLayout
 
  private void renumberPanels()
  {
-  n=0;
-  nMods=0;
+  n=1;
+  nMods=1;
   
   for( Widget w : panel )
   {
@@ -275,24 +334,25 @@ public class SubmissionUpdatePanelGWT extends VLayout
    }
    else if( w instanceof NewDMPanel )
    {
+    NewDMPanel dmp = (NewDMPanel)w;
+    dmp.setOrder(n);
+
     n++;
     nMods++;
-    
-    NewDMPanel dmp = (NewDMPanel)w;
-    
-    dmp.setOrder(n);
-    
    }
    else if( w instanceof NewFilePanel )
    {
-    n++;
-
     NewFilePanel fp = (NewFilePanel)w;
     
     fp.setOrder(n);
+
+    n++;
    }
    else if( w instanceof AtInfoPanel )
+   {
+    ((AtInfoPanel)w).setOrder(n);
     n++;
+   }
   }
 
  }
@@ -328,6 +388,8 @@ public class SubmissionUpdatePanelGWT extends VLayout
   private CheckBox dscCB = new CheckBox();
   private CheckBox fileCB = new CheckBox();
   
+  private Hidden statusInput = new Hidden();
+  
   private Status status = Status.HOLD;
   
   private int order;
@@ -349,6 +411,9 @@ public class SubmissionUpdatePanelGWT extends VLayout
    FlexCellFormatter cellFormatter = layout.getFlexCellFormatter();
 
    cellFormatter.setWidth(row, 0, "30");
+
+   layout.setWidget(row, 0, new Hidden(SubmissionConstants.MODULE_ID + n, dmm.getId()) );
+   
    statusLbl.setText("Status: "+status.name());
    layout.setWidget(row, 1, statusLbl);
    
@@ -379,6 +444,11 @@ public class SubmissionUpdatePanelGWT extends VLayout
    layout.setWidget(row, 2, clsBt);
 
    row++;
+   
+   statusInput.setName( SubmissionConstants.S);
+   statusInput.setValue(status.name());
+   
+   layout.setWidget( row, 0, statusInput );
    
    layout.setWidget(row++, 1, new Label("Description:"));
 
@@ -455,6 +525,11 @@ public class SubmissionUpdatePanelGWT extends VLayout
    add(layout);
   }
   
+  public boolean isFileUpdated()
+  {
+   return fileCB.getValue();
+  }
+
   private void updateStatus()
   {
    if( status != Status.DELETE )
@@ -484,6 +559,8 @@ public class SubmissionUpdatePanelGWT extends VLayout
 
  public class AtInfoPanel extends CaptionPanel
  {
+  private Hidden origId = new Hidden();
+  
   private TextBox id;
   private CheckBox idCB = new CheckBox();
 
@@ -526,6 +603,10 @@ public class SubmissionUpdatePanelGWT extends VLayout
    
 
    cellFormatter.setWidth(row, 0, "30");
+   origId.setName(SubmissionConstants.ATTACHMENT_ID + n);
+   origId.setValue(fatMeta.getId());
+   layout.setWidget(row, 0, origId );
+   
    cellFormatter.setColSpan(row, 1, 3);
    layout.setWidget(row, 1, statusLbl);
 
@@ -611,7 +692,7 @@ public class SubmissionUpdatePanelGWT extends VLayout
 
    row++;
    
-   dscCB.setName(SubmissionConstants.MODULE_NAME_UPDATE + n);
+   dscCB.setName(SubmissionConstants.ATTACHMENT_DESC_UPDATE + n);
    dscCB.addClickHandler(new ClickHandler()
    {
     @Override
@@ -674,6 +755,11 @@ public class SubmissionUpdatePanelGWT extends VLayout
    add(layout);
   }
   
+  public boolean isFileUpdated()
+  {
+   return fileCB.getValue();
+  }
+
   private void updateStatus()
   {
    if( status != Status.DELETE )
@@ -707,7 +793,23 @@ public class SubmissionUpdatePanelGWT extends VLayout
   public void setOrder(int ndm)
   {
    order = ndm;
-   setCaptionText("Attached file: "+order);
+   
+   origId.setName(SubmissionConstants.ATTACHMENT_ORIG_ID + ndm);
+   
+   id.setName(SubmissionConstants.ATTACHMENT_ID + ndm);
+   idCB.setName(SubmissionConstants.ATTACHMENT_ID_UPDATE + ndm);
+
+   isGlobal.setName(SubmissionConstants.ATTACHMENT_GLOBAL + ndm);
+   
+   dsc.setName(SubmissionConstants.ATTACHMENT_DESC + ndm);
+   dscCB.setName(SubmissionConstants.ATTACHMENT_DESC_UPDATE + ndm);
+
+   fileCB.setName(SubmissionConstants.ATTACHMENT_FILE_UPDATE + ndm);
+   
+   if( upload != null )
+    upload.setName(SubmissionConstants.ATTACHMENT_FILE + ndm);
+
+   setCaptionText("Attached file: "+ndm+" ID="+fAtMeta.getId());
   }
 
  }

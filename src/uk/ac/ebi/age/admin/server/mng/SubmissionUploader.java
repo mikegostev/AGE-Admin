@@ -43,11 +43,11 @@ public class SubmissionUploader implements UploadCommandListener
 
    try
    {
-    if(upReq.getFiles() == null)
-    {
-     log.getRootNode().log(Level.ERROR, "No files found");
-     return false;
-    }
+//    if(upReq.getFiles() == null)
+//    {
+//     log.getRootNode().log(Level.ERROR, "No files found");
+//     return false;
+//    }
     
     String userName = sess.getUserProfile().getUserName();
     
@@ -65,6 +65,22 @@ public class SubmissionUploader implements UploadCommandListener
     
     sMeta.setSubmissionTime(time);
     sMeta.setModificationTime(time);
+    
+    int nPrms = upReq.getParams().size();
+    
+    for( int part = 1; part <= nPrms; part++ )
+    {
+     String ptIDParam = SubmissionConstants.MODULE_ID+part;
+     
+     String val = upReq.getParams().get(ptIDParam);
+     
+     if( val != null )
+     {
+      DataModuleMeta dmMeta = new DataModuleMeta();
+     }
+     
+    }
+    
     
     int atN=0;
     
