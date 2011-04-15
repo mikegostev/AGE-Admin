@@ -1,6 +1,7 @@
 package uk.ac.ebi.age.admin.client.ui.module.submission;
 
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
+import uk.ac.ebi.age.ext.submission.Status;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -11,6 +12,7 @@ import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
@@ -24,6 +26,7 @@ public class NewDMPanel extends CaptionPanel
  
  private TextArea dsc;
  private FileUpload upload;
+ private Hidden statusInput = new Hidden();
  private RemoveListener remListener;
  private int order;
  
@@ -74,6 +77,12 @@ public class NewDMPanel extends CaptionPanel
   upload.getElement().setAttribute("size", "80");
   layout.setWidget(2, 0, upload);
 
+  statusInput.setName(SubmissionConstants.MODULE_STATUS + n);
+  statusInput.setValue(Status.NEW.name());
+
+  layout.setWidget(4, 0, statusInput);
+
+  
   add(layout);
  }
  
@@ -93,6 +102,7 @@ public class NewDMPanel extends CaptionPanel
   setCaptionText("Data Module: "+order);
   dsc.setName(SubmissionConstants.MODULE_NAME + ndm);
   upload.setName(SubmissionConstants.MODULE_FILE + ndm);
+  statusInput.setName(SubmissionConstants.MODULE_STATUS + ndm);
  }
 }
 

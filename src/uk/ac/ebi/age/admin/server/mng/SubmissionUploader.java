@@ -11,6 +11,7 @@ import uk.ac.ebi.age.admin.server.user.Session;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
 import uk.ac.ebi.age.ext.submission.DataModuleMeta;
 import uk.ac.ebi.age.ext.submission.FileAttachmentMeta;
+import uk.ac.ebi.age.ext.submission.Status;
 import uk.ac.ebi.age.ext.submission.SubmissionMeta;
 import uk.ac.ebi.age.log.Log2JSON;
 import uk.ac.ebi.age.log.LogNode.Level;
@@ -53,11 +54,21 @@ public class SubmissionUploader implements UploadCommandListener
     
     SubmissionMeta sMeta = new SubmissionMeta();
     
-    sMeta.setForUpdate( "true".equals(upReq.getParams().get(SubmissionConstants.SUBMISSON_UPDATE)) );
+    String sbmSts = upReq.getParams().get(SubmissionConstants.SUBMISSON_STATUS);
+    
+    if( sbmSts == null )
+    {
+     log.getRootNode().log(Level.ERROR, "The '"+SubmissionConstants.SUBMISSON_STATUS+"' parameter should be defined");
+     return false;
+    }
+    
+    sMeta.setStatus( Status.valueOf(sbmSts) );
     
     sMeta.setId(upReq.getParams().get(SubmissionConstants.SUBMISSON_ID));
     
+    sMeta.setUpdateDescription( upReq.getParams().get(SubmissionConstants.THE_UPDATE_DESCR) );
     sMeta.setDescription( upReq.getParams().get(SubmissionConstants.SUBMISSON_DESCR) );
+    
     sMeta.setSubmitter( userName );
     sMeta.setModifier( userName );
     
@@ -70,14 +81,62 @@ public class SubmissionUploader implements UploadCommandListener
     
     for( int part = 1; part <= nPrms; part++ )
     {
-     String ptIDParam = SubmissionConstants.MODULE_ID+part;
+     String ptIDParam = SubmissionConstants.MODULE_STATUS+part;
      
      String val = upReq.getParams().get(ptIDParam);
      
      if( val != null )
      {
+      Status blkSts = Status.valueOf(val);
+      
       DataModuleMeta dmMeta = new DataModuleMeta();
+      
+      dmMeta.setStatus( blkSts );
+      
+      dmMeta.setId( upReq.getParams().get(SubmissionConstants.MODULE_ID+part) );
+      
+      if( dmMeta.getId() == null || "on".equals(upReq.getParams().get(SubmissionConstants.MODULE_NAME_UPDATE+part)) )
+       dmMeta.setDescription(upReq.getParams().get(SubmissionConstants.MODULE_NAME+part));
+
+      if( dmMeta.getId() == null || "on".equals(upReq.getParams().get(SubmissionConstants.MODULE_FILE_UPDATE+part)) )
+      {
+       File modFile = upReq.getFiles().get(SubmissionConstants.MODULE_FILE+part);
+       
+       if( modFile == null )
+       {
+        log.getRootNode().log(Level.ERROR,
+         "File for module "+part+" is not found");
+        return false;
+       }
+       
+       ByteArrayOutputStream bais = new ByteArrayOutputStream();
+
+       FileInputStream fis = new FileInputStream(modFile);
+       StreamPump.doPump(fis, bais, false);
+       fis.close();
+
+       bais.close();
+
+       byte[] barr = bais.toByteArray();
+       String enc = "UTF-8";
+
+       if(barr.length >= 2 && (barr[0] == -1 && barr[1] == -2) || (barr[0] == -2 && barr[1] == -1))
+        enc = "UTF-16";
+
+       dmMeta.setText(new String(bais.toByteArray(), enc));
+      }
+
+ 
+//      public static final String MODULE_NAME = "dmName";
+//      public static final String MODULE_FILE = "dmFile";
+//      public static final String MODULE_UPDATE = "dmUpd";
+//      public static final String MODULE_STATUS = "modStatus";
+//      public static final String MODULE_NAME_UPDATE = "dmNameUpdate";
+//      public static final String MODULE_FILE_UPDATE = "dmFileUpdate";
+
+      
      }
+     
      
     }
     

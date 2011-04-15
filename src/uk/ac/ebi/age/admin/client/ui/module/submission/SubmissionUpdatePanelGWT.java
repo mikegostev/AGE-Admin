@@ -5,9 +5,9 @@ import uk.ac.ebi.age.admin.client.ui.module.log.LogTree;
 import uk.ac.ebi.age.admin.client.ui.module.submission.NewDMPanel.RemoveListener;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
-import uk.ac.ebi.age.admin.shared.SubmissionConstants.Status;
 import uk.ac.ebi.age.ext.submission.DataModuleMeta;
 import uk.ac.ebi.age.ext.submission.FileAttachmentMeta;
+import uk.ac.ebi.age.ext.submission.Status;
 import uk.ac.ebi.age.ext.submission.SubmissionMeta;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -80,7 +80,7 @@ public class SubmissionUpdatePanelGWT extends VLayout
   panel.add( new Hidden(Constants.uploadHandlerParameter,SubmissionConstants.SUBMISSON_COMMAND) );
   panel.add( new Hidden(SubmissionConstants.SUBMISSON_KEY,String.valueOf(key) ) );
   panel.add( new Hidden(SubmissionConstants.SUBMISSON_ID, sbmMeta.getId() ) );
-  panel.add( new Hidden(SubmissionConstants.SUBMISSON_UPDATE, "true" ) );
+  panel.add( new Hidden(SubmissionConstants.SUBMISSON_STATUS, Status.UPDATE.name() ) );
   
   FlexTable btPan = new FlexTable();
   btPan.setCellSpacing(6);
@@ -134,7 +134,7 @@ public class SubmissionUpdatePanelGWT extends VLayout
   panel.add(new Label("The update description:"));
 
   updateDescription = new TextArea();
-  updateDescription.setName(SubmissionConstants.UPDATE_DESCR);
+  updateDescription.setName(SubmissionConstants.THE_UPDATE_DESCR);
   updateDescription.setWidth("97%");
   panel.add(updateDescription);
 
@@ -445,10 +445,11 @@ public class SubmissionUpdatePanelGWT extends VLayout
 
    row++;
    
-   statusInput.setName( SubmissionConstants.S);
+   statusInput.setName( SubmissionConstants.MODULE_STATUS+n);
    statusInput.setValue(status.name());
    
    layout.setWidget( row, 0, statusInput );
+   
    
    layout.setWidget(row++, 1, new Label("Description:"));
 
@@ -540,6 +541,8 @@ public class SubmissionUpdatePanelGWT extends VLayout
      status = Status.HOLD;
    }
    
+   statusInput.setValue(status.name());
+
    statusLbl.setText("Status: "+status.name());
    setStylePrimaryName("dmPanel"+status.name());
   }
@@ -571,6 +574,8 @@ public class SubmissionUpdatePanelGWT extends VLayout
   private CheckBox fileCB = new CheckBox();
 
   private CheckBox isGlobal = new CheckBox();
+  
+  private Hidden statusInput = new Hidden();
   
   private int order;
   
@@ -681,6 +686,12 @@ public class SubmissionUpdatePanelGWT extends VLayout
    
    row++;
    
+   statusInput.setName( SubmissionConstants.ATTACHMENT_STATUS+n);
+   statusInput.setValue(status.name());
+   
+   layout.setWidget( row, 0, statusInput );
+
+   
    cellFormatter.setColSpan(row, 1, 4);
    layout.setWidget(row, 1, new Label("Description:"));
 
@@ -770,6 +781,8 @@ public class SubmissionUpdatePanelGWT extends VLayout
      status = Status.HOLD;
    }
    
+   statusInput.setValue(status.name());
+   
    statusLbl.setText("Status: "+status.name());
    setStylePrimaryName("attPanel"+status.name());
   }
@@ -808,6 +821,8 @@ public class SubmissionUpdatePanelGWT extends VLayout
    
    if( upload != null )
     upload.setName(SubmissionConstants.ATTACHMENT_FILE + ndm);
+
+   statusInput.setName( SubmissionConstants.ATTACHMENT_STATUS+ndm);
 
    setCaptionText("Attached file: "+ndm+" ID="+fAtMeta.getId());
   }
