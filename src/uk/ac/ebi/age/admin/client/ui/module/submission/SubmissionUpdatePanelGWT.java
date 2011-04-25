@@ -390,7 +390,7 @@ public class SubmissionUpdatePanelGWT extends VLayout
   
   private Hidden statusInput = new Hidden();
   
-  private Status status = Status.HOLD;
+  private Status status = Status.KEEP;
   
   private int order;
   
@@ -429,7 +429,7 @@ public class SubmissionUpdatePanelGWT extends VLayout
      if( status == Status.DELETE )
      {
       clsBt.setHTML("<img src='images/icons/delete.png'>");
-      status = Status.HOLD;
+      status = Status.KEEP;
      }
      else
      {
@@ -454,12 +454,12 @@ public class SubmissionUpdatePanelGWT extends VLayout
    layout.setWidget(row++, 1, new Label("Description:"));
 
    dsc = new TextArea();
-   dsc.setName(SubmissionConstants.MODULE_NAME + n);
+   dsc.setName(SubmissionConstants.MODULE_DESCRIPTION + n);
    dsc.setValue(dmm.getDescription());
    dsc.setEnabled(false);
    dsc.setWidth("97%");
 
-   dscCB.setName(SubmissionConstants.MODULE_NAME_UPDATE + n);
+   dscCB.setName(SubmissionConstants.MODULE_DESCRIPTION_UPDATE + n);
    dscCB.addClickHandler(new ClickHandler()
    {
     @Override
@@ -538,7 +538,7 @@ public class SubmissionUpdatePanelGWT extends VLayout
     if( dscCB.getValue() || fileCB.getValue() )
      status = Status.UPDATE;
     else
-     status = Status.HOLD;
+     status = Status.KEEP;
    }
    
    statusInput.setValue(status.name());
@@ -581,7 +581,7 @@ public class SubmissionUpdatePanelGWT extends VLayout
   
   private Label statusLbl = new Label();
   
-  private Status status = Status.HOLD;
+  private Status status = Status.KEEP;
 
   private FileAttachmentMeta fAtMeta;
   
@@ -627,7 +627,7 @@ public class SubmissionUpdatePanelGWT extends VLayout
      if(status == Status.DELETE)
      {
       clsBt.setHTML("<img src='images/icons/delete.png'>");
-      status = Status.HOLD;
+      status = Status.KEEP;
      }
      else
      {
@@ -646,7 +646,7 @@ public class SubmissionUpdatePanelGWT extends VLayout
    id = new TextBox();
    id.setValue(fatMeta.getId());
    id.setEnabled(false);
-   id.setName(SubmissionConstants.ATTACHMENT_ID + n);
+   id.setName(SubmissionConstants.ATTACHMENT_NEW_ID + n);
 //   id.setWidth("97%");
 
    idCB.setName(SubmissionConstants.ATTACHMENT_ID_UPDATE + n);
@@ -778,7 +778,7 @@ public class SubmissionUpdatePanelGWT extends VLayout
     if( idCB.getValue() || dscCB.getValue() || fileCB.getValue() || isGlobal.getValue() != fAtMeta.isGlobal() )
      status = Status.UPDATE;
     else
-     status = Status.HOLD;
+     status = Status.KEEP;
    }
    
    statusInput.setValue(status.name());
@@ -807,7 +807,7 @@ public class SubmissionUpdatePanelGWT extends VLayout
   {
    order = ndm;
    
-   origId.setName(SubmissionConstants.ATTACHMENT_ORIG_ID + ndm);
+   origId.setName(SubmissionConstants.ATTACHMENT_NEW_ID + ndm);
    
    id.setName(SubmissionConstants.ATTACHMENT_ID + ndm);
    idCB.setName(SubmissionConstants.ATTACHMENT_ID_UPDATE + ndm);

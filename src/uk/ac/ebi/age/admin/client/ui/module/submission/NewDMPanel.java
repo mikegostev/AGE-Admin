@@ -46,7 +46,7 @@ public class NewDMPanel extends CaptionPanel
   layout.setWidget(0, 0, new Label("Description:"));
 
   dsc = new TextArea();
-  dsc.setName(SubmissionConstants.MODULE_NAME + n);
+  dsc.setName(SubmissionConstants.MODULE_DESCRIPTION + n);
   dsc.setWidth("97%");
 
   cellFormatter.setColSpan(1, 0, 2);
@@ -100,7 +100,7 @@ public class NewDMPanel extends CaptionPanel
  {
   order = ndm;
   setCaptionText("Data Module: "+order);
-  dsc.setName(SubmissionConstants.MODULE_NAME + ndm);
+  dsc.setName(SubmissionConstants.MODULE_DESCRIPTION + ndm);
   upload.setName(SubmissionConstants.MODULE_FILE + ndm);
   statusInput.setName(SubmissionConstants.MODULE_STATUS + ndm);
  }

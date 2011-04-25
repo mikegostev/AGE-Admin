@@ -26,7 +26,7 @@ import uk.ac.ebi.age.ext.submission.SubmissionDBException;
 import uk.ac.ebi.age.ext.submission.SubmissionQuery;
 import uk.ac.ebi.age.ext.submission.SubmissionReport;
 import uk.ac.ebi.age.log.impl.BufferLogger;
-import uk.ac.ebi.age.mng.SubmissionManager;
+import uk.ac.ebi.age.mng.submission.SubmissionManager;
 import uk.ac.ebi.age.model.SemanticModel;
 import uk.ac.ebi.age.service.submission.SubmissionDB;
 import uk.ac.ebi.age.service.submission.impl.H2SubmissionDB;

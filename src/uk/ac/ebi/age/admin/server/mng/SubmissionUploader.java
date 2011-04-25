@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.PrintWriter;
-import java.util.Map;
 
 import uk.ac.ebi.age.admin.server.service.UploadRequest;
 import uk.ac.ebi.age.admin.server.user.Session;
@@ -16,7 +15,9 @@ import uk.ac.ebi.age.ext.submission.SubmissionMeta;
 import uk.ac.ebi.age.log.Log2JSON;
 import uk.ac.ebi.age.log.LogNode.Level;
 import uk.ac.ebi.age.log.impl.BufferLogger;
-import uk.ac.ebi.age.mng.SubmissionManager;
+import uk.ac.ebi.age.mng.submission.AttachmentAux;
+import uk.ac.ebi.age.mng.submission.ModuleAux;
+import uk.ac.ebi.age.mng.submission.SubmissionManager;
 
 import com.pri.util.stream.StreamPump;
 
@@ -44,27 +45,44 @@ public class SubmissionUploader implements UploadCommandListener
 
    try
    {
-//    if(upReq.getFiles() == null)
-//    {
-//     log.getRootNode().log(Level.ERROR, "No files found");
-//     return false;
-//    }
     
     String userName = sess.getUserProfile().getUserName();
     
     SubmissionMeta sMeta = new SubmissionMeta();
     
-    String sbmSts = upReq.getParams().get(SubmissionConstants.SUBMISSON_STATUS);
+    String val = upReq.getParams().get(SubmissionConstants.SUBMISSON_STATUS);
     
-    if( sbmSts == null )
+    if( val == null )
     {
      log.getRootNode().log(Level.ERROR, "The '"+SubmissionConstants.SUBMISSON_STATUS+"' parameter should be defined");
      return false;
     }
     
-    sMeta.setStatus( Status.valueOf(sbmSts) );
+    Status blkSts = null;
+
+    try
+    {
+     blkSts = Status.valueOf(val);
+    }
+    catch (Exception e) 
+    {
+     log.getRootNode().log(Level.ERROR, "Invalid status of submission: '"+val+"'");
+     
+     return false;
+    }
+
+    sMeta.setStatus( blkSts );
     
-    sMeta.setId(upReq.getParams().get(SubmissionConstants.SUBMISSON_ID));
+    val = upReq.getParams().get(SubmissionConstants.SUBMISSON_ID);
+    
+    if( val == null && blkSts != Status.NEW )
+    {
+     log.getRootNode().log(Level.ERROR, "Submission ID is not provided");
+     
+     return false;
+    }
+    
+    sMeta.setId(upReq.getParams().get(val) );
     
     sMeta.setUpdateDescription( upReq.getParams().get(SubmissionConstants.THE_UPDATE_DESCR) );
     sMeta.setDescription( upReq.getParams().get(SubmissionConstants.SUBMISSON_DESCR) );
@@ -79,33 +97,65 @@ public class SubmissionUploader implements UploadCommandListener
     
     int nPrms = upReq.getParams().size();
     
-    for( int part = 1; part <= nPrms; part++ )
+    for( int partNo = 1; partNo <= nPrms; partNo++ )
     {
-     String ptIDParam = SubmissionConstants.MODULE_STATUS+part;
+     String param = SubmissionConstants.MODULE_STATUS+partNo;
      
-     String val = upReq.getParams().get(ptIDParam);
+     val = upReq.getParams().get(param);
      
      if( val != null )
      {
-      Status blkSts = Status.valueOf(val);
+      blkSts = null;
+      
+      try
+      {
+       blkSts = Status.valueOf(val);
+      }
+      catch (Exception e) 
+      {
+       log.getRootNode().log(Level.ERROR, "Invalid status for module "+partNo+": '"+val+"'");
+        return false;
+      }
+      
+      if( blkSts == Status.KEEP )
+       continue;
       
       DataModuleMeta dmMeta = new DataModuleMeta();
+      dmMeta.setSubmissionTime(time);
+      dmMeta.setModificationTime(time);
+      dmMeta.setSubmitter(userName);
+      dmMeta.setModifier(userName);
       
-      dmMeta.setStatus( blkSts );
-      
-      dmMeta.setId( upReq.getParams().get(SubmissionConstants.MODULE_ID+part) );
-      
-      if( dmMeta.getId() == null || "on".equals(upReq.getParams().get(SubmissionConstants.MODULE_NAME_UPDATE+part)) )
-       dmMeta.setDescription(upReq.getParams().get(SubmissionConstants.MODULE_NAME+part));
+      ModuleAux mAux = new ModuleAux();
+      dmMeta.setAux(mAux);
 
-      if( dmMeta.getId() == null || "on".equals(upReq.getParams().get(SubmissionConstants.MODULE_FILE_UPDATE+part)) )
+      mAux.setStatus( blkSts );
+      mAux.setOrder(partNo);
+      
+      sMeta.addDataModule(dmMeta);
+ 
+      val = upReq.getParams().get(SubmissionConstants.MODULE_ID+partNo);
+      
+      if( val == null && blkSts != Status.NEW )
       {
-       File modFile = upReq.getFiles().get(SubmissionConstants.MODULE_FILE+part);
+       log.getRootNode().log(Level.ERROR, "Module "+partNo+". ID is not provided");
+       
+       return false;
+      }
+      
+      dmMeta.setId( val );
+      
+      if( dmMeta.getId() == null || "on".equals(upReq.getParams().get(SubmissionConstants.MODULE_DESCRIPTION_UPDATE+partNo)) )
+       dmMeta.setDescription(upReq.getParams().get(SubmissionConstants.MODULE_DESCRIPTION+partNo));
+
+      if( dmMeta.getId() == null || "on".equals(upReq.getParams().get(SubmissionConstants.MODULE_FILE_UPDATE+partNo)) )
+      {
+       File modFile = upReq.getFiles().get(SubmissionConstants.MODULE_FILE+partNo);
        
        if( modFile == null )
        {
         log.getRootNode().log(Level.ERROR,
-         "File for module "+part+" is not found");
+         "File for module "+partNo+" is not found");
         return false;
        }
        
@@ -126,100 +176,85 @@ public class SubmissionUploader implements UploadCommandListener
        dmMeta.setText(new String(bais.toByteArray(), enc));
       }
 
- 
-//      public static final String MODULE_NAME = "dmName";
-//      public static final String MODULE_FILE = "dmFile";
-//      public static final String MODULE_UPDATE = "dmUpd";
-//      public static final String MODULE_STATUS = "modStatus";
-//      public static final String MODULE_NAME_UPDATE = "dmNameUpdate";
-//      public static final String MODULE_FILE_UPDATE = "dmFileUpdate";
-
-      
+      continue;
      }
      
+     param = SubmissionConstants.ATTACHMENT_STATUS+partNo;
      
-    }
-    
-    
-    int atN=0;
-    
-    for(Map.Entry<String, File> me : upReq.getFiles().entrySet())
-    {
-     String fName = me.getKey();
+     val = upReq.getParams().get(param);
+  
      
-     if(  fName.startsWith(SubmissionConstants.MODULE_FILE) )
+     if( val != null )
      {
-      // log.getRootNode().log(Level.ERROR,
-      // "Invalid name of module file field: '"+fName+"'. Must start with '"+SubmissionConstants.MODULE_FILE+"'");
-      // return false;
-
-      String dmRId = fName.substring(SubmissionConstants.MODULE_FILE.length());
-
-      String dmDesc = upReq.getParams().get(SubmissionConstants.MODULE_NAME + dmRId);
-
-      DataModuleMeta dmMeta = new DataModuleMeta();
-
-      dmMeta.setId(upReq.getParams().get(SubmissionConstants.MODULE_ID + dmRId));
-      dmMeta.setForUpdate("true".equals(upReq.getParams().get(SubmissionConstants.MODULE_UPDATE + dmRId)));
+      blkSts = null;
       
-      dmMeta.setDescription(dmDesc);
-
-      dmMeta.setSubmissionTime(time);
-      dmMeta.setModificationTime(time);
-      dmMeta.setSubmitter(userName);
-      dmMeta.setModifier(userName);
-
-      sMeta.addDataModule(dmMeta);
-
-      ByteArrayOutputStream bais = new ByteArrayOutputStream();
-
-      FileInputStream fis = new FileInputStream(me.getValue());
-      StreamPump.doPump(fis, bais, false);
-      fis.close();
-
-      bais.close();
-
-      byte[] barr = bais.toByteArray();
-      String enc = "UTF-8";
-
-      if(barr.length >= 2 && (barr[0] == -1 && barr[1] == -2) || (barr[0] == -2 && barr[1] == -1))
-       enc = "UTF-16";
-
-      dmMeta.setText(new String(bais.toByteArray(), enc));
-     }
-     else if( fName.startsWith(SubmissionConstants.ATTACHMENT_FILE) )
-     {
-      atN++;
-      
-      String atRId = fName.substring(SubmissionConstants.ATTACHMENT_FILE.length());
-      
-      String atID = upReq.getParams().get(SubmissionConstants.ATTACHMENT_ID+atRId);
-      
-      if( atID == null )
+      try
+      {
+       blkSts = Status.valueOf(val);
+      }
+      catch (Exception e) 
       {
        log.getRootNode().log(Level.ERROR,
-        "Attachment file "+atN+" has no ID so it can't be referenced");
+         "Invalid status for attachment "+partNo+": '"+val+"'");
+        return false;
+      }
+
+      if( blkSts == Status.KEEP )
+       continue;
+
+      
+      FileAttachmentMeta fatt = new FileAttachmentMeta();
+      fatt.setSubmissionTime(time);
+      fatt.setModificationTime(time);
+      
+      fatt.setSubmitter( userName );
+      fatt.setModifier( userName );
+
+      sMeta.addAttachment(fatt);
+      
+      AttachmentAux atAux = new AttachmentAux();
+      fatt.setAux(atAux);
+      atAux.setStatus(blkSts);
+      
+      
+      val = upReq.getParams().get(SubmissionConstants.ATTACHMENT_ID+partNo);
+      
+      if( val == null && blkSts != Status.NEW )
+      {
+       log.getRootNode().log(Level.ERROR, "Attachment "+partNo+". ID is not provided");
+       
        return false;
       }
       
-      FileAttachmentMeta fAtMeta = new FileAttachmentMeta();
+      fatt.setId(val);
       
-      fAtMeta.setOriginalId(atID);
-      fAtMeta.setDescription(upReq.getParams().get(SubmissionConstants.ATTACHMENT_DESC+atRId));
+      val = upReq.getParams().get(SubmissionConstants.ATTACHMENT_GLOBAL+partNo);
       
-      fAtMeta.setSubmissionTime(time);
-      fAtMeta.setModificationTime(time);
+      fatt.setGlobal(val != null && "on".equals(val));
       
-      fAtMeta.setSubmitter( userName );
-      fAtMeta.setModifier( userName );
       
-      String glbPrm = upReq.getParams().get(SubmissionConstants.ATTACHMENT_GLOBAL+atRId);
-      fAtMeta.setGlobal( glbPrm != null && "on".equals(glbPrm) );
-      fAtMeta.setAux(me.getValue());
+      val = upReq.getParams().get(SubmissionConstants.ATTACHMENT_ID_UPDATE+partNo);
       
-      sMeta.addAttachment( fAtMeta );
-     }
+      if( val != null && "on".equals(val) )
+       atAux.setNewId( upReq.getParams().get(SubmissionConstants.ATTACHMENT_NEW_ID+partNo) );
+      
+      
+      if( fatt.getId() == null || (val != null && "on".equals( upReq.getParams().get(SubmissionConstants.ATTACHMENT_DESC_UPDATE+partNo)) ) )
+       fatt.setDescription( upReq.getParams().get(SubmissionConstants.ATTACHMENT_DESC+partNo) );
 
+      if( fatt.getId() == null || (val != null && "on".equals( upReq.getParams().get(SubmissionConstants.ATTACHMENT_FILE_UPDATE+partNo)) ) )
+      {
+       File attFile = upReq.getFiles().get(SubmissionConstants.ATTACHMENT_FILE+partNo);
+       
+       if( attFile == null )
+       {
+        log.getRootNode().log(Level.ERROR,  "File for attachment "+partNo+" is not found");
+        return false;
+       }
+
+       atAux.setFile(attFile);
+      }
+     }
     }
 
     sbmManager.storeSubmission(sMeta, sess.getUserProfile(), log.getRootNode());

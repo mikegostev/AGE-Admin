@@ -15,14 +15,14 @@ public class SubmissionConstants
  public static final String SUBMISSON_DESCR_UPDATE = "submDescUpdate";
  
  public static final String MODULE_ID = "dmId";
- public static final String MODULE_NAME = "dmName";
+ public static final String MODULE_DESCRIPTION = "dmName";
  public static final String MODULE_FILE = "dmFile";
  public static final String MODULE_STATUS = "modStatus";
- public static final String MODULE_NAME_UPDATE = "dmNameUpdate";
+ public static final String MODULE_DESCRIPTION_UPDATE = "dmNameUpdate";
  public static final String MODULE_FILE_UPDATE = "dmFileUpdate";
 
  public static final String ATTACHMENT_ID = "attachId";
- public static final String ATTACHMENT_ORIG_ID = "attachOrigId";
+ public static final String ATTACHMENT_NEW_ID = "attachNewId";
  public static final String ATTACHMENT_ID_UPDATE = "attachIdUpdate";
  public static final String ATTACHMENT_DESC = "attachDesc";
  public static final String ATTACHMENT_DESC_UPDATE = "attachDescUpdate";
