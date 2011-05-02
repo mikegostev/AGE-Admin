@@ -363,7 +363,7 @@ public class SubmissionUpdatePanelGWT extends VLayout
     +Constants.downloadHandlerParameter+"="+Constants.documentRequestSubject
     +"&"+Constants.clusterIdParameter+"="+sMeta.getId()
     +"&"+Constants.documentIdParameter+"="+dmm.getId()
-    +"&"+Constants.versionParameter+"="+dmm.getModificationTime()
+    +"&"+Constants.versionParameter+"="+dmm.getDocVersion()
     +"'>Module file</a>");
  }
  
@@ -373,7 +373,7 @@ public class SubmissionUpdatePanelGWT extends VLayout
     +Constants.downloadHandlerParameter+"="+Constants.attachmentRequestSubject
     +"&"+Constants.clusterIdParameter+"="+sMeta.getId()
     +"&"+Constants.fileIdParameter+"="+atm.getId()
-    +"&"+Constants.versionParameter+"="+atm.getModificationTime()
+    +"&"+Constants.versionParameter+"="+atm.getFileVersion()
     +"'>"+atm.getId()+"</a>");
  }
 

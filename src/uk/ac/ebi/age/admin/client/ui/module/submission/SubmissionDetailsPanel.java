@@ -70,7 +70,7 @@ public class SubmissionDetailsPanel extends VLayout
       +Constants.downloadHandlerParameter+"="+Constants.documentRequestSubject
       +"&"+Constants.clusterIdParameter+"="+simp.getId()
       +"&"+Constants.documentIdParameter+"="+dmImp.getId()
-      +"&"+Constants.versionParameter+"="+dmImp.getModificationTime()
+      +"&"+Constants.versionParameter+"="+dmImp.getDocVersion()
       +"'>"+dmImp.getId()+"</a>"
       );
 
@@ -112,7 +112,7 @@ public class SubmissionDetailsPanel extends VLayout
       +Constants.downloadHandlerParameter+"="+Constants.attachmentRequestSubject
       +"&"+Constants.clusterIdParameter+"="+simp.getId()
       +"&"+Constants.fileIdParameter+"="+dmImp.getId()
-      +"&"+Constants.versionParameter+"="+dmImp.getModificationTime()
+      +"&"+Constants.versionParameter+"="+dmImp.getFileVersion()
       +"'>"+dmImp.getId()+"</a>"
       );
 

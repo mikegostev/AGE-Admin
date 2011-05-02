@@ -9,6 +9,7 @@ import uk.ac.ebi.age.admin.server.service.UploadRequest;
 import uk.ac.ebi.age.admin.server.user.Session;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
 import uk.ac.ebi.age.ext.submission.DataModuleMeta;
+import uk.ac.ebi.age.ext.submission.Factory;
 import uk.ac.ebi.age.ext.submission.FileAttachmentMeta;
 import uk.ac.ebi.age.ext.submission.Status;
 import uk.ac.ebi.age.ext.submission.SubmissionMeta;
@@ -48,7 +49,7 @@ public class SubmissionUploader implements UploadCommandListener
     
     String userName = sess.getUserProfile().getUserName();
     
-    SubmissionMeta sMeta = new SubmissionMeta();
+    SubmissionMeta sMeta = Factory.createSubmissionMeta();
     
     String val = upReq.getParams().get(SubmissionConstants.SUBMISSON_STATUS);
     
@@ -82,9 +83,10 @@ public class SubmissionUploader implements UploadCommandListener
      return false;
     }
     
+    String updateDescr = upReq.getParams().get(SubmissionConstants.THE_UPDATE_DESCR);
+    
     sMeta.setId(upReq.getParams().get(val) );
     
-    sMeta.setUpdateDescription( upReq.getParams().get(SubmissionConstants.THE_UPDATE_DESCR) );
     sMeta.setDescription( upReq.getParams().get(SubmissionConstants.SUBMISSON_DESCR) );
     
     sMeta.setSubmitter( userName );
@@ -120,7 +122,7 @@ public class SubmissionUploader implements UploadCommandListener
       if( blkSts == Status.KEEP )
        continue;
       
-      DataModuleMeta dmMeta = new DataModuleMeta();
+      DataModuleMeta dmMeta = Factory.createDataModuleMeta();
       dmMeta.setSubmissionTime(time);
       dmMeta.setModificationTime(time);
       dmMeta.setSubmitter(userName);
@@ -203,7 +205,7 @@ public class SubmissionUploader implements UploadCommandListener
        continue;
 
       
-      FileAttachmentMeta fatt = new FileAttachmentMeta();
+      FileAttachmentMeta fatt = Factory.createFileAttachmentMeta();
       fatt.setSubmissionTime(time);
       fatt.setModificationTime(time);
       
@@ -257,7 +259,7 @@ public class SubmissionUploader implements UploadCommandListener
      }
     }
 
-    sbmManager.storeSubmission(sMeta, sess.getUserProfile(), log.getRootNode());
+    sbmManager.storeSubmission(sMeta, updateDescr, sess.getUserProfile(), log.getRootNode());
     
 //    if(  SubmissionManager.getInstance()
 //      .storeSubmission(sMeta, sess.getUserProfile(), admin.getStorageAdmin(), log.getRootNode()) )
