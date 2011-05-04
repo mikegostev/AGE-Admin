@@ -147,6 +147,22 @@ public class SubmissionDetailsPanel extends VLayout
   
   btLay.addMember(b);
   
+  if( simp.getSubmissionTime() != simp.getModificationTime() )
+  {
+   Button hb = new Button("History");
+   
+   hb.addClickHandler(new ClickHandler()
+   {
+    @Override
+    public void onClick(ClickEvent event)
+    {
+     PlacingManager.placeWidget(new SubmissionHistoryPanel( simp.getId() ), "Submission "+simp.getId()+" history");
+    }
+   });
+   
+   btLay.addMember(hb);
+  }
+   
   addMember(btLay);
  }
 

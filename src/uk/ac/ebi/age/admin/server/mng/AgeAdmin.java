@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.List;
 
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
@@ -22,6 +23,7 @@ import uk.ac.ebi.age.admin.shared.ModelPath;
 import uk.ac.ebi.age.admin.shared.StoreNode;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
+import uk.ac.ebi.age.ext.submission.HistoryEntry;
 import uk.ac.ebi.age.ext.submission.SubmissionDBException;
 import uk.ac.ebi.age.ext.submission.SubmissionQuery;
 import uk.ac.ebi.age.ext.submission.SubmissionReport;
@@ -310,6 +312,15 @@ public class AgeAdmin
   // TODO check permission to list all submissions
   
   return submissionDB.getSubmissions(q);
+ }
+
+
+
+ public List<HistoryEntry> getSubmissionHistory(String sbmId, Session session) throws SubmissionDBException
+ {
+  // TODO check permission to list all submissions
+
+  return submissionDB.getHistory(sbmId);
  }
 
 // public void storeSubmission(SubmissionMeta sMeta)

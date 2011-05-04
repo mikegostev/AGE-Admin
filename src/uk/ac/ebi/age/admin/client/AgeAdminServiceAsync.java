@@ -1,8 +1,11 @@
 package uk.ac.ebi.age.admin.client;
 
+import java.util.List;
+
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
 import uk.ac.ebi.age.admin.shared.ModelPath;
+import uk.ac.ebi.age.ext.submission.HistoryEntry;
 import uk.ac.ebi.age.ext.submission.SubmissionQuery;
 import uk.ac.ebi.age.ext.submission.SubmissionReport;
 
@@ -24,5 +27,7 @@ public interface AgeAdminServiceAsync
  void installModel(ModelPath modelPath, AsyncCallback<Void> asyncCallback);
 
  void getSubmissions(SubmissionQuery q, AsyncCallback<SubmissionReport> asyncCallback);
+
+ void getSubmissionHistory(String sbmId, AsyncCallback<List<HistoryEntry>> callback);
 
 }

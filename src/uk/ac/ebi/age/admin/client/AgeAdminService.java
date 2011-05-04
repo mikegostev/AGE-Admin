@@ -1,10 +1,13 @@
 package uk.ac.ebi.age.admin.client;
 
+import java.util.List;
+
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
 import uk.ac.ebi.age.admin.client.model.ModelStorageException;
 import uk.ac.ebi.age.admin.shared.ModelPath;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
+import uk.ac.ebi.age.ext.submission.HistoryEntry;
 import uk.ac.ebi.age.ext.submission.SubmissionDBException;
 import uk.ac.ebi.age.ext.submission.SubmissionQuery;
 import uk.ac.ebi.age.ext.submission.SubmissionReport;
@@ -44,4 +47,6 @@ public interface AgeAdminService extends RemoteService
  void installModel(ModelPath modelPath) throws UserAuthException, ModelStorageException;
 
  SubmissionReport getSubmissions(SubmissionQuery q) throws UserAuthException, SubmissionDBException;
+
+ List<HistoryEntry> getSubmissionHistory(String sbmId) throws UserAuthException, SubmissionDBException;
 }
