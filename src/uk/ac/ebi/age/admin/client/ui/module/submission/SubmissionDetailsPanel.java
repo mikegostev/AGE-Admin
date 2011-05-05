@@ -37,7 +37,7 @@ public class SubmissionDetailsPanel extends VLayout
   DetailViewer dv = new DetailViewer();
   dv.setWidth("90%");
   dv.setDataSource(ds);
-  dv.setStyleName("groupDetails");
+  dv.setStyleName("submissionDetails");
   
   dv.setAutoFetchData(true);
 
@@ -91,29 +91,30 @@ public class SubmissionDetailsPanel extends VLayout
   
   if( simp.getAttachments() != null )
   {
-   for(FileAttachmentMeta dmImp : simp.getAttachments())
+   for(FileAttachmentMeta faImp : simp.getAttachments())
    {
     DataSource dmds = SubmissionFields.createAttachmentDataSource();
     dmds.setClientOnly(true);
 
     ListGridRecord rec = new ListGridRecord();
 
-    rec.setAttribute(SubmissionFields.FILE_ID.name(), dmImp.getId());
+    rec.setAttribute(SubmissionFields.FILE_ID.name(), faImp.getId());
 
-    rec.setAttribute(SubmissionFields.COMM.name(), dmImp.getDescription());
-    rec.setAttribute(SubmissionFields.CRTR.name(), dmImp.getSubmitter());
-    rec.setAttribute(SubmissionFields.MDFR.name(), dmImp.getModifier());
+    rec.setAttribute(SubmissionFields.COMM.name(), faImp.getDescription());
+    rec.setAttribute(SubmissionFields.VIS.name(), faImp.isGlobal()?"Global":"Cluster");
+    rec.setAttribute(SubmissionFields.CRTR.name(), faImp.getSubmitter());
+    rec.setAttribute(SubmissionFields.MDFR.name(), faImp.getModifier());
     rec.setAttribute(SubmissionFields.CTIME.name(),
-      DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format(new Date(dmImp.getSubmissionTime())));
+      DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format(new Date(faImp.getSubmissionTime())));
     rec.setAttribute(SubmissionFields.MTIME.name(),
-      DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format(new Date(dmImp.getModificationTime())));
+      DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format(new Date(faImp.getModificationTime())));
 //    rec.setAttribute(SubmissionFields.SRC_FILE.name(), dmImp.getId());
     rec.setAttribute(SubmissionFields.SRC_FILE.name(), "<a target='_blank' href='download?"
       +Constants.downloadHandlerParameter+"="+Constants.attachmentRequestSubject
       +"&"+Constants.clusterIdParameter+"="+simp.getId()
-      +"&"+Constants.fileIdParameter+"="+dmImp.getId()
-      +"&"+Constants.versionParameter+"="+dmImp.getFileVersion()
-      +"'>"+dmImp.getId()+"</a>"
+      +"&"+Constants.fileIdParameter+"="+faImp.getId()
+      +"&"+Constants.versionParameter+"="+faImp.getFileVersion()
+      +"'>"+faImp.getId()+"</a>"
       );
 
     dmds.addData(rec);

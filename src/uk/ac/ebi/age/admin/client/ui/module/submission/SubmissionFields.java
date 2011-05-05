@@ -14,7 +14,8 @@ public enum SubmissionFields
  MTIME("Modified"),
  CRTR("Created by"),
  MDFR("Modified by"),
- COMM("Description");
+ COMM("Description"), 
+ VIS("Visibilty");
  
  SubmissionFields(String s)
  {
@@ -64,6 +65,7 @@ public enum SubmissionFields
   
   ds.addField(new DataSourceTextField(SubmissionFields.FILE_ID.name(), SubmissionFields.FILE_ID.title()));
   ds.addField(new DataSourceTextField(SubmissionFields.COMM.name(), SubmissionFields.COMM.title()));
+  ds.addField(new DataSourceTextField(SubmissionFields.VIS.name(), SubmissionFields.VIS.title()));
   ds.addField(new DataSourceTextField(SubmissionFields.CRTR.name(), SubmissionFields.CRTR.title()));
   ds.addField(new DataSourceTextField(SubmissionFields.MDFR.name(), SubmissionFields.MDFR.title()));
   ds.addField(new DataSourceDateField(SubmissionFields.CTIME.name(), SubmissionFields.CTIME.title()));
