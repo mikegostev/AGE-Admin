@@ -5,6 +5,7 @@ import uk.ac.ebi.age.admin.client.ui.module.log.LogTree;
 import uk.ac.ebi.age.admin.client.ui.module.submission.NewDMPanel.RemoveListener;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
+import uk.ac.ebi.age.ext.submission.Status;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
@@ -63,6 +64,7 @@ public class SubmissionPreparePanelGWT extends VLayout
 
   panel.add( new Hidden(Constants.uploadHandlerParameter,SubmissionConstants.SUBMISSON_COMMAND) );
   panel.add( new Hidden(SubmissionConstants.SUBMISSON_KEY,String.valueOf(key) ) );
+  panel.add( new Hidden(SubmissionConstants.SUBMISSON_STATUS, Status.NEW.name() ) );
   
   FlexTable btPan = new FlexTable();
   btPan.setCellSpacing(6);

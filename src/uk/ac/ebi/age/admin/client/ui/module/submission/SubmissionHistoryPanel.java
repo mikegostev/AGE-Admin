@@ -9,7 +9,6 @@ import uk.ac.ebi.age.ext.submission.HistoryEntry;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.types.ExpansionMode;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.grid.ListGrid;
@@ -30,10 +29,11 @@ public class SubmissionHistoryPanel extends VLayout
   setMargin(5);
   
   setShowEdges(true);
-  setEdgeSize(4);
+  setEdgeSize(6);
 //  setEdgeImage("gnframe.gif");
   setEdgeMarginSize(10);
   
+  resultGrid.setHeight100();
   resultGrid.setShowAllRecords(true);  
   resultGrid.setWrapCells(true);
   resultGrid.setFixedRecordHeights(false);
@@ -59,7 +59,7 @@ public class SubmissionHistoryPanel extends VLayout
 //  idField.setWidth(200);
      
   resultGrid.setFields(mtimeField,mdfrField, descField );
-  resultGrid.setExpansionMode(ExpansionMode.DETAIL_FIELD);
+//  resultGrid.setExpansionMode(ExpansionMode.DETAIL_FIELD);
   
   addMember(resultGrid);
   

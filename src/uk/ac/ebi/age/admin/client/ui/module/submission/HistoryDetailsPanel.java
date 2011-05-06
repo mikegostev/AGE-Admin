@@ -35,7 +35,7 @@ public class HistoryDetailsPanel extends VLayout
   {
    rec.setAttribute(HistoryFields.COMM.name(), "&#8730;" );
    
-   ds.addData( rec );
+//   ds.addData( rec );
 
    rec = new ListGridRecord();
   }

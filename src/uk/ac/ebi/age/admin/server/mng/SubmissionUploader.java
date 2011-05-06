@@ -85,7 +85,7 @@ public class SubmissionUploader implements UploadCommandListener
     
     String updateDescr = upReq.getParams().get(SubmissionConstants.THE_UPDATE_DESCR);
     
-    sMeta.setId(upReq.getParams().get(val) );
+    sMeta.setId(val);
     
     sMeta.setDescription( upReq.getParams().get(SubmissionConstants.SUBMISSON_DESCR) );
     
