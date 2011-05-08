@@ -50,8 +50,8 @@ public enum HistoryFields
   
   ds.addField(new DataSourceTextField(SUBM_ID.name(), SUBM_ID.title()));
   ds.addField(new DataSourceTextField(COMM.name(), COMM.title()));
-  ds.addField(new DataSourceTextField(CRTR.name(), MDFR.title()));
-  ds.addField(new DataSourceDateField(CTIME.name(), MTIME.title()));
+  ds.addField(new DataSourceTextField(CRTR.name(), CRTR.title()));
+  ds.addField(new DataSourceDateField(CTIME.name(), CTIME.title()));
   ds.addField(new DataSourceTextField(MDFR.name(), MDFR.title()));
   ds.addField(new DataSourceDateField(MTIME.name(), MTIME.title()));
   
@@ -65,8 +65,8 @@ public enum HistoryFields
   ds.addField(new DataSourceTextField(STS.name(), STS.title()));
   ds.addField(new DataSourceTextField(MOD_ID.name(), MOD_ID.title()));
   ds.addField(new DataSourceTextField(COMM.name(), COMM.title()));
-  ds.addField(new DataSourceTextField(CRTR.name(), MDFR.title()));
-  ds.addField(new DataSourceDateField(CTIME.name(), MTIME.title()));
+  ds.addField(new DataSourceTextField(CRTR.name(), CRTR.title()));
+  ds.addField(new DataSourceDateField(CTIME.name(), CTIME.title()));
   ds.addField(new DataSourceTextField(MDFR.name(), MDFR.title()));
   ds.addField(new DataSourceDateField(MTIME.name(), MTIME.title()));
   ds.addField(new DataSourceTextField(SRC_FILE.name(), SRC_FILE.title()));

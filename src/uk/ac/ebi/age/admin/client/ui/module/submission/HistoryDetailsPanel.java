@@ -11,6 +11,11 @@ import uk.ac.ebi.age.ext.submission.SubmissionDiff;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.fields.DataSourceTextField;
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.viewer.DetailViewer;
@@ -31,13 +36,20 @@ public class HistoryDetailsPanel extends VLayout
 
   SubmissionDiff sDiff = hEnt.getDiff();
 
+  DetailViewer dv = new DetailViewer();
+  dv.setWidth("90%");
+  dv.setDataSource(ds);
+  dv.setStyleName("groupDetails");
+  
+  dv.setAutoFetchData(true);
+  dv.setRecordsPerBlock(2);
+  
+  ListGridRecord chgRec = null;
+  
   if( sDiff.isDescriptionChanged() )
   {
-   rec.setAttribute(HistoryFields.COMM.name(), "&#8730;" );
-   
-//   ds.addData( rec );
-
-   rec = new ListGridRecord();
+   chgRec = new ListGridRecord();
+   chgRec.setAttribute(HistoryFields.COMM.name(), "CHANGED" );
   }
   
   
@@ -51,14 +63,11 @@ public class HistoryDetailsPanel extends VLayout
   rec.setAttribute(HistoryFields.MDFR.name(), sDiff.getModifier() );
   
   
+  if( chgRec != null )
+   ds.addData( chgRec );
   ds.addData( rec );
   
-  DetailViewer dv = new DetailViewer();
-  dv.setWidth("90%");
-  dv.setDataSource(ds);
-  dv.setStyleName("groupDetails");
-  
-  dv.setAutoFetchData(true);
+
 
   addMember(dv);
   
@@ -80,7 +89,7 @@ public class HistoryDetailsPanel extends VLayout
      if( dmd.isDataChanged()  )
       rec.setAttribute(HistoryFields.SRC_FILE.name(), "&#8730;" );
      
-     ds.addData( rec );
+//     ds.addData( rec );
 
      rec = new ListGridRecord();
     }
@@ -114,6 +123,10 @@ public class HistoryDetailsPanel extends VLayout
     dv.setAutoFetchData(true);
 
     addMember(dv);
+    
+    ModuleDetails mdd = new ModuleDetails(dmd, sDiff.getId());
+    mdd.setWidth("70%");
+    addMember( mdd );
    }
   }
   
@@ -177,7 +190,7 @@ public class HistoryDetailsPanel extends VLayout
   }
  }
 
- private String getStatusDesc(Status status)
+ private static String getStatusDesc(Status status)
  {
   switch(status)
   {
@@ -194,4 +207,147 @@ public class HistoryDetailsPanel extends VLayout
   return "Unknown";
  }
 
+ private static class ModuleDetails extends ListGrid
+ {
+  private DataModuleDiff modDiff;
+  
+  ModuleDetails( DataModuleDiff dmd, String sbmId )
+  {
+   setShowAllRecords(true);  
+   setWrapCells(true);
+   setFixedRecordHeights(false);
+   setCellHeight(20);
+   
+   setAutoFetchData(true);
+   setShowCustomScrollbars(false);
+   
+   setBodyOverflow(Overflow.VISIBLE);
+   setOverflow(Overflow.VISIBLE);
+   
+   setLeaveScrollbarGap(false);
+
+   setShowRollOver(false);
+   setShowSelectedStyle(false);
+   
+   setStyleName("propViewer");
+   
+   modDiff = dmd;
+   
+   DataSource ds = new DataSource();
+   
+   ds.setClientOnly(true);
+   
+   ds.addField(new DataSourceTextField("name", "name"));
+   ds.addField(new DataSourceTextField("value", "value"));
+   ds.addField(new DataSourceTextField("changed", "changed"));
+
+   setDataSource(ds);
+   setShowHeader(false);
+
+   ListGridField nmField = new ListGridField("name",100);
+   nmField.setAutoFitWidth(true);
+   nmField.setBaseStyle("dataModulePropName");
+   nmField.setAlign(Alignment.RIGHT);
+  
+   ListGridField valField = new ListGridField("value");
+   valField.setBaseStyle("propValue");
+  
+   ListGridField chgField = new ListGridField("changed",25);
+   chgField.setBaseStyle("propChanged");
+
+   setFields(nmField,valField,chgField);
+   
+   ListGridRecord rec = new ListGridRecord();
+   
+   rec.setAttribute( "name", HistoryFields.STS.title()+":" );
+   rec.setAttribute( "value", getStatusDesc( dmd.getStatus() ) );
+   rec.setAttribute( "changed", "" );
+
+   addData(rec);
+
+   rec = new ListGridRecord();
+   
+   rec.setAttribute( "name", HistoryFields.MOD_ID.title()+":" );
+   rec.setAttribute( "value", dmd.getId() );
+   rec.setAttribute( "changed", "" );
+
+   addData(rec);
+
+   rec = new ListGridRecord();
+   
+   rec.setAttribute( "name", HistoryFields.COMM.title()+":" );
+   rec.setAttribute( "value", dmd.getDescription() );
+   rec.setAttribute( "changed", dmd.isMetaChanged()?"&#8730;":"" );
+
+   addData(rec);
+
+   rec = new ListGridRecord();
+   
+   rec.setAttribute( "name", HistoryFields.CTIME.title()+":" );
+   rec.setAttribute( "value", DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format(new Date(dmd.getCreationTime())) );
+   rec.setAttribute( "changed", "" );
+
+   addData(rec);
+
+   rec = new ListGridRecord();
+   
+   rec.setAttribute( "name", HistoryFields.MTIME.title()+":" );
+   rec.setAttribute( "value", DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format(new Date(dmd.getModificationTime())) );
+   rec.setAttribute( "changed", "" );
+
+   addData(rec);
+
+   rec = new ListGridRecord();
+   
+   rec.setAttribute( "name", HistoryFields.CRTR.title()+":" );
+   rec.setAttribute( "value", dmd.getCreator() );
+   rec.setAttribute( "changed", "" );
+
+   addData(rec);
+
+   rec = new ListGridRecord();
+   
+   rec.setAttribute( "name", HistoryFields.MDFR.title()+":" );
+   rec.setAttribute( "value", dmd.getCreator() );
+   rec.setAttribute( "changed", "" );
+
+   addData(rec);
+   
+   rec = new ListGridRecord();
+   
+   String fileRef = "<a target='_blank' href='download?"
+    +Constants.downloadHandlerParameter+"="+Constants.documentRequestSubject
+    +"&"+Constants.clusterIdParameter+"="+sbmId
+    +"&"+Constants.documentIdParameter+"="+dmd.getId()
+    +"&"+Constants.versionParameter+"="+dmd.getNewDocumentVersion()
+    +"'>"+dmd.getId()+"</a>" ;
+   
+   if( dmd.isDataChanged() )
+   {
+    fileRef += " (<a target='_blank' href='download?"
+     +Constants.downloadHandlerParameter+"="+Constants.documentRequestSubject
+     +"&"+Constants.clusterIdParameter+"="+sbmId
+     +"&"+Constants.documentIdParameter+"="+dmd.getId()
+     +"&"+Constants.versionParameter+"="+dmd.getOldDocumentVersion()
+     +"'>was</a>)" ;
+   }
+   
+   rec.setAttribute( "name", HistoryFields.SRC_FILE.title()+":" );
+   rec.setAttribute( "value", fileRef);
+   rec.setAttribute( "changed", dmd.isDataChanged()?"&#8730;":"" );
+
+   addData(rec);
+
+  }
+  
+  protected String getCellStyle(ListGridRecord record,
+    int rowNum,
+    int colNum)
+  {
+   if( colNum != 0 && ( ( rowNum == 2 && modDiff.isMetaChanged() ) || ( rowNum == 7 && modDiff.isDataChanged() )  ) )
+    return "changedProperty&#32;"+super.getCellStyle(record,rowNum,colNum);
+   else
+    return super.getCellStyle(record,rowNum,colNum);
+  }
+ }
 }
