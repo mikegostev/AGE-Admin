@@ -106,9 +106,11 @@ public class SubmissionUpdatePanelGWT extends VLayout
    {
     NewFilePanel fp = new NewFilePanel(n++, rmListener);
     
-    fp.setStylePrimaryName("dmPanelNEW");
+    fp.setStylePrimaryName("attPanelNEW");
     
     panel.insert(fp, panel.getWidgetCount()-1);
+
+    wc.adjustForContent(true);
    }
   });
   btPan.setWidget(0, 0, addBt);
@@ -118,11 +120,11 @@ public class SubmissionUpdatePanelGWT extends VLayout
   {
    public void onClick(com.google.gwt.event.dom.client.ClickEvent event)
    {
-    NewFilePanel atp = new NewFilePanel(n++, rmListener);
+    NewDMPanel atp = new NewDMPanel(n++, rmListener);
     
-    atp.setStylePrimaryName("attPanelNEW");
+    atp.setStylePrimaryName("dmPanelNEW");
 
-    panel.insert(atp, nMods+6);
+    panel.insert(atp, nMods+7);
     nMods++;
     wc.adjustForContent(true);
     
@@ -402,8 +404,6 @@ public class SubmissionUpdatePanelGWT extends VLayout
    setWidth("auto");
    setCaptionText("Data Module: "+n+" ID="+dmm.getId());
 
-   updateStatus();
-   
    int row=0;
    
    final FlexTable layout = new FlexTable();
@@ -524,6 +524,9 @@ public class SubmissionUpdatePanelGWT extends VLayout
 //   layout.setWidget(3, 0, upload);
 
    add(layout);
+   
+   updateStatus();
+   
   }
   
   public boolean isFileUpdated()
@@ -598,7 +601,6 @@ public class SubmissionUpdatePanelGWT extends VLayout
    setCaptionText("Attached file: "+n+" ID="+fatMeta.getId());
 
    
-   updateStatus();
 
    int row=0;
    
@@ -764,6 +766,9 @@ public class SubmissionUpdatePanelGWT extends VLayout
    layout.setWidget(row, 1, createAttachmentLink(sMeta, fatMeta));
 
    add(layout);
+   
+   updateStatus();
+
   }
   
   public boolean isFileUpdated()
@@ -775,7 +780,7 @@ public class SubmissionUpdatePanelGWT extends VLayout
   {
    if( status != Status.DELETE )
    {
-    if( idCB.getValue() || dscCB.getValue() || fileCB.getValue() || isGlobal.getValue() != fAtMeta.isGlobal() )
+    if( idCB.getValue() || dscCB.getValue() || fileCB.getValue() || ( isGlobal.getValue() != fAtMeta.isGlobal() ) )
      status = Status.UPDATE;
     else
      status = Status.KEEP;
@@ -807,9 +812,9 @@ public class SubmissionUpdatePanelGWT extends VLayout
   {
    order = ndm;
    
-   origId.setName(SubmissionConstants.ATTACHMENT_NEW_ID + ndm);
+   origId.setName(SubmissionConstants.ATTACHMENT_ID + ndm);
    
-   id.setName(SubmissionConstants.ATTACHMENT_ID + ndm);
+   id.setName(SubmissionConstants.ATTACHMENT_NEW_ID + ndm);
    idCB.setName(SubmissionConstants.ATTACHMENT_ID_UPDATE + ndm);
 
    isGlobal.setName(SubmissionConstants.ATTACHMENT_GLOBAL + ndm);

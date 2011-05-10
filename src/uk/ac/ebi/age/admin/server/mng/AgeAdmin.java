@@ -323,6 +323,15 @@ public class AgeAdmin
   return submissionDB.getHistory(sbmId);
  }
 
+
+
+ public void deleteSubmission(String id, Session userSession) throws SubmissionDBException
+ {
+  // TODO check permission to list all submissions
+
+  submissionDB.removeSubmission(id);
+ }
+
 // public void storeSubmission(SubmissionMeta sMeta)
 // {
 //  submissionDB.storeSubmission(sMeta);

@@ -30,4 +30,6 @@ public interface AgeAdminServiceAsync
 
  void getSubmissionHistory(String sbmId, AsyncCallback<List<HistoryEntry>> callback);
 
+ void deleteSubmission(String id, AsyncCallback<Void> asyncCallback);
+
 }

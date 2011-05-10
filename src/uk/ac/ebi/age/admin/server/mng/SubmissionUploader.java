@@ -147,10 +147,10 @@ public class SubmissionUploader implements UploadCommandListener
       
       dmMeta.setId( val );
       
-      if( dmMeta.getId() == null || "on".equals(upReq.getParams().get(SubmissionConstants.MODULE_DESCRIPTION_UPDATE+partNo)) )
+      if( blkSts == Status.NEW || "on".equals(upReq.getParams().get(SubmissionConstants.MODULE_DESCRIPTION_UPDATE+partNo)) )
        dmMeta.setDescription(upReq.getParams().get(SubmissionConstants.MODULE_DESCRIPTION+partNo));
 
-      if( dmMeta.getId() == null || "on".equals(upReq.getParams().get(SubmissionConstants.MODULE_FILE_UPDATE+partNo)) )
+      if( blkSts == Status.NEW || "on".equals(upReq.getParams().get(SubmissionConstants.MODULE_FILE_UPDATE+partNo)) )
       {
        File modFile = upReq.getFiles().get(SubmissionConstants.MODULE_FILE+partNo);
        
@@ -218,6 +218,7 @@ public class SubmissionUploader implements UploadCommandListener
       fatt.setAux(atAux);
       atAux.setStatus(blkSts);
       
+      atAux.setOrder(partNo);
       
       val = upReq.getParams().get(SubmissionConstants.ATTACHMENT_ID+partNo);
       
@@ -237,14 +238,14 @@ public class SubmissionUploader implements UploadCommandListener
       
       val = upReq.getParams().get(SubmissionConstants.ATTACHMENT_ID_UPDATE+partNo);
       
-      if( val != null && "on".equals(val) )
+      if( "on".equals(val) )
        atAux.setNewId( upReq.getParams().get(SubmissionConstants.ATTACHMENT_NEW_ID+partNo) );
       
       
-      if( fatt.getId() == null || (val != null && "on".equals( upReq.getParams().get(SubmissionConstants.ATTACHMENT_DESC_UPDATE+partNo)) ) )
+      if( blkSts == Status.NEW || "on".equals( upReq.getParams().get(SubmissionConstants.ATTACHMENT_DESC_UPDATE+partNo) ) )
        fatt.setDescription( upReq.getParams().get(SubmissionConstants.ATTACHMENT_DESC+partNo) );
 
-      if( fatt.getId() == null || (val != null && "on".equals( upReq.getParams().get(SubmissionConstants.ATTACHMENT_FILE_UPDATE+partNo)) ) )
+      if( blkSts == Status.NEW || "on".equals( upReq.getParams().get(SubmissionConstants.ATTACHMENT_FILE_UPDATE+partNo) ) )
       {
        File attFile = upReq.getFiles().get(SubmissionConstants.ATTACHMENT_FILE+partNo);
        

@@ -3,6 +3,7 @@ package uk.ac.ebi.age.admin.client.ui.module.submission;
 import java.util.Date;
 import java.util.List;
 
+import uk.ac.ebi.age.admin.client.AgeAdminService;
 import uk.ac.ebi.age.admin.client.ui.PlacingManager;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.ext.submission.DataModuleMeta;
@@ -10,8 +11,11 @@ import uk.ac.ebi.age.ext.submission.FileAttachmentMeta;
 import uk.ac.ebi.age.ext.submission.SubmissionMeta;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
@@ -132,6 +136,7 @@ public class SubmissionDetailsPanel extends VLayout
   }
   
   HLayout btLay = new HLayout();
+  btLay.setMembersMargin(10);
   btLay.setAlign(Alignment.RIGHT);
   btLay.setWidth100();
   
@@ -164,6 +169,53 @@ public class SubmissionDetailsPanel extends VLayout
    btLay.addMember(hb);
   }
    
+  if( simp.isRemoved() )
+  {
+   
+  }
+  else
+  {
+   Button rmb = new Button("Delete");
+
+   rmb.addClickHandler(new ClickHandler()
+   {
+    @Override
+    public void onClick(ClickEvent event)
+    {
+     SC.ask("Delete submission", "Do you really want to delete this submission", new BooleanCallback()
+     {
+      
+      @Override
+      public void execute(Boolean value)
+      {
+       if( value != null && value )
+       {
+        AgeAdminService.Util.getInstance().deleteSubmission(simp.getId(), new AsyncCallback<Void>()
+        {
+
+         @Override
+         public void onSuccess( Void res )
+         {
+         }
+
+         @Override
+         public void onFailure(Throwable caught)
+         {
+          // TODO Auto-generated method stub
+
+         }
+        });
+       }     
+       }       
+      });
+     }
+   });
+   
+   btLay.addMember(rmb);
+  }
+  
+  
+  
   addMember(btLay);
  }
 

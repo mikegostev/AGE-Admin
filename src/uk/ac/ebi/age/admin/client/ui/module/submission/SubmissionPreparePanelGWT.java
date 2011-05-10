@@ -99,7 +99,7 @@ public class SubmissionPreparePanelGWT extends VLayout
   {
    public void onClick(com.google.gwt.event.dom.client.ClickEvent event)
    {
-    panel.insert(new NewDMPanel(n++,rmListener), nMods+5);
+    panel.insert(new NewDMPanel(n++,rmListener), nMods+6);
     nMods++;
     wc.adjustForContent(true);
     

@@ -58,6 +58,7 @@ h1 {
  font-weight: bold;
 }
 
+
 .fileDetails
 {
  padding-left: 50px;
@@ -70,7 +71,12 @@ h1 {
 
 .moduleDetails
 {
- padding-left: 50px;
+ margin-left: 50px;
+}
+
+.attachmentDetails
+{
+ margin-left: 50px;
 }
 
 .moduleDetails .detailLabel
@@ -97,56 +103,84 @@ h1 {
 {
     border-top: 1px solid #A0A0A0;
     border-left: 1px solid #A0A0A0;
+    background-color: white;
 }
+
+.propViewer td
+{
+    border-bottom: 1px solid #A0A0A0;
+    border-right: 1px solid #A0A0A0;
+
+    font-family: Arial,Verdana,sans-serif;
+    font-size: 11px;
+    color: #4C4C4C;
+}
+
+.modulePropViewer
+{
+	margin-left: 50px;
+}
+
+.attachmentPropViewer
+{
+	margin-left: 60px;
+}
+
+.submissionPropViewer
+{
+	margin-bottom: 10px;
+}
+
 
 .propValue, .propValueDark
 {
-    border-bottom: 1px solid #A0A0A0;
-    border-right: 1px solid #A0A0A0;
-    font-family: Arial,Verdana,sans-serif;
-    font-size: 11px;
 }
 
-.propChanged, .propChangedDark
+.propChanged
 {
-    border-bottom: 1px solid #A0A0A0;
-    border-right: 1px solid #A0A0A0;
+	font-weight: bold;
 }
 
 .dataModulePropName, .dataModulePropNameDark
 {
-    border-bottom: 1px solid #A0A0A0;
-    border-right: 1px solid #A0A0A0;
     background-color: #EEDDBB;
     font-weight: bold;
-    font-family: Arial,Verdana,sans-serif;
-    font-size: 11px;
-    color: #4C4C4C;
 }
 
 .attachmentPropName, .attachmentPropNameDark
 {
-    border-bottom: 1px solid #A0A0A0;
-    border-right: 1px solid #A0A0A0;
-    background-color: #EEDDBB;
+    background-color: #AADDBB;
     font-weight: bold;
-    font-family: Arial,Verdana,sans-serif;
-    font-size: 11px;
-    color: #4C4C4C;
 }
 
-.submissionPropName, .submissionNameDark
+.submissionPropName
 {
-    border-bottom: 1px solid #A0A0A0;
-    border-right: 1px solid #A0A0A0;
-    background-color: #EEDDBB;
     font-weight: bold;
-    font-family: Arial,Verdana,sans-serif;
-    font-size: 11px;
-    color: #4C4C4C;
+	background-color: #CCEEFF;
 }
 
 .changedProperty
 {
-	background-color: #e0ffe0;
+ background-color: #ffffe0;
 }
+
+.statusNEW
+{
+	 background-color: #BEFEA9;
+}
+
+.statusUPDATE
+{
+	 background-color: #AAD4FC;
+}
+
+.statusKEEP
+{
+}
+
+.statusDELETE
+{
+	 background-color: #FFA8B1;
+}
+
+
