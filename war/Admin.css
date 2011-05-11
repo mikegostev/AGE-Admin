@@ -183,4 +183,7 @@ h1 {
 	 background-color: #FFA8B1;
 }
 
-
+.removedSubmission, .removedSubmissionDark, .removedSubmissionSelected
+{
+		 background-color: #FFA8B1;
+}

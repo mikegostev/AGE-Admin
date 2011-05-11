@@ -1,9 +1,11 @@
 package uk.ac.ebi.age.admin.client.ui.module.submission;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 
 import uk.ac.ebi.age.admin.client.AgeAdminService;
 import uk.ac.ebi.age.ext.submission.SubmissionQuery;
+import uk.ac.ebi.age.ext.submission.SubmissionQuery.Selector;
 import uk.ac.ebi.age.ext.submission.SubmissionReport;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -13,6 +15,7 @@ import com.smartgwt.client.types.TitleOrientation;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.ButtonItem;
+import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import com.smartgwt.client.widgets.form.fields.MiniDateRangeItem;
 import com.smartgwt.client.widgets.form.fields.PickerIcon;
 import com.smartgwt.client.widgets.form.fields.SpacerItem;
@@ -32,6 +35,7 @@ public class SubmissionsQueryPanel extends HLayout
  private MiniDateRangeItem modifiedRangeField;
  private TextItem submitterField;
  private TextItem modifierField;
+ private ComboBoxItem status;
  
  private SubmissionsListPane resultPane;
  
@@ -62,6 +66,7 @@ public class SubmissionsQueryPanel extends HLayout
   simpQForm.setIsGroup(true);
   simpQForm.setGroupTitle("Search by description");
   simpQForm.setPadding(5);
+  simpQForm.setNumCols(2);
   
   
   PickerIcon searchPicker = new PickerIcon(PickerIcon.SEARCH, new FormItemClickHandler()
@@ -78,11 +83,27 @@ public class SubmissionsQueryPanel extends HLayout
   queryField.setWidth(350);
   queryField.setShowTitle(false);
   queryField.setIcons(searchPicker);
+  queryField.setEndRow(true);
+  queryField.setColSpan(2);
 
+  status = new ComboBoxItem();
+  status.setTitle("");
+  status.setName("status");
+  status.setShowTitle(false);
+  status.setEndRow(false);
+
+  LinkedHashMap<String, String> st = new LinkedHashMap<String, String>();
+  st.put(Selector.ACTIVE.name(),Selector.ACTIVE.title());
+  st.put(Selector.REMOVED.name(),Selector.REMOVED.title());
+  st.put(Selector.BOTH.name(),Selector.BOTH.title());
+  
+  status.setValueMap(st);
+  status.setValue(Selector.ACTIVE.name());
+  
   ButtonItem searchBt=new ButtonItem();
   searchBt.setTitle("Search");
   searchBt.setAlign(Alignment.RIGHT);
-  searchBt.setEndRow(true);
+  searchBt.setStartRow(false);
   searchBt.addClickHandler( new ClickHandler()
   {
    @Override
@@ -94,9 +115,10 @@ public class SubmissionsQueryPanel extends HLayout
   
   SpacerItem spIt = new SpacerItem();
   spIt.setHeight(10);
+  spIt.setColSpan(2);
   spIt.setEndRow(true);
   
-  simpQForm.setFields(spIt,queryField,searchBt);
+  simpQForm.setFields(spIt,queryField,status,searchBt);
   
   
   DynamicForm advQForm = new DynamicForm();
@@ -157,6 +179,8 @@ public class SubmissionsQueryPanel extends HLayout
 
   q.setSubmitter( submitterField.getValueAsString() );
   q.setModifier( modifierField.getValueAsString() );
+  
+  q.setStateSelector( status.getValueAsString()!=null?Selector.valueOf( status.getValueAsString() ):Selector.ACTIVE );
   
   Date dt = createdRangeField.getFromDate();
   

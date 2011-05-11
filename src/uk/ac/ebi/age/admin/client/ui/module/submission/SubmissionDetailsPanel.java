@@ -32,7 +32,7 @@ public class SubmissionDetailsPanel extends VLayout
   setMembersMargin(8);
   setPadding(8);
   
-  DataSource ds = SubmissionFields.createSubmissionDataSource();
+  DataSource ds = SubmissionConstants.createSubmissionDataSource();
   
   ds.setClientOnly(true);
 
@@ -56,21 +56,21 @@ public class SubmissionDetailsPanel extends VLayout
 
    for(DataModuleMeta dmImp : mods)
    {
-    DataSource dmds = SubmissionFields.createDataModuleDataSource();
+    DataSource dmds = SubmissionConstants.createDataModuleDataSource();
     dmds.setClientOnly(true);
 
     ListGridRecord rec = new ListGridRecord();
 
-    rec.setAttribute(SubmissionFields.MOD_ID.name(), dmImp.getId());
+    rec.setAttribute(SubmissionConstants.MOD_ID.name(), dmImp.getId());
 
-    rec.setAttribute(SubmissionFields.COMM.name(), dmImp.getDescription());
-    rec.setAttribute(SubmissionFields.CRTR.name(), dmImp.getSubmitter());
-    rec.setAttribute(SubmissionFields.MDFR.name(), dmImp.getModifier());
-    rec.setAttribute(SubmissionFields.CTIME.name(),
+    rec.setAttribute(SubmissionConstants.COMM.name(), dmImp.getDescription());
+    rec.setAttribute(SubmissionConstants.CRTR.name(), dmImp.getSubmitter());
+    rec.setAttribute(SubmissionConstants.MDFR.name(), dmImp.getModifier());
+    rec.setAttribute(SubmissionConstants.CTIME.name(),
       DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format(new Date(dmImp.getSubmissionTime())));
-    rec.setAttribute(SubmissionFields.MTIME.name(),
+    rec.setAttribute(SubmissionConstants.MTIME.name(),
       DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format(new Date(dmImp.getModificationTime())));
-    rec.setAttribute(SubmissionFields.SRC_FILE.name(), "<a target='_blank' href='download?"
+    rec.setAttribute(SubmissionConstants.SRC_FILE.name(), "<a target='_blank' href='download?"
       +Constants.downloadHandlerParameter+"="+Constants.documentRequestSubject
       +"&"+Constants.clusterIdParameter+"="+simp.getId()
       +"&"+Constants.documentIdParameter+"="+dmImp.getId()
@@ -97,23 +97,23 @@ public class SubmissionDetailsPanel extends VLayout
   {
    for(FileAttachmentMeta faImp : simp.getAttachments())
    {
-    DataSource dmds = SubmissionFields.createAttachmentDataSource();
+    DataSource dmds = SubmissionConstants.createAttachmentDataSource();
     dmds.setClientOnly(true);
 
     ListGridRecord rec = new ListGridRecord();
 
-    rec.setAttribute(SubmissionFields.FILE_ID.name(), faImp.getId());
+    rec.setAttribute(SubmissionConstants.FILE_ID.name(), faImp.getId());
 
-    rec.setAttribute(SubmissionFields.COMM.name(), faImp.getDescription());
-    rec.setAttribute(SubmissionFields.VIS.name(), faImp.isGlobal()?"Global":"Cluster");
-    rec.setAttribute(SubmissionFields.CRTR.name(), faImp.getSubmitter());
-    rec.setAttribute(SubmissionFields.MDFR.name(), faImp.getModifier());
-    rec.setAttribute(SubmissionFields.CTIME.name(),
+    rec.setAttribute(SubmissionConstants.COMM.name(), faImp.getDescription());
+    rec.setAttribute(SubmissionConstants.VIS.name(), faImp.isGlobal()?"Global":"Cluster");
+    rec.setAttribute(SubmissionConstants.CRTR.name(), faImp.getSubmitter());
+    rec.setAttribute(SubmissionConstants.MDFR.name(), faImp.getModifier());
+    rec.setAttribute(SubmissionConstants.CTIME.name(),
       DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format(new Date(faImp.getSubmissionTime())));
-    rec.setAttribute(SubmissionFields.MTIME.name(),
+    rec.setAttribute(SubmissionConstants.MTIME.name(),
       DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format(new Date(faImp.getModificationTime())));
 //    rec.setAttribute(SubmissionFields.SRC_FILE.name(), dmImp.getId());
-    rec.setAttribute(SubmissionFields.SRC_FILE.name(), "<a target='_blank' href='download?"
+    rec.setAttribute(SubmissionConstants.SRC_FILE.name(), "<a target='_blank' href='download?"
       +Constants.downloadHandlerParameter+"="+Constants.attachmentRequestSubject
       +"&"+Constants.clusterIdParameter+"="+simp.getId()
       +"&"+Constants.fileIdParameter+"="+faImp.getId()
@@ -171,8 +171,43 @@ public class SubmissionDetailsPanel extends VLayout
    
   if( simp.isRemoved() )
   {
+   Button rmb = new Button("Restore");
+
+   rmb.addClickHandler(new ClickHandler()
+   {
+    @Override
+    public void onClick(ClickEvent event)
+    {
+     SC.ask("Restore submission", "Do you really want to restorethis submission", new BooleanCallback()
+     {
+      
+      @Override
+      public void execute(Boolean value)
+      {
+       if( value != null && value )
+       {
+        AgeAdminService.Util.getInstance().restoreSubmission(simp.getId(), new AsyncCallback<Void>()
+        {
+
+         @Override
+         public void onSuccess( Void res )
+         {
+          SC.say("The submission was successfully restored");
+         }
+
+         @Override
+         public void onFailure(Throwable caught)
+         {
+          SC.say("Operation error: "+caught.getMessage());
+         }
+        });
+       }     
+       }       
+      });
+     }
+   });
    
-  }
+   btLay.addMember(rmb);  }
   else
   {
    Button rmb = new Button("Delete");
@@ -196,13 +231,13 @@ public class SubmissionDetailsPanel extends VLayout
          @Override
          public void onSuccess( Void res )
          {
+          SC.say("The submission was successfully removed");
          }
 
          @Override
          public void onFailure(Throwable caught)
          {
-          // TODO Auto-generated method stub
-
+          SC.say("Operation error: "+caught.getMessage());
          }
         });
        }     

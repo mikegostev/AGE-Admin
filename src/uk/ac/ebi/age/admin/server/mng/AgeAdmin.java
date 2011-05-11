@@ -329,7 +329,20 @@ public class AgeAdmin
  {
   // TODO check permission to list all submissions
 
-  submissionDB.removeSubmission(id);
+  BufferLogger log = new BufferLogger();
+  
+  configuration.getSubmissionManager().removeSubmission(id, userSession.getUserProfile(), log.getRootNode());
+  
+//  submissionDB.removeSubmission(id);
+ }
+
+
+
+ public void restoreSubmission(String id, Session userSession) throws SubmissionDBException
+ {
+  // TODO check permission to list all submissions
+
+  submissionDB.restoreSubmission(id);
  }
 
 // public void storeSubmission(SubmissionMeta sMeta)

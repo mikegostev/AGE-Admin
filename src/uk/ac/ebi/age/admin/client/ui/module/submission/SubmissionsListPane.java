@@ -47,25 +47,26 @@ public class SubmissionsListPane extends VLayout
   
   resultGrid.setStyleName("reportGrid");
   
-  DataSource ds = SubmissionFields.createSubmissionDataSource();
+  DataSource ds = SubmissionConstants.createSubmissionDataSource();
   
   ds.setClientOnly(true);
   
   resultGrid.setCanExpandRecords(true); 
   
-  ListGridField idField = new ListGridField(SubmissionFields.SUBM_ID.name(),"ID", 200);  
-  ListGridField descField = new ListGridField(SubmissionFields.COMM.name(),"Description");
-  ListGridField crtrField = new ListGridField(SubmissionFields.CRTR.name(),"Submitter",100);
-  ListGridField mdfrField = new ListGridField(SubmissionFields.MDFR.name(),"Modifier",100);
-  ListGridField ctimeField = new ListGridField(SubmissionFields.CTIME.name(),"C. time",100);
-  ListGridField mtimeField = new ListGridField(SubmissionFields.MTIME.name(),"M. time",100);
+  ListGridField idField = new ListGridField(SubmissionConstants.SUBM_ID.name(),"ID", 200);  
+  ListGridField stsField = new ListGridField(SubmissionConstants.STS.name(),"Status",50);
+  ListGridField descField = new ListGridField(SubmissionConstants.COMM.name(),"Description");
+  ListGridField crtrField = new ListGridField(SubmissionConstants.CRTR.name(),"Submitter",100);
+  ListGridField mdfrField = new ListGridField(SubmissionConstants.MDFR.name(),"Modifier",100);
+  ListGridField ctimeField = new ListGridField(SubmissionConstants.CTIME.name(),"C. time",100);
+  ListGridField mtimeField = new ListGridField(SubmissionConstants.MTIME.name(),"M. time",100);
 //  ListGridField propField = new ListGridField("prop","AdditionalProp");
   
 //  propField.setHidden(true);
   
 //  idField.setWidth(200);
      
-  resultGrid.setFields(idField, descField,crtrField,mdfrField,ctimeField,mtimeField );
+  resultGrid.setFields(idField, stsField, descField,crtrField,mdfrField,ctimeField,mtimeField );
   resultGrid.setExpansionMode(ExpansionMode.DETAIL_FIELD);
   
   pagingRuler.setVisible(false);
@@ -128,12 +129,13 @@ public class SubmissionsListPane extends VLayout
   {
    ListGridRecord rec = new ListGridRecord();
    
-   rec.setAttribute(SubmissionFields.SUBM_ID.name(), sgr.getId());
-   rec.setAttribute(SubmissionFields.CRTR.name(), sgr.getSubmitter());
-   rec.setAttribute(SubmissionFields.MDFR.name(), sgr.getModifier());
-   rec.setAttribute(SubmissionFields.COMM.name(), sgr.getDescription());
-   rec.setAttribute(SubmissionFields.CTIME.name(), DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format( new Date(sgr.getSubmissionTime())));
-   rec.setAttribute(SubmissionFields.MTIME.name(), DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format( new Date(sgr.getModificationTime())));
+   rec.setAttribute(SubmissionConstants.SUBM_ID.name(), sgr.getId());
+   rec.setAttribute(SubmissionConstants.STS.name(), sgr.isRemoved()?SubmissionConstants.RMVD.title():SubmissionConstants.ACTV.title());
+   rec.setAttribute(SubmissionConstants.CRTR.name(), sgr.getSubmitter());
+   rec.setAttribute(SubmissionConstants.MDFR.name(), sgr.getModifier());
+   rec.setAttribute(SubmissionConstants.COMM.name(), sgr.getDescription());
+   rec.setAttribute(SubmissionConstants.CTIME.name(), DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format( new Date(sgr.getSubmissionTime())));
+   rec.setAttribute(SubmissionConstants.MTIME.name(), DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format( new Date(sgr.getModificationTime())));
 
    rec.setAttribute("__obj", sgr);
    
@@ -143,49 +145,6 @@ public class SubmissionsListPane extends VLayout
 
 
  
-// private void renderResultList(final VLayout lay, final Report smpls)
-// {
-//  if( smpls.getObjects().size() < 50 )
-//  {
-//   renderSampleList(lay,smpls);
-//   return;
-//  }
-//  
-//  final Window waitW = new Window();
-//  
-//  waitW.setHeight(100);
-//  waitW.setWidth(250);
-//  waitW.setShowMinimizeButton(false);  
-//  waitW.setIsModal(true);  
-//  waitW.setShowModalMask(true);  
-//  waitW.centerInPage();
-//
-//  Label msg = new Label("<b>Please wait for result rendering</b>");
-//  msg.setAlign(Alignment.CENTER);
-//  
-//  waitW.addItem(msg);
-//  
-//  waitW.addDrawHandler(new DrawHandler()
-//  {
-//   @Override
-//   public void onDraw(DrawEvent event)
-//   {
-//    DeferredCommand.addCommand(new Command()
-//    {
-//     @Override
-//     public void execute()
-//     {
-//      renderSampleList(lay,smpls);
-//      waitW.destroy();
-//     }
-//    });
-//   }
-//  });
-//  
-//  waitW.show();
-//  
-// }
-
  
  
  private class SubmissionList extends ListGrid
@@ -193,6 +152,14 @@ public class SubmissionsListPane extends VLayout
   protected Canvas getExpansionComponent(final ListGridRecord record)
   {
    return new SubmissionDetailsPanel( record );
+  }
+  
+  protected String getCellCSSText(ListGridRecord record, int rowNum, int colNum)
+  {
+   if( SubmissionConstants.RMVD.title().equals(record.getAttributeAsString(SubmissionConstants.STS.name()) ) )
+    return "background-color: #FFD4D0;";
+   
+   return super.getCellCSSText(record, rowNum, colNum);
   }
  }
  

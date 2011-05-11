@@ -93,9 +93,9 @@ public class SubmissionHistoryPanel extends VLayout
   {
    ListGridRecord rec = new ListGridRecord();
    
-   rec.setAttribute(SubmissionFields.MDFR.name(), hisEnt.getModifier());
-   rec.setAttribute(SubmissionFields.COMM.name(), hisEnt.getDescription());
-   rec.setAttribute(SubmissionFields.MTIME.name(), DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format( new Date(hisEnt.getModificationTime())));
+   rec.setAttribute(SubmissionConstants.MDFR.name(), hisEnt.getModifier());
+   rec.setAttribute(SubmissionConstants.COMM.name(), hisEnt.getDescription());
+   rec.setAttribute(SubmissionConstants.MTIME.name(), DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format( new Date(hisEnt.getModificationTime())));
 
    rec.setAttribute("__obj", hisEnt);
    

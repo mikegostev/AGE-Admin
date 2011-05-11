@@ -19,6 +19,7 @@ import uk.ac.ebi.age.log.impl.BufferLogger;
 import uk.ac.ebi.age.mng.submission.AttachmentAux;
 import uk.ac.ebi.age.mng.submission.ModuleAux;
 import uk.ac.ebi.age.mng.submission.SubmissionManager;
+import uk.ac.ebi.mg.time.UniqTime;
 
 import com.pri.util.stream.StreamPump;
 
@@ -92,7 +93,7 @@ public class SubmissionUploader implements UploadCommandListener
     sMeta.setSubmitter( userName );
     sMeta.setModifier( userName );
     
-    long time = System.currentTimeMillis();
+    long time = UniqTime.getTime();
     
     sMeta.setSubmissionTime(time);
     sMeta.setModificationTime(time);

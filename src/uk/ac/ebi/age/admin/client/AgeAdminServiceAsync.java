@@ -32,4 +32,6 @@ public interface AgeAdminServiceAsync
 
  void deleteSubmission(String id, AsyncCallback<Void> asyncCallback);
 
+ void restoreSubmission(String id, AsyncCallback<Void> asyncCallback);
+
 }

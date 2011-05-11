@@ -111,6 +111,13 @@ public class AgeAdminServiceImpl extends RemoteServiceServlet implements AgeAdmi
  public void deleteSubmission(String id) throws UserAuthException, SubmissionDBException
  {
   adm.deleteSubmission(id, getUserSession());
+ }
+ 
+ @Override
+ public void restoreSubmission(String id) throws UserAuthException, SubmissionDBException
+ {
+  adm.restoreSubmission(id, getUserSession());
   
  }
+
 }

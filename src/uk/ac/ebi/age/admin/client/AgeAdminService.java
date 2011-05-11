@@ -51,4 +51,6 @@ public interface AgeAdminService extends RemoteService
  List<HistoryEntry> getSubmissionHistory(String sbmId) throws UserAuthException, SubmissionDBException;
 
  void deleteSubmission(String id) throws UserAuthException, SubmissionDBException;
+
+ void restoreSubmission(String id) throws UserAuthException, SubmissionDBException;
 }
