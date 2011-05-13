@@ -7,6 +7,7 @@ import uk.ac.ebi.age.admin.client.model.ModelStorage;
 import uk.ac.ebi.age.admin.client.model.ModelStorageException;
 import uk.ac.ebi.age.admin.shared.ModelPath;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
+import uk.ac.ebi.age.ext.log.SimpleLogNode;
 import uk.ac.ebi.age.ext.submission.HistoryEntry;
 import uk.ac.ebi.age.ext.submission.SubmissionDBException;
 import uk.ac.ebi.age.ext.submission.SubmissionQuery;
@@ -50,7 +51,7 @@ public interface AgeAdminService extends RemoteService
 
  List<HistoryEntry> getSubmissionHistory(String sbmId) throws UserAuthException, SubmissionDBException;
 
- void deleteSubmission(String id) throws UserAuthException, SubmissionDBException;
+ SimpleLogNode deleteSubmission(String id) throws UserAuthException, SubmissionDBException;
 
- void restoreSubmission(String id) throws UserAuthException, SubmissionDBException;
+ SimpleLogNode restoreSubmission(String id) throws UserAuthException, SubmissionDBException;
 }

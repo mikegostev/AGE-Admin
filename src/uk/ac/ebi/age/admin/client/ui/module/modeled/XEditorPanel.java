@@ -230,6 +230,12 @@ public class XEditorPanel extends HLayout
  
  private void showClassDetails(AgeAbstractClassImprint cls)
  {
+  if( detailPanel.getChildren() != null )
+  {
+   for( Canvas cnv : detailPanel.getChildren() )
+    cnv.destroy();
+  }
+  
   if( cls == null )
    detailPanel.setMembers( new Canvas[0] );
   else  

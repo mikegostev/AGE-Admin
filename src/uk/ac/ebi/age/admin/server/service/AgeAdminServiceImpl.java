@@ -15,6 +15,7 @@ import uk.ac.ebi.age.admin.server.mng.Configuration;
 import uk.ac.ebi.age.admin.server.user.Session;
 import uk.ac.ebi.age.admin.shared.ModelPath;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
+import uk.ac.ebi.age.ext.log.SimpleLogNode;
 import uk.ac.ebi.age.ext.submission.HistoryEntry;
 import uk.ac.ebi.age.ext.submission.SubmissionDBException;
 import uk.ac.ebi.age.ext.submission.SubmissionQuery;
@@ -108,16 +109,15 @@ public class AgeAdminServiceImpl extends RemoteServiceServlet implements AgeAdmi
  }
 
  @Override
- public void deleteSubmission(String id) throws UserAuthException, SubmissionDBException
+ public SimpleLogNode deleteSubmission(String id) throws UserAuthException, SubmissionDBException
  {
-  adm.deleteSubmission(id, getUserSession());
+  return adm.deleteSubmission(id, getUserSession());
  }
  
  @Override
- public void restoreSubmission(String id) throws UserAuthException, SubmissionDBException
+ public SimpleLogNode restoreSubmission(String id) throws UserAuthException, SubmissionDBException
  {
-  adm.restoreSubmission(id, getUserSession());
-  
+  return adm.restoreSubmission(id, getUserSession());
  }
 
 }

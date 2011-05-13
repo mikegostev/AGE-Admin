@@ -1,10 +1,11 @@
 package uk.ac.ebi.age.admin.client.ui.module.submission;
 
-import uk.ac.ebi.age.admin.client.log.LogNode;
-import uk.ac.ebi.age.admin.client.ui.module.log.LogTree;
+import uk.ac.ebi.age.admin.client.log.ROJSLogNode;
+import uk.ac.ebi.age.admin.client.ui.module.log.LogWindow;
 import uk.ac.ebi.age.admin.client.ui.module.submission.NewDMPanel.RemoveListener;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
+import uk.ac.ebi.age.ext.log.LogNode;
 import uk.ac.ebi.age.ext.submission.DataModuleMeta;
 import uk.ac.ebi.age.ext.submission.FileAttachmentMeta;
 import uk.ac.ebi.age.ext.submission.Status;
@@ -299,18 +300,9 @@ public class SubmissionUpdatePanelGWT extends VLayout
     
     System.out.println(txt);
     
-    LogNode rLn = LogNode.convert(txt); 
+    LogNode rLn = ROJSLogNode.convert(txt); 
     
-    System.out.println(rLn.getSubnodes().get(0).getMessage());
-    
-    com.smartgwt.client.widgets.Window logW = new com.smartgwt.client.widgets.Window();
-    logW.setWidth(1000);
-    logW.setHeight(600);
-    logW.centerInPage();
-    
-    logW.addItem( new LogTree(rLn) );
-    
-    logW.show();
+    new LogWindow("Submission update log",rLn).show();
    }
   });
 

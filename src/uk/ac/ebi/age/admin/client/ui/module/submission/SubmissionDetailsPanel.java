@@ -5,7 +5,9 @@ import java.util.List;
 
 import uk.ac.ebi.age.admin.client.AgeAdminService;
 import uk.ac.ebi.age.admin.client.ui.PlacingManager;
+import uk.ac.ebi.age.admin.client.ui.module.log.LogWindow;
 import uk.ac.ebi.age.admin.shared.Constants;
+import uk.ac.ebi.age.ext.log.SimpleLogNode;
 import uk.ac.ebi.age.ext.submission.DataModuleMeta;
 import uk.ac.ebi.age.ext.submission.FileAttachmentMeta;
 import uk.ac.ebi.age.ext.submission.SubmissionMeta;
@@ -186,13 +188,14 @@ public class SubmissionDetailsPanel extends VLayout
       {
        if( value != null && value )
        {
-        AgeAdminService.Util.getInstance().restoreSubmission(simp.getId(), new AsyncCallback<Void>()
+        AgeAdminService.Util.getInstance().restoreSubmission(simp.getId(), new AsyncCallback<SimpleLogNode>()
         {
 
          @Override
-         public void onSuccess( Void res )
+         public void onSuccess( SimpleLogNode res )
          {
-          SC.say("The submission was successfully restored");
+          SimpleLogNode.setLevels( res );
+          new LogWindow("Submission restoration log",res).show();
          }
 
          @Override
@@ -225,13 +228,14 @@ public class SubmissionDetailsPanel extends VLayout
       {
        if( value != null && value )
        {
-        AgeAdminService.Util.getInstance().deleteSubmission(simp.getId(), new AsyncCallback<Void>()
+        AgeAdminService.Util.getInstance().deleteSubmission(simp.getId(), new AsyncCallback<SimpleLogNode>()
         {
 
          @Override
-         public void onSuccess( Void res )
+         public void onSuccess( SimpleLogNode res )
          {
-          SC.say("The submission was successfully removed");
+          SimpleLogNode.setLevels( res );
+          new LogWindow("Submission deletion log", res).show();
          }
 
          @Override

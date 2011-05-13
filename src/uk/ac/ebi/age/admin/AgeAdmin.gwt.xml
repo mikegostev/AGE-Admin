@@ -8,6 +8,7 @@
 	<inherits name="com.google.gwt.i18n.I18N"/>
 
 	<inherits name="com.smartgwt.SmartGwt"/>
+	<inherits name="com.smartgwt.tools.SmartGwtTools"/>
 
 	<inherits name="uk.ac.ebi.age.ui.AGE_Visual"/>
 	<inherits name="uk.ac.ebi.age.AGE"/>

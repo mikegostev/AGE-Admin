@@ -5,6 +5,7 @@ import java.util.List;
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
 import uk.ac.ebi.age.admin.shared.ModelPath;
+import uk.ac.ebi.age.ext.log.SimpleLogNode;
 import uk.ac.ebi.age.ext.submission.HistoryEntry;
 import uk.ac.ebi.age.ext.submission.SubmissionQuery;
 import uk.ac.ebi.age.ext.submission.SubmissionReport;
@@ -30,8 +31,8 @@ public interface AgeAdminServiceAsync
 
  void getSubmissionHistory(String sbmId, AsyncCallback<List<HistoryEntry>> callback);
 
- void deleteSubmission(String id, AsyncCallback<Void> asyncCallback);
+ void deleteSubmission(String id, AsyncCallback<SimpleLogNode> asyncCallback);
 
- void restoreSubmission(String id, AsyncCallback<Void> asyncCallback);
+ void restoreSubmission(String id, AsyncCallback<SimpleLogNode> asyncCallback);
 
 }

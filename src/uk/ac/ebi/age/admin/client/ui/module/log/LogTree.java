@@ -1,8 +1,9 @@
 package uk.ac.ebi.age.admin.client.ui.module.log;
 
-import uk.ac.ebi.age.admin.client.log.LogNode;
+import java.util.List;
 
-import com.google.gwt.core.client.JsArray;
+import uk.ac.ebi.age.ext.log.LogNode;
+
 import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeGrid;
 import com.smartgwt.client.widgets.tree.TreeNode;
@@ -18,8 +19,7 @@ public class LogTree extends TreeGrid
   
   setShowConnectors(true);
   
-  Tree data = new Tree();
-  
+//  Tree data = new Tree();
   
   if( root == null )
   {
@@ -35,30 +35,43 @@ public class LogTree extends TreeGrid
   LogTreeNode  clsRoot = new LogTreeNode(root);
   clsRoot.setTitle("Log");
   
-  createTreeStructure(root, clsRoot);
-
   data.setRoot(rootNode);
-  
   data.addList(new TreeNode[] { clsRoot } , rootNode);
+
+  createTreeStructure(root, clsRoot);
   
   setData(data);
+  
+//  data.openFolder(clsRoot);
+  
+//  expandRecord(clsRoot);
 
 //  data.openAll();
 
  }
  
+ protected void onDraw()
+ {
+  super.onDraw();
+  
+  TreeNode rn = data.getRoot();
+  TreeNode[] rCh = data.getChildren(rn);
+  
+  data.openFolder( rCh[0] );
+ }
+ 
  private void createTreeStructure(LogNode cls, LogTreeNode node)
  {
   
-  if( cls.getSubnodes() == null)
+  if( cls.getSubNodes() == null)
    return;
 
-  JsArray<LogNode> subNodes = cls.getSubnodes();
+  List<? extends LogNode> subNodes = cls.getSubNodes();
   
-  TreeNode[] children = new TreeNode[ subNodes.length() ];
+  TreeNode[] children = new TreeNode[ subNodes.size() ];
 
 
-  for( int i=0; i < subNodes.length(); i++ )
+  for( int i=0; i < subNodes.size(); i++ )
   {
    LogNode subLn = subNodes.get(i);
    

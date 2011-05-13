@@ -23,6 +23,7 @@ import uk.ac.ebi.age.admin.shared.ModelPath;
 import uk.ac.ebi.age.admin.shared.StoreNode;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
+import uk.ac.ebi.age.ext.log.SimpleLogNode;
 import uk.ac.ebi.age.ext.submission.HistoryEntry;
 import uk.ac.ebi.age.ext.submission.SubmissionDBException;
 import uk.ac.ebi.age.ext.submission.SubmissionQuery;
@@ -325,7 +326,7 @@ public class AgeAdmin
 
 
 
- public void deleteSubmission(String id, Session userSession) throws SubmissionDBException
+ public SimpleLogNode deleteSubmission(String id, Session userSession) throws SubmissionDBException
  {
   // TODO check permission to list all submissions
 
@@ -333,16 +334,20 @@ public class AgeAdmin
   
   configuration.getSubmissionManager().removeSubmission(id, userSession.getUserProfile(), log.getRootNode());
   
-//  submissionDB.removeSubmission(id);
+  return log.getRootNode();
  }
 
 
 
- public void restoreSubmission(String id, Session userSession) throws SubmissionDBException
+ public SimpleLogNode restoreSubmission(String id, Session userSession) throws SubmissionDBException
  {
   // TODO check permission to list all submissions
 
-  submissionDB.restoreSubmission(id);
+  BufferLogger log = new BufferLogger();
+
+  configuration.getSubmissionManager().restoreSubmission(id, userSession.getUserProfile(), log.getRootNode() );
+  
+  return log.getRootNode();
  }
 
 // public void storeSubmission(SubmissionMeta sMeta)

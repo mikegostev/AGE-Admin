@@ -1,6 +1,7 @@
 package uk.ac.ebi.age.admin.client.ui.module.log;
 
-import uk.ac.ebi.age.admin.client.log.LogNode;
+
+import uk.ac.ebi.age.ext.log.LogNode;
 
 import com.smartgwt.client.widgets.tree.TreeNode;
 
