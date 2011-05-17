@@ -5,6 +5,7 @@ import java.io.File;
 import uk.ac.ebi.age.admin.server.user.SessionPool;
 import uk.ac.ebi.age.admin.server.user.UserDatabase;
 import uk.ac.ebi.age.admin.shared.Constants;
+import uk.ac.ebi.age.annotation.AnnotationStorage;
 import uk.ac.ebi.age.mng.submission.SubmissionManager;
 import uk.ac.ebi.age.service.submission.SubmissionDB;
 
@@ -16,6 +17,7 @@ public class Configuration
  public static final String modelRelPath="model";
  public static final String userRelPath="user";
  public static final String submissionRelPath="submission";
+ public static final String annotationRelPath="annotation";
  
  private static Configuration defaultConfig = new Configuration();
  
@@ -29,6 +31,7 @@ public class Configuration
  private UploadManager uploadManager;
  private SubmissionDB submissionDB;
  private SubmissionManager submissionManager;
+ private AnnotationStorage annotationStorage;
 
  private File tmpDir;
  private File baseDir;
@@ -123,6 +126,10 @@ public class Configuration
   return new File(baseDir,submissionRelPath);
  }
 
+ public File getAnnotationDbDir()
+ {
+  return new File(baseDir,annotationRelPath);
+ }
 
  public SubmissionDB getSubmissionDB()
  {
@@ -158,8 +165,18 @@ public class Configuration
  {
   this.fileSourceManager = fileSourceManager;
  }
- 
 
+
+ public AnnotationStorage getAnnotationStorage()
+ {
+  return annotationStorage;
+ }
+
+
+ public void setAnnotationStorage(AnnotationStorage annotationStorage)
+ {
+  this.annotationStorage = annotationStorage;
+ }
 
 }
 

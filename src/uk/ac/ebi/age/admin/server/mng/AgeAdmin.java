@@ -23,6 +23,8 @@ import uk.ac.ebi.age.admin.shared.ModelPath;
 import uk.ac.ebi.age.admin.shared.StoreNode;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
+import uk.ac.ebi.age.annotation.AnnotationStorage;
+import uk.ac.ebi.age.annotation.impl.InMemoryAnnotationStorage;
 import uk.ac.ebi.age.ext.log.SimpleLogNode;
 import uk.ac.ebi.age.ext.submission.HistoryEntry;
 import uk.ac.ebi.age.ext.submission.SubmissionDBException;
@@ -51,6 +53,7 @@ public class AgeAdmin
  private UserDatabase  udb;
  private AgeStorageAdm storage;
  private SubmissionDB submissionDB;
+ private AnnotationStorage annotationStorage;
  
  private Configuration configuration;
 
@@ -85,6 +88,11 @@ public class AgeAdmin
   }
   else
    submissionDB=conf.getSubmissionDB();
+  
+  if(conf.getAnnotationStorage() == null)
+    conf.setAnnotationStorage( annotationStorage = new InMemoryAnnotationStorage(conf.getAnnotationDbDir()) );
+  else
+   annotationStorage=conf.getAnnotationStorage();
   
   if( conf.getSubmissionManager() == null )
    conf.setSubmissionManager( new SubmissionManager(storage, submissionDB ) );
