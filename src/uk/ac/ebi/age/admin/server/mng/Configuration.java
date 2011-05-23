@@ -2,6 +2,7 @@ package uk.ac.ebi.age.admin.server.mng;
 
 import java.io.File;
 
+import uk.ac.ebi.age.admin.server.service.ds.DataSourceServiceRouter;
 import uk.ac.ebi.age.admin.server.user.SessionPool;
 import uk.ac.ebi.age.admin.server.user.UserDatabase;
 import uk.ac.ebi.age.admin.shared.Constants;
@@ -40,6 +41,8 @@ public class Configuration
  private File publicModelDir;
 
  private FileSourceManager fileSourceManager;
+
+ private DataSourceServiceRouter dsRouter;
 
 
  public UserDatabase getUserDatabase()
@@ -178,6 +181,18 @@ public class Configuration
   this.annotationStorage = annotationStorage;
  }
 
+
+ public DataSourceServiceRouter getDataSourceServiceRouter()
+ {
+  return dsRouter;
+ }
+
+ public void setDataSourceServiceRouter( DataSourceServiceRouter dsr )
+ {
+  dsRouter=dsr;
+ }
+
+ 
 }
 
 
