@@ -39,6 +39,10 @@ public class AgeAdminServiceImpl extends RemoteServiceServlet implements AgeAdmi
  private Session getUserSession() throws UserAuthException
  {
   HttpServletRequest req = getThreadLocalRequest();
+
+  if( req.getCookies() == null )
+   throw new UserAuthException("Session invalid or expired");
+  
   for(Cookie cck : req.getCookies() )
   {
    if( cck.getName().equals(Configuration.SESSION_COOKIE_NAME) )
@@ -50,7 +54,7 @@ public class AgeAdminServiceImpl extends RemoteServiceServlet implements AgeAdmi
    }
   }
   
-  throw new UserAuthException("Session expired");
+  throw new UserAuthException("Session invalid or expired");
  }
 
  @Override

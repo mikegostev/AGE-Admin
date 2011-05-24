@@ -59,7 +59,7 @@ public class Configuration
 
  public String getSessionCookieName()
  {
-  return Constants.sessionCookieName;
+  return Constants.sessionKey;
  }
 
 

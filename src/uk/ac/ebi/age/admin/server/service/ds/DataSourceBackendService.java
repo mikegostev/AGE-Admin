@@ -1,8 +1,12 @@
 package uk.ac.ebi.age.admin.server.service.ds;
 
+import uk.ac.ebi.age.admin.shared.ds.DSDef;
+
 public interface DataSourceBackendService
 {
 
- boolean processRequest(DataSourceRequest dsr);
+ DataSourceResponce processRequest(DataSourceRequest dsr);
+
+ DSDef getDSDefinition();
 
 }

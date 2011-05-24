@@ -12,13 +12,18 @@ public class DataSourceServiceRouter
   svcMap.put(svcName, svc);
  }
  
- public boolean processRequest( String svcName, DataSourceRequest dsr  )
+ public DataSourceResponce processRequest( String svcName, DataSourceRequest dsr  )
  {
   DataSourceBackendService svc = svcMap.get(svcName);
   
   if( svc == null )
-   return false;
+   return null;
   
   return svc.processRequest( dsr );
+ }
+
+ public DataSourceBackendService getService(String dest)
+ {
+  return svcMap.get(dest);
  }
 }

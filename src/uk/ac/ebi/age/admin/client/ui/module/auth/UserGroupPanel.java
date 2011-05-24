@@ -1,5 +1,6 @@
 package uk.ac.ebi.age.admin.client.ui.module.auth;
 
+import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
@@ -21,6 +22,7 @@ public class UserGroupPanel extends HLayout
   
   vl.addMember(ul);
   
+  addMember(new Canvas());
  }
 
  

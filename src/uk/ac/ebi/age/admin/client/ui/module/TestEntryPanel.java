@@ -54,7 +54,7 @@ public class TestEntryPanel extends HLayout
      @Override
      public void onSuccess(String res)
      {
-      Cookies.setCookie(Constants.sessionCookieName, res);
+      Cookies.setCookie(Constants.sessionKey, res);
       Session.setSessionId(res);
       stat.setValue("success " + res);
      }

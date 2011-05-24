@@ -60,7 +60,7 @@ public class SubmissionEntry implements EntryPoint
      @Override
      public void onSuccess(String res)
      {
-      Cookies.setCookie(Constants.sessionCookieName, res);
+      Cookies.setCookie(Constants.sessionKey, res);
       stat.setValue( "success "+res );
      }
      

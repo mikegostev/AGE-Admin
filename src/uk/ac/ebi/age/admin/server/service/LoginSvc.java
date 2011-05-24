@@ -24,7 +24,7 @@ public class LoginSvc extends HttpServlet
   {
    String sessId =  AgeAdmin.getDefaultInstance().login(uname, pass, req.getRemoteAddr()).getSessionKey();
    
-   resp.addCookie( new Cookie(Constants.sessionCookieName, sessId) );
+   resp.addCookie( new Cookie(Constants.sessionKey, sessId) );
    
   }
   catch (Exception e) 
