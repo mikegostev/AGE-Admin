@@ -12,6 +12,8 @@ import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
 import uk.ac.ebi.age.admin.client.model.ModelStorageException;
 import uk.ac.ebi.age.admin.server.model.Age2ImprintConverter;
+import uk.ac.ebi.age.admin.server.service.auth.AuthDBDataSourceService;
+import uk.ac.ebi.age.admin.server.service.ds.DataSourceServiceRouter;
 import uk.ac.ebi.age.admin.server.user.Session;
 import uk.ac.ebi.age.admin.server.user.SessionPool;
 import uk.ac.ebi.age.admin.server.user.UserDatabase;
@@ -25,6 +27,7 @@ import uk.ac.ebi.age.admin.shared.SubmissionConstants;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
 import uk.ac.ebi.age.annotation.AnnotationStorage;
 import uk.ac.ebi.age.annotation.impl.InMemoryAnnotationStorage;
+import uk.ac.ebi.age.authz.impl.H2AuthDBImpl;
 import uk.ac.ebi.age.ext.log.SimpleLogNode;
 import uk.ac.ebi.age.ext.submission.HistoryEntry;
 import uk.ac.ebi.age.ext.submission.SubmissionDBException;
@@ -97,6 +100,14 @@ public class AgeAdmin
   if( conf.getSubmissionManager() == null )
    conf.setSubmissionManager( new SubmissionManager(storage, submissionDB ) );
 
+  if( conf.getAuthDB() == null )
+   conf.setAuthDB( new H2AuthDBImpl() );
+  
+  if( conf.getDataSourceServiceRouter() == null )
+   conf.setDataSourceServiceRouter( new DataSourceServiceRouter() );
+
+  conf.getDataSourceServiceRouter().addService(Constants.userListServiceName, new AuthDBDataSourceService( conf.getAuthDB() ) );
+  
   if( conf.getFileSourceManager() == null )
    conf.setFileSourceManager( new FileSourceManager() );
 

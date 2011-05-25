@@ -7,6 +7,7 @@ import uk.ac.ebi.age.admin.server.user.SessionPool;
 import uk.ac.ebi.age.admin.server.user.UserDatabase;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.annotation.AnnotationStorage;
+import uk.ac.ebi.age.authz.AuthDB;
 import uk.ac.ebi.age.mng.submission.SubmissionManager;
 import uk.ac.ebi.age.service.submission.SubmissionDB;
 
@@ -43,6 +44,8 @@ public class Configuration
  private FileSourceManager fileSourceManager;
 
  private DataSourceServiceRouter dsRouter;
+
+ private AuthDB authDB;
 
 
  public UserDatabase getUserDatabase()
@@ -192,7 +195,17 @@ public class Configuration
   dsRouter=dsr;
  }
 
- 
+
+ public void setAuthDB( AuthDB adb)
+ {
+  authDB = adb;
+ }
+
+ public AuthDB getAuthDB( )
+ {
+  return authDB;
+ }
+
 }
 
 

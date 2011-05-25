@@ -11,7 +11,7 @@ public class DSDef
 {
  private List<DSField> fields = new ArrayList<DSField>(10);
 
- 
+
  public void addField( DSField fld )
  {
   fields.add(fld);

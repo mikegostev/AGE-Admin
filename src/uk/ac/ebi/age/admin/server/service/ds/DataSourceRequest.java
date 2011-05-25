@@ -7,9 +7,18 @@ import uk.ac.ebi.age.admin.shared.ds.DSField;
 
 public class DataSourceRequest
 {
+ public static enum RequestType
+ {
+  FETCH,
+  ADD,
+  DELETE,
+  UPDATE;
+ }
+ 
  private int begin;
  private int end;
  private Map<DSField, String> values;
+ private RequestType reqType;
 
  public void setEnd(int e)
  {
@@ -37,6 +46,22 @@ public class DataSourceRequest
    values = new HashMap<DSField, String>();
   
   values.put(dsf, val);
+ }
+
+ public RequestType getRequestType()
+ {
+  return reqType;
+ }
+ 
+ public void setRequestType( RequestType typ )
+ {
+  reqType=typ;
+ }
+
+ 
+ public Map<DSField, String> getValueMap()
+ {
+  return values;
  }
 
 }

@@ -5,7 +5,7 @@ import uk.ac.ebi.age.admin.shared.ds.DSDef;
 public interface DataSourceBackendService
 {
 
- DataSourceResponce processRequest(DataSourceRequest dsr);
+ DataSourceResponse processRequest(DataSourceRequest dsr);
 
  DSDef getDSDefinition();
 

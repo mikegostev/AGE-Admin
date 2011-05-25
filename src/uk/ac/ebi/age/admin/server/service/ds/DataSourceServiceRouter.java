@@ -12,7 +12,7 @@ public class DataSourceServiceRouter
   svcMap.put(svcName, svc);
  }
  
- public DataSourceResponce processRequest( String svcName, DataSourceRequest dsr  )
+ public DataSourceResponse processRequest( String svcName, DataSourceRequest dsr  )
  {
   DataSourceBackendService svc = svcMap.get(svcName);
   

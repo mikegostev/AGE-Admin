@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Enumeration;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,10 +12,12 @@ import javax.servlet.http.HttpServletResponse;
 import uk.ac.ebi.age.admin.server.mng.Configuration;
 import uk.ac.ebi.age.admin.server.service.ds.DataSourceBackendService;
 import uk.ac.ebi.age.admin.server.service.ds.DataSourceRequest;
-import uk.ac.ebi.age.admin.server.service.ds.DataSourceResponce;
-import uk.ac.ebi.age.admin.shared.Constants;
+import uk.ac.ebi.age.admin.server.service.ds.DataSourceRequest.RequestType;
+import uk.ac.ebi.age.admin.server.service.ds.DataSourceResponse;
 import uk.ac.ebi.age.admin.shared.ds.DSDef;
 import uk.ac.ebi.age.admin.shared.ds.DSField;
+
+import com.pri.util.collection.MapIterator;
 
 public class DataSourceServlet extends HttpServlet
 {
@@ -45,11 +48,21 @@ public class DataSourceServlet extends HttpServlet
     System.out.println(pName+"="+pv);
   }
   
-  String dest  = request.getParameter(Constants.dsServiceParam);
+  String dest  = request.getParameter("_dataSource");
   
   DataSourceRequest dsr = new DataSourceRequest();
   
-  String prm = request.getParameter("_endRow");
+  String prm = request.getParameter("_operationType");
+  
+  if( "fetch".equals(prm) )
+   dsr.setRequestType( RequestType.FETCH );
+  else
+  {
+   sendInvRequetError(response);
+   return;
+  }
+  
+  prm = request.getParameter("_endRow");
   
   if( prm != null )
    dsr.setEnd( Integer.parseInt(prm) );
@@ -79,31 +92,66 @@ public class DataSourceServlet extends HttpServlet
     dsr.addFieldValue( dsf, val );
   }
   
-  DataSourceResponce dsresp = srv.processRequest(dsr);
+  DataSourceResponse dsresp = srv.processRequest(dsr);
   
-  Configuration.getDefaultConfiguration().getDataSourceServiceRouter().processRequest(dest, dsr );
   
   response.setContentType("application/json");
-  response.getOutputStream().print("" +
-  		" { " +
-  		"response:{" +
-  		" status: 0," +
-  		" startRow: 0," +
-  		" endRow: 1," +
-  		" totalRows: 200," +
-  		" data: [" +
-  		"{ userid: 'vaspup', username: 'Vasya Pupkin'}," +   
-        "{ userid: 'glasha', username: 'Glasha Lozhkina'},");
-
-  int endRow = Integer.parseInt(request.getParameter("_endRow"));
+ 
+  ServletOutputStream out = response.getOutputStream();
   
-  for( int i=2; i < endRow; i++ )
+  out.print("{" +
+    "response:{" +
+    " status: 0" +
+    ", startRow: " +dsr.getBegin()+
+    ", endRow: " +(dsr.getBegin()+dsresp.getSize()-1)+
+    ", totalRows: " +dsresp.getTotal()+
+    ", data: ["
+  
+  );
+  
+  MapIterator<DSField, String> dataIter = dsresp.getIterator();
+  
+  while( dataIter.next() )
   {
-   response.getOutputStream().print("{ userid: 'vaspup"+i+"', username: 'Vasya Pupkin "+i+"'},");
-  }
-  
-  response.getOutputStream().print("] }}"); 
+   out.print('{');
+   
+   for( DSField dsf : dsd.getFields() )
+    out.print("'"+dsf.getFieldId()+"': '"+dataIter.get(dsf)+"',");
+   
+   out.print("},");
 
+  }
+ 
+  out.print("] }}"); 
+
+  
+//  response.getOutputStream().print("" +
+//  		" { " +
+//  		"response:{" +
+//  		" status: 0," +
+//  		" startRow: 0," +
+//  		" endRow: 1," +
+//  		" totalRows: 200," +
+//  		" data: [" +
+//  		"{ userid: 'vaspup', username: 'Vasya Pupkin'}," +   
+//        "{ userid: 'glasha', username: 'Glasha Lozhkina'},");
+//
+//  int endRow = Integer.parseInt(request.getParameter("_endRow"));
+//  
+//  for( int i=2; i < endRow; i++ )
+//  {
+//   response.getOutputStream().print("{ userid: 'vaspup"+i+"', username: 'Vasya Pupkin "+i+"'},");
+//  }
+//  
+//  response.getOutputStream().print("] }}"); 
+
+ }
+
+ private void sendInvRequetError(HttpServletResponse response)
+ {
+  // TODO Auto-generated method stub
+  throw new dev.NotImplementedYetException();
+  //
  }
 
  private void sendNoServiceError(HttpServletResponse response)
