@@ -10,13 +10,24 @@ import com.smartgwt.client.types.FieldType;
 public class UserDSDef extends DSDef
 {
  public static UserDSDef instance;
- public static DSField userIdField = new DSField("userid",FieldType.TEXT,"User ID", 150);
+ public static DSField userIdField = new DSField("userid",FieldType.TEXT,"User ID");
  public static DSField userNameField = new DSField("username",FieldType.TEXT,"User Name");
+ public static DSField userPassField = new DSField("userpass",FieldType.TEXT,"Password");
+ 
+ static
+ {
+  userIdField.setPrimaryKey( true );
+  userIdField.setWidth(150);
+  
+  userNameField.setEditable( true );
+  userPassField.setHidden( true );
+ }
  
  public UserDSDef()
  {
   addField( userIdField );
   addField( userNameField );
+  addField( userPassField );
  }
 
  public static UserDSDef getInstance()

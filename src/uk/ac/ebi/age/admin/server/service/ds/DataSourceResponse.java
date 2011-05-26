@@ -9,6 +9,7 @@ public class DataSourceResponse
  private int size;
  private int total;
  private MapIterator<DSField, String> iterator;
+ private String errorMessage;
 
  public void setTotal(int ttl)
  {
@@ -40,5 +41,14 @@ public class DataSourceResponse
   this.size = size;
  }
 
+ public void setErrorMessage(String errorMessage)
+ {
+  this.errorMessage = errorMessage;
+ }
+
+ public String getErrorMessage()
+ {
+  return errorMessage;
+ }
 
 }

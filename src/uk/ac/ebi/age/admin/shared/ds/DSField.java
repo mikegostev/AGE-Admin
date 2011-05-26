@@ -8,6 +8,11 @@ public class DSField
  private String fieldTitle;
  private FieldType type;
  private int    width = -1;
+ 
+ private boolean primaryKey=false;
+ private boolean editable=false;
+ private boolean hidden=false;
+ 
 
  public static final String fieldIdPrefix = "##";
  
@@ -84,4 +89,36 @@ public class DSField
  {
   return fieldId.hashCode();
  }
+
+ public boolean isPrimaryKey()
+ {
+  return primaryKey;
+ }
+
+ public void setPrimaryKey(boolean primaryKey)
+ {
+  this.primaryKey = primaryKey;
+ }
+
+ public boolean isEditable()
+ {
+  return editable;
+ }
+
+ public void setEditable(boolean editable)
+ {
+  this.editable = editable;
+ }
+
+ public boolean isHidden()
+ {
+  return hidden;
+ }
+
+ public void setHidden(boolean hidden)
+ {
+  this.hidden = hidden;
+ }
+
+
 }

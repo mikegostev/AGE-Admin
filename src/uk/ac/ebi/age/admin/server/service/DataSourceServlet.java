@@ -1,6 +1,8 @@
 package uk.ac.ebi.age.admin.server.service;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.Enumeration;
 
 import javax.servlet.ServletException;
@@ -18,6 +20,7 @@ import uk.ac.ebi.age.admin.shared.ds.DSDef;
 import uk.ac.ebi.age.admin.shared.ds.DSField;
 
 import com.pri.util.collection.MapIterator;
+import com.smartgwt.client.rpc.RPCResponse;
 
 public class DataSourceServlet extends HttpServlet
 {
@@ -56,6 +59,8 @@ public class DataSourceServlet extends HttpServlet
   
   if( "fetch".equals(prm) )
    dsr.setRequestType( RequestType.FETCH );
+  else if( "update".equals(prm) )
+   dsr.setRequestType( RequestType.UPDATE );
   else
   {
    sendInvRequetError(response);
@@ -95,15 +100,34 @@ public class DataSourceServlet extends HttpServlet
   DataSourceResponse dsresp = srv.processRequest(dsr);
   
   
-  response.setContentType("application/json");
+  response.setContentType("application/json; charset=utf-8");
  
   ServletOutputStream out = response.getOutputStream();
   
-  out.print("{" +
+  
+  OutputStreamWriter outw = new OutputStreamWriter(out, Charset.forName("UTF-8"));
+
+  if( dsr.getRequestType() != RequestType.FETCH )
+  {
+   if( dsresp.getErrorMessage() != null )
+    out.print("{" +
+      "response:{" +
+      " status: " + RPCResponse.STATUS_FAILURE +
+      ", data: '"+dsresp.getErrorMessage()+"'"+
+      "}}");
+   else
+    out.print("{" +
+       "response:{" +
+       " status: 0}}");
+   
+   return;
+  }
+
+  outw.write("{" +
     "response:{" +
     " status: 0" +
     ", startRow: " +dsr.getBegin()+
-    ", endRow: " +(dsr.getBegin()+dsresp.getSize()-1)+
+    ", endRow: " +(dsr.getBegin()+dsresp.getSize())+
     ", totalRows: " +dsresp.getTotal()+
     ", data: ["
   
@@ -111,19 +135,27 @@ public class DataSourceServlet extends HttpServlet
   
   MapIterator<DSField, String> dataIter = dsresp.getIterator();
   
+  boolean first = true;
   while( dataIter.next() )
   {
-   out.print('{');
+   if( first )
+   {
+    outw.write('{');
+    first=false;
+   }
+   else
+    outw.write(",{");
    
    for( DSField dsf : dsd.getFields() )
-    out.print("'"+dsf.getFieldId()+"': '"+dataIter.get(dsf)+"',");
+    outw.write("'"+dsf.getFieldId()+"': '"+dataIter.get(dsf)+"',");
    
-   out.print("},");
+   outw.write("}");
 
   }
  
-  out.print("] }}"); 
+  outw.write("] }}"); 
 
+  outw.close();
   
 //  response.getOutputStream().print("" +
 //  		" { " +
@@ -147,17 +179,27 @@ public class DataSourceServlet extends HttpServlet
 
  }
 
- private void sendInvRequetError(HttpServletResponse response)
+ private void sendInvRequetError(HttpServletResponse response) throws IOException
  {
-  // TODO Auto-generated method stub
-  throw new dev.NotImplementedYetException();
-  //
+  ServletOutputStream out = response.getOutputStream();
+
+  out.print("{" +
+    "response:{" +
+    " status: " + RPCResponse.STATUS_FAILURE +
+    ", data: 'Invalid request'"+
+    "}}");
+
  }
 
- private void sendNoServiceError(HttpServletResponse response)
+ private void sendNoServiceError(HttpServletResponse response) throws IOException
  {
-  // TODO Auto-generated method stub
-  
+  ServletOutputStream out = response.getOutputStream();
+
+  out.print("{" +
+    "response:{" +
+    " status: " + RPCResponse.STATUS_FAILURE +
+    ", data: 'Service Not Supported'"+
+    "}}");
  }
 
 }

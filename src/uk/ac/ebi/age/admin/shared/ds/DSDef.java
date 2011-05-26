@@ -31,15 +31,28 @@ public class DSDef
  {
   RestDataSource ds = new RestDataSource();
   
+  ds.setAutoCacheAllData(false);
+  ds.setCacheAllData(false);
+  
   DataSourceField fArr[] = new DataSourceField[fields.size()];
   
   int i=0;
   for( DSField f : fields )
-   if( f.getWidth() >  0 )
-    fArr[i++] = new DataSourceField(f.getFieldId(), f.getType(), f.getFieldTitle(), f.getWidth());
-   else
-    fArr[i++] = new DataSourceField(f.getFieldId(), f.getType(), f.getFieldTitle());
+  {
+   DataSourceField dsf=null;
    
+   if( f.getWidth() >  0 )
+    dsf = new DataSourceField(f.getFieldId(), f.getType(), f.getFieldTitle(), f.getWidth());
+   else
+    dsf = new DataSourceField(f.getFieldId(), f.getType(), f.getFieldTitle());
+   
+   dsf.setPrimaryKey( f.isPrimaryKey() );
+   dsf.setCanEdit(f.isEditable());
+   dsf.setHidden( f.isHidden() );
+   
+   fArr[i++]=dsf;
+  }
+  
   ds.setFields(fArr);
   
   return ds;

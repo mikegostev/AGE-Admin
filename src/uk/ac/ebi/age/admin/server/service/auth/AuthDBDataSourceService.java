@@ -2,6 +2,7 @@ package uk.ac.ebi.age.admin.server.service.auth;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import uk.ac.ebi.age.admin.server.service.ds.DataSourceBackendService;
 import uk.ac.ebi.age.admin.server.service.ds.DataSourceRequest;
@@ -9,6 +10,7 @@ import uk.ac.ebi.age.admin.server.service.ds.DataSourceResponse;
 import uk.ac.ebi.age.admin.shared.auth.UserDSDef;
 import uk.ac.ebi.age.admin.shared.ds.DSField;
 import uk.ac.ebi.age.authz.AuthDB;
+import uk.ac.ebi.age.authz.AuthException;
 import uk.ac.ebi.age.authz.User;
 
 import com.pri.util.collection.ListFragment;
@@ -31,19 +33,52 @@ public class AuthDBDataSourceService implements DataSourceBackendService
   switch( dsr.getRequestType() )
   {
    case FETCH:
-    return processFetch(dsr);
+    return processFetch( dsr );
+   case UPDATE:
+    return processUpdate( dsr );
   }
   
   return null;
+ }
+
+ private DataSourceResponse processUpdate(DataSourceRequest dsr)
+ {
+  DataSourceResponse resp = new DataSourceResponse();
+
+  Map<DSField, String> vmap = dsr.getValueMap();
+  
+  String userId = vmap.get(UserDSDef.userIdField);
+  String userName = vmap.get(UserDSDef.userNameField);
+  String userPass = vmap.get(UserDSDef.userPassField);
+  
+  if( userId == null )
+  {
+   resp.setErrorMessage(UserDSDef.userIdField.getFieldTitle()+" should not be null");
+   return resp;
+  }
+  
+  
+  try
+  {
+   db.updateUser( userId, userName, userPass );
+  }
+  catch(AuthException e)
+  {
+   resp.setErrorMessage("Error");
+  }
+  
+  return resp;
  }
 
  private DataSourceResponse processFetch(DataSourceRequest dsr)
  {
   DataSourceResponse resp = new DataSourceResponse();
   
-  if( dsr.getValueMap() == null || dsr.getValueMap().size() == 0 )
+  Map<DSField, String> vmap = dsr.getValueMap();
+  
+  if( vmap == null || vmap.size() == 0 )
   {
-   List<User> res=db.getUsers( dsr.getBegin(), dsr.getEnd() );
+   List<? extends User> res=db.getUsers( dsr.getBegin(), dsr.getEnd() );
    
    resp.setTotal( db.getUsersTotal() );
    resp.setSize(res.size());
@@ -51,7 +86,7 @@ public class AuthDBDataSourceService implements DataSourceBackendService
   }
   else
   {
-   ListFragment<User> res=db.getUsers( dsr.getValueMap().get(UserDSDef.userIdField), dsr.getValueMap().get(UserDSDef.userNameField), dsr.getBegin(), dsr.getEnd() );
+   ListFragment<User> res=db.getUsers( vmap.get(UserDSDef.userIdField), vmap.get(UserDSDef.userNameField), dsr.getBegin(), dsr.getEnd() );
   
    resp.setTotal(res.getTotalLength());
    resp.setSize(res.getList().size());
@@ -72,10 +107,10 @@ public class AuthDBDataSourceService implements DataSourceBackendService
  
  class UserMapIterator implements MapIterator<DSField, String>
  {
-  private Iterator<User> userIter;
+  private Iterator<? extends User> userIter;
   private User cUser;
   
-  UserMapIterator( List<User> lst )
+  UserMapIterator( List<? extends User> lst )
   {
    userIter = lst.iterator();
   }
@@ -94,10 +129,10 @@ public class AuthDBDataSourceService implements DataSourceBackendService
   @Override
   public String get(DSField key)
   {
-   if( key.equals(getDSDefinition().userIdField) )
+   if( key.equals(UserDSDef.userIdField) )
     return cUser.getId();
    
-   if( key.equals(getDSDefinition().userNameField) )
+   if( key.equals(UserDSDef.userNameField) )
     return cUser.getName();
 
    return null;
