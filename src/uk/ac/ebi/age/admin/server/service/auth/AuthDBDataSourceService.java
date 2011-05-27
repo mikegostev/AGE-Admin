@@ -36,9 +36,70 @@ public class AuthDBDataSourceService implements DataSourceBackendService
     return processFetch( dsr );
    case UPDATE:
     return processUpdate( dsr );
+   case ADD:
+    return processAdd( dsr );
+   case DELETE:
+    return processDelete( dsr );
   }
   
   return null;
+ }
+
+ private DataSourceResponse processDelete(DataSourceRequest dsr)
+ {
+  DataSourceResponse resp = new DataSourceResponse();
+
+  Map<DSField, String> vmap = dsr.getValueMap();
+  
+  String userId = vmap.get(UserDSDef.userIdField);
+  
+  if( userId == null )
+  {
+   resp.setErrorMessage(UserDSDef.userIdField.getFieldTitle()+" should not be null");
+   return resp;
+  }
+  
+  
+  try
+  {
+   db.deleteUser( userId );
+  }
+  catch(AuthException e)
+  {
+   resp.setErrorMessage("User with ID '"+userId+"' exists");
+  }
+  
+  return resp;
+ }
+
+ private DataSourceResponse processAdd(DataSourceRequest dsr)
+ {
+  DataSourceResponse resp = new DataSourceResponse();
+
+  Map<DSField, String> vmap = dsr.getValueMap();
+  
+  String userId = vmap.get(UserDSDef.userIdField);
+  String userName = vmap.get(UserDSDef.userNameField);
+  String userPass = vmap.get(UserDSDef.userPassField);
+  
+  if( userId == null )
+  {
+   resp.setErrorMessage(UserDSDef.userIdField.getFieldTitle()+" should not be null");
+   return resp;
+  }
+  
+  
+  try
+  {
+   db.addUser( userId, userName, userPass );
+  }
+  catch(AuthException e)
+  {
+   resp.setErrorMessage("User with ID '"+userId+"' exists");
+  }
+  
+  return resp;
+  
  }
 
  private DataSourceResponse processUpdate(DataSourceRequest dsr)

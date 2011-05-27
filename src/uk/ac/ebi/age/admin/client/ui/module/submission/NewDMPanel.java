@@ -55,7 +55,7 @@ public class NewDMPanel extends CaptionPanel
   cellFormatter.setVerticalAlignment(0, 1, HasVerticalAlignment.ALIGN_TOP);
   cellFormatter.setHorizontalAlignment(0, 1, HasHorizontalAlignment.ALIGN_RIGHT);
 
-  HTML clsBt = new HTML("<img src='images/icons/delete.png'>");
+  HTML clsBt = new HTML("<img src='admin_images/icons/delete.png'>");
   clsBt.addClickHandler(new ClickHandler()
   {
    @Override

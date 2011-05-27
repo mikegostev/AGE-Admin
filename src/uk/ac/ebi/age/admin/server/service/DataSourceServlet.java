@@ -19,6 +19,7 @@ import uk.ac.ebi.age.admin.server.service.ds.DataSourceResponse;
 import uk.ac.ebi.age.admin.shared.ds.DSDef;
 import uk.ac.ebi.age.admin.shared.ds.DSField;
 
+import com.pri.util.StringUtils;
 import com.pri.util.collection.MapIterator;
 import com.smartgwt.client.rpc.RPCResponse;
 
@@ -61,6 +62,10 @@ public class DataSourceServlet extends HttpServlet
    dsr.setRequestType( RequestType.FETCH );
   else if( "update".equals(prm) )
    dsr.setRequestType( RequestType.UPDATE );
+  else if( "add".equals(prm) )
+   dsr.setRequestType( RequestType.ADD );
+  else if( "remove".equals(prm) )
+   dsr.setRequestType( RequestType.DELETE );
   else
   {
    sendInvRequetError(response);
@@ -112,8 +117,8 @@ public class DataSourceServlet extends HttpServlet
    if( dsresp.getErrorMessage() != null )
     out.print("{" +
       "response:{" +
-      " status: " + RPCResponse.STATUS_FAILURE +
-      ", data: '"+dsresp.getErrorMessage()+"'"+
+      " status: " + RPCResponse.STATUS_LOGIN_SUCCESS+
+      ", data: '"+StringUtils.escapeByBackslash(dsresp.getErrorMessage(), '\'')+"'"+
       "}}");
    else
     out.print("{" +
@@ -147,8 +152,14 @@ public class DataSourceServlet extends HttpServlet
     outw.write(",{");
    
    for( DSField dsf : dsd.getFields() )
-    outw.write("'"+dsf.getFieldId()+"': '"+dataIter.get(dsf)+"',");
-   
+   {
+    String val = dataIter.get(dsf);
+    
+    val = val==null?"":StringUtils.escapeByBackslash(val,'\'');
+    
+    outw.write("'"+StringUtils.escapeByBackslash(dsf.getFieldId(),'\'')+"': '"+val+"',");
+   }
+    
    outw.write("}");
 
   }

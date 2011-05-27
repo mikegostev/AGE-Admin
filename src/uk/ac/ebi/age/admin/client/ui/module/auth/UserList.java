@@ -30,6 +30,8 @@ public class UserList extends VLayout
 {
  public UserList()
  {
+  final DataSource ds = UserDSDef.getInstance().createDataSource();
+  
   ToolStrip usrTools = new ToolStrip();
   usrTools.setWidth100();
 
@@ -45,6 +47,8 @@ public class UserList extends VLayout
    @Override
    public void onClick(ClickEvent event)
    {
+    new AddUserDialog(ds).show();
+    
    }
   });
   
@@ -86,9 +90,6 @@ public class UserList extends VLayout
   addMember(usrTools);
   
   
-  DataSource ds = UserDSDef.getInstance().createDataSource();
-  
- 
   ds.setDataFormat(DSDataFormat.JSON);
   ds.setDataURL(Constants.dsServiceUrl);
   ds.setDataProtocol(DSProtocol.POSTPARAMS);

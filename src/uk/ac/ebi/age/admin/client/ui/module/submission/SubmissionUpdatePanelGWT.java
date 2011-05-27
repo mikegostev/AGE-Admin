@@ -412,7 +412,7 @@ public class SubmissionUpdatePanelGWT extends VLayout
    cellFormatter.setVerticalAlignment(row, 2, HasVerticalAlignment.ALIGN_TOP);
    cellFormatter.setHorizontalAlignment(row, 2, HasHorizontalAlignment.ALIGN_RIGHT);
    
-   final HTML clsBt = new HTML("<img src='images/icons/delete.png'>");
+   final HTML clsBt = new HTML("<img src='admin_images/icons/delete.png'>");
    clsBt.addClickHandler(new ClickHandler()
    {
     @Override
@@ -420,12 +420,12 @@ public class SubmissionUpdatePanelGWT extends VLayout
     {
      if( status == Status.DELETE )
      {
-      clsBt.setHTML("<img src='images/icons/delete.png'>");
+      clsBt.setHTML("<img src='admin_images/icons/delete.png'>");
       status = Status.KEEP;
      }
      else
      {
-      clsBt.setHTML("<img src='images/icons/add.png'>");
+      clsBt.setHTML("<img src='admin_images/icons/add.png'>");
       status = Status.DELETE;
      }
      
@@ -612,7 +612,7 @@ public class SubmissionUpdatePanelGWT extends VLayout
    cellFormatter.setVerticalAlignment(row, 4, HasVerticalAlignment.ALIGN_TOP);
    cellFormatter.setHorizontalAlignment(row, 4, HasHorizontalAlignment.ALIGN_RIGHT);
 
-   final HTML clsBt = new HTML("<img src='images/icons/delete.png'>");
+   final HTML clsBt = new HTML("<img src='admin_images/icons/delete.png'>");
    clsBt.addClickHandler(new ClickHandler()
    {
     @Override
@@ -620,12 +620,12 @@ public class SubmissionUpdatePanelGWT extends VLayout
     {
      if(status == Status.DELETE)
      {
-      clsBt.setHTML("<img src='images/icons/delete.png'>");
+      clsBt.setHTML("<img src='admin_images/icons/delete.png'>");
       status = Status.KEEP;
      }
      else
      {
-      clsBt.setHTML("<img src='images/icons/add.png'>");
+      clsBt.setHTML("<img src='admin_images/icons/add.png'>");
       status = Status.DELETE;
      }
 
