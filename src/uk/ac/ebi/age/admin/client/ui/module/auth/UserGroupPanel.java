@@ -22,6 +22,12 @@ public class UserGroupPanel extends HLayout
   
   vl.addMember(ul);
   
+  GroupList gl = new GroupList();
+  gl.setHeight("50%");
+  
+  vl.addMember(gl);
+
+  
   addMember(new Canvas());
  }
 

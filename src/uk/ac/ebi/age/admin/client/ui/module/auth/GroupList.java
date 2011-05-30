@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import uk.ac.ebi.age.admin.client.Session;
 import uk.ac.ebi.age.admin.shared.Constants;
-import uk.ac.ebi.age.admin.shared.auth.UserDSDef;
+import uk.ac.ebi.age.admin.shared.auth.GroupDSDef;
 
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.Alignment;
@@ -16,7 +16,6 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.EditFailedEvent;
 import com.smartgwt.client.widgets.grid.events.EditFailedHandler;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -27,38 +26,38 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 //criteria={"_constructor":"AdvancedCriteria","operator":"or","criteria":[{"fieldName":"username","operator":"iNotStartsWith","value":"V"}]}
 
 
-public class UserList extends VLayout
+public class GroupList extends VLayout
 {
- public UserList()
+ public GroupList()
  {
-  final DataSource ds = UserDSDef.getInstance().createDataSource();
+  final DataSource ds = GroupDSDef.getInstance().createDataSource();
   
-  ToolStrip usrTools = new ToolStrip();
-  usrTools.setWidth100();
+  ToolStrip grpTools = new ToolStrip();
+  grpTools.setWidth100();
 
   final ListGrid list = new ListGrid();
 
 
   ToolStripButton addBut = new ToolStripButton();
-  addBut.setTitle("Add user");
+  addBut.setTitle("Add group");
   addBut.setSelected(true);
-  addBut.setIcon( "icons/auth/user_add.png" );
+  addBut.setIcon( "icons/auth/group_add.png" );
   addBut.addClickHandler( new ClickHandler()
   {
    @Override
    public void onClick(ClickEvent event)
    {
-    new UserAddDialog(ds).show();
+    new GroupAddDialog(ds).show();
    }
   });
   
-  usrTools.addSpacer(20);
-  usrTools.addButton(addBut);
+  grpTools.addSpacer(20);
+  grpTools.addButton(addBut);
 
   ToolStripButton delBut = new ToolStripButton();
-  delBut.setTitle("Delete user");
+  delBut.setTitle("Delete Group");
   delBut.setSelected(true);
-  delBut.setIcon( "icons/auth/user_delete.png" );
+  delBut.setIcon( "icons/auth/group_delete.png" );
   delBut.addClickHandler( new ClickHandler()
   {
    @Override
@@ -68,32 +67,10 @@ public class UserList extends VLayout
    }
   });
   
-  usrTools.addSpacer(5);
-  usrTools.addButton(delBut);
-
-  ToolStripButton passBut = new ToolStripButton();
-  passBut.setTitle("Change password");
-  passBut.setSelected(true);
-  passBut.setIcon( "icons/auth/key.png" );
-  passBut.addClickHandler( new ClickHandler()
-  {
-   @Override
-   public void onClick(ClickEvent event)
-   {
-    ListGridRecord[] sel = list.getSelection();
-    
-    if( sel == null || sel.length != 1 )
-     SC.warn("Please select one user");
-    else
-     new UserChgPassDialog(sel[0],ds).show();
-   }
-  });
+  grpTools.addSpacer(5);
+  grpTools.addButton(delBut);
   
-  usrTools.addSpacer(5);
-  usrTools.addButton(passBut);
-
-  
-  addMember(usrTools);
+  addMember(grpTools);
   
   
   ds.setDataFormat(DSDataFormat.JSON);
@@ -102,16 +79,16 @@ public class UserList extends VLayout
   ds.setDefaultParams(new HashMap<String, String>(){{ put("_$sess",Session.getSessionId());}});
   
   
-  ListGridField icnField = new ListGridField("userIcon","");
+  ListGridField icnField = new ListGridField("grpIcon","");
   icnField.setWidth(30);
   icnField.setAlign(Alignment.CENTER);  
   icnField.setType(ListGridFieldType.ICON);  
-  icnField.setIcon("icons/auth/user.png");
+  icnField.setIcon("icons/auth/group.png");
   
-  ListGridField idField = new ListGridField( UserDSDef.userIdField.getFieldId(), UserDSDef.userIdField.getFieldTitle());
+  ListGridField idField = new ListGridField( GroupDSDef.grpIdField.getFieldId(), GroupDSDef.grpIdField.getFieldTitle());
   idField.setWidth(200);
 
-  ListGridField nameField = new ListGridField( UserDSDef.userNameField.getFieldId(), UserDSDef.userNameField.getFieldTitle());
+  ListGridField nameField = new ListGridField( GroupDSDef.grpDescField.getFieldId(), GroupDSDef.grpDescField.getFieldTitle());
   
   list.setFields(icnField,idField,nameField);
   

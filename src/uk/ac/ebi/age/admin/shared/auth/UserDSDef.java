@@ -4,8 +4,6 @@ import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.ds.DSDef;
 import uk.ac.ebi.age.admin.shared.ds.DSField;
 
-import com.smartgwt.client.data.DSRequest;
-import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.data.RestDataSource;
@@ -45,36 +43,28 @@ public class UserDSDef extends DSDef
  public DataSource createDataSource()
  {
  // DataSource ds = super.createDataSource();
-  RestDataSource ds = new RestDataSource() {
-   protected  void  transformResponse(DSResponse response, DSRequest request, Object data) 
-   {
-    super.transformResponse(response, request, data);
-   }
-  };
+  RestDataSource ds = new RestDataSource();
+//   { protected  void  transformResponse(DSResponse response, DSRequest request, Object data) 
+//   {
+//    System.out.println( "<**>"+   xmlSerialize(request.getData()) +"<**>");
+//    JSOHelper.setAttribute(request.getData(), "##username", "XXX");
+//    JSOHelper.setAttribute(request.getData(), "##userpass", (String)null);
+//    System.out.println("Attr="+JSOHelper.getAttribute(request.getData(), "##userid"));
+//
+//    System.out.println(data.getClass().getName());
+//    
+//    super.transformResponse(response, request, data);
+//   }
+//  };
   
   ds.setAutoCacheAllData(false);
   ds.setCacheAllData(false);
   
-  DataSourceField fArr[] = new DataSourceField[getFields().size()];
+  DataSourceField idF = new DataSourceField(userIdField.getFieldId(), userIdField.getType(), userIdField.getFieldTitle());
+  DataSourceField nameF = new DataSourceField(userNameField.getFieldId(), userNameField.getType(), userNameField.getFieldTitle());
+  idF.setPrimaryKey(true);
   
-  int i=0;
-  for( DSField f : getFields() )
-  {
-   DataSourceField dsf=null;
-   
-   if( f.getWidth() >  0 )
-    dsf = new DataSourceField(f.getFieldId(), f.getType(), f.getFieldTitle(), f.getWidth());
-   else
-    dsf = new DataSourceField(f.getFieldId(), f.getType(), f.getFieldTitle());
-   
-   dsf.setPrimaryKey( f.isPrimaryKey() );
-   dsf.setCanEdit(f.isEditable());
-   dsf.setHidden( f.isHidden() );
-   
-   fArr[i++]=dsf;
-  }
-  
-  ds.setFields(fArr);
+  ds.setFields(idF,nameF);
   
   ds.setID(Constants.userListServiceName);
   

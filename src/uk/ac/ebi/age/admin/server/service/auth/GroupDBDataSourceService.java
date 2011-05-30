@@ -7,22 +7,20 @@ import java.util.Map;
 import uk.ac.ebi.age.admin.server.service.ds.DataSourceBackendService;
 import uk.ac.ebi.age.admin.server.service.ds.DataSourceRequest;
 import uk.ac.ebi.age.admin.server.service.ds.DataSourceResponse;
-import uk.ac.ebi.age.admin.shared.auth.UserDSDef;
+import uk.ac.ebi.age.admin.shared.auth.GroupDSDef;
 import uk.ac.ebi.age.admin.shared.ds.DSField;
 import uk.ac.ebi.age.authz.AuthDB;
 import uk.ac.ebi.age.authz.AuthException;
-import uk.ac.ebi.age.authz.User;
+import uk.ac.ebi.age.authz.UserGroup;
 
 import com.pri.util.collection.ListFragment;
 import com.pri.util.collection.MapIterator;
 
-public class AuthDBDataSourceService implements DataSourceBackendService
+public class GroupDBDataSourceService implements DataSourceBackendService
 {
- private static UserDSDef dsDefinition;
- 
  private AuthDB db;
  
- public AuthDBDataSourceService(AuthDB authDB)
+ public GroupDBDataSourceService(AuthDB authDB)
  {
   db = authDB;
  }
@@ -51,22 +49,22 @@ public class AuthDBDataSourceService implements DataSourceBackendService
 
   Map<DSField, String> vmap = dsr.getValueMap();
   
-  String userId = vmap.get(UserDSDef.userIdField);
+  String grpId = vmap.get(GroupDSDef.grpIdField);
   
-  if( userId == null )
+  if( grpId == null )
   {
-   resp.setErrorMessage(UserDSDef.userIdField.getFieldTitle()+" should not be null");
+   resp.setErrorMessage(GroupDSDef.grpIdField.getFieldTitle()+" should not be null");
    return resp;
   }
   
   
   try
   {
-   db.deleteUser( userId );
+   db.deleteGroup( grpId );
   }
   catch(AuthException e)
   {
-   resp.setErrorMessage("User with ID '"+userId+"' exists");
+   resp.setErrorMessage("Group with ID '"+grpId+"' doesn't exist");
   }
   
   return resp;
@@ -78,24 +76,23 @@ public class AuthDBDataSourceService implements DataSourceBackendService
 
   Map<DSField, String> vmap = dsr.getValueMap();
   
-  String userId = vmap.get(UserDSDef.userIdField);
-  String userName = vmap.get(UserDSDef.userNameField);
-  String userPass = vmap.get(UserDSDef.userPassField);
+  String grpId = vmap.get(GroupDSDef.grpIdField);
+  String grpDesc = vmap.get(GroupDSDef.grpDescField);
   
-  if( userId == null )
+  if( grpId == null )
   {
-   resp.setErrorMessage(UserDSDef.userIdField.getFieldTitle()+" should not be null");
+   resp.setErrorMessage(GroupDSDef.grpIdField.getFieldTitle()+" should not be null");
    return resp;
   }
   
   
   try
   {
-   db.addUser( userId, userName, userPass );
+   db.addGroup( grpId, grpDesc );
   }
   catch(AuthException e)
   {
-   resp.setErrorMessage("User with ID '"+userId+"' exists");
+   resp.setErrorMessage("Group with ID '"+grpId+"' exists");
   }
   
   return resp;
@@ -108,20 +105,19 @@ public class AuthDBDataSourceService implements DataSourceBackendService
 
   Map<DSField, String> vmap = dsr.getValueMap();
   
-  String userId = vmap.get(UserDSDef.userIdField);
-  String userName = vmap.get(UserDSDef.userNameField);
-  String userPass = vmap.get(UserDSDef.userPassField);
+  String grpId = vmap.get(GroupDSDef.grpIdField);
+  String grpDesc = vmap.get(GroupDSDef.grpDescField);
   
-  if( userId == null )
+  if( grpId == null )
   {
-   resp.setErrorMessage(UserDSDef.userIdField.getFieldTitle()+" should not be null");
+   resp.setErrorMessage(GroupDSDef.grpIdField.getFieldTitle()+" should not be null");
    return resp;
   }
   
   
   try
   {
-   db.updateUser( userId, userName, userPass );
+   db.updateGroup( grpId, grpDesc );
   }
   catch(AuthException e)
   {
@@ -139,50 +135,47 @@ public class AuthDBDataSourceService implements DataSourceBackendService
   
   if( vmap == null || vmap.size() == 0 )
   {
-   List<? extends User> res=db.getUsers( dsr.getBegin(), dsr.getEnd() );
+   List<? extends UserGroup> res=db.getGroups( dsr.getBegin(), dsr.getEnd() );
    
-   resp.setTotal( db.getUsersTotal() );
+   resp.setTotal( db.getGroupsTotal() );
    resp.setSize(res.size());
-   resp.setIterator( new UserMapIterator(res) );
+   resp.setIterator( new GroupMapIterator(res) );
   }
   else
   {
-   ListFragment<User> res=db.getUsers( vmap.get(UserDSDef.userIdField), vmap.get(UserDSDef.userNameField), dsr.getBegin(), dsr.getEnd() );
+   ListFragment<UserGroup> res=db.getGroups( vmap.get(GroupDSDef.grpIdField), vmap.get(GroupDSDef.grpDescField), dsr.getBegin(), dsr.getEnd() );
   
    resp.setTotal(res.getTotalLength());
    resp.setSize(res.getList().size());
-   resp.setIterator( new UserMapIterator(res.getList()) );
+   resp.setIterator( new GroupMapIterator(res.getList()) );
   }
   
   return resp;
  }
 
  @Override
- public UserDSDef getDSDefinition()
+ public GroupDSDef getDSDefinition()
  {
-  if( dsDefinition == null )
-   dsDefinition = new UserDSDef();
-
-  return dsDefinition;
+  return GroupDSDef.getInstance();
  }
  
- class UserMapIterator implements MapIterator<DSField, String>
+ class GroupMapIterator implements MapIterator<DSField, String>
  {
-  private Iterator<? extends User> userIter;
-  private User cUser;
+  private Iterator<? extends UserGroup> grpIter;
+  private UserGroup cGrp;
   
-  UserMapIterator( List<? extends User> lst )
+  GroupMapIterator( List<? extends UserGroup> lst )
   {
-   userIter = lst.iterator();
+   grpIter = lst.iterator();
   }
 
   @Override
   public boolean next()
   {
-   if( ! userIter.hasNext() )
+   if( ! grpIter.hasNext() )
     return false;
 
-   cUser = userIter.next();
+   cGrp = grpIter.next();
    
    return true;
   }
@@ -190,11 +183,11 @@ public class AuthDBDataSourceService implements DataSourceBackendService
   @Override
   public String get(DSField key)
   {
-   if( key.equals(UserDSDef.userIdField) )
-    return cUser.getId();
+   if( key.equals(GroupDSDef.grpIdField) )
+    return cGrp.getId();
    
-   if( key.equals(UserDSDef.userNameField) )
-    return cUser.getName();
+   if( key.equals(GroupDSDef.grpDescField) )
+    return cGrp.getDescription();
 
    return null;
   }

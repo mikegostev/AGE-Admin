@@ -5,10 +5,19 @@ import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.CloseClickHandler;
 import com.smartgwt.client.widgets.events.CloseClientEvent;
 
-public class AddUserDialog extends Window
+public class UserAddDialog extends Window
 {
+ 
+ private CloseClickHandler clsHnd = new CloseClickHandler()
+ {
+  @Override
+  public void onCloseClick(CloseClientEvent event)
+  {
+   close();
+  }
+ };
 
- public AddUserDialog(DataSource ds)
+ public UserAddDialog(DataSource ds)
  {
 //  setWidth(300);
 //  setHeight(200);
@@ -20,16 +29,9 @@ public class AddUserDialog extends Window
   setAutoSize(true);
   setAutoCenter(true);
 
-  addCloseClickHandler( new CloseClickHandler()
-  {
-   @Override
-   public void onCloseClick(CloseClientEvent event)
-   {
-    close();
-   }
-  });
+  addCloseClickHandler( clsHnd );
   
-  addItem( new UserAddForm(ds) );
+  addItem( new UserAddForm(ds,clsHnd) );
  }
 
  public void close()

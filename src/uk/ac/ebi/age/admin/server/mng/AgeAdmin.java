@@ -12,7 +12,8 @@ import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
 import uk.ac.ebi.age.admin.client.model.ModelStorageException;
 import uk.ac.ebi.age.admin.server.model.Age2ImprintConverter;
-import uk.ac.ebi.age.admin.server.service.auth.AuthDBDataSourceService;
+import uk.ac.ebi.age.admin.server.service.auth.GroupDBDataSourceService;
+import uk.ac.ebi.age.admin.server.service.auth.UserDBDataSourceService;
 import uk.ac.ebi.age.admin.server.service.ds.DataSourceServiceRouter;
 import uk.ac.ebi.age.admin.server.user.Session;
 import uk.ac.ebi.age.admin.server.user.SessionPool;
@@ -106,7 +107,8 @@ public class AgeAdmin
   if( conf.getDataSourceServiceRouter() == null )
    conf.setDataSourceServiceRouter( new DataSourceServiceRouter() );
 
-  conf.getDataSourceServiceRouter().addService(Constants.userListServiceName, new AuthDBDataSourceService( conf.getAuthDB() ) );
+  conf.getDataSourceServiceRouter().addService(Constants.userListServiceName, new UserDBDataSourceService( conf.getAuthDB() ) );
+  conf.getDataSourceServiceRouter().addService(Constants.groupListServiceName, new GroupDBDataSourceService( conf.getAuthDB() ) );
   
   if( conf.getFileSourceManager() == null )
    conf.setFileSourceManager( new FileSourceManager() );
