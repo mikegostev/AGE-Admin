@@ -1,10 +1,9 @@
 package uk.ac.ebi.age.admin.client.ui.module.auth;
 
-import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
-public class UserGroupPanel extends HLayout
+public class UserGroupPanel extends VLayout
 {
 
  public UserGroupPanel(AuthAdminPanel authAdminPanel)
@@ -12,23 +11,37 @@ public class UserGroupPanel extends HLayout
   setWidth100();
   setHeight100();
   
-  VLayout vl = new VLayout();
+  HLayout row = new HLayout();
   
-  vl.setWidth("50%");
-  addMember(vl);
+  row.setHeight("50%");
+  row.setBorder("1px solid black");
+  addMember(row);
   
-  UserList ul = new UserList();
-  ul.setHeight("50%");
+  VLayout userGroups = new VLayout();
+  userGroups.setWidth("50%");
+  userGroups.setHeight100();
   
-  vl.addMember(ul);
+  UserList ul = new UserList( userGroups );
+  ul.setWidth("50%");
   
-  GroupList gl = new GroupList();
-  gl.setHeight("50%");
+  row.addMember(ul);
+  row.addMember(userGroups);
   
-  vl.addMember(gl);
+  row = new HLayout();
+  row.setBorder("1px solid black");
+  row.setHeight("50%");
+  addMember(row);
+  
+  VLayout groupUsers = new VLayout();
+  groupUsers.setWidth("50%");
+  
+  GroupList gl = new GroupList(groupUsers);
+  gl.setWidth("50%");
+  
+  row.addMember(gl);
+  row.addMember(groupUsers);
 
   
-  addMember(new Canvas());
  }
 
  

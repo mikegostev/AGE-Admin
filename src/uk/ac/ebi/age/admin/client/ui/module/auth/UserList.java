@@ -19,6 +19,7 @@ import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.EditFailedEvent;
 import com.smartgwt.client.widgets.grid.events.EditFailedHandler;
+import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
@@ -29,8 +30,12 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
 public class UserList extends VLayout
 {
- public UserList()
+ public UserList(Layout userGroups)
  {
+  setWidth100();  
+  setHeight100();  
+  setMargin(5);
+
   final DataSource ds = UserDSDef.getInstance().createDataSource();
   
   ToolStrip usrTools = new ToolStrip();
@@ -38,6 +43,18 @@ public class UserList extends VLayout
 
   final ListGrid list = new ListGrid();
 
+  
+  ToolStripButton hdr = new ToolStripButton();
+  hdr.setTitle("Users");
+  hdr.setSelected(false);
+  hdr.setIcon( "icons/auth/user.png" );
+  hdr.setShowDisabled(false);
+  hdr.setDisabled(true);
+  
+  usrTools.addButton(hdr);
+
+//  StaticTextItem hdr = new StaticTextItem("hdr", Canvas.imgHTML("icons/auth/user.png") + " Users" );
+//  usrTools.addFormItem(hdr);
 
   ToolStripButton addBut = new ToolStripButton();
   addBut.setTitle("Add user");
