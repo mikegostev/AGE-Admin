@@ -12,6 +12,7 @@ import com.smartgwt.client.types.DSDataFormat;
 import com.smartgwt.client.types.DSProtocol;
 import com.smartgwt.client.types.ListGridFieldType;
 import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.ListGrid;
@@ -19,6 +20,8 @@ import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.EditFailedEvent;
 import com.smartgwt.client.widgets.grid.events.EditFailedHandler;
+import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
+import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
@@ -30,8 +33,12 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
 public class UserList extends VLayout
 {
+ private Layout detailsPanel;
+ 
  public UserList(Layout userGroups)
  {
+  detailsPanel = userGroups;
+  
   setWidth100();  
   setHeight100();  
   setMargin(5);
@@ -157,5 +164,30 @@ public class UserList extends VLayout
   
   addMember( list );
   
+  list.addSelectionChangedHandler(new SelectionChangedHandler()
+  {
+   
+   @Override
+   public void onSelectionChanged(SelectionEvent event)
+   {
+    clearDetailsPanel();
+    
+    if( event.getSelection() == null || event.getSelection().length != 1 )
+     return;
+    
+    
+   }
+  });
+  
+ }
+ 
+ private void clearDetailsPanel()
+ {
+  Canvas[] membs = detailsPanel.getMembers();
+  
+  detailsPanel.removeMembers(membs);
+  
+  for(Canvas c : membs )
+   c.destroy();
  }
 }
