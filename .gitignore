@@ -4,3 +4,7 @@
 scrap
 /lib
 .externalToolBuilders
+war/admin
+war/biosd
+war/var
+.gwt
