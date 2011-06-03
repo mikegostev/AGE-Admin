@@ -35,9 +35,9 @@ public class UserList extends VLayout
 {
  private Layout detailsPanel;
  
- public UserList(Layout userGroups)
+ public UserList(Layout detp)
  {
-  detailsPanel = userGroups;
+  detailsPanel = detp;
   
   setWidth100();  
   setHeight100();  
@@ -123,7 +123,7 @@ public class UserList extends VLayout
   ds.setDataFormat(DSDataFormat.JSON);
   ds.setDataURL(Constants.dsServiceUrl);
   ds.setDataProtocol(DSProtocol.POSTPARAMS);
-  ds.setDefaultParams(new HashMap<String, String>(){{ put("_$sess",Session.getSessionId());}});
+  ds.setDefaultParams(new HashMap<String, String>(){{ put(Constants.sessionKey,Session.getSessionId());}});
   
   
   ListGridField icnField = new ListGridField("userIcon","");
@@ -175,7 +175,9 @@ public class UserList extends VLayout
     if( event.getSelection() == null || event.getSelection().length != 1 )
      return;
     
+    UserGroupsList ugl = new UserGroupsList( event.getSelectedRecord().getAttribute(UserDSDef.userIdField.getFieldId()) );
     
+    detailsPanel.addMember(ugl);
    }
   });
   

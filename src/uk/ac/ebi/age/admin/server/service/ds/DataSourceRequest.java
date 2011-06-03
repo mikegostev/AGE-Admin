@@ -19,7 +19,9 @@ public class DataSourceRequest
  private int end;
  private Map<DSField, String> values;
  private RequestType reqType;
-
+ private Map<String, String> reqParams = new HashMap<String, String>();
+ 
+ 
  public void setEnd(int e)
  {
   end=e;
@@ -62,6 +64,16 @@ public class DataSourceRequest
  public Map<DSField, String> getValueMap()
  {
   return values;
+ }
+
+ public void addRequestParameter(String pName, String parameter)
+ {
+  reqParams.put(pName, parameter);
+ }
+ 
+ public Map<String, String> getRequestParametersMap()
+ {
+  return reqParams;
  }
 
 }

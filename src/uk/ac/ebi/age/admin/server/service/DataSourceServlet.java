@@ -40,8 +40,9 @@ public class DataSourceServlet extends HttpServlet
  {
   String query = request.getQueryString();
   
-  System.out.println("Query: "+query);
-  
+//  System.out.println("Query: "+query);
+  DataSourceRequest dsr = new DataSourceRequest();
+ 
   Enumeration<?> prmNames = request.getParameterNames();
   
   while( prmNames.hasMoreElements() )
@@ -50,11 +51,11 @@ public class DataSourceServlet extends HttpServlet
    
    for(String pv : request.getParameterValues(pName))
     System.out.println(pName+"="+pv);
+   
+   dsr.addRequestParameter(pName, request.getParameter(pName));
   }
   
   String dest  = request.getParameter("_dataSource");
-  
-  DataSourceRequest dsr = new DataSourceRequest();
   
   String prm = request.getParameter("_operationType");
   

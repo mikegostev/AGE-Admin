@@ -1,6 +1,5 @@
 package uk.ac.ebi.age.admin.shared.auth;
 
-import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.ds.DSDef;
 import uk.ac.ebi.age.admin.shared.ds.DSField;
 
@@ -50,7 +49,6 @@ public class GroupDSDef extends DSDef
   
   ds.setFields(idF,descF);
   
-  ds.setID(Constants.groupListServiceName);
   
   return ds;
  }

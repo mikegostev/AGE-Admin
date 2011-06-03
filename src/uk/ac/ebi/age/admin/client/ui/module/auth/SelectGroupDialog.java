@@ -1,0 +1,135 @@
+package uk.ac.ebi.age.admin.client.ui.module.auth;
+
+import java.util.HashMap;
+
+import uk.ac.ebi.age.admin.client.Session;
+import uk.ac.ebi.age.admin.shared.Constants;
+import uk.ac.ebi.age.admin.shared.auth.GroupDSDef;
+
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.DSDataFormat;
+import com.smartgwt.client.types.DSProtocol;
+import com.smartgwt.client.types.ListGridFieldType;
+import com.smartgwt.client.widgets.Button;
+import com.smartgwt.client.widgets.Window;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.events.CloseClickHandler;
+import com.smartgwt.client.widgets.events.CloseClientEvent;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
+
+public class SelectGroupDialog extends Window
+{
+ private DataSource ds;
+ 
+ private CloseClickHandler clsHnd = new CloseClickHandler()
+ {
+  @Override
+  public void onCloseClick(CloseClientEvent event)
+  {
+   close();
+  }
+ };
+
+ 
+ public SelectGroupDialog()
+ {
+  setTitle("Select Group");
+  setShowMinimizeButton(false);
+  setIsModal(true);
+  setShowModalMask(true);
+//  setAutoSize(true);
+  setAutoCenter(true);
+  setHeight("90%");
+  setWidth("70%");
+  
+  
+  VLayout panel = new VLayout();
+  
+  ds = DataSource.getDataSource(Constants.groupListServiceName);
+  
+  if( ds == null )
+  {
+   ds = GroupDSDef.getInstance().createDataSource();
+
+   ds.setID(Constants.groupListServiceName);
+   ds.setDataFormat(DSDataFormat.JSON);
+   ds.setDataURL(Constants.dsServiceUrl);
+   ds.setDataProtocol(DSProtocol.POSTPARAMS);
+   ds.setDefaultParams(new HashMap<String, String>()
+     {{
+      put(Constants.sessionKey,Session.getSessionId());
+     }});
+  }
+  
+  final ListGrid list = new ListGrid();
+
+  
+  ListGridField icnField = new ListGridField("grpIcon", "");
+  icnField.setWidth(30);
+  icnField.setAlign(Alignment.CENTER);
+  icnField.setType(ListGridFieldType.ICON);
+  icnField.setIcon("icons/auth/group.png");
+
+  ListGridField idField = new ListGridField(GroupDSDef.grpIdField.getFieldId(), GroupDSDef.grpIdField.getFieldTitle());
+  idField.setWidth(200);
+
+  ListGridField nameField = new ListGridField(GroupDSDef.grpDescField.getFieldId(), GroupDSDef.grpDescField.getFieldTitle());
+  nameField.setCanEdit(false);
+
+  list.setFields(icnField, idField, nameField);
+
+  list.setWidth100();
+  list.setHeight100();
+  list.setAutoFetchData(true);
+  list.setDataSource(ds);
+
+  list.setShowFilterEditor(true);
+  list.setFilterOnKeypress(true);
+
+  list.setShowAllRecords(false);
+  list.setDrawAheadRatio(1.5F);
+  list.setScrollRedrawDelay(0);
+
+  panel.addMember(list);
+  
+  HLayout buttonPanel = new HLayout();
+//  buttonPanel.setWidth100();
+  buttonPanel.setMargin(5);
+  buttonPanel.setMembersMargin(15);
+  buttonPanel.setAlign(Alignment.CENTER);
+  
+  Button okBt = new Button("OK");
+  
+  buttonPanel.addMember( okBt );
+  
+  
+  Button cancelBt = new Button("Cancel");
+  cancelBt.addClickHandler( new ClickHandler()
+  {
+   @Override
+   public void onClick(ClickEvent event)
+   {
+    close();
+   }
+  });
+  
+  buttonPanel.addMember( cancelBt );
+
+  panel.addMember(buttonPanel);
+    
+  addItem(panel);
+  
+  addCloseClickHandler( clsHnd );
+
+ }
+ 
+ public void close()
+ {
+  destroy();
+ }
+}
