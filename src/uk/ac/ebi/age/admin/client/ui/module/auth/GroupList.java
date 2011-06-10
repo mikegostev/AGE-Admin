@@ -10,14 +10,18 @@ import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.DSDataFormat;
 import com.smartgwt.client.types.DSProtocol;
+import com.smartgwt.client.types.DragDataAction;
 import com.smartgwt.client.types.ListGridFieldType;
 import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.events.EditFailedEvent;
 import com.smartgwt.client.widgets.grid.events.EditFailedHandler;
+import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
+import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
@@ -30,13 +34,16 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 public class GroupList extends VLayout
 {
  private DataSource ds;
+ private Layout detailsPanel;
  
- public GroupList(Layout groupUsers)
+ public GroupList(Layout detp)
  {
   setWidth100();
   setHeight100();
   setMargin(5);
 
+  detailsPanel = detp;
+  
   ds = DataSource.getDataSource(Constants.groupListServiceName);
   
   if( ds == null )
@@ -60,6 +67,8 @@ public class GroupList extends VLayout
   grpTools.setWidth100();
 
   final ListGrid list = new ListGrid();
+  list.setCanDragRecordsOut(true);
+  list.setDragDataAction(DragDataAction.COPY);
   
   ToolStripButton hdr = new ToolStripButton();
   hdr.setTitle("Groups");
@@ -148,7 +157,35 @@ public class GroupList extends VLayout
    }
   });
 
-  addMember(list);
 
+  list.addSelectionChangedHandler(new SelectionChangedHandler()
+  {
+   
+   @Override
+   public void onSelectionChanged(SelectionEvent event)
+   {
+    clearDetailsPanel();
+    
+    if( event.getSelection() == null || event.getSelection().length != 1 )
+     return;
+    
+    GroupParticipantsList gpl = new GroupParticipantsList( event.getSelectedRecord().getAttribute(GroupDSDef.grpIdField.getFieldId()) );
+    
+    detailsPanel.addMember(gpl);
+   }
+  });
+
+  addMember(list);
  }
+ 
+ private void clearDetailsPanel()
+ {
+  Canvas[] membs = detailsPanel.getMembers();
+  
+  detailsPanel.removeMembers(membs);
+  
+  for(Canvas c : membs )
+   c.destroy();
+ }
+
 }

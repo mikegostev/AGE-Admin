@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import uk.ac.ebi.age.admin.client.Session;
 import uk.ac.ebi.age.admin.shared.Constants;
-import uk.ac.ebi.age.admin.shared.auth.GroupDSDef;
+import uk.ac.ebi.age.admin.shared.auth.UserDSDef;
 
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.Alignment;
@@ -23,7 +23,7 @@ import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
-public class SelectGroupDialog extends Window
+public class SelectUserDialog extends Window
 {
  private DataSource ds;
  
@@ -37,9 +37,9 @@ public class SelectGroupDialog extends Window
  };
 
  
- public SelectGroupDialog( final RecordSelectedListener selLstnr )
+ public SelectUserDialog( final RecordSelectedListener selLstnr )
  {
-  setTitle("Select Group");
+  setTitle("Select User");
   setShowMinimizeButton(false);
   setIsModal(true);
   setShowModalMask(true);
@@ -51,13 +51,13 @@ public class SelectGroupDialog extends Window
   
   VLayout panel = new VLayout();
   
-  ds = DataSource.getDataSource(Constants.groupListServiceName);
+  ds = DataSource.getDataSource(Constants.userListServiceName);
   
   if( ds == null )
   {
-   ds = GroupDSDef.getInstance().createDataSource();
+   ds = UserDSDef.getInstance().createDataSource();
 
-   ds.setID(Constants.groupListServiceName);
+   ds.setID(Constants.userListServiceName);
    ds.setDataFormat(DSDataFormat.JSON);
    ds.setDataURL(Constants.dsServiceUrl);
    ds.setDataProtocol(DSProtocol.POSTPARAMS);
@@ -70,16 +70,16 @@ public class SelectGroupDialog extends Window
   final ListGrid list = new ListGrid();
   list.setSelectionType(SelectionStyle.SINGLE);
   
-  ListGridField icnField = new ListGridField("grpIcon", "");
+  ListGridField icnField = new ListGridField("userIcon", "");
   icnField.setWidth(30);
   icnField.setAlign(Alignment.CENTER);
   icnField.setType(ListGridFieldType.ICON);
-  icnField.setIcon("icons/auth/group.png");
+  icnField.setIcon("icons/auth/user.png");
 
-  ListGridField idField = new ListGridField(GroupDSDef.grpIdField.getFieldId(), GroupDSDef.grpIdField.getFieldTitle());
+  ListGridField idField = new ListGridField(UserDSDef.userIdField.getFieldId(), UserDSDef.userIdField.getFieldTitle());
   idField.setWidth(200);
 
-  ListGridField nameField = new ListGridField(GroupDSDef.grpDescField.getFieldId(), GroupDSDef.grpDescField.getFieldTitle());
+  ListGridField nameField = new ListGridField(UserDSDef.userNameField.getFieldId(), UserDSDef.userNameField.getFieldTitle());
   nameField.setCanEdit(false);
 
   list.setFields(icnField, idField, nameField);

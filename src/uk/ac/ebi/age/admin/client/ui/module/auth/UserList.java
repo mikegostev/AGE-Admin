@@ -10,6 +10,7 @@ import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.DSDataFormat;
 import com.smartgwt.client.types.DSProtocol;
+import com.smartgwt.client.types.DragDataAction;
 import com.smartgwt.client.types.ListGridFieldType;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
@@ -49,6 +50,8 @@ public class UserList extends VLayout
   usrTools.setWidth100();
 
   final ListGrid list = new ListGrid();
+  list.setCanDragRecordsOut(true);
+  list.setDragDataAction(DragDataAction.COPY);
 
   
   ToolStripButton hdr = new ToolStripButton();

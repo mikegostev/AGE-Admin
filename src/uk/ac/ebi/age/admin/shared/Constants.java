@@ -21,11 +21,13 @@ public class Constants
  public static final String dsServiceParam="service";
 
  public static final String userIdParam="_$userId";
+ public static final String groupIdParam="_$groupId";
 
  
  public static final String userListServiceName="userList";
  public static final String groupListServiceName="groupList";
- public static final String groupOfUserListServiceName = "groupOfUserList"; 
+ public static final String groupOfUserListServiceName = "groupOfUserList";
+ public static final String groupPartsListServiceName = "groupPartsList";
 
 
 }

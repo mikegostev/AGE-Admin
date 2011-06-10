@@ -5,6 +5,7 @@ import java.util.HashMap;
 import uk.ac.ebi.age.admin.client.Session;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.auth.GroupDSDef;
+import uk.ac.ebi.age.admin.shared.auth.GroupPartsDSDef;
 
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
@@ -12,36 +13,33 @@ import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.DSDataFormat;
 import com.smartgwt.client.types.DSProtocol;
 import com.smartgwt.client.types.ListGridFieldType;
-import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
-import com.smartgwt.client.widgets.grid.events.EditFailedEvent;
-import com.smartgwt.client.widgets.grid.events.EditFailedHandler;
 import com.smartgwt.client.widgets.grid.events.RecordDropEvent;
 import com.smartgwt.client.widgets.grid.events.RecordDropHandler;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
-public class UserGroupsList extends VLayout
+public class GroupParticipantsList extends VLayout
 {
  private DataSource ds;
 
- public UserGroupsList(final String userId)
+ public GroupParticipantsList(final String groupId)
  {
   setWidth100();  
   setHeight100();  
   setMargin(5);
 
-  ds = DataSource.getDataSource(Constants.groupOfUserListServiceName);
+  ds = DataSource.getDataSource(Constants.groupPartsListServiceName);
   
   if( ds == null )
   {
-   ds = GroupDSDef.getInstance().createDataSource();
+   ds = GroupPartsDSDef.getInstance().createDataSource();
 
-   ds.setID(Constants.groupOfUserListServiceName);
+   ds.setID(Constants.groupPartsListServiceName);
    ds.setDataFormat(DSDataFormat.JSON);
    ds.setDataURL(Constants.dsServiceUrl);
    ds.setDataProtocol(DSProtocol.POSTPARAMS);
@@ -50,7 +48,7 @@ public class UserGroupsList extends VLayout
   ds.setDefaultParams(new HashMap<String, String>()
     {{
      put(Constants.sessionKey,Session.getSessionId());
-     put(Constants.userIdParam, userId);
+     put(Constants.groupIdParam, groupId);
     }});
 
   ToolStrip usrTools = new ToolStrip();
@@ -74,13 +72,36 @@ public class UserGroupsList extends VLayout
   });
   
   ToolStripButton hdr = new ToolStripButton();
-  hdr.setTitle("Groups of user '"+userId+"'");
+  hdr.setTitle("Participants of group '"+groupId+"'");
   hdr.setSelected(false);
   hdr.setIcon( "icons/auth/group.png" );
   hdr.setShowDisabled(false);
   hdr.setDisabled(true);
   
   usrTools.addButton(hdr);
+
+  ToolStripButton addUBut = new ToolStripButton();
+  addUBut.setTitle("Add user");
+  addUBut.setSelected(true);
+  addUBut.setIcon( "icons/auth/user_add.png" );
+  addUBut.addClickHandler( new ClickHandler()
+  {
+   @Override
+   public void onClick(ClickEvent event)
+   {
+    new SelectUserDialog( new RecordSelectedListener()
+    {
+     @Override
+     public void recordSelected(Record r)
+     {
+      list.addData(r);
+     }
+    }).show();
+   }
+  });
+  
+  usrTools.addSpacer(20);
+  usrTools.addButton(addUBut);
 
   ToolStripButton addBut = new ToolStripButton();
   addBut.setTitle("Add group");
@@ -102,11 +123,12 @@ public class UserGroupsList extends VLayout
    }
   });
   
-  usrTools.addSpacer(20);
+  usrTools.addSpacer(5);
   usrTools.addButton(addBut);
 
+ 
   ToolStripButton delBut = new ToolStripButton();
-  delBut.setTitle("Delete group");
+  delBut.setTitle("Delete participant");
   delBut.setSelected(true);
   delBut.setIcon( "icons/auth/group_delete.png" );
   delBut.addClickHandler( new ClickHandler()
@@ -125,16 +147,17 @@ public class UserGroupsList extends VLayout
   addMember(usrTools);
   
   
-  ListGridField icnField = new ListGridField("groupIcon","");
+  ListGridField icnField = new ListGridField(GroupPartsDSDef.partTypeField.getFieldId(),"U/G");
   icnField.setWidth(30);
   icnField.setAlign(Alignment.CENTER);  
-  icnField.setType(ListGridFieldType.ICON);  
-  icnField.setIcon("icons/auth/group.png");
+  icnField.setType(ListGridFieldType.IMAGE);
+  icnField.setImageURLPrefix("icons/auth/");
+  icnField.setImageURLSuffix(".png");
   
-  ListGridField idField = new ListGridField( GroupDSDef.grpIdField.getFieldId(), GroupDSDef.grpIdField.getFieldTitle());
+  ListGridField idField = new ListGridField( GroupPartsDSDef.partIdField.getFieldId(), GroupPartsDSDef.partIdField.getFieldTitle());
   idField.setWidth(200);
 
-  ListGridField nameField = new ListGridField( GroupDSDef.grpDescField.getFieldId(), GroupDSDef.grpDescField.getFieldTitle());
+  ListGridField nameField = new ListGridField( GroupPartsDSDef.partDescField.getFieldId(), GroupPartsDSDef.partDescField.getFieldTitle());
   
   list.setFields(icnField,idField,nameField);
   
@@ -150,16 +173,6 @@ public class UserGroupsList extends VLayout
   list.setDrawAheadRatio(1.5F);
   list.setScrollRedrawDelay(0);
   
-  list.addEditFailedHandler( new EditFailedHandler()
-  {
-   @Override
-   public void onEditFailed(EditFailedEvent event)
-   {
-    SC.warn( event.getDsResponse().getAttributeAsString("data") );
-
-    list.discardAllEdits();
-   }
-  });
   
   addMember( list );
   

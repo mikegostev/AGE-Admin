@@ -9,18 +9,20 @@ import uk.ac.ebi.age.admin.server.service.ds.DataSourceRequest;
 import uk.ac.ebi.age.admin.server.service.ds.DataSourceResponse;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.auth.GroupDSDef;
+import uk.ac.ebi.age.admin.shared.auth.GroupPartsDSDef;
 import uk.ac.ebi.age.admin.shared.ds.DSField;
 import uk.ac.ebi.age.authz.AuthDB;
 import uk.ac.ebi.age.authz.AuthException;
+import uk.ac.ebi.age.authz.User;
 import uk.ac.ebi.age.authz.UserGroup;
 
 import com.pri.util.collection.MapIterator;
 
-public class GroupOfUserDBDataSourceService implements DataSourceBackendService
+public class GroupPartsDBDataSourceService implements DataSourceBackendService
 {
  private AuthDB db;
  
- public GroupOfUserDBDataSourceService(AuthDB authDB)
+ public GroupPartsDBDataSourceService(AuthDB authDB)
  {
   db = authDB;
  }
@@ -131,23 +133,24 @@ public class GroupOfUserDBDataSourceService implements DataSourceBackendService
  {
   DataSourceResponse resp = new DataSourceResponse();
   
-  String userId = dsr.getRequestParametersMap().get(Constants.userIdParam);
+  String groupId = dsr.getRequestParametersMap().get(Constants.groupIdParam);
   
-  if( userId == null )
+  if( groupId == null )
   {
-   resp.setErrorMessage("No user ID");
+   resp.setErrorMessage("No group ID");
    return resp;
   }
   
   
-  Collection< ? extends UserGroup> res;
+  
   try
   {
-   res = db.getGroupsOfUser( userId );
+   Collection< ? extends User> ures = db.getUsersOfGroup( groupId );
+   Collection< ? extends UserGroup> gres = db.getGroupsOfGroup( groupId );
 
-   resp.setTotal( res.size() );
-   resp.setSize(res.size());
-   resp.setIterator( new GroupMapIterator(res) );
+   resp.setTotal( ures.size() + gres.size() );
+   resp.setSize(ures.size() + gres.size() );
+   resp.setIterator( new PartsMapIterator( ures, gres) );
   }
   catch(AuthException e)
   {
@@ -158,24 +161,35 @@ public class GroupOfUserDBDataSourceService implements DataSourceBackendService
  }
 
  @Override
- public GroupDSDef getDSDefinition()
+ public GroupPartsDSDef getDSDefinition()
  {
-  return GroupDSDef.getInstance();
+  return GroupPartsDSDef.getInstance();
  }
  
- class GroupMapIterator implements MapIterator<DSField, String>
+ class PartsMapIterator implements MapIterator<DSField, String>
  {
   private Iterator<? extends UserGroup> grpIter;
+  private Iterator<? extends User> userIter;
+  private User cUsr;
   private UserGroup cGrp;
   
-  GroupMapIterator( Collection<? extends UserGroup> lst )
+  PartsMapIterator( Collection< ? extends User> ures, Collection<? extends UserGroup> gres )
   {
-   grpIter = lst.iterator();
+   userIter = ures.iterator();
+   grpIter  = gres.iterator();
   }
 
   @Override
   public boolean next()
   {
+   if( userIter.hasNext() )
+   {
+    cUsr = userIter.next();
+    return true;
+   }
+   
+   cUsr = null;
+   
    if( ! grpIter.hasNext() )
     return false;
 
@@ -187,11 +201,35 @@ public class GroupOfUserDBDataSourceService implements DataSourceBackendService
   @Override
   public String get(DSField key)
   {
-   if( key.equals(GroupDSDef.grpIdField) )
-    return cGrp.getId();
+   if( cUsr != null )
+   {
+    if( key.equals(GroupPartsDSDef.keyField) )
+     return "user"+cUsr.getId();
+
+    if( key.equals(GroupPartsDSDef.partTypeField) )
+     return "user";
+
+    if( key.equals(GroupPartsDSDef.partIdField) )
+     return cUsr.getId();
+    
+    if( key.equals(GroupPartsDSDef.partDescField) )
+     return cUsr.getName();
+   }
+   else
+   {
+    if( key.equals(GroupPartsDSDef.keyField) )
+     return "group"+cGrp.getId();
+
+    if( key.equals(GroupPartsDSDef.partTypeField) )
+     return "group";
+
+    if( key.equals(GroupPartsDSDef.partIdField) )
+     return cGrp.getId();
+    
+    if( key.equals(GroupPartsDSDef.partDescField) )
+     return cGrp.getDescription();
+   }
    
-   if( key.equals(GroupDSDef.grpDescField) )
-    return cGrp.getDescription();
 
    return null;
   }
