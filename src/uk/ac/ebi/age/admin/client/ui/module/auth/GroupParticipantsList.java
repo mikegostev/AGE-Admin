@@ -6,6 +6,7 @@ import uk.ac.ebi.age.admin.client.Session;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.auth.GroupDSDef;
 import uk.ac.ebi.age.admin.shared.auth.GroupPartsDSDef;
+import uk.ac.ebi.age.admin.shared.auth.UserDSDef;
 
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
@@ -17,6 +18,7 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.RecordDropEvent;
 import com.smartgwt.client.widgets.grid.events.RecordDropHandler;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -65,9 +67,24 @@ public class GroupParticipantsList extends VLayout
     System.out.println(event.getSourceWidget().getClass().getName()+" | "+event.getAssociatedType());
     
     for( Record r : event.getDropRecords() )
-     if( r.getAttributeAsString(GroupDSDef.grpIdField.getFieldId()) == null )
+    {
+     if( r.getAttributeAsString(UserDSDef.userIdField.getFieldId()) == null )
+     {
       event.cancel();
+      return;
+     }
+     
+     Record nr = new ListGridRecord();
+     
+     nr.setAttribute(GroupPartsDSDef.partIdField.getFieldId(), r.getAttribute(UserDSDef.userIdField.getFieldId()) );
+     nr.setAttribute(GroupPartsDSDef.partDescField.getFieldId(), r.getAttribute(UserDSDef.userNameField.getFieldId()) );
+     nr.setAttribute(GroupPartsDSDef.partTypeField.getFieldId(), "user" );
+     
+     list.addData(nr);
+
+    }
     
+    event.cancel();
    }
   });
   
@@ -94,7 +111,13 @@ public class GroupParticipantsList extends VLayout
      @Override
      public void recordSelected(Record r)
      {
-      list.addData(r);
+      Record nr = new ListGridRecord();
+      
+      nr.setAttribute(GroupPartsDSDef.partIdField.getFieldId(), r.getAttribute(UserDSDef.userIdField.getFieldId()) );
+      nr.setAttribute(GroupPartsDSDef.partDescField.getFieldId(), r.getAttribute(UserDSDef.userNameField.getFieldId()) );
+      nr.setAttribute(GroupPartsDSDef.partTypeField.getFieldId(), "user" );
+      
+      list.addData(nr);
      }
     }).show();
    }
@@ -117,7 +140,13 @@ public class GroupParticipantsList extends VLayout
      @Override
      public void recordSelected(Record r)
      {
-      list.addData(r);
+      Record nr = new ListGridRecord();
+      
+      nr.setAttribute(GroupPartsDSDef.partIdField.getFieldId(), r.getAttribute(GroupDSDef.grpIdField.getFieldId()) );
+      nr.setAttribute(GroupPartsDSDef.partDescField.getFieldId(), r.getAttribute(GroupDSDef.grpDescField.getFieldId()) );
+      nr.setAttribute(GroupPartsDSDef.partTypeField.getFieldId(), "group" );
+      
+      list.addData(nr);
      }
     }).show();
    }

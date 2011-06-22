@@ -8,7 +8,6 @@ import uk.ac.ebi.age.admin.server.service.ds.DataSourceBackendService;
 import uk.ac.ebi.age.admin.server.service.ds.DataSourceRequest;
 import uk.ac.ebi.age.admin.server.service.ds.DataSourceResponse;
 import uk.ac.ebi.age.admin.shared.Constants;
-import uk.ac.ebi.age.admin.shared.auth.GroupDSDef;
 import uk.ac.ebi.age.admin.shared.auth.GroupPartsDSDef;
 import uk.ac.ebi.age.admin.shared.ds.DSField;
 import uk.ac.ebi.age.authz.AuthDB;
@@ -49,33 +48,60 @@ public class GroupPartsDBDataSourceService implements DataSourceBackendService
  {
   DataSourceResponse resp = new DataSourceResponse();
 
-  Map<DSField, String> vmap = dsr.getValueMap();
   
-  String grpId = vmap.get(GroupDSDef.grpIdField);
+  String grpId = dsr.getRequestParametersMap().get(Constants.groupIdParam);
   
   if( grpId == null )
   {
-   resp.setErrorMessage(GroupDSDef.grpIdField.getFieldTitle()+" should not be null");
-   return resp;
-  }
-  
-  String userId = dsr.getRequestParametersMap().get(Constants.userIdParam);
-  
-  if( userId == null )
-  {
-   resp.setErrorMessage("No user ID");
+   resp.setErrorMessage(Constants.groupIdParam+" should not be null");
    return resp;
   }
 
-  try
+  Map<DSField, String> vmap = dsr.getValueMap();
+  
+  String partId = vmap.get(GroupPartsDSDef.partIdField);
+  
+  if( partId == null )
   {
-   db.removeUserFromGroup( grpId, userId );
-  }
-  catch(AuthException e)
-  {
-   resp.setErrorMessage("Group with ID '"+grpId+"' doesn't exist");
+   resp.setErrorMessage("No part ID");
+   return resp;
   }
   
+  String type = vmap.get(GroupPartsDSDef.partTypeField);
+  
+  if( type == null )
+  {
+   resp.setErrorMessage(GroupPartsDSDef.partTypeField+" should not be null");
+   return resp;
+  }
+
+  if( "user".equals(type) )
+  {
+   
+   try
+   {
+    db.removeUserFromGroup( grpId, partId );
+   }
+   catch(AuthException e)
+   {
+    resp.setErrorMessage("Error");
+   }
+
+  }
+  else if( "group".equals(type) )
+  {
+   try
+   {
+    db.removeGroupFromGroup( grpId, partId );
+   }
+   catch(AuthException e)
+   {
+    resp.setErrorMessage("Error");
+   }
+
+  }
+  else
+   resp.setErrorMessage("Invalid type");  
   return resp;
  }
 
@@ -83,38 +109,59 @@ public class GroupPartsDBDataSourceService implements DataSourceBackendService
  {
   DataSourceResponse resp = new DataSourceResponse();
 
+  String grpId = dsr.getRequestParametersMap().get(Constants.groupIdParam);
+  
+  if( grpId == null )
+  {
+   resp.setErrorMessage(Constants.groupIdParam+" should not be null");
+   return resp;
+  }
+
   Map<DSField, String> vmap = dsr.getValueMap();
-  String grpId = vmap.get(GroupDSDef.grpIdField);
   
-  if( grpId == null )
+  String partId = vmap.get(GroupPartsDSDef.partIdField);
+  
+  if( partId == null )
   {
-   resp.setErrorMessage(GroupDSDef.grpIdField.getFieldTitle()+" should not be null");
+   resp.setErrorMessage("No part ID");
    return resp;
   }
   
-  String userId = dsr.getRequestParametersMap().get(Constants.userIdParam);
+  String type = vmap.get(GroupPartsDSDef.partTypeField);
   
-  if( userId == null )
+  if( type == null )
   {
-   resp.setErrorMessage("No user ID");
+   resp.setErrorMessage(GroupPartsDSDef.partTypeField+" should not be null");
    return resp;
   }
-  
-  if( grpId == null )
+
+  if( "user".equals(type) )
   {
-   resp.setErrorMessage(GroupDSDef.grpIdField.getFieldTitle()+" should not be null");
-   return resp;
+   
+   try
+   {
+    db.addUserToGroup( grpId, partId );
+   }
+   catch(AuthException e)
+   {
+    resp.setErrorMessage("Error: "+e.getMessage());
+   }
+
   }
-  
-  
-  try
+  else if( "group".equals(type) )
   {
-   db.addUserToGroup( grpId, userId );
+   try
+   {
+    db.addGroupToGroup( grpId, partId );
+   }
+   catch(AuthException e)
+   {
+    resp.setErrorMessage("Error");
+   }
+
   }
-  catch(AuthException e)
-  {
-   resp.setErrorMessage("Error");
-  }
+  else
+   resp.setErrorMessage("Invalid type");
   
   return resp;
   
