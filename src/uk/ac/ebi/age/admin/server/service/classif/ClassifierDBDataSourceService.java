@@ -1,4 +1,4 @@
-package uk.ac.ebi.age.admin.server.service.auth;
+package uk.ac.ebi.age.admin.server.service.classif;
 
 import java.util.Iterator;
 import java.util.List;
@@ -7,20 +7,20 @@ import java.util.Map;
 import uk.ac.ebi.age.admin.server.service.ds.DataSourceBackendService;
 import uk.ac.ebi.age.admin.server.service.ds.DataSourceRequest;
 import uk.ac.ebi.age.admin.server.service.ds.DataSourceResponse;
-import uk.ac.ebi.age.admin.shared.auth.GroupDSDef;
+import uk.ac.ebi.age.admin.shared.cassif.ClassifierDSDef;
 import uk.ac.ebi.age.admin.shared.ds.DSField;
-import uk.ac.ebi.age.authz.AuthDB;
-import uk.ac.ebi.age.authz.UserGroup;
-import uk.ac.ebi.age.authz.exception.AuthException;
+import uk.ac.ebi.age.classif.Classifier;
+import uk.ac.ebi.age.classif.ClassifierDB;
+import uk.ac.ebi.age.classif.exception.TagException;
 
 import com.pri.util.collection.ListFragment;
 import com.pri.util.collection.MapIterator;
 
-public class GroupDBDataSourceService implements DataSourceBackendService
+public class ClassifierDBDataSourceService implements DataSourceBackendService
 {
- private AuthDB db;
+ private ClassifierDB db;
  
- public GroupDBDataSourceService(AuthDB authDB)
+ public ClassifierDBDataSourceService(ClassifierDB authDB)
  {
   db = authDB;
  }
@@ -49,22 +49,22 @@ public class GroupDBDataSourceService implements DataSourceBackendService
 
   Map<DSField, String> vmap = dsr.getValueMap();
   
-  String grpId = vmap.get(GroupDSDef.grpIdField);
+  String csfId = vmap.get(ClassifierDSDef.idField);
   
-  if( grpId == null )
+  if( csfId == null )
   {
-   resp.setErrorMessage(GroupDSDef.grpIdField.getFieldTitle()+" should not be null");
+   resp.setErrorMessage(ClassifierDSDef.idField.getFieldTitle()+" should not be null");
    return resp;
   }
   
   
   try
   {
-   db.deleteGroup( grpId );
+   db.deleteClassifier( csfId );
   }
-  catch(AuthException e)
+  catch(TagException e)
   {
-   resp.setErrorMessage("Group with ID '"+grpId+"' doesn't exist");
+   resp.setErrorMessage("Classifier with ID '"+csfId+"' doesn't exist");
   }
   
   return resp;
@@ -76,23 +76,23 @@ public class GroupDBDataSourceService implements DataSourceBackendService
 
   Map<DSField, String> vmap = dsr.getValueMap();
   
-  String grpId = vmap.get(GroupDSDef.grpIdField);
-  String grpDesc = vmap.get(GroupDSDef.grpDescField);
+  String csfId = vmap.get(ClassifierDSDef.idField);
+  String csfDesc = vmap.get(ClassifierDSDef.descField);
   
-  if( grpId == null )
+  if( csfId == null )
   {
-   resp.setErrorMessage(GroupDSDef.grpIdField.getFieldTitle()+" should not be null");
+   resp.setErrorMessage(ClassifierDSDef.idField.getFieldTitle()+" should not be null");
    return resp;
   }
   
   
   try
   {
-   db.addGroup( grpId, grpDesc );
+   db.addClassifier( csfId, csfDesc );
   }
-  catch(AuthException e)
+  catch(TagException e)
   {
-   resp.setErrorMessage("Group with ID '"+grpId+"' exists");
+   resp.setErrorMessage("Classifier with ID '"+csfId+"' exists");
   }
   
   return resp;
@@ -105,23 +105,22 @@ public class GroupDBDataSourceService implements DataSourceBackendService
 
   Map<DSField, String> vmap = dsr.getValueMap();
   
-  String grpId = vmap.get(GroupDSDef.grpIdField);
-  String grpDesc = vmap.get(GroupDSDef.grpDescField);
+  String csfId = vmap.get(ClassifierDSDef.idField);
+  String csfDesc = vmap.get(ClassifierDSDef.descField);
   
-  if( grpId == null )
+  if( csfId == null )
   {
-   resp.setErrorMessage(GroupDSDef.grpIdField.getFieldTitle()+" should not be null");
+   resp.setErrorMessage(ClassifierDSDef.idField.getFieldTitle()+" should not be null");
    return resp;
   }
   
-  
   try
   {
-   db.updateGroup( grpId, grpDesc );
+   db.updateClassifier( csfId, csfDesc );
   }
-  catch(AuthException e)
+  catch(TagException e)
   {
-   resp.setErrorMessage("Error");
+   resp.setErrorMessage(e.getMessage());
   }
   
   return resp;
@@ -135,36 +134,36 @@ public class GroupDBDataSourceService implements DataSourceBackendService
   
   if( vmap == null || vmap.size() == 0 )
   {
-   List<? extends UserGroup> res=db.getGroups( dsr.getBegin(), dsr.getEnd() );
+   List<? extends Classifier> res=db.getClassifiers( dsr.getBegin(), dsr.getEnd() );
    
-   resp.setTotal( db.getGroupsTotal() );
+   resp.setTotal( db.getClassifiersTotal() );
    resp.setSize(res.size());
-   resp.setIterator( new GroupMapIterator(res) );
+   resp.setIterator( new ClassifierMapIterator(res) );
   }
   else
   {
-   ListFragment<UserGroup> res=db.getGroups( vmap.get(GroupDSDef.grpIdField), vmap.get(GroupDSDef.grpDescField), dsr.getBegin(), dsr.getEnd() );
+   ListFragment<Classifier> res=db.getClassifiers( vmap.get(ClassifierDSDef.idField), vmap.get(ClassifierDSDef.descField), dsr.getBegin(), dsr.getEnd() );
   
    resp.setTotal(res.getTotalLength());
    resp.setSize(res.getList().size());
-   resp.setIterator( new GroupMapIterator(res.getList()) );
+   resp.setIterator( new ClassifierMapIterator(res.getList()) );
   }
   
   return resp;
  }
 
  @Override
- public GroupDSDef getDSDefinition()
+ public ClassifierDSDef getDSDefinition()
  {
-  return GroupDSDef.getInstance();
+  return ClassifierDSDef.getInstance();
  }
  
- class GroupMapIterator implements MapIterator<DSField, String>
+ class ClassifierMapIterator implements MapIterator<DSField, String>
  {
-  private Iterator<? extends UserGroup> grpIter;
-  private UserGroup cGrp;
+  private Iterator<? extends Classifier> grpIter;
+  private Classifier cGrp;
   
-  GroupMapIterator( List<? extends UserGroup> lst )
+  ClassifierMapIterator( List<? extends Classifier> lst )
   {
    grpIter = lst.iterator();
   }
@@ -183,10 +182,10 @@ public class GroupDBDataSourceService implements DataSourceBackendService
   @Override
   public String get(DSField key)
   {
-   if( key.equals(GroupDSDef.grpIdField) )
+   if( key.equals(ClassifierDSDef.idField) )
     return cGrp.getId();
    
-   if( key.equals(GroupDSDef.grpDescField) )
+   if( key.equals(ClassifierDSDef.descField) )
     return cGrp.getDescription();
 
    return null;

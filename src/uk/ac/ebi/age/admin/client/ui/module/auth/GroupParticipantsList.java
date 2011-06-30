@@ -13,9 +13,12 @@ import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.DSDataFormat;
 import com.smartgwt.client.types.DSProtocol;
+import com.smartgwt.client.types.GroupStartOpen;
 import com.smartgwt.client.types.ListGridFieldType;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.grid.GroupNode;
+import com.smartgwt.client.widgets.grid.GroupTitleRenderer;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
@@ -36,6 +39,12 @@ public class GroupParticipantsList extends VLayout
   setMargin(5);
 
   ds = DataSource.getDataSource(Constants.groupPartsListServiceName);
+  
+  if( ds != null )
+  {
+   ds.destroy();
+   ds = null;
+  }
   
   if( ds == null )
   {
@@ -113,11 +122,12 @@ public class GroupParticipantsList extends VLayout
      {
       Record nr = new ListGridRecord();
       
+      nr.setAttribute(GroupPartsDSDef.keyField.getFieldId(), "user"+r.getAttribute(GroupDSDef.grpIdField.getFieldId()) );
       nr.setAttribute(GroupPartsDSDef.partIdField.getFieldId(), r.getAttribute(UserDSDef.userIdField.getFieldId()) );
       nr.setAttribute(GroupPartsDSDef.partDescField.getFieldId(), r.getAttribute(UserDSDef.userNameField.getFieldId()) );
       nr.setAttribute(GroupPartsDSDef.partTypeField.getFieldId(), "user" );
       
-      list.addData(nr);
+      ds.addData(nr);
      }
     }).show();
    }
@@ -142,11 +152,12 @@ public class GroupParticipantsList extends VLayout
      {
       Record nr = new ListGridRecord();
       
+      nr.setAttribute(GroupPartsDSDef.keyField.getFieldId(), "group"+r.getAttribute(GroupDSDef.grpIdField.getFieldId()) );
       nr.setAttribute(GroupPartsDSDef.partIdField.getFieldId(), r.getAttribute(GroupDSDef.grpIdField.getFieldId()) );
       nr.setAttribute(GroupPartsDSDef.partDescField.getFieldId(), r.getAttribute(GroupDSDef.grpDescField.getFieldId()) );
       nr.setAttribute(GroupPartsDSDef.partTypeField.getFieldId(), "group" );
       
-      list.addData(nr);
+      ds.addData(nr);
      }
     }).show();
    }
@@ -183,6 +194,17 @@ public class GroupParticipantsList extends VLayout
   icnField.setImageURLPrefix("icons/auth/");
   icnField.setImageURLSuffix(".png");
   
+  icnField.setGroupTitleRenderer(new GroupTitleRenderer()
+  {
+   public String getGroupTitle(Object groupValue, GroupNode groupNode, ListGridField field, String fieldName, ListGrid grid)
+   {
+    final String groupType = (String) groupValue;
+
+    return groupType.equals("user")?"Users":"Groups";
+   }
+  });
+
+  
   ListGridField idField = new ListGridField( GroupPartsDSDef.partIdField.getFieldId(), GroupPartsDSDef.partIdField.getFieldTitle());
   idField.setWidth(200);
 
@@ -198,10 +220,9 @@ public class GroupParticipantsList extends VLayout
   list.setShowFilterEditor(true);  
   list.setFilterOnKeypress(true);  
   
-  list.setShowAllRecords(false);
-  list.setDrawAheadRatio(1.5F);
-  list.setScrollRedrawDelay(0);
-  
+  list.setShowAllRecords(true);
+  list.setGroupByField(GroupPartsDSDef.partTypeField.getFieldId());
+  list.setGroupStartOpen(GroupStartOpen.ALL);
   
   addMember( list );
   

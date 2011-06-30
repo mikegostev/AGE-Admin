@@ -7,20 +7,20 @@ import java.util.Map;
 import uk.ac.ebi.age.admin.server.service.ds.DataSourceBackendService;
 import uk.ac.ebi.age.admin.server.service.ds.DataSourceRequest;
 import uk.ac.ebi.age.admin.server.service.ds.DataSourceResponse;
-import uk.ac.ebi.age.admin.shared.auth.GroupDSDef;
+import uk.ac.ebi.age.admin.shared.auth.ProfileDSDef;
 import uk.ac.ebi.age.admin.shared.ds.DSField;
 import uk.ac.ebi.age.authz.AuthDB;
-import uk.ac.ebi.age.authz.UserGroup;
+import uk.ac.ebi.age.authz.PermissionProfile;
 import uk.ac.ebi.age.authz.exception.AuthException;
 
 import com.pri.util.collection.ListFragment;
 import com.pri.util.collection.MapIterator;
 
-public class GroupDBDataSourceService implements DataSourceBackendService
+public class ProfileDBDataSourceService implements DataSourceBackendService
 {
  private AuthDB db;
  
- public GroupDBDataSourceService(AuthDB authDB)
+ public ProfileDBDataSourceService(AuthDB authDB)
  {
   db = authDB;
  }
@@ -49,22 +49,22 @@ public class GroupDBDataSourceService implements DataSourceBackendService
 
   Map<DSField, String> vmap = dsr.getValueMap();
   
-  String grpId = vmap.get(GroupDSDef.grpIdField);
+  String profId = vmap.get(ProfileDSDef.profIdField);
   
-  if( grpId == null )
+  if( profId == null )
   {
-   resp.setErrorMessage(GroupDSDef.grpIdField.getFieldTitle()+" should not be null");
+   resp.setErrorMessage(ProfileDSDef.profIdField.getFieldTitle()+" should not be null");
    return resp;
   }
   
   
   try
   {
-   db.deleteGroup( grpId );
+   db.deleteProfile( profId );
   }
   catch(AuthException e)
   {
-   resp.setErrorMessage("Group with ID '"+grpId+"' doesn't exist");
+   resp.setErrorMessage("Profile with ID '"+profId+"' doesn't exist");
   }
   
   return resp;
@@ -76,23 +76,23 @@ public class GroupDBDataSourceService implements DataSourceBackendService
 
   Map<DSField, String> vmap = dsr.getValueMap();
   
-  String grpId = vmap.get(GroupDSDef.grpIdField);
-  String grpDesc = vmap.get(GroupDSDef.grpDescField);
+  String profId = vmap.get(ProfileDSDef.profIdField);
+  String profDesc = vmap.get(ProfileDSDef.profDescField);
   
-  if( grpId == null )
+  if( profId == null )
   {
-   resp.setErrorMessage(GroupDSDef.grpIdField.getFieldTitle()+" should not be null");
+   resp.setErrorMessage(ProfileDSDef.profIdField.getFieldTitle()+" should not be null");
    return resp;
   }
   
   
   try
   {
-   db.addGroup( grpId, grpDesc );
+   db.addProfile( profId, profDesc );
   }
   catch(AuthException e)
   {
-   resp.setErrorMessage("Group with ID '"+grpId+"' exists");
+   resp.setErrorMessage("Profile with ID '"+profId+"' exists");
   }
   
   return resp;
@@ -105,19 +105,18 @@ public class GroupDBDataSourceService implements DataSourceBackendService
 
   Map<DSField, String> vmap = dsr.getValueMap();
   
-  String grpId = vmap.get(GroupDSDef.grpIdField);
-  String grpDesc = vmap.get(GroupDSDef.grpDescField);
+  String profId = vmap.get(ProfileDSDef.profIdField);
+  String profDesc = vmap.get(ProfileDSDef.profDescField);
   
-  if( grpId == null )
+  if( profId == null )
   {
-   resp.setErrorMessage(GroupDSDef.grpIdField.getFieldTitle()+" should not be null");
+   resp.setErrorMessage(ProfileDSDef.profIdField.getFieldTitle()+" should not be null");
    return resp;
   }
   
-  
   try
   {
-   db.updateGroup( grpId, grpDesc );
+   db.updateProfile( profId, profDesc );
   }
   catch(AuthException e)
   {
@@ -135,47 +134,47 @@ public class GroupDBDataSourceService implements DataSourceBackendService
   
   if( vmap == null || vmap.size() == 0 )
   {
-   List<? extends UserGroup> res=db.getGroups( dsr.getBegin(), dsr.getEnd() );
+   List<? extends PermissionProfile> res=db.getProfiles( dsr.getBegin(), dsr.getEnd() );
    
-   resp.setTotal( db.getGroupsTotal() );
+   resp.setTotal( db.getProfilesTotal() );
    resp.setSize(res.size());
-   resp.setIterator( new GroupMapIterator(res) );
+   resp.setIterator( new ProfileMapIterator(res) );
   }
   else
   {
-   ListFragment<UserGroup> res=db.getGroups( vmap.get(GroupDSDef.grpIdField), vmap.get(GroupDSDef.grpDescField), dsr.getBegin(), dsr.getEnd() );
+   ListFragment<PermissionProfile> res=db.getProfiles( vmap.get(ProfileDSDef.profIdField), vmap.get(ProfileDSDef.profDescField), dsr.getBegin(), dsr.getEnd() );
   
    resp.setTotal(res.getTotalLength());
    resp.setSize(res.getList().size());
-   resp.setIterator( new GroupMapIterator(res.getList()) );
+   resp.setIterator( new ProfileMapIterator(res.getList()) );
   }
   
   return resp;
  }
 
  @Override
- public GroupDSDef getDSDefinition()
+ public ProfileDSDef getDSDefinition()
  {
-  return GroupDSDef.getInstance();
+  return ProfileDSDef.getInstance();
  }
  
- class GroupMapIterator implements MapIterator<DSField, String>
+ class ProfileMapIterator implements MapIterator<DSField, String>
  {
-  private Iterator<? extends UserGroup> grpIter;
-  private UserGroup cGrp;
+  private Iterator<? extends PermissionProfile> profIter;
+  private PermissionProfile cProf;
   
-  GroupMapIterator( List<? extends UserGroup> lst )
+  ProfileMapIterator( List<? extends PermissionProfile> lst )
   {
-   grpIter = lst.iterator();
+   profIter = lst.iterator();
   }
 
   @Override
   public boolean next()
   {
-   if( ! grpIter.hasNext() )
+   if( ! profIter.hasNext() )
     return false;
 
-   cGrp = grpIter.next();
+   cProf = profIter.next();
    
    return true;
   }
@@ -183,11 +182,11 @@ public class GroupDBDataSourceService implements DataSourceBackendService
   @Override
   public String get(DSField key)
   {
-   if( key.equals(GroupDSDef.grpIdField) )
-    return cGrp.getId();
+   if( key.equals(ProfileDSDef.profIdField) )
+    return cProf.getId();
    
-   if( key.equals(GroupDSDef.grpDescField) )
-    return cGrp.getDescription();
+   if( key.equals(ProfileDSDef.profDescField) )
+    return cProf.getDescription();
 
    return null;
   }

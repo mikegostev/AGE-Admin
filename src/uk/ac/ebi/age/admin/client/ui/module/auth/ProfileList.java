@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import uk.ac.ebi.age.admin.client.Session;
 import uk.ac.ebi.age.admin.shared.Constants;
-import uk.ac.ebi.age.admin.shared.auth.GroupDSDef;
+import uk.ac.ebi.age.admin.shared.auth.ProfileDSDef;
 
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.Alignment;
@@ -15,17 +15,18 @@ import com.smartgwt.client.types.ListGridFieldType;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 
-public class GroupList extends ListGrid
+public class ProfileList extends ListGrid
 {
- public GroupList()
+ public ProfileList()
  {
-  DataSource ds = DataSource.getDataSource(Constants.groupListServiceName);
+  
+  DataSource ds = DataSource.getDataSource(Constants.profileListServiceName);
   
   if( ds == null )
   {
-   ds = GroupDSDef.getInstance().createDataSource();
+   ds = ProfileDSDef.getInstance().createDataSource();
 
-   ds.setID(Constants.groupListServiceName);
+   ds.setID(Constants.profileListServiceName);
    ds.setDataFormat(DSDataFormat.JSON);
    ds.setDataURL(Constants.dsServiceUrl);
    ds.setDataProtocol(DSProtocol.POSTPARAMS);
@@ -34,21 +35,22 @@ public class GroupList extends ListGrid
       put(Constants.sessionKey,Session.getSessionId());
      }});
   }
+  
   final ListGrid list = this;
   list.setCanDragRecordsOut(true);
   list.setDragDataAction(DragDataAction.COPY);
   
 
-  ListGridField icnField = new ListGridField("grpIcon", "");
+  ListGridField icnField = new ListGridField("profIcon", "");
   icnField.setWidth(30);
   icnField.setAlign(Alignment.CENTER);
   icnField.setType(ListGridFieldType.ICON);
-  icnField.setIcon("icons/auth/group.png");
+  icnField.setIcon("icons/auth/profile.png");
 
-  ListGridField idField = new ListGridField(GroupDSDef.grpIdField.getFieldId(), GroupDSDef.grpIdField.getFieldTitle());
+  ListGridField idField = new ListGridField(ProfileDSDef.profIdField.getFieldId(), ProfileDSDef.profIdField.getFieldTitle());
   idField.setWidth(200);
 
-  ListGridField nameField = new ListGridField(GroupDSDef.grpDescField.getFieldId(), GroupDSDef.grpDescField.getFieldTitle());
+  ListGridField nameField = new ListGridField(ProfileDSDef.profDescField.getFieldId(), ProfileDSDef.profDescField.getFieldTitle());
 
   list.setFields(icnField, idField, nameField);
 

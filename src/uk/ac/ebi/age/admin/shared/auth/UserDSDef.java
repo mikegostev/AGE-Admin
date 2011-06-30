@@ -63,6 +63,8 @@ public class UserDSDef extends DSDef
   DataSourceField idF = new DataSourceField(userIdField.getFieldId(), userIdField.getType(), userIdField.getFieldTitle());
   DataSourceField nameF = new DataSourceField(userNameField.getFieldId(), userNameField.getType(), userNameField.getFieldTitle());
   idF.setPrimaryKey(true);
+  nameF.setCanEdit(true);
+  
   
   ds.setFields(idF,nameF);
   

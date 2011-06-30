@@ -10,8 +10,8 @@ import uk.ac.ebi.age.admin.server.service.ds.DataSourceResponse;
 import uk.ac.ebi.age.admin.shared.auth.UserDSDef;
 import uk.ac.ebi.age.admin.shared.ds.DSField;
 import uk.ac.ebi.age.authz.AuthDB;
-import uk.ac.ebi.age.authz.AuthException;
 import uk.ac.ebi.age.authz.User;
+import uk.ac.ebi.age.authz.exception.AuthException;
 
 import com.pri.util.collection.ListFragment;
 import com.pri.util.collection.MapIterator;

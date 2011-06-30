@@ -8,6 +8,7 @@ import uk.ac.ebi.age.admin.server.user.UserDatabase;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.annotation.AnnotationStorage;
 import uk.ac.ebi.age.authz.AuthDB;
+import uk.ac.ebi.age.classif.ClassifierDB;
 import uk.ac.ebi.age.mng.submission.SubmissionManager;
 import uk.ac.ebi.age.service.submission.SubmissionDB;
 
@@ -47,6 +48,7 @@ public class Configuration
 
  private AuthDB authDB;
 
+ private ClassifierDB classifierDB;
 
  public UserDatabase getUserDatabase()
  {
@@ -204,6 +206,18 @@ public class Configuration
  public AuthDB getAuthDB( )
  {
   return authDB;
+ }
+
+
+ public ClassifierDB getClassifierDB()
+ {
+  return classifierDB;
+ }
+
+
+ public void setClassifierDB(ClassifierDB classifierDB)
+ {
+  this.classifierDB = classifierDB;
  }
 
 }

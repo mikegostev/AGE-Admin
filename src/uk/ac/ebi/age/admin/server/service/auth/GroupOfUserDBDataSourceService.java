@@ -11,8 +11,8 @@ import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.auth.GroupDSDef;
 import uk.ac.ebi.age.admin.shared.ds.DSField;
 import uk.ac.ebi.age.authz.AuthDB;
-import uk.ac.ebi.age.authz.AuthException;
 import uk.ac.ebi.age.authz.UserGroup;
+import uk.ac.ebi.age.authz.exception.AuthException;
 
 import com.pri.util.collection.MapIterator;
 

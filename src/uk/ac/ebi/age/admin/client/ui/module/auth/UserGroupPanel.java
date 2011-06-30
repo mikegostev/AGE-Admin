@@ -21,7 +21,7 @@ public class UserGroupPanel extends VLayout
   userGroups.setWidth("50%");
   userGroups.setHeight100();
   
-  UserList ul = new UserList( userGroups );
+  UserListPanel ul = new UserListPanel( userGroups );
   ul.setWidth("50%");
   
   row.addMember(ul);
@@ -35,7 +35,7 @@ public class UserGroupPanel extends VLayout
   VLayout groupUsers = new VLayout();
   groupUsers.setWidth("50%");
   
-  GroupList gl = new GroupList(groupUsers);
+  GroupListPanel gl = new GroupListPanel(groupUsers);
   gl.setWidth("50%");
   
   row.addMember(gl);

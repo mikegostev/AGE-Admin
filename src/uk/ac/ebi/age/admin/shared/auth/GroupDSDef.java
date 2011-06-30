@@ -46,6 +46,7 @@ public class GroupDSDef extends DSDef
   DataSourceField idF = new DataSourceField(grpIdField.getFieldId(), grpIdField.getType(), grpIdField.getFieldTitle());
   DataSourceField descF = new DataSourceField(grpDescField.getFieldId(), grpDescField.getType(), grpDescField.getFieldTitle());
   idF.setPrimaryKey(true);
+  descF.setCanEdit(true);
   
   ds.setFields(idF,descF);
   

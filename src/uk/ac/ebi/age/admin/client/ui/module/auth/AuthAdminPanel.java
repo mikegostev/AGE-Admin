@@ -7,6 +7,7 @@ import com.smartgwt.client.widgets.tab.TabSet;
 public class AuthAdminPanel extends TabSet
 {
  private UserGroupPanel userGroups;
+ private ProfilesPanel profileGroups;
 
  public AuthAdminPanel()
  {
@@ -16,6 +17,11 @@ public class AuthAdminPanel extends TabSet
 
   Tab genTab = new Tab("Users & Groups");
   genTab.setPane( userGroups=new UserGroupPanel( this )  );
+  
+  addTab(genTab);
+
+  genTab = new Tab("Profiles");
+  genTab.setPane( profileGroups=new ProfilesPanel( this )  );
   
   addTab(genTab);
 

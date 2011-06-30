@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import uk.ac.ebi.age.admin.client.Session;
 import uk.ac.ebi.age.admin.shared.Constants;
+import uk.ac.ebi.age.admin.shared.auth.GroupDSDef;
 import uk.ac.ebi.age.admin.shared.auth.UserDSDef;
 
 import com.smartgwt.client.data.DataSource;
@@ -13,121 +14,37 @@ import com.smartgwt.client.types.DSProtocol;
 import com.smartgwt.client.types.DragDataAction;
 import com.smartgwt.client.types.ListGridFieldType;
 import com.smartgwt.client.util.SC;
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.EditFailedEvent;
 import com.smartgwt.client.widgets.grid.events.EditFailedHandler;
-import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
-import com.smartgwt.client.widgets.grid.events.SelectionEvent;
-import com.smartgwt.client.widgets.layout.Layout;
-import com.smartgwt.client.widgets.layout.VLayout;
-import com.smartgwt.client.widgets.toolbar.ToolStrip;
-import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
-//criteria={"fieldName":"userid","operator":"notEqual","value":"kk"}
-//criteria={"_constructor":"AdvancedCriteria","operator":"or","criteria":[{"fieldName":"username","operator":"iNotStartsWith","value":"V"}]}
-
-
-public class UserList extends VLayout
+public class UserList extends ListGrid
 {
- private Layout detailsPanel;
+ private DataSource ds;
  
- public UserList(Layout detp)
+ public UserList()
  {
-  detailsPanel = detp;
+  ds = DataSource.getDataSource(Constants.userListServiceName);
   
-  setWidth100();  
-  setHeight100();  
-  setMargin(5);
+  if( ds == null )
+  {
+   ds = GroupDSDef.getInstance().createDataSource();
 
-  final DataSource ds = UserDSDef.getInstance().createDataSource();
+   ds.setID(Constants.userListServiceName);
+   ds.setDataFormat(DSDataFormat.JSON);
+   ds.setDataURL(Constants.dsServiceUrl);
+   ds.setDataProtocol(DSProtocol.POSTPARAMS);
+   ds.setDefaultParams(new HashMap<String, String>()
+     {{
+      put(Constants.sessionKey,Session.getSessionId());
+     }});
+  }
   
-  ToolStrip usrTools = new ToolStrip();
-  usrTools.setWidth100();
-
-  final ListGrid list = new ListGrid();
+  final ListGrid list = this;
   list.setCanDragRecordsOut(true);
   list.setDragDataAction(DragDataAction.COPY);
 
-  
-  ToolStripButton hdr = new ToolStripButton();
-  hdr.setTitle("Users");
-  hdr.setSelected(false);
-  hdr.setIcon( "icons/auth/user.png" );
-  hdr.setShowDisabled(false);
-  hdr.setDisabled(true);
-  
-  usrTools.addButton(hdr);
-
-//  StaticTextItem hdr = new StaticTextItem("hdr", Canvas.imgHTML("icons/auth/user.png") + " Users" );
-//  usrTools.addFormItem(hdr);
-
-  ToolStripButton addBut = new ToolStripButton();
-  addBut.setTitle("Add user");
-  addBut.setSelected(true);
-  addBut.setIcon( "icons/auth/user_add.png" );
-  addBut.addClickHandler( new ClickHandler()
-  {
-   @Override
-   public void onClick(ClickEvent event)
-   {
-    new UserAddDialog(ds).show();
-   }
-  });
-  
-  usrTools.addSpacer(20);
-  usrTools.addButton(addBut);
-
-  ToolStripButton delBut = new ToolStripButton();
-  delBut.setTitle("Delete user");
-  delBut.setSelected(true);
-  delBut.setIcon( "icons/auth/user_delete.png" );
-  delBut.addClickHandler( new ClickHandler()
-  {
-   @Override
-   public void onClick(ClickEvent event)
-   {
-    list.removeSelectedData();
-   }
-  });
-  
-  usrTools.addSpacer(5);
-  usrTools.addButton(delBut);
-
-  ToolStripButton passBut = new ToolStripButton();
-  passBut.setTitle("Change password");
-  passBut.setSelected(true);
-  passBut.setIcon( "icons/auth/key.png" );
-  passBut.addClickHandler( new ClickHandler()
-  {
-   @Override
-   public void onClick(ClickEvent event)
-   {
-    ListGridRecord[] sel = list.getSelection();
-    
-    if( sel == null || sel.length != 1 )
-     SC.warn("Please select one user");
-    else
-     new UserChgPassDialog(sel[0],ds).show();
-   }
-  });
-  
-  usrTools.addSpacer(5);
-  usrTools.addButton(passBut);
-
-  
-  addMember(usrTools);
-  
-  
-  ds.setDataFormat(DSDataFormat.JSON);
-  ds.setDataURL(Constants.dsServiceUrl);
-  ds.setDataProtocol(DSProtocol.POSTPARAMS);
-  ds.setDefaultParams(new HashMap<String, String>(){{ put(Constants.sessionKey,Session.getSessionId());}});
-  
   
   ListGridField icnField = new ListGridField("userIcon","");
   icnField.setWidth(30);
@@ -164,35 +81,8 @@ public class UserList extends VLayout
     list.discardAllEdits();
    }
   });
-  
-  addMember( list );
-  
-  list.addSelectionChangedHandler(new SelectionChangedHandler()
-  {
-   
-   @Override
-   public void onSelectionChanged(SelectionEvent event)
-   {
-    clearDetailsPanel();
-    
-    if( event.getSelection() == null || event.getSelection().length != 1 )
-     return;
-    
-    UserGroupsList ugl = new UserGroupsList( event.getSelectedRecord().getAttribute(UserDSDef.userIdField.getFieldId()) );
-    
-    detailsPanel.addMember(ugl);
-   }
-  });
-  
+
+
  }
- 
- private void clearDetailsPanel()
- {
-  Canvas[] membs = detailsPanel.getMembers();
-  
-  detailsPanel.removeMembers(membs);
-  
-  for(Canvas c : membs )
-   c.destroy();
- }
+
 }
