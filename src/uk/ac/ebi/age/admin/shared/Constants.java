@@ -24,7 +24,7 @@ public class Constants
  public static final String groupIdParam="_$groupId";
  public static final String profileIdParam="_$profileId";
  public static final String classifIdParam ="_$classifId";
-
+ public static final String tagIdParam = "_$tagId";
  
  public static final String userListServiceName="userList";
  public static final String groupListServiceName="groupList";
@@ -44,6 +44,7 @@ public class Constants
  public static final String tagACLServiceName = "tagACL";
 
  public static final String rootTagId = "__rootTag";
+
 
 
 }

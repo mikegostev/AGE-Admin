@@ -19,6 +19,7 @@ import uk.ac.ebi.age.admin.server.service.auth.ProfileDBDataSourceService;
 import uk.ac.ebi.age.admin.server.service.auth.ProfilePermissionsDBDataSourceService;
 import uk.ac.ebi.age.admin.server.service.auth.UserDBDataSourceService;
 import uk.ac.ebi.age.admin.server.service.classif.ClassifierDBDataSourceService;
+import uk.ac.ebi.age.admin.server.service.classif.TagACLDBDataSourceService;
 import uk.ac.ebi.age.admin.server.service.classif.TagDBDataSourceService;
 import uk.ac.ebi.age.admin.server.service.ds.DataSourceServiceRouter;
 import uk.ac.ebi.age.admin.server.user.Session;
@@ -131,7 +132,7 @@ public class AgeAdmin
  
   conf.getDataSourceServiceRouter().addService(Constants.classifierListServiceName, new ClassifierDBDataSourceService( conf.getClassifierDB() ) );
   conf.getDataSourceServiceRouter().addService(Constants.tagTreeServiceName, new TagDBDataSourceService( conf.getClassifierDB() ) );
-//  conf.getDataSourceServiceRouter().addService(Constants.tagACLServiceName, new TagACLDBDataSourceService( conf.getClassifierDB() ) );
+  conf.getDataSourceServiceRouter().addService(Constants.tagACLServiceName, new TagACLDBDataSourceService( conf.getClassifierDB() ) );
 
   if( conf.getFileSourceManager() == null )
    conf.setFileSourceManager( new FileSourceManager() );
