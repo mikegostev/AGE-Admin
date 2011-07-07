@@ -38,7 +38,7 @@ public class DataSourceServlet extends HttpServlet
 
  protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
  {
-  String query = request.getQueryString();
+//  String query = request.getQueryString();
   
 //  System.out.println("Query: "+query);
   DataSourceRequest dsr = new DataSourceRequest();
@@ -105,90 +105,76 @@ public class DataSourceServlet extends HttpServlet
   
   DataSourceResponse dsresp = srv.processRequest(dsr);
   
-  
-  response.setContentType("application/json; charset=utf-8");
- 
-  ServletOutputStream out = response.getOutputStream();
-  
-  
-  OutputStreamWriter outw = new OutputStreamWriter(out, Charset.forName("UTF-8"));
-
-  if( dsr.getRequestType() != RequestType.FETCH )
+  try
   {
-   if( dsresp.getErrorMessage() != null )
-    out.print("{" +
-      "response:{" +
-      " status: " + RPCResponse.STATUS_LOGIN_SUCCESS+
-      ", data: '"+StringUtils.escapeByBackslash(dsresp.getErrorMessage(), '\'')+"'"+
-      "}}");
-   else
-    out.print("{" +
+   
+   response.setContentType("application/json; charset=utf-8");
+  
+   ServletOutputStream out = response.getOutputStream();
+   
+   
+   OutputStreamWriter outw = new OutputStreamWriter(out, Charset.forName("UTF-8"));
+ 
+   if( dsr.getRequestType() != RequestType.FETCH )
+   {
+    if( dsresp.getErrorMessage() != null )
+     out.print("{" +
        "response:{" +
-       " status: 0}}");
-   
-   return;
-  }
-
-  outw.write("{" +
-    "response:{" +
-    " status: 0" +
-    ", startRow: " +dsr.getBegin()+
-    ", endRow: " +(dsr.getBegin()+dsresp.getSize())+
-    ", totalRows: " +dsresp.getTotal()+
-    ", data: ["
-  
-  );
-  
-  MapIterator<DSField, String> dataIter = dsresp.getIterator();
-  
-  boolean first = true;
-  while( dataIter.next() )
-  {
-   if( first )
-   {
-    outw.write('{');
-    first=false;
+       " status: " + RPCResponse.STATUS_LOGIN_SUCCESS+
+       ", data: '"+StringUtils.escapeByBackslash(dsresp.getErrorMessage(), '\'')+"'"+
+       "}}");
+    else
+     out.print("{" +
+        "response:{" +
+        " status: 0}}");
+    
+    return;
    }
-   else
-    outw.write(",{");
-   
-   for( DSField dsf : dsd.getFields() )
-   {
-    String val = dataIter.get(dsf);
-    
-    val = val==null?"":StringUtils.escapeByBackslash(val,'\'');
-    
-    outw.write("'"+StringUtils.escapeByBackslash(dsf.getFieldId(),'\'')+"': '"+val+"',");
-   }
-    
-   outw.write("}");
-
-  }
  
-  outw.write("] }}"); 
-
-  outw.close();
+   outw.write("{" +
+     "response:{" +
+     " status: 0" +
+     ", startRow: " +dsr.getBegin()+
+     ", endRow: " +(dsr.getBegin()+dsresp.getSize())+
+     ", totalRows: " +dsresp.getTotal()+
+     ", data: ["
+   
+   );
+   
+   MapIterator<DSField, String> dataIter = dsresp.getIterator();
+   
+   boolean first = true;
+   while( dataIter.next() )
+   {
+    if( first )
+    {
+     outw.write('{');
+     first=false;
+    }
+    else
+     outw.write(",{");
+    
+    for( DSField dsf : dsd.getFields() )
+    {
+     String val = dataIter.get(dsf);
+     
+     val = val==null?"":StringUtils.escapeByBackslash(val,'\'');
+     
+     outw.write("'"+StringUtils.escapeByBackslash(dsf.getFieldId(),'\'')+"': '"+val+"',");
+    }
+     
+    outw.write("}");
+ 
+   }
   
-//  response.getOutputStream().print("" +
-//  		" { " +
-//  		"response:{" +
-//  		" status: 0," +
-//  		" startRow: 0," +
-//  		" endRow: 1," +
-//  		" totalRows: 200," +
-//  		" data: [" +
-//  		"{ userid: 'vaspup', username: 'Vasya Pupkin'}," +   
-//        "{ userid: 'glasha', username: 'Glasha Lozhkina'},");
-//
-//  int endRow = Integer.parseInt(request.getParameter("_endRow"));
-//  
-//  for( int i=2; i < endRow; i++ )
-//  {
-//   response.getOutputStream().print("{ userid: 'vaspup"+i+"', username: 'Vasya Pupkin "+i+"'},");
-//  }
-//  
-//  response.getOutputStream().print("] }}"); 
-
+   outw.write("] }}"); 
+ 
+   outw.close();
+  }
+  finally
+  {
+   dsresp.release();
+  }
  }
 
  private void sendInvRequetError(HttpServletResponse response) throws IOException

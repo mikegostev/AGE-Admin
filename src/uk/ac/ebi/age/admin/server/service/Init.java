@@ -7,6 +7,7 @@ import javax.servlet.ServletContextListener;
 
 import uk.ac.ebi.age.admin.server.mng.AgeAdmin;
 import uk.ac.ebi.age.admin.server.mng.AgeAdminConfigManager;
+import uk.ac.ebi.age.admin.server.mng.AgeAdminException;
 import uk.ac.ebi.age.admin.server.mng.Configuration;
 import uk.ac.ebi.age.mng.AgeStorageManager;
 import uk.ac.ebi.age.mng.AgeStorageManager.DB_TYPE;
@@ -45,6 +46,7 @@ public class Init implements ServletContextListener
   }
   catch(Exception e)
   {
+   arg0.getServletContext().setAttribute(Configuration.webappErrorAttribute, "Can't instantiate AgeStorageManager");
    e.printStackTrace();
    return;
   }
@@ -53,7 +55,14 @@ public class Init implements ServletContextListener
   conf.getPublicModelDir().mkdirs();
   conf.getUserBaseDir().mkdirs();
   
-  adm = new AgeAdmin(conf, storage);
+  try
+  {
+   adm = new AgeAdmin(conf, storage);
+  }
+  catch(AgeAdminException e)
+  {
+   arg0.getServletContext().setAttribute(Configuration.webappErrorAttribute, "Can't instantiate AgeAdmin");
+  }
  }
 
 }

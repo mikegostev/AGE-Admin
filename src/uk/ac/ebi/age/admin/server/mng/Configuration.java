@@ -2,6 +2,8 @@ package uk.ac.ebi.age.admin.server.mng;
 
 import java.io.File;
 
+import org.apache.commons.transaction.file.FileResourceManager;
+
 import uk.ac.ebi.age.admin.server.service.ds.DataSourceServiceRouter;
 import uk.ac.ebi.age.admin.server.user.SessionPool;
 import uk.ac.ebi.age.admin.server.user.UserDatabase;
@@ -21,6 +23,9 @@ public class Configuration
  public static final String userRelPath="user";
  public static final String submissionRelPath="submission";
  public static final String annotationRelPath="annotation";
+ public static final String authRelPath="auth";
+
+ public static final String webappErrorAttribute = "_sysError";
  
  private static Configuration defaultConfig = new Configuration();
  
@@ -35,6 +40,7 @@ public class Configuration
  private SubmissionDB submissionDB;
  private SubmissionManager submissionManager;
  private AnnotationStorage annotationStorage;
+ private FileResourceManager txResMngr;
 
  private File tmpDir;
  private File baseDir;
@@ -102,7 +108,11 @@ public class Configuration
   tmpDir=f;
  }
 
-
+ public File getBaseDir()
+ {
+  return baseDir;
+ }
+ 
  public void setBaseDir(File file)
  {
   baseDir = file;
@@ -218,6 +228,18 @@ public class Configuration
  public void setClassifierDB(ClassifierDB classifierDB)
  {
   this.classifierDB = classifierDB;
+ }
+
+
+ public FileResourceManager getTxResourceManager()
+ {
+  return txResMngr;
+ }
+
+
+ public void setTxResourceManager(FileResourceManager txResMngr)
+ {
+  this.txResMngr = txResMngr;
  }
 
 }

@@ -172,9 +172,11 @@ public class TagsTree extends VLayout
     if( rec == null )
      return;
     
-    Canvas permPan = new TagPermissionsPanel();
+    String tagId = rec.getAttribute(TagsDSDef.idField.getFieldId());
     
-    PlacingManager.placeWidget(permPan, "Tag '"+ rec.getAttribute(TagsDSDef.idField.getFieldId())+"' permissions");
+    Canvas permPan = new TagPermissionsPanel( classifId , tagId );
+    
+    PlacingManager.placeWidget(permPan, "Tag '"+tagId+"' permissions");
    }
   });
 

@@ -10,9 +10,9 @@ import uk.ac.ebi.age.admin.server.service.ds.DataSourceResponse;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.cassif.TagsDSDef;
 import uk.ac.ebi.age.admin.shared.ds.DSField;
+import uk.ac.ebi.age.authz.Tag;
+import uk.ac.ebi.age.authz.exception.TagException;
 import uk.ac.ebi.age.classif.ClassifierDB;
-import uk.ac.ebi.age.classif.Tag;
-import uk.ac.ebi.age.classif.exception.TagException;
 
 import com.pri.util.collection.MapIterator;
 

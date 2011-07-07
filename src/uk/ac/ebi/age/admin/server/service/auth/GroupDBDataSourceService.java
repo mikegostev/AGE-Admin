@@ -12,6 +12,8 @@ import uk.ac.ebi.age.admin.shared.ds.DSField;
 import uk.ac.ebi.age.authz.AuthDB;
 import uk.ac.ebi.age.authz.UserGroup;
 import uk.ac.ebi.age.authz.exception.AuthException;
+import uk.ac.ebi.age.transaction.ReadLock;
+import uk.ac.ebi.age.transaction.Transaction;
 
 import com.pri.util.collection.ListFragment;
 import com.pri.util.collection.MapIterator;
@@ -60,7 +62,11 @@ public class GroupDBDataSourceService implements DataSourceBackendService
   
   try
   {
-   db.deleteGroup( grpId );
+   Transaction t = db.startTransaction();
+   
+   db.deleteGroup( t, grpId );
+   
+   db.commitTransaction(t);
   }
   catch(AuthException e)
   {
@@ -88,7 +94,11 @@ public class GroupDBDataSourceService implements DataSourceBackendService
   
   try
   {
-   db.addGroup( grpId, grpDesc );
+   Transaction t = db.startTransaction();
+   
+   db.addGroup(t, grpId, grpDesc );
+   
+   db.commitTransaction(t);
   }
   catch(AuthException e)
   {
@@ -117,7 +127,11 @@ public class GroupDBDataSourceService implements DataSourceBackendService
   
   try
   {
-   db.updateGroup( grpId, grpDesc );
+   Transaction t = db.startTransaction();
+   
+   db.updateGroup(t, grpId, grpDesc );
+
+   db.commitTransaction(t);
   }
   catch(AuthException e)
   {
@@ -129,21 +143,22 @@ public class GroupDBDataSourceService implements DataSourceBackendService
 
  private DataSourceResponse processFetch(DataSourceRequest dsr)
  {
-  DataSourceResponse resp = new DataSourceResponse();
-  
   Map<DSField, String> vmap = dsr.getValueMap();
+  
+  ReadLock rl = db.getReadLock();
+  DataSourceResponse resp = new DataSourceResponse(rl);
   
   if( vmap == null || vmap.size() == 0 )
   {
-   List<? extends UserGroup> res=db.getGroups( dsr.getBegin(), dsr.getEnd() );
+   List<? extends UserGroup> res=db.getGroups(rl, dsr.getBegin(), dsr.getEnd() );
    
-   resp.setTotal( db.getGroupsTotal() );
+   resp.setTotal(db.getGroupsTotal(rl) );
    resp.setSize(res.size());
    resp.setIterator( new GroupMapIterator(res) );
   }
   else
   {
-   ListFragment<UserGroup> res=db.getGroups( vmap.get(GroupDSDef.grpIdField), vmap.get(GroupDSDef.grpDescField), dsr.getBegin(), dsr.getEnd() );
+   ListFragment<UserGroup> res=db.getGroups(rl, vmap.get(GroupDSDef.grpIdField), vmap.get(GroupDSDef.grpDescField), dsr.getBegin(), dsr.getEnd() );
   
    resp.setTotal(res.getTotalLength());
    resp.setSize(res.getList().size());

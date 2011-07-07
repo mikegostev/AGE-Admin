@@ -8,6 +8,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
 
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.transaction.file.FileResourceManager;
+import org.apache.commons.transaction.file.ResourceManagerSystemException;
+import org.apache.commons.transaction.util.CommonsLoggingLogger;
+
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
 import uk.ac.ebi.age.admin.client.model.ModelStorageException;
@@ -35,7 +40,7 @@ import uk.ac.ebi.age.admin.shared.SubmissionConstants;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
 import uk.ac.ebi.age.annotation.AnnotationStorage;
 import uk.ac.ebi.age.annotation.impl.InMemoryAnnotationStorage;
-import uk.ac.ebi.age.authz.impl.TestAuthDBImpl;
+import uk.ac.ebi.age.authz.impl.SerializedAuthDBImpl;
 import uk.ac.ebi.age.classif.ClassifierDB;
 import uk.ac.ebi.age.ext.log.SimpleLogNode;
 import uk.ac.ebi.age.ext.submission.HistoryEntry;
@@ -69,7 +74,7 @@ public class AgeAdmin
  
  private Configuration configuration;
 
- public AgeAdmin(Configuration conf, AgeStorageAdm storage)
+ public AgeAdmin(Configuration conf, AgeStorageAdm storage) throws AgeAdminException
  {
   configuration=conf;
   
@@ -109,16 +114,33 @@ public class AgeAdmin
   if( conf.getSubmissionManager() == null )
    conf.setSubmissionManager( new SubmissionManager(storage, submissionDB ) );
 
+  if( conf.getTxResourceManager() == null )
+  {
+   conf.setTxResourceManager( new FileResourceManager(conf.getBaseDir().getAbsolutePath(),
+     new File(conf.getTmpDir(),"tx").getAbsolutePath() , false, new CommonsLoggingLogger(LogFactory.getLog(FileResourceManager.class))) );
+   
+   try
+   {
+    conf.getTxResourceManager().start();
+   }
+   catch(ResourceManagerSystemException e)
+   {
+    e.printStackTrace();
+    throw new AgeAdminException(e);
+   }
+  }
+
   if( conf.getAuthDB() == null )
-   conf.setAuthDB( new TestAuthDBImpl() );
+   conf.setAuthDB( new SerializedAuthDBImpl(conf.getTxResourceManager(),Configuration.authRelPath) );
   
   if( conf.getClassifierDB() == null )
   {
    if( conf.getAuthDB() instanceof ClassifierDB )
     conf.setClassifierDB( (ClassifierDB) conf.getAuthDB() );
    else
-    conf.setClassifierDB( new TestAuthDBImpl() );
+    conf.setClassifierDB( new SerializedAuthDBImpl(conf.getTxResourceManager(),Configuration.authRelPath) );
   }
+  
   
   if( conf.getDataSourceServiceRouter() == null )
    conf.setDataSourceServiceRouter( new DataSourceServiceRouter() );
@@ -157,6 +179,15 @@ public class AgeAdmin
 
   if(udb != null)
    udb.shutdown();
+  
+  try
+  {
+   Configuration.getDefaultConfiguration().getTxResourceManager().stop(FileResourceManager.SHUTDOWN_MODE_NORMAL);
+  }
+  catch(ResourceManagerSystemException e)
+  {
+   e.printStackTrace();
+  }
 
 //  if(submissionDB != null)
 //   submissionDB.shutdown();

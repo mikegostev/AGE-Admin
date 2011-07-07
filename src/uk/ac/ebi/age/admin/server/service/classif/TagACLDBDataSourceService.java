@@ -17,8 +17,8 @@ import uk.ac.ebi.age.authz.PermissionUnit;
 import uk.ac.ebi.age.authz.Subject;
 import uk.ac.ebi.age.authz.User;
 import uk.ac.ebi.age.authz.UserGroup;
+import uk.ac.ebi.age.authz.exception.TagException;
 import uk.ac.ebi.age.classif.ClassifierDB;
-import uk.ac.ebi.age.classif.exception.TagException;
 import uk.ac.ebi.age.ext.authz.SystemAction;
 
 import com.pri.util.collection.MapIterator;
