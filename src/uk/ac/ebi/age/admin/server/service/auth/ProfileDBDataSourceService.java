@@ -12,6 +12,9 @@ import uk.ac.ebi.age.admin.shared.ds.DSField;
 import uk.ac.ebi.age.authz.AuthDB;
 import uk.ac.ebi.age.authz.PermissionProfile;
 import uk.ac.ebi.age.authz.exception.AuthException;
+import uk.ac.ebi.age.transaction.ReadLock;
+import uk.ac.ebi.age.transaction.Transaction;
+import uk.ac.ebi.age.transaction.TransactionException;
 
 import com.pri.util.collection.ListFragment;
 import com.pri.util.collection.MapIterator;
@@ -57,15 +60,36 @@ public class ProfileDBDataSourceService implements DataSourceBackendService
    return resp;
   }
   
-  
+  Transaction trn = db.startTransaction();
+
   try
   {
-   db.deleteProfile( profId );
+   db.deleteProfile( trn, profId );
+   
+   try
+   {
+    db.commitTransaction(trn);
+   }
+   catch(TransactionException e)
+   {
+    resp.setErrorMessage("Transaction error: "+e.getMessage());
+   }
+  
   }
   catch(AuthException e)
   {
-   resp.setErrorMessage("Profile with ID '"+profId+"' doesn't exist");
+   try
+   {
+    db.rollbackTransaction(trn);
+    resp.setErrorMessage("Profile with ID '"+profId+"' doesn't exist");
+   }
+   catch(TransactionException e1)
+   {
+    resp.setErrorMessage("Transaction error: "+e1.getMessage());
+   }
+
   }
+
   
   return resp;
  }
@@ -86,17 +110,38 @@ public class ProfileDBDataSourceService implements DataSourceBackendService
   }
   
   
+  Transaction trn = db.startTransaction();
+
   try
   {
-   db.addProfile( profId, profDesc );
+   db.addProfile( trn, profId, profDesc );
+   
+   try
+   {
+    db.commitTransaction(trn);
+   }
+   catch(TransactionException e)
+   {
+    resp.setErrorMessage("Transaction error: "+e.getMessage());
+   }
+  
   }
   catch(AuthException e)
   {
-   resp.setErrorMessage("Profile with ID '"+profId+"' exists");
+   try
+   {
+    db.rollbackTransaction(trn);
+    resp.setErrorMessage("Profile with ID '"+profId+"' exists");
+   }
+   catch(TransactionException e1)
+   {
+    resp.setErrorMessage("Transaction error: "+e1.getMessage());
+   }
+
   }
+
   
   return resp;
-  
  }
 
  private DataSourceResponse processUpdate(DataSourceRequest dsr)
@@ -114,35 +159,59 @@ public class ProfileDBDataSourceService implements DataSourceBackendService
    return resp;
   }
   
+  
+  Transaction trn = db.startTransaction();
+
   try
   {
-   db.updateProfile( profId, profDesc );
+   db.updateProfile( trn, profId, profDesc );
+   
+   try
+   {
+    db.commitTransaction(trn);
+   }
+   catch(TransactionException e)
+   {
+    resp.setErrorMessage("Transaction error: "+e.getMessage());
+   }
+  
   }
   catch(AuthException e)
   {
-   resp.setErrorMessage("Error");
+   try
+   {
+    db.rollbackTransaction(trn);
+    resp.setErrorMessage(e.getMessage());
+   }
+   catch(TransactionException e1)
+   {
+    resp.setErrorMessage("Transaction error: "+e1.getMessage());
+   }
+
   }
+
   
   return resp;
  }
 
  private DataSourceResponse processFetch(DataSourceRequest dsr)
  {
-  DataSourceResponse resp = new DataSourceResponse();
+  ReadLock lck = db.getReadLock();
+  DataSourceResponse resp = new DataSourceResponse( lck );
   
   Map<DSField, String> vmap = dsr.getValueMap();
   
   if( vmap == null || vmap.size() == 0 )
   {
-   List<? extends PermissionProfile> res=db.getProfiles( dsr.getBegin(), dsr.getEnd() );
+   List<? extends PermissionProfile> res=db.getProfiles(lck, dsr.getBegin(), dsr.getEnd() );
    
-   resp.setTotal( db.getProfilesTotal() );
+   resp.setTotal( db.getProfilesTotal(lck) );
    resp.setSize(res.size());
    resp.setIterator( new ProfileMapIterator(res) );
   }
   else
   {
-   ListFragment<PermissionProfile> res=db.getProfiles( vmap.get(ProfileDSDef.profIdField), vmap.get(ProfileDSDef.profDescField), dsr.getBegin(), dsr.getEnd() );
+   ListFragment<PermissionProfile> res=db.getProfiles(lck, vmap.get(ProfileDSDef.profIdField), vmap.get(ProfileDSDef.profDescField), dsr.getBegin(), dsr.getEnd() );
   
    resp.setTotal(res.getTotalLength());
    resp.setSize(res.getList().size());

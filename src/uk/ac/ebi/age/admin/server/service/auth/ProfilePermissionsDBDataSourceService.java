@@ -15,6 +15,9 @@ import uk.ac.ebi.age.authz.Permission;
 import uk.ac.ebi.age.authz.PermissionProfile;
 import uk.ac.ebi.age.authz.exception.AuthException;
 import uk.ac.ebi.age.ext.authz.SystemAction;
+import uk.ac.ebi.age.transaction.ReadLock;
+import uk.ac.ebi.age.transaction.Transaction;
+import uk.ac.ebi.age.transaction.TransactionException;
 
 import com.pri.util.collection.MapIterator;
 
@@ -89,26 +92,70 @@ public class ProfilePermissionsDBDataSourceService implements DataSourceBackendS
     resp.setErrorMessage("Invalid action: " + actId);
    }
 
+   
+   Transaction trn = db.startTransaction();
+
    try
    {
-    db.removePermissionFromProfile(profId, actn, "allow".equals(type));
+    db.removePermissionFromProfile(trn, profId, actn, "allow".equals(type));
+    
+    try
+    {
+     db.commitTransaction(trn);
+    }
+    catch(TransactionException e)
+    {
+     resp.setErrorMessage("Transaction error: "+e.getMessage());
+    }
+   
    }
    catch(AuthException e)
    {
-    resp.setErrorMessage(e.getMessage());
-   }
+    try
+    {
+     db.rollbackTransaction(trn);
+     resp.setErrorMessage(e.getMessage());
+    }
+    catch(TransactionException e1)
+    {
+     resp.setErrorMessage("Transaction error: "+e1.getMessage());
+    }
 
+   }
+   
   }
   else if( "profile".equals(type) )
   {
+   Transaction trn = db.startTransaction();
+
    try
    {
-    db.removeProfileFromProfile(profId, vmap.get(ProfilePermDSDef.idField) );
+    db.removeProfileFromProfile(trn, profId, vmap.get(ProfilePermDSDef.idField) );
+    
+    try
+    {
+     db.commitTransaction(trn);
+    }
+    catch(TransactionException e)
+    {
+     resp.setErrorMessage("Transaction error: "+e.getMessage());
+    }
+   
    }
    catch(AuthException e)
    {
-    resp.setErrorMessage(e.getMessage());
+    try
+    {
+     db.rollbackTransaction(trn);
+     resp.setErrorMessage(e.getMessage());
+    }
+    catch(TransactionException e1)
+    {
+     resp.setErrorMessage("Transaction error: "+e1.getMessage());
+    }
+
    }
+
   }
   else
   {
@@ -162,26 +209,70 @@ public class ProfilePermissionsDBDataSourceService implements DataSourceBackendS
     resp.setErrorMessage("Invalid action: " + actId);
    }
 
+   
+   Transaction trn = db.startTransaction();
+
    try
    {
-    db.addPermissionToProfile(profId, actn, "allow".equals(type));
+    db.addPermissionToProfile( trn, profId, actn, "allow".equals(type));
+    
+    try
+    {
+     db.commitTransaction(trn);
+    }
+    catch(TransactionException e)
+    {
+     resp.setErrorMessage("Transaction error: "+e.getMessage());
+    }
+   
    }
    catch(AuthException e)
    {
-    resp.setErrorMessage(e.getMessage());
-   }
+    try
+    {
+     db.rollbackTransaction(trn);
+     resp.setErrorMessage(e.getMessage());
+    }
+    catch(TransactionException e1)
+    {
+     resp.setErrorMessage("Transaction error: "+e1.getMessage());
+    }
 
+   }
   }
   else if( "profile".equals(type) )
   {
+   
+   Transaction trn = db.startTransaction();
+
    try
    {
-    db.addProfileToProfile(profId, vmap.get(ProfilePermDSDef.idField) );
+    db.addProfileToProfile( trn, profId, vmap.get(ProfilePermDSDef.idField) );
+    
+    try
+    {
+     db.commitTransaction(trn);
+    }
+    catch(TransactionException e)
+    {
+     resp.setErrorMessage("Transaction error: "+e.getMessage());
+    }
+   
    }
    catch(AuthException e)
    {
-    resp.setErrorMessage(e.getMessage());
+    try
+    {
+     db.rollbackTransaction(trn);
+     resp.setErrorMessage(e.getMessage());
+    }
+    catch(TransactionException e1)
+    {
+     resp.setErrorMessage("Transaction error: "+e1.getMessage());
+    }
+
    }
+
   }
   else
   {
@@ -205,7 +296,8 @@ public class ProfilePermissionsDBDataSourceService implements DataSourceBackendS
 
  private DataSourceResponse processFetch(DataSourceRequest dsr)
  {
-  DataSourceResponse resp = new DataSourceResponse();
+  ReadLock lck = db.getReadLock();
+  DataSourceResponse resp = new DataSourceResponse( lck );
   
   String profId = dsr.getRequestParametersMap().get(Constants.profileIdParam);
   
@@ -217,9 +309,9 @@ public class ProfilePermissionsDBDataSourceService implements DataSourceBackendS
   
   try
   {
-   Collection< ? extends Permission> perms = db.getPermissionsOfProfile( profId );
+   Collection< ? extends Permission> perms = db.getPermissionsOfProfile( lck, profId );
 
-   Collection< ? extends PermissionProfile> prof = db.getProfilesOfProfile( profId );
+   Collection< ? extends PermissionProfile> prof = db.getProfilesOfProfile( lck, profId );
 
    resp.setTotal( perms.size()+prof.size() );
    resp.setSize( perms.size()+prof.size() );
@@ -228,7 +320,7 @@ public class ProfilePermissionsDBDataSourceService implements DataSourceBackendS
   }
   catch(AuthException e)
   {
-   resp.setErrorMessage("Error");
+   resp.setErrorMessage(e.getMessage());
   }
  
   return resp;

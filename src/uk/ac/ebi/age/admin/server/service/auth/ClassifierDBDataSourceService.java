@@ -1,4 +1,4 @@
-package uk.ac.ebi.age.admin.server.service.classif;
+package uk.ac.ebi.age.admin.server.service.auth;
 
 import java.util.Iterator;
 import java.util.List;
@@ -9,18 +9,21 @@ import uk.ac.ebi.age.admin.server.service.ds.DataSourceRequest;
 import uk.ac.ebi.age.admin.server.service.ds.DataSourceResponse;
 import uk.ac.ebi.age.admin.shared.cassif.ClassifierDSDef;
 import uk.ac.ebi.age.admin.shared.ds.DSField;
+import uk.ac.ebi.age.authz.AuthDB;
 import uk.ac.ebi.age.authz.Classifier;
 import uk.ac.ebi.age.authz.exception.TagException;
-import uk.ac.ebi.age.classif.ClassifierDB;
+import uk.ac.ebi.age.transaction.ReadLock;
+import uk.ac.ebi.age.transaction.Transaction;
+import uk.ac.ebi.age.transaction.TransactionException;
 
 import com.pri.util.collection.ListFragment;
 import com.pri.util.collection.MapIterator;
 
 public class ClassifierDBDataSourceService implements DataSourceBackendService
 {
- private ClassifierDB db;
+ private AuthDB db;
  
- public ClassifierDBDataSourceService(ClassifierDB authDB)
+ public ClassifierDBDataSourceService(AuthDB authDB)
  {
   db = authDB;
  }
@@ -58,15 +61,36 @@ public class ClassifierDBDataSourceService implements DataSourceBackendService
   }
   
   
+  Transaction trn = db.startTransaction();
+
   try
   {
-   db.deleteClassifier( csfId );
+   db.deleteClassifier(trn, csfId );
+   
+   try
+   {
+    db.commitTransaction(trn);
+   }
+   catch(TransactionException e)
+   {
+    resp.setErrorMessage("Transaction error: "+e.getMessage());
+   }
+  
   }
   catch(TagException e)
   {
-   resp.setErrorMessage("Classifier with ID '"+csfId+"' doesn't exist");
+   try
+   {
+    db.rollbackTransaction(trn);
+    resp.setErrorMessage("Classifier with ID '"+csfId+"' doesn't exist");
+   }
+   catch(TransactionException e1)
+   {
+    resp.setErrorMessage("Transaction error: "+e1.getMessage());
+   }
+
   }
-  
+ 
   return resp;
  }
 
@@ -86,17 +110,37 @@ public class ClassifierDBDataSourceService implements DataSourceBackendService
   }
   
   
+  Transaction trn = db.startTransaction();
+  
   try
   {
-   db.addClassifier( csfId, csfDesc );
+   db.addClassifier( trn, csfId, csfDesc );   
+
+   try
+   {
+    db.commitTransaction(trn);
+   }
+   catch(TransactionException e)
+   {
+    resp.setErrorMessage("Transaction error: "+e.getMessage());
+   }
+  
   }
   catch(TagException e)
   {
-   resp.setErrorMessage("Classifier with ID '"+csfId+"' exists");
+   try
+   {
+    db.rollbackTransaction(trn);
+    resp.setErrorMessage("Classifier with ID '"+csfId+"' exists");
+   }
+   catch(TransactionException e1)
+   {
+    resp.setErrorMessage("Transaction error: "+e1.getMessage());
+   }
+
   }
   
   return resp;
-  
  }
 
  private DataSourceResponse processUpdate(DataSourceRequest dsr)
@@ -114,35 +158,59 @@ public class ClassifierDBDataSourceService implements DataSourceBackendService
    return resp;
   }
   
+  
+  Transaction trn = db.startTransaction();
+  
   try
   {
-   db.updateClassifier( csfId, csfDesc );
+   db.updateClassifier( trn, csfId, csfDesc );
+
+   try
+   {
+    db.commitTransaction(trn);
+   }
+   catch(TransactionException e)
+   {
+    resp.setErrorMessage("Transaction error: "+e.getMessage());
+   }
+  
   }
   catch(TagException e)
   {
-   resp.setErrorMessage(e.getMessage());
+   try
+   {
+    db.rollbackTransaction(trn);
+    resp.setErrorMessage(e.getMessage());
+   }
+   catch(TransactionException e1)
+   {
+    resp.setErrorMessage("Transaction error: "+e1.getMessage());
+   }
+
   }
-  
+
   return resp;
  }
 
  private DataSourceResponse processFetch(DataSourceRequest dsr)
  {
-  DataSourceResponse resp = new DataSourceResponse();
+  ReadLock lck = db.getReadLock();
+  
+  DataSourceResponse resp = new DataSourceResponse( lck );
   
   Map<DSField, String> vmap = dsr.getValueMap();
   
   if( vmap == null || vmap.size() == 0 )
   {
-   List<? extends Classifier> res=db.getClassifiers( dsr.getBegin(), dsr.getEnd() );
+   List<? extends Classifier> res=db.getClassifiers( lck, dsr.getBegin(), dsr.getEnd() );
    
-   resp.setTotal( db.getClassifiersTotal() );
+   resp.setTotal( db.getClassifiersTotal( lck ) );
    resp.setSize(res.size());
    resp.setIterator( new ClassifierMapIterator(res) );
   }
   else
   {
-   ListFragment<Classifier> res=db.getClassifiers( vmap.get(ClassifierDSDef.idField), vmap.get(ClassifierDSDef.descField), dsr.getBegin(), dsr.getEnd() );
+   ListFragment<Classifier> res=db.getClassifiers( lck, vmap.get(ClassifierDSDef.idField), vmap.get(ClassifierDSDef.descField), dsr.getBegin(), dsr.getEnd() );
   
    resp.setTotal(res.getTotalLength());
    resp.setSize(res.getList().size());

@@ -1,4 +1,4 @@
-package uk.ac.ebi.age.admin.server.service.classif;
+package uk.ac.ebi.age.admin.server.service.auth;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -11,6 +11,7 @@ import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.cassif.TagACLDSDef;
 import uk.ac.ebi.age.admin.shared.ds.DSField;
 import uk.ac.ebi.age.authz.ACR;
+import uk.ac.ebi.age.authz.AuthDB;
 import uk.ac.ebi.age.authz.Permission;
 import uk.ac.ebi.age.authz.PermissionProfile;
 import uk.ac.ebi.age.authz.PermissionUnit;
@@ -18,17 +19,19 @@ import uk.ac.ebi.age.authz.Subject;
 import uk.ac.ebi.age.authz.User;
 import uk.ac.ebi.age.authz.UserGroup;
 import uk.ac.ebi.age.authz.exception.TagException;
-import uk.ac.ebi.age.classif.ClassifierDB;
 import uk.ac.ebi.age.ext.authz.SystemAction;
+import uk.ac.ebi.age.transaction.ReadLock;
+import uk.ac.ebi.age.transaction.Transaction;
+import uk.ac.ebi.age.transaction.TransactionException;
 
 import com.pri.util.collection.MapIterator;
 
 public class TagACLDBDataSourceService implements DataSourceBackendService
 {
 
- private ClassifierDB db;
+ private AuthDB db;
  
- public TagACLDBDataSourceService(ClassifierDB classifierDB)
+ public TagACLDBDataSourceService(AuthDB classifierDB)
  {
   db = classifierDB;
  }
@@ -164,30 +167,50 @@ public class TagACLDBDataSourceService implements DataSourceBackendService
    return resp;
   }
   
+  
+  Transaction trn = db.startTransaction();
+
   try
   {
-   
    if( r.isGroup )
    {
     if( r.profileId != null )
-     db.removeProfileForGroupACR( r.classifId, r.tagId, r.subjId, r.profileId );
+     db.removeProfileForGroupACR( trn, r.classifId, r.tagId, r.subjId, r.profileId );
     else
-     db.removePermissionForGroupACR( r.classifId, r.tagId, r.subjId, r.action, r.allow );
+     db.removePermissionForGroupACR( trn, r.classifId, r.tagId, r.subjId, r.action, r.allow );
    }
    else
    {
     if( r.profileId != null )
-     db.removeProfileForUserACR( r.classifId, r.tagId, r.subjId, r.profileId );
+     db.removeProfileForUserACR( trn, r.classifId, r.tagId, r.subjId, r.profileId );
     else
-     db.removePermissionForUserACR( r.classifId, r.tagId, r.subjId, r.action, r.allow );
+     db.removePermissionForUserACR( trn, r.classifId, r.tagId, r.subjId, r.action, r.allow );
+   }   
+  
+   try
+   {
+    db.commitTransaction(trn);
    }
+   catch(TransactionException e)
+   {
+    resp.setErrorMessage("Transaction error: "+e.getMessage());
+   }
+  
   }
-  catch (Exception e)
+  catch(TagException e)
   {
-   resp.setErrorMessage(r.error);
+   try
+   {
+    db.rollbackTransaction(trn);
+    resp.setErrorMessage(e.getMessage());
+   }
+   catch(TransactionException e1)
+   {
+    resp.setErrorMessage("Transaction error: "+e1.getMessage());
+   }
+
   }
   
-
   return resp;
  }
 
@@ -203,29 +226,50 @@ public class TagACLDBDataSourceService implements DataSourceBackendService
    return resp;
   }
   
+  
+  
+  Transaction trn = db.startTransaction();
+
   try
   {
-   
    if( r.isGroup )
    {
     if( r.profileId != null )
-     db.addProfileForGroupACR( r.classifId, r.tagId, r.subjId, r.profileId );
+     db.addProfileForGroupACR( trn, r.classifId, r.tagId, r.subjId, r.profileId );
     else
-     db.addActionForGroupACR( r.classifId, r.tagId, r.subjId, r.action, r.allow );
+     db.addActionForGroupACR( trn, r.classifId, r.tagId, r.subjId, r.action, r.allow );
    }
    else
    {
     if( r.profileId != null )
-     db.addProfileForUserACR( r.classifId, r.tagId, r.subjId, r.profileId );
+     db.addProfileForUserACR( trn, r.classifId, r.tagId, r.subjId, r.profileId );
     else
-     db.addActionForUserACR( r.classifId, r.tagId, r.subjId, r.action, r.allow );
+     db.addActionForUserACR( trn, r.classifId, r.tagId, r.subjId, r.action, r.allow );
    }
-  }
-  catch (Exception e)
-  {
-   resp.setErrorMessage(r.error);
-  }
   
+   try
+   {
+    db.commitTransaction(trn);
+   }
+   catch(TransactionException e)
+   {
+    resp.setErrorMessage("Transaction error: "+e.getMessage());
+   }
+  
+  }
+  catch(Exception e)
+  {
+   try
+   {
+    db.rollbackTransaction(trn);
+    resp.setErrorMessage(e.getMessage());
+   }
+   catch(TransactionException e1)
+   {
+    resp.setErrorMessage("Transaction error: "+e1.getMessage());
+   }
+
+  }
 
   return resp;
  }
@@ -241,7 +285,8 @@ public class TagACLDBDataSourceService implements DataSourceBackendService
 
  private DataSourceResponse processFetch(DataSourceRequest dsr)
  {
-  DataSourceResponse resp = new DataSourceResponse();
+  ReadLock rl = db.getReadLock();
+  DataSourceResponse resp = new DataSourceResponse(rl);
   
   String tagId = dsr.getRequestParametersMap().get(Constants.tagIdParam);
   
@@ -262,7 +307,7 @@ public class TagACLDBDataSourceService implements DataSourceBackendService
   
   try
   {
-   Collection<? extends ACR> acrs = db.getACL( classifId, tagId );
+   Collection<? extends ACR> acrs = db.getACL( rl, classifId, tagId );
    
    resp.setTotal( acrs.size() );
    resp.setSize( acrs.size() );

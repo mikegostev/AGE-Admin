@@ -13,6 +13,9 @@ import uk.ac.ebi.age.admin.shared.ds.DSField;
 import uk.ac.ebi.age.authz.AuthDB;
 import uk.ac.ebi.age.authz.UserGroup;
 import uk.ac.ebi.age.authz.exception.AuthException;
+import uk.ac.ebi.age.transaction.ReadLock;
+import uk.ac.ebi.age.transaction.Transaction;
+import uk.ac.ebi.age.transaction.TransactionException;
 
 import com.pri.util.collection.MapIterator;
 
@@ -65,13 +68,35 @@ public class GroupOfUserDBDataSourceService implements DataSourceBackendService
    return resp;
   }
 
+  
+  Transaction trn = db.startTransaction();
+
   try
   {
-   db.removeUserFromGroup( grpId, userId );
+   db.removeUserFromGroup( trn, grpId, userId );
+   
+   try
+   {
+    db.commitTransaction(trn);
+   }
+   catch(TransactionException e)
+   {
+    resp.setErrorMessage("Transaction error: "+e.getMessage());
+   }
+  
   }
   catch(AuthException e)
   {
-   resp.setErrorMessage("Group with ID '"+grpId+"' doesn't exist");
+   try
+   {
+    db.rollbackTransaction(trn);
+    resp.setErrorMessage(e.getMessage());
+   }
+   catch(TransactionException e1)
+   {
+    resp.setErrorMessage("Transaction error: "+e1.getMessage());
+   }
+
   }
   
   return resp;
@@ -98,20 +123,34 @@ public class GroupOfUserDBDataSourceService implements DataSourceBackendService
    return resp;
   }
   
-  if( grpId == null )
-  {
-   resp.setErrorMessage(GroupDSDef.grpIdField.getFieldTitle()+" should not be null");
-   return resp;
-  }
-  
-  
+  Transaction trn = db.startTransaction();
+
   try
   {
-   db.addUserToGroup( grpId, userId );
+   db.addUserToGroup( trn, grpId, userId );
+   
+   try
+   {
+    db.commitTransaction(trn);
+   }
+   catch(TransactionException e)
+   {
+    resp.setErrorMessage("Transaction error: "+e.getMessage());
+   }
+  
   }
   catch(AuthException e)
   {
-   resp.setErrorMessage("Error");
+   try
+   {
+    db.rollbackTransaction(trn);
+    resp.setErrorMessage(e.getMessage());
+   }
+   catch(TransactionException e1)
+   {
+    resp.setErrorMessage("Transaction error: "+e1.getMessage());
+   }
+
   }
   
   return resp;
@@ -129,7 +168,8 @@ public class GroupOfUserDBDataSourceService implements DataSourceBackendService
 
  private DataSourceResponse processFetch(DataSourceRequest dsr)
  {
-  DataSourceResponse resp = new DataSourceResponse();
+  ReadLock rl = db.getReadLock();
+  DataSourceResponse resp = new DataSourceResponse(rl);
   
   String userId = dsr.getRequestParametersMap().get(Constants.userIdParam);
   
@@ -143,7 +183,7 @@ public class GroupOfUserDBDataSourceService implements DataSourceBackendService
   Collection< ? extends UserGroup> res;
   try
   {
-   res = db.getGroupsOfUser( userId );
+   res = db.getGroupsOfUser( rl, userId );
 
    resp.setTotal( res.size() );
    resp.setSize(res.size());

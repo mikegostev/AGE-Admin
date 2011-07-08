@@ -17,15 +17,15 @@ import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
 import uk.ac.ebi.age.admin.client.model.ModelStorageException;
 import uk.ac.ebi.age.admin.server.model.Age2ImprintConverter;
+import uk.ac.ebi.age.admin.server.service.auth.ClassifierDBDataSourceService;
 import uk.ac.ebi.age.admin.server.service.auth.GroupDBDataSourceService;
 import uk.ac.ebi.age.admin.server.service.auth.GroupOfUserDBDataSourceService;
 import uk.ac.ebi.age.admin.server.service.auth.GroupPartsDBDataSourceService;
 import uk.ac.ebi.age.admin.server.service.auth.ProfileDBDataSourceService;
 import uk.ac.ebi.age.admin.server.service.auth.ProfilePermissionsDBDataSourceService;
+import uk.ac.ebi.age.admin.server.service.auth.TagACLDBDataSourceService;
+import uk.ac.ebi.age.admin.server.service.auth.TagDBDataSourceService;
 import uk.ac.ebi.age.admin.server.service.auth.UserDBDataSourceService;
-import uk.ac.ebi.age.admin.server.service.classif.ClassifierDBDataSourceService;
-import uk.ac.ebi.age.admin.server.service.classif.TagACLDBDataSourceService;
-import uk.ac.ebi.age.admin.server.service.classif.TagDBDataSourceService;
 import uk.ac.ebi.age.admin.server.service.ds.DataSourceServiceRouter;
 import uk.ac.ebi.age.admin.server.user.Session;
 import uk.ac.ebi.age.admin.server.user.SessionPool;
@@ -40,8 +40,8 @@ import uk.ac.ebi.age.admin.shared.SubmissionConstants;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
 import uk.ac.ebi.age.annotation.AnnotationStorage;
 import uk.ac.ebi.age.annotation.impl.InMemoryAnnotationStorage;
+import uk.ac.ebi.age.authz.exception.DBInitException;
 import uk.ac.ebi.age.authz.impl.SerializedAuthDBImpl;
-import uk.ac.ebi.age.classif.ClassifierDB;
 import uk.ac.ebi.age.ext.log.SimpleLogNode;
 import uk.ac.ebi.age.ext.submission.HistoryEntry;
 import uk.ac.ebi.age.ext.submission.SubmissionDBException;
@@ -131,15 +131,24 @@ public class AgeAdmin
   }
 
   if( conf.getAuthDB() == null )
-   conf.setAuthDB( new SerializedAuthDBImpl(conf.getTxResourceManager(),Configuration.authRelPath) );
-  
-  if( conf.getClassifierDB() == null )
   {
-   if( conf.getAuthDB() instanceof ClassifierDB )
-    conf.setClassifierDB( (ClassifierDB) conf.getAuthDB() );
-   else
-    conf.setClassifierDB( new SerializedAuthDBImpl(conf.getTxResourceManager(),Configuration.authRelPath) );
+   try
+   {
+    conf.setAuthDB( new SerializedAuthDBImpl(conf.getTxResourceManager(),Configuration.authRelPath) );
+   }
+   catch(DBInitException e)
+   {
+    e.printStackTrace();
+    throw new AgeAdminException(e);
+   }
   }
+//  if( conf.getClassifierDB() == null )
+//  {
+//   if( conf.getAuthDB() instanceof ClassifierDB )
+//    conf.setClassifierDB( (ClassifierDB) conf.getAuthDB() );
+//   else
+//    conf.setClassifierDB( new SerializedAuthDBImpl(conf.getTxResourceManager(),Configuration.authRelPath) );
+//  }
   
   
   if( conf.getDataSourceServiceRouter() == null )
@@ -152,9 +161,9 @@ public class AgeAdmin
   conf.getDataSourceServiceRouter().addService(Constants.profileListServiceName, new ProfileDBDataSourceService( conf.getAuthDB() ) );
   conf.getDataSourceServiceRouter().addService(Constants.profilePermissionsListServiceName, new ProfilePermissionsDBDataSourceService( conf.getAuthDB() ) );
  
-  conf.getDataSourceServiceRouter().addService(Constants.classifierListServiceName, new ClassifierDBDataSourceService( conf.getClassifierDB() ) );
-  conf.getDataSourceServiceRouter().addService(Constants.tagTreeServiceName, new TagDBDataSourceService( conf.getClassifierDB() ) );
-  conf.getDataSourceServiceRouter().addService(Constants.tagACLServiceName, new TagACLDBDataSourceService( conf.getClassifierDB() ) );
+  conf.getDataSourceServiceRouter().addService(Constants.classifierListServiceName, new ClassifierDBDataSourceService( conf.getAuthDB() ) );
+  conf.getDataSourceServiceRouter().addService(Constants.tagTreeServiceName, new TagDBDataSourceService( conf.getAuthDB() ) );
+  conf.getDataSourceServiceRouter().addService(Constants.tagACLServiceName, new TagACLDBDataSourceService( conf.getAuthDB() ) );
 
   if( conf.getFileSourceManager() == null )
    conf.setFileSourceManager( new FileSourceManager() );

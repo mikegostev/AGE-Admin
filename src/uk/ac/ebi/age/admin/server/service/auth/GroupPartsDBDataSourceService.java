@@ -14,6 +14,9 @@ import uk.ac.ebi.age.authz.AuthDB;
 import uk.ac.ebi.age.authz.User;
 import uk.ac.ebi.age.authz.UserGroup;
 import uk.ac.ebi.age.authz.exception.AuthException;
+import uk.ac.ebi.age.transaction.ReadLock;
+import uk.ac.ebi.age.transaction.Transaction;
+import uk.ac.ebi.age.transaction.TransactionException;
 
 import com.pri.util.collection.MapIterator;
 
@@ -75,33 +78,44 @@ public class GroupPartsDBDataSourceService implements DataSourceBackendService
    return resp;
   }
 
-  if( "user".equals(type) )
+  
+  
+  Transaction trn = db.startTransaction();
+
+  try
   {
+   
+   if( "user".equals(type) )
+     db.removeUserFromGroup(trn, grpId, partId );
+   else if( "group".equals(type) )
+     db.removeGroupFromGroup(trn, grpId, partId );
+   else
+    resp.setErrorMessage("Invalid type");    
    
    try
    {
-    db.removeUserFromGroup( grpId, partId );
+    db.commitTransaction(trn);
    }
-   catch(AuthException e)
+   catch(TransactionException e)
    {
-    resp.setErrorMessage("Error");
+    resp.setErrorMessage("Transaction error: "+e.getMessage());
    }
-
+  
   }
-  else if( "group".equals(type) )
+  catch(AuthException e)
   {
    try
    {
-    db.removeGroupFromGroup( grpId, partId );
+    db.rollbackTransaction(trn);
+    resp.setErrorMessage(e.getMessage());
    }
-   catch(AuthException e)
+   catch(TransactionException e1)
    {
-    resp.setErrorMessage("Error");
+    resp.setErrorMessage("Transaction error: "+e1.getMessage());
    }
 
   }
-  else
-   resp.setErrorMessage("Invalid type");  
+ 
   return resp;
  }
 
@@ -135,36 +149,44 @@ public class GroupPartsDBDataSourceService implements DataSourceBackendService
    return resp;
   }
 
-  if( "user".equals(type) )
+  Transaction trn = db.startTransaction();
+
+  try
   {
+   
+   if( "user".equals(type) )
+     db.addUserToGroup(trn, grpId, partId );
+   else if( "group".equals(type) )
+     db.addGroupToGroup(trn, grpId, partId );
+   else
+    resp.setErrorMessage("Invalid type");    
    
    try
    {
-    db.addUserToGroup( grpId, partId );
+    db.commitTransaction(trn);
    }
-   catch(AuthException e)
+   catch(TransactionException e)
    {
-    resp.setErrorMessage("Error: "+e.getMessage());
+    resp.setErrorMessage("Transaction error: "+e.getMessage());
    }
-
+  
   }
-  else if( "group".equals(type) )
+  catch(AuthException e)
   {
    try
    {
-    db.addGroupToGroup( grpId, partId );
+    db.rollbackTransaction(trn);
+    resp.setErrorMessage(e.getMessage());
    }
-   catch(AuthException e)
+   catch(TransactionException e1)
    {
-    resp.setErrorMessage("Error");
+    resp.setErrorMessage("Transaction error: "+e1.getMessage());
    }
 
   }
-  else
-   resp.setErrorMessage("Invalid type");
   
+ 
   return resp;
-  
  }
 
  private DataSourceResponse processUpdate(DataSourceRequest dsr)
@@ -178,7 +200,9 @@ public class GroupPartsDBDataSourceService implements DataSourceBackendService
 
  private DataSourceResponse processFetch(DataSourceRequest dsr)
  {
-  DataSourceResponse resp = new DataSourceResponse();
+  ReadLock lck = db.getReadLock();
+  
+  DataSourceResponse resp = new DataSourceResponse( lck );
   
   String groupId = dsr.getRequestParametersMap().get(Constants.groupIdParam);
   
@@ -192,8 +216,8 @@ public class GroupPartsDBDataSourceService implements DataSourceBackendService
   
   try
   {
-   Collection< ? extends User> ures = db.getUsersOfGroup( groupId );
-   Collection< ? extends UserGroup> gres = db.getGroupsOfGroup( groupId );
+   Collection< ? extends User> ures = db.getUsersOfGroup(lck, groupId );
+   Collection< ? extends UserGroup> gres = db.getGroupsOfGroup(lck, groupId );
 
    resp.setTotal( ures.size() + gres.size() );
    resp.setSize(ures.size() + gres.size() );
@@ -201,7 +225,7 @@ public class GroupPartsDBDataSourceService implements DataSourceBackendService
   }
   catch(AuthException e)
   {
-   resp.setErrorMessage("Error");
+   resp.setErrorMessage(e.getMessage());
   }
  
   return resp;

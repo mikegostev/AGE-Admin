@@ -12,6 +12,9 @@ import uk.ac.ebi.age.admin.shared.ds.DSField;
 import uk.ac.ebi.age.authz.AuthDB;
 import uk.ac.ebi.age.authz.User;
 import uk.ac.ebi.age.authz.exception.AuthException;
+import uk.ac.ebi.age.transaction.ReadLock;
+import uk.ac.ebi.age.transaction.Transaction;
+import uk.ac.ebi.age.transaction.TransactionException;
 
 import com.pri.util.collection.ListFragment;
 import com.pri.util.collection.MapIterator;
@@ -58,14 +61,36 @@ public class UserDBDataSourceService implements DataSourceBackendService
   }
   
   
+  Transaction trn = db.startTransaction();
+
   try
   {
-   db.deleteUser( userId );
+   db.deleteUser( trn, userId );
+   
+   try
+   {
+    db.commitTransaction(trn);
+   }
+   catch(TransactionException e)
+   {
+    resp.setErrorMessage("Transaction error: "+e.getMessage());
+   }
+  
   }
   catch(AuthException e)
   {
-   resp.setErrorMessage("User with ID '"+userId+"' doesn't exist");
+   try
+   {
+    db.rollbackTransaction(trn);
+    resp.setErrorMessage("User with ID '"+userId+"' doesn't exist");
+   }
+   catch(TransactionException e1)
+   {
+    resp.setErrorMessage("Transaction error: "+e1.getMessage());
+   }
+
   }
+
   
   return resp;
  }
@@ -87,14 +112,37 @@ public class UserDBDataSourceService implements DataSourceBackendService
   }
   
   
+  
+  Transaction trn = db.startTransaction();
+
   try
   {
-   db.addUser( userId, userName, userPass );
+   db.addUser( trn, userId, userName, userPass );
+   
+   try
+   {
+    db.commitTransaction(trn);
+   }
+   catch(TransactionException e)
+   {
+    resp.setErrorMessage("Transaction error: "+e.getMessage());
+   }
+  
   }
   catch(AuthException e)
   {
-   resp.setErrorMessage("User with ID '"+userId+"' exists");
+   try
+   {
+    db.rollbackTransaction(trn);
+    resp.setErrorMessage("User with ID '"+userId+"' exists");
+   }
+   catch(TransactionException e1)
+   {
+    resp.setErrorMessage("Transaction error: "+e1.getMessage());
+   }
+
   }
+
   
   return resp;
   
@@ -117,13 +165,35 @@ public class UserDBDataSourceService implements DataSourceBackendService
   }
   
   
+  
+  Transaction trn = db.startTransaction();
+
   try
   {
-   db.updateUser( userId, userName, userPass );
+   db.updateUser( trn, userId, userName, userPass );
+   
+   try
+   {
+    db.commitTransaction(trn);
+   }
+   catch(TransactionException e)
+   {
+    resp.setErrorMessage("Transaction error: "+e.getMessage());
+   }
+  
   }
   catch(AuthException e)
   {
-   resp.setErrorMessage("Error");
+   try
+   {
+    db.rollbackTransaction(trn);
+    resp.setErrorMessage(e.getMessage());
+   }
+   catch(TransactionException e1)
+   {
+    resp.setErrorMessage("Transaction error: "+e1.getMessage());
+   }
+
   }
   
   return resp;
@@ -131,21 +201,22 @@ public class UserDBDataSourceService implements DataSourceBackendService
 
  private DataSourceResponse processFetch(DataSourceRequest dsr)
  {
-  DataSourceResponse resp = new DataSourceResponse();
+  ReadLock lck = db.getReadLock();
+  DataSourceResponse resp = new DataSourceResponse(lck);
   
   Map<DSField, String> vmap = dsr.getValueMap();
   
   if( vmap == null || vmap.size() == 0 )
   {
-   List<? extends User> res=db.getUsers( dsr.getBegin(), dsr.getEnd() );
+   List<? extends User> res=db.getUsers(lck, dsr.getBegin(), dsr.getEnd() );
    
-   resp.setTotal( db.getUsersTotal() );
+   resp.setTotal( db.getUsersTotal(lck) );
    resp.setSize(res.size());
    resp.setIterator( new UserMapIterator(res) );
   }
   else
   {
-   ListFragment<User> res=db.getUsers( vmap.get(UserDSDef.userIdField), vmap.get(UserDSDef.userNameField), dsr.getBegin(), dsr.getEnd() );
+   ListFragment<User> res=db.getUsers(lck, vmap.get(UserDSDef.userIdField), vmap.get(UserDSDef.userNameField), dsr.getBegin(), dsr.getEnd() );
   
    resp.setTotal(res.getTotalLength());
    resp.setSize(res.getList().size());

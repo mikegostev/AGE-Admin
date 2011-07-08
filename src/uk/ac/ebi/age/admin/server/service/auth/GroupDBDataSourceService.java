@@ -14,6 +14,7 @@ import uk.ac.ebi.age.authz.UserGroup;
 import uk.ac.ebi.age.authz.exception.AuthException;
 import uk.ac.ebi.age.transaction.ReadLock;
 import uk.ac.ebi.age.transaction.Transaction;
+import uk.ac.ebi.age.transaction.TransactionException;
 
 import com.pri.util.collection.ListFragment;
 import com.pri.util.collection.MapIterator;
@@ -60,17 +61,34 @@ public class GroupDBDataSourceService implements DataSourceBackendService
   }
   
   
+  Transaction trn = db.startTransaction();
+
   try
   {
-   Transaction t = db.startTransaction();
+   db.deleteGroup( trn, grpId );
    
-   db.deleteGroup( t, grpId );
-   
-   db.commitTransaction(t);
+   try
+   {
+    db.commitTransaction(trn);
+   }
+   catch(TransactionException e)
+   {
+    resp.setErrorMessage("Transaction error: "+e.getMessage());
+   }
+  
   }
   catch(AuthException e)
   {
-   resp.setErrorMessage("Group with ID '"+grpId+"' doesn't exist");
+   try
+   {
+    db.rollbackTransaction(trn);
+    resp.setErrorMessage("Group with ID '"+grpId+"' doesn't exist");
+   }
+   catch(TransactionException e1)
+   {
+    resp.setErrorMessage("Transaction error: "+e1.getMessage());
+   }
+
   }
   
   return resp;
@@ -92,21 +110,37 @@ public class GroupDBDataSourceService implements DataSourceBackendService
   }
   
   
+  Transaction trn = db.startTransaction();
+
   try
   {
-   Transaction t = db.startTransaction();
+   db.addGroup(trn, grpId, grpDesc );
    
-   db.addGroup(t, grpId, grpDesc );
-   
-   db.commitTransaction(t);
+   try
+   {
+    db.commitTransaction(trn);
+   }
+   catch(TransactionException e)
+   {
+    resp.setErrorMessage("Transaction error: "+e.getMessage());
+   }
+  
   }
   catch(AuthException e)
   {
-   resp.setErrorMessage("Group with ID '"+grpId+"' exists");
+   try
+   {
+    db.rollbackTransaction(trn);
+    resp.setErrorMessage("Group with ID '"+grpId+"' exists");
+   }
+   catch(TransactionException e1)
+   {
+    resp.setErrorMessage("Transaction error: "+e1.getMessage());
+   }
+
   }
-  
+
   return resp;
-  
  }
 
  private DataSourceResponse processUpdate(DataSourceRequest dsr)
@@ -125,17 +159,34 @@ public class GroupDBDataSourceService implements DataSourceBackendService
   }
   
   
+  Transaction trn = db.startTransaction();
+
   try
   {
-   Transaction t = db.startTransaction();
+   db.updateGroup(trn, grpId, grpDesc );
    
-   db.updateGroup(t, grpId, grpDesc );
-
-   db.commitTransaction(t);
+   try
+   {
+    db.commitTransaction(trn);
+   }
+   catch(TransactionException e)
+   {
+    resp.setErrorMessage("Transaction error: "+e.getMessage());
+   }
+  
   }
   catch(AuthException e)
   {
-   resp.setErrorMessage("Error");
+   try
+   {
+    db.rollbackTransaction(trn);
+    resp.setErrorMessage(e.getMessage());
+   }
+   catch(TransactionException e1)
+   {
+    resp.setErrorMessage("Transaction error: "+e1.getMessage());
+   }
+
   }
   
   return resp;

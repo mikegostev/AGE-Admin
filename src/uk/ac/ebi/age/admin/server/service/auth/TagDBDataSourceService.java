@@ -1,4 +1,4 @@
-package uk.ac.ebi.age.admin.server.service.classif;
+package uk.ac.ebi.age.admin.server.service.auth;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -10,17 +10,20 @@ import uk.ac.ebi.age.admin.server.service.ds.DataSourceResponse;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.cassif.TagsDSDef;
 import uk.ac.ebi.age.admin.shared.ds.DSField;
+import uk.ac.ebi.age.authz.AuthDB;
 import uk.ac.ebi.age.authz.Tag;
 import uk.ac.ebi.age.authz.exception.TagException;
-import uk.ac.ebi.age.classif.ClassifierDB;
+import uk.ac.ebi.age.transaction.ReadLock;
+import uk.ac.ebi.age.transaction.Transaction;
+import uk.ac.ebi.age.transaction.TransactionException;
 
 import com.pri.util.collection.MapIterator;
 
 public class TagDBDataSourceService implements DataSourceBackendService
 {
- private ClassifierDB db;
+ private AuthDB db;
  
- public TagDBDataSourceService(ClassifierDB classDB)
+ public TagDBDataSourceService(AuthDB classDB)
  {
   db = classDB;
  }
@@ -64,15 +67,39 @@ public class TagDBDataSourceService implements DataSourceBackendService
    resp.setErrorMessage("No tag ID");
    return resp;
   }
+  
+  
+  
+  Transaction trn = db.startTransaction();
 
   try
   {
-   db.removeTagFromClassifier(clsId, tagId);
+   db.removeTagFromClassifier(trn, clsId, tagId);
+   
+   try
+   {
+    db.commitTransaction(trn);
+   }
+   catch(TransactionException e)
+   {
+    resp.setErrorMessage("Transaction error: "+e.getMessage());
+   }
+  
   }
   catch(TagException e)
   {
-   resp.setErrorMessage(e.getMessage());
+   try
+   {
+    db.rollbackTransaction(trn);
+    resp.setErrorMessage(e.getMessage());
+   }
+   catch(TransactionException e1)
+   {
+    resp.setErrorMessage("Transaction error: "+e1.getMessage());
+   }
+
   }
+
 
   return resp;
  }
@@ -95,13 +122,35 @@ public class TagDBDataSourceService implements DataSourceBackendService
   String parentTagId = vmap.get(TagsDSDef.parentField);
   String desc = vmap.get(TagsDSDef.descField);
   
+  
+  Transaction trn = db.startTransaction();
+
   try
   {
-   db.addTagToClassifier(clsId, tagId, desc, Constants.rootTagId.equals(parentTagId)?null:parentTagId);
+   db.addTagToClassifier(trn, clsId, tagId, desc, Constants.rootTagId.equals(parentTagId)?null:parentTagId);
+   
+   try
+   {
+    db.commitTransaction(trn);
+   }
+   catch(TransactionException e)
+   {
+    resp.setErrorMessage("Transaction error: "+e.getMessage());
+   }
+  
   }
   catch(TagException e)
   {
-   resp.setErrorMessage(e.getMessage());
+   try
+   {
+    db.rollbackTransaction(trn);
+    resp.setErrorMessage(e.getMessage());
+   }
+   catch(TransactionException e1)
+   {
+    resp.setErrorMessage("Transaction error: "+e1.getMessage());
+   }
+
   }
   
   return resp;
@@ -125,22 +174,43 @@ public class TagDBDataSourceService implements DataSourceBackendService
   String parentTagId = vmap.get(TagsDSDef.parentField);
   String desc = vmap.get(TagsDSDef.descField);
   
+  Transaction trn = db.startTransaction();
+
   try
   {
-   db.updateTag(clsId, tagId, desc, Constants.rootTagId.equals(parentTagId)?null:parentTagId);
+   db.updateTag(trn, clsId, tagId, desc, Constants.rootTagId.equals(parentTagId)?null:parentTagId);
+   
+   try
+   {
+    db.commitTransaction(trn);
+   }
+   catch(TransactionException e)
+   {
+    resp.setErrorMessage("Transaction error: "+e.getMessage());
+   }
+  
   }
   catch(TagException e)
   {
-   resp.setErrorMessage(e.getMessage());
+   try
+   {
+    db.rollbackTransaction(trn);
+    resp.setErrorMessage(e.getMessage());
+   }
+   catch(TransactionException e1)
+   {
+    resp.setErrorMessage("Transaction error: "+e1.getMessage());
+   }
+
   }
 
-  
   return resp;
  }
 
  private DataSourceResponse processFetch(DataSourceRequest dsr)
  {
-  DataSourceResponse resp = new DataSourceResponse();
+  ReadLock lck = db.getReadLock();
+  DataSourceResponse resp = new DataSourceResponse( lck );
   
   String clsId = dsr.getRequestParametersMap().get(Constants.classifIdParam);
   
@@ -155,7 +225,7 @@ public class TagDBDataSourceService implements DataSourceBackendService
   
   try
   {
-   Collection< ? extends Tag> tags = db.getTagsOfClassifier( clsId );
+   Collection< ? extends Tag> tags = db.getTagsOfClassifier( lck, clsId );
 
    resp.setTotal( tags.size() );
    resp.setSize( tags.size() );
