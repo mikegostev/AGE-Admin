@@ -6,23 +6,22 @@ import java.util.Map;
 import uk.ac.ebi.age.admin.server.service.ds.DataSourceBackendService;
 import uk.ac.ebi.age.admin.server.service.ds.DataSourceRequest;
 import uk.ac.ebi.age.admin.server.service.ds.DataSourceResponse;
-import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.cassif.ACLDSDef;
 import uk.ac.ebi.age.admin.shared.ds.DSField;
 import uk.ac.ebi.age.authz.ACR;
 import uk.ac.ebi.age.authz.AuthDB;
-import uk.ac.ebi.age.authz.exception.TagException;
+import uk.ac.ebi.age.authz.exception.AuthDBException;
 import uk.ac.ebi.age.ext.authz.SystemAction;
 import uk.ac.ebi.age.transaction.ReadLock;
 import uk.ac.ebi.age.transaction.Transaction;
 import uk.ac.ebi.age.transaction.TransactionException;
 
-public class TagACLDBDataSourceService implements DataSourceBackendService
+public class SystemACLDBDataSourceService implements DataSourceBackendService
 {
 
  private AuthDB db;
  
- public TagACLDBDataSourceService(AuthDB classifierDB)
+ public SystemACLDBDataSourceService(AuthDB classifierDB)
  {
   db = classifierDB;
  }
@@ -47,8 +46,6 @@ public class TagACLDBDataSourceService implements DataSourceBackendService
 
  private static class Req
  {
-  String classifId;
-  String tagId;
   String subjId;
   boolean isGroup;
   String profileId;
@@ -61,23 +58,7 @@ public class TagACLDBDataSourceService implements DataSourceBackendService
  {
   Req resp = new Req();
   
-  resp.tagId = dsr.getRequestParametersMap().get(Constants.tagIdParam);
-  
-  if( resp.tagId == null )
-  {
-   resp.error = Constants.tagIdParam+" should not be null";
-   return resp;
-  }
-
-  resp.classifId = dsr.getRequestParametersMap().get(Constants.classifIdParam);
-  
-  if( resp.classifId == null )
-  {
-   resp.error = Constants.classifIdParam+" should not be null";
-   return resp;
-  }
-
-  
+ 
   Map<DSField, String> vmap = dsr.getValueMap();
   
   
@@ -166,16 +147,16 @@ public class TagACLDBDataSourceService implements DataSourceBackendService
    if( r.isGroup )
    {
     if( r.profileId != null )
-     db.removeProfileForGroupACR( trn, r.classifId, r.tagId, r.subjId, r.profileId );
+     db.removeSysProfileForGroupACR( trn, r.subjId, r.profileId );
     else
-     db.removePermissionForGroupACR( trn, r.classifId, r.tagId, r.subjId, r.action, r.allow );
+     db.removeSysPermissionForGroupACR( trn,  r.subjId, r.action, r.allow );
    }
    else
    {
     if( r.profileId != null )
-     db.removeProfileForUserACR( trn, r.classifId, r.tagId, r.subjId, r.profileId );
+     db.removeSysProfileForUserACR( trn, r.subjId, r.profileId );
     else
-     db.removePermissionForUserACR( trn, r.classifId, r.tagId, r.subjId, r.action, r.allow );
+     db.removeSysPermissionForUserACR( trn, r.subjId, r.action, r.allow );
    }   
   
    try
@@ -188,7 +169,7 @@ public class TagACLDBDataSourceService implements DataSourceBackendService
    }
   
   }
-  catch(TagException e)
+  catch(AuthDBException e)
   {
    try
    {
@@ -226,16 +207,16 @@ public class TagACLDBDataSourceService implements DataSourceBackendService
    if( r.isGroup )
    {
     if( r.profileId != null )
-     db.addProfileForGroupACR( trn, r.classifId, r.tagId, r.subjId, r.profileId );
+     db.addSysProfileForGroupACR( trn, r.subjId, r.profileId );
     else
-     db.addActionForGroupACR( trn, r.classifId, r.tagId, r.subjId, r.action, r.allow );
+     db.addSysActionForGroupACR( trn, r.subjId, r.action, r.allow );
    }
    else
    {
     if( r.profileId != null )
-     db.addProfileForUserACR( trn, r.classifId, r.tagId, r.subjId, r.profileId );
+     db.addSysProfileForUserACR( trn, r.subjId, r.profileId );
     else
-     db.addActionForUserACR( trn, r.classifId, r.tagId, r.subjId, r.action, r.allow );
+     db.addSysActionForUserACR( trn, r.subjId, r.action, r.allow );
    }
   
    try
@@ -279,33 +260,17 @@ public class TagACLDBDataSourceService implements DataSourceBackendService
   ReadLock rl = db.getReadLock();
   DataSourceResponse resp = new DataSourceResponse(rl);
   
-  String tagId = dsr.getRequestParametersMap().get(Constants.tagIdParam);
-  
-  if( tagId == null )
-  {
-   resp.setErrorMessage("No tag ID");
-   return resp;
-  }
-  
-  String classifId = dsr.getRequestParametersMap().get(Constants.classifIdParam);
-  
-  if( classifId == null )
-  {
-   resp.setErrorMessage(Constants.classifIdParam+" should not be null");
-   return resp;
-  }
-
   
   try
   {
-   Collection<? extends ACR> acrs = db.getACL( rl, classifId, tagId );
+   Collection<? extends ACR> acrs = db.getSysACL( rl);
    
    resp.setTotal( acrs.size() );
    resp.setSize( acrs.size() );
    resp.setIterator( new ACLMapIterator( acrs ) );
 
   }
-  catch(TagException e)
+  catch(AuthDBException e)
   {
    resp.setErrorMessage(e.getMessage());
   }
@@ -319,6 +284,6 @@ public class TagACLDBDataSourceService implements DataSourceBackendService
   return ACLDSDef.getInstance();
  }
  
-
+ 
  
 }

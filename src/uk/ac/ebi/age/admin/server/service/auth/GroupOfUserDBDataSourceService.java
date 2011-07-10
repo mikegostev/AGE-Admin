@@ -12,7 +12,7 @@ import uk.ac.ebi.age.admin.shared.auth.GroupDSDef;
 import uk.ac.ebi.age.admin.shared.ds.DSField;
 import uk.ac.ebi.age.authz.AuthDB;
 import uk.ac.ebi.age.authz.UserGroup;
-import uk.ac.ebi.age.authz.exception.AuthException;
+import uk.ac.ebi.age.authz.exception.AuthDBException;
 import uk.ac.ebi.age.transaction.ReadLock;
 import uk.ac.ebi.age.transaction.Transaction;
 import uk.ac.ebi.age.transaction.TransactionException;
@@ -85,7 +85,7 @@ public class GroupOfUserDBDataSourceService implements DataSourceBackendService
    }
   
   }
-  catch(AuthException e)
+  catch(AuthDBException e)
   {
    try
    {
@@ -139,7 +139,7 @@ public class GroupOfUserDBDataSourceService implements DataSourceBackendService
    }
   
   }
-  catch(AuthException e)
+  catch(AuthDBException e)
   {
    try
    {
@@ -189,7 +189,7 @@ public class GroupOfUserDBDataSourceService implements DataSourceBackendService
    resp.setSize(res.size());
    resp.setIterator( new GroupMapIterator(res) );
   }
-  catch(AuthException e)
+  catch(AuthDBException e)
   {
    resp.setErrorMessage("Error");
   }

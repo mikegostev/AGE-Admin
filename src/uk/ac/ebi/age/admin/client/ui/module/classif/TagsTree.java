@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import uk.ac.ebi.age.admin.client.Session;
 import uk.ac.ebi.age.admin.client.ui.PlacingManager;
-import uk.ac.ebi.age.admin.client.ui.module.auth.TagPermissionsPanel;
+import uk.ac.ebi.age.admin.client.ui.module.auth.ACLPanel;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.cassif.TagsDSDef;
 
@@ -32,6 +32,7 @@ public class TagsTree extends VLayout
  private Layout detailsPanel;
  private DataSource ds;
  
+ @SuppressWarnings("serial")
  TagsTree( final String classifId, Layout detp )
  {
   setWidth100();
@@ -174,7 +175,7 @@ public class TagsTree extends VLayout
     
     String tagId = rec.getAttribute(TagsDSDef.idField.getFieldId());
     
-    Canvas permPan = new TagPermissionsPanel( classifId , tagId );
+    Canvas permPan = new ACLPanel( classifId , tagId, Constants.tagACLServiceName );
     
     PlacingManager.placeWidget(permPan, "Tag '"+tagId+"' permissions");
    }

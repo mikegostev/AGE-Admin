@@ -42,6 +42,7 @@ public class Constants
  public static final String tagTreeServiceName = "tagsTree";
 
  public static final String tagACLServiceName = "tagACL";
+ public static final String sysACLServiceName = "sysACL";
 
  public static final String rootTagId = "__rootTag";
 

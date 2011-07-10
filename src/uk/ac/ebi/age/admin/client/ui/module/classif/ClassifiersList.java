@@ -3,7 +3,6 @@ package uk.ac.ebi.age.admin.client.ui.module.classif;
 import java.util.HashMap;
 
 import uk.ac.ebi.age.admin.client.Session;
-import uk.ac.ebi.age.admin.client.ui.module.auth.GroupAddDialog;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.cassif.ClassifierDSDef;
 
@@ -89,7 +88,7 @@ public class ClassifiersList extends VLayout
    @Override
    public void onClick(ClickEvent event)
    {
-    new GroupAddDialog(ds).show();
+    new ClassifierAddDialog(ds).show();
    }
   });
 

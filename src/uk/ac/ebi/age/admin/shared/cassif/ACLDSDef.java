@@ -8,9 +8,9 @@ import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.data.RestDataSource;
 import com.smartgwt.client.types.FieldType;
 
-public class TagACLDSDef extends DSDef
+public class ACLDSDef extends DSDef
 {
- public static TagACLDSDef instance;
+ public static ACLDSDef instance;
  public static DSField keyField = new DSField("key",FieldType.TEXT,"Key");
  public static DSField pTypeField = new DSField("ptype",FieldType.TEXT,"Type");
  public static DSField sTypeField = new DSField("stype",FieldType.TEXT,"U/G");
@@ -23,7 +23,7 @@ public class TagACLDSDef extends DSDef
   keyField.setPrimaryKey( true );
  }
  
- public TagACLDSDef()
+ public ACLDSDef()
  {
   addField( keyField );
   addField( pTypeField );
@@ -32,10 +32,10 @@ public class TagACLDSDef extends DSDef
   addField( pIdField );
  }
 
- public static TagACLDSDef getInstance()
+ public static ACLDSDef getInstance()
  {
   if( instance == null )
-   instance = new TagACLDSDef();
+   instance = new ACLDSDef();
   
   return instance;
  }

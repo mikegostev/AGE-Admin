@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import uk.ac.ebi.age.admin.client.Session;
 import uk.ac.ebi.age.admin.shared.Constants;
-import uk.ac.ebi.age.admin.shared.auth.GroupDSDef;
 import uk.ac.ebi.age.admin.shared.auth.UserDSDef;
 
 import com.smartgwt.client.data.DataSource;
@@ -29,7 +28,7 @@ public class UserList extends ListGrid
   
   if( ds == null )
   {
-   ds = GroupDSDef.getInstance().createDataSource();
+   ds = UserDSDef.getInstance().createDataSource();
 
    ds.setID(Constants.userListServiceName);
    ds.setDataFormat(DSDataFormat.JSON);

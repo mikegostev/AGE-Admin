@@ -13,7 +13,7 @@ import uk.ac.ebi.age.admin.shared.ds.DSField;
 import uk.ac.ebi.age.authz.AuthDB;
 import uk.ac.ebi.age.authz.Permission;
 import uk.ac.ebi.age.authz.PermissionProfile;
-import uk.ac.ebi.age.authz.exception.AuthException;
+import uk.ac.ebi.age.authz.exception.AuthDBException;
 import uk.ac.ebi.age.ext.authz.SystemAction;
 import uk.ac.ebi.age.transaction.ReadLock;
 import uk.ac.ebi.age.transaction.Transaction;
@@ -109,7 +109,7 @@ public class ProfilePermissionsDBDataSourceService implements DataSourceBackendS
     }
    
    }
-   catch(AuthException e)
+   catch(AuthDBException e)
    {
     try
     {
@@ -142,7 +142,7 @@ public class ProfilePermissionsDBDataSourceService implements DataSourceBackendS
     }
    
    }
-   catch(AuthException e)
+   catch(AuthDBException e)
    {
     try
     {
@@ -226,7 +226,7 @@ public class ProfilePermissionsDBDataSourceService implements DataSourceBackendS
     }
    
    }
-   catch(AuthException e)
+   catch(AuthDBException e)
    {
     try
     {
@@ -259,7 +259,7 @@ public class ProfilePermissionsDBDataSourceService implements DataSourceBackendS
     }
    
    }
-   catch(AuthException e)
+   catch(AuthDBException e)
    {
     try
     {
@@ -318,7 +318,7 @@ public class ProfilePermissionsDBDataSourceService implements DataSourceBackendS
    resp.setIterator( new PermMapIterator( perms, prof ) );
 
   }
-  catch(AuthException e)
+  catch(AuthDBException e)
   {
    resp.setErrorMessage(e.getMessage());
   }

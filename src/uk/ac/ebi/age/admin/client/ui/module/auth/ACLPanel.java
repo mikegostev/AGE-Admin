@@ -6,9 +6,8 @@ import uk.ac.ebi.age.admin.client.Session;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.auth.GroupDSDef;
 import uk.ac.ebi.age.admin.shared.auth.ProfileDSDef;
-import uk.ac.ebi.age.admin.shared.auth.ProfilePermDSDef;
 import uk.ac.ebi.age.admin.shared.auth.UserDSDef;
-import uk.ac.ebi.age.admin.shared.cassif.TagACLDSDef;
+import uk.ac.ebi.age.admin.shared.cassif.ACLDSDef;
 
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
@@ -28,11 +27,10 @@ import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
-public class TagPermissionsPanel extends HLayout
+public class ACLPanel extends HLayout
 {
- private DataSource grpDs;
  
- public TagPermissionsPanel( final String classfId, final String tgId)
+ public ACLPanel( final String classfId, final String tgId, String svcName )
  {
 
   setMembersMargin(3);
@@ -216,8 +214,8 @@ public class TagPermissionsPanel extends HLayout
 
     if(r != null)
     {
-     acrr.setAttribute(TagACLDSDef.sTypeField.getFieldId(), "user");
-     acrr.setAttribute(TagACLDSDef.sIdField.getFieldId(), r.getAttribute(UserDSDef.userIdField.getFieldId()));
+     acrr.setAttribute(ACLDSDef.sTypeField.getFieldId(), "user");
+     acrr.setAttribute(ACLDSDef.sIdField.getFieldId(), r.getAttribute(UserDSDef.userIdField.getFieldId()));
     }
     else
     {
@@ -225,16 +223,16 @@ public class TagPermissionsPanel extends HLayout
      if(r == null)
       return null;
 
-     acrr.setAttribute(TagACLDSDef.sTypeField.getFieldId(), "group");
-     acrr.setAttribute(TagACLDSDef.sIdField.getFieldId(), r.getAttribute(GroupDSDef.grpIdField.getFieldId()));
+     acrr.setAttribute(ACLDSDef.sTypeField.getFieldId(), "group");
+     acrr.setAttribute(ACLDSDef.sIdField.getFieldId(), r.getAttribute(GroupDSDef.grpIdField.getFieldId()));
     }
 
     r = permList.getSelectedRecord();
 
     if(r != null)
     {
-     acrr.setAttribute(TagACLDSDef.pTypeField.getFieldId(), ptype);
-     acrr.setAttribute(TagACLDSDef.pIdField.getFieldId(), r.getAttribute("pname"));
+     acrr.setAttribute(ACLDSDef.pTypeField.getFieldId(), ptype);
+     acrr.setAttribute(ACLDSDef.pIdField.getFieldId(), r.getAttribute("pname"));
     }
     else
     {
@@ -242,8 +240,8 @@ public class TagPermissionsPanel extends HLayout
      if(r == null)
       return null;
 
-     acrr.setAttribute(TagACLDSDef.pTypeField.getFieldId(), "profile");
-     acrr.setAttribute(TagACLDSDef.pIdField.getFieldId(), r.getAttribute(ProfileDSDef.profIdField.getFieldId()));
+     acrr.setAttribute(ACLDSDef.pTypeField.getFieldId(), "profile");
+     acrr.setAttribute(ACLDSDef.pIdField.getFieldId(), r.getAttribute(ProfileDSDef.profIdField.getFieldId()));
     }
     
     return acrr;
@@ -251,7 +249,7 @@ public class TagPermissionsPanel extends HLayout
   }
   
   final ListGrid acl = new ListGrid();
-  DataSource aclds = DataSource.getDataSource(Constants.tagACLServiceName);
+  DataSource aclds = DataSource.getDataSource(svcName);
   
   if( aclds != null )
   {
@@ -261,9 +259,9 @@ public class TagPermissionsPanel extends HLayout
   
   if( aclds == null )
   {
-   aclds = ProfilePermDSDef.getInstance().createDataSource();
+   aclds = ACLDSDef.getInstance().createDataSource();
 
-   aclds.setID(Constants.tagACLServiceName);
+   aclds.setID(svcName);
    aclds.setDataFormat(DSDataFormat.JSON);
    aclds.setDataURL(Constants.dsServiceUrl);
    aclds.setDataProtocol(DSProtocol.POSTPARAMS);
@@ -318,24 +316,24 @@ public class TagPermissionsPanel extends HLayout
   aclPanel.addMember(aclTools);
 
   
-  ListGridField sTypeField = new ListGridField( TagACLDSDef.sTypeField.getFieldId(), "U/G" );
+  ListGridField sTypeField = new ListGridField( ACLDSDef.sTypeField.getFieldId(), "U/G" );
   sTypeField.setWidth(30);
   sTypeField.setAlign(Alignment.CENTER);  
   sTypeField.setType(ListGridFieldType.IMAGE);
   sTypeField.setImageURLPrefix("icons/auth/");
   sTypeField.setImageURLSuffix(".png");
 
-  ListGridField sidField = new ListGridField( TagACLDSDef.sIdField.getFieldId(), TagACLDSDef.sIdField.getFieldTitle() );
+  ListGridField sidField = new ListGridField( ACLDSDef.sIdField.getFieldId(), ACLDSDef.sIdField.getFieldTitle() );
   sidField.setWidth(200);
 
-  ListGridField pTypeField = new ListGridField( TagACLDSDef.pTypeField.getFieldId(), "A/D" );
+  ListGridField pTypeField = new ListGridField( ACLDSDef.pTypeField.getFieldId(), "A/D" );
   pTypeField.setWidth(30);
   pTypeField.setAlign(Alignment.CENTER);  
   pTypeField.setType(ListGridFieldType.IMAGE);
   pTypeField.setImageURLPrefix("icons/auth/");
   pTypeField.setImageURLSuffix(".png");
 
-  ListGridField permField = new ListGridField( TagACLDSDef.pIdField.getFieldId(), TagACLDSDef.pIdField.getFieldTitle() );
+  ListGridField permField = new ListGridField( ACLDSDef.pIdField.getFieldId(), ACLDSDef.pIdField.getFieldTitle() );
   
   
   acl.setFields(sTypeField,sidField,pTypeField,permField);

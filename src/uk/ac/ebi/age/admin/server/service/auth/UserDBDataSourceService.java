@@ -11,7 +11,7 @@ import uk.ac.ebi.age.admin.shared.auth.UserDSDef;
 import uk.ac.ebi.age.admin.shared.ds.DSField;
 import uk.ac.ebi.age.authz.AuthDB;
 import uk.ac.ebi.age.authz.User;
-import uk.ac.ebi.age.authz.exception.AuthException;
+import uk.ac.ebi.age.authz.exception.AuthDBException;
 import uk.ac.ebi.age.transaction.ReadLock;
 import uk.ac.ebi.age.transaction.Transaction;
 import uk.ac.ebi.age.transaction.TransactionException;
@@ -77,12 +77,12 @@ public class UserDBDataSourceService implements DataSourceBackendService
    }
   
   }
-  catch(AuthException e)
+  catch(AuthDBException e)
   {
    try
    {
     db.rollbackTransaction(trn);
-    resp.setErrorMessage("User with ID '"+userId+"' doesn't exist");
+    resp.setErrorMessage(e.getMessage());
    }
    catch(TransactionException e1)
    {
@@ -129,12 +129,12 @@ public class UserDBDataSourceService implements DataSourceBackendService
    }
   
   }
-  catch(AuthException e)
+  catch(AuthDBException e)
   {
    try
    {
     db.rollbackTransaction(trn);
-    resp.setErrorMessage("User with ID '"+userId+"' exists");
+    resp.setErrorMessage(e.getMessage());
    }
    catch(TransactionException e1)
    {
@@ -170,7 +170,10 @@ public class UserDBDataSourceService implements DataSourceBackendService
 
   try
   {
-   db.updateUser( trn, userId, userName, userPass );
+   if( userPass != null )
+    db.setUserPassword(  trn, userId, userPass  );
+   else
+    db.updateUser( trn, userId, userName);
    
    try
    {
@@ -182,7 +185,7 @@ public class UserDBDataSourceService implements DataSourceBackendService
    }
   
   }
-  catch(AuthException e)
+  catch(AuthDBException e)
   {
    try
    {
