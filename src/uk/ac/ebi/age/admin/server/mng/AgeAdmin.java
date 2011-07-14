@@ -6,8 +6,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.transaction.file.FileResourceManager;
 import org.apache.commons.transaction.file.ResourceManagerSystemException;
@@ -28,21 +32,26 @@ import uk.ac.ebi.age.admin.server.service.auth.TagACLDBDataSourceService;
 import uk.ac.ebi.age.admin.server.service.auth.TagDBDataSourceService;
 import uk.ac.ebi.age.admin.server.service.auth.UserDBDataSourceService;
 import uk.ac.ebi.age.admin.server.service.ds.DataSourceServiceRouter;
-import uk.ac.ebi.age.admin.server.user.Session;
-import uk.ac.ebi.age.admin.server.user.SessionPool;
-import uk.ac.ebi.age.admin.server.user.UserDatabase;
-import uk.ac.ebi.age.admin.server.user.UserProfile;
-import uk.ac.ebi.age.admin.server.user.impl.SessionPoolImpl;
-import uk.ac.ebi.age.admin.server.user.impl.TestUserDataBase;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.ModelPath;
 import uk.ac.ebi.age.admin.shared.StoreNode;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
-import uk.ac.ebi.age.annotation.AnnotationStorage;
+import uk.ac.ebi.age.annotation.AnnotationManager;
+import uk.ac.ebi.age.annotation.Topic;
 import uk.ac.ebi.age.annotation.impl.InMemoryAnnotationStorage;
+import uk.ac.ebi.age.authz.AuthDB;
+import uk.ac.ebi.age.authz.SecurityChangedListener;
+import uk.ac.ebi.age.authz.Session;
+import uk.ac.ebi.age.authz.SessionManager;
+import uk.ac.ebi.age.authz.exception.AuthDBException;
 import uk.ac.ebi.age.authz.exception.DBInitException;
+import uk.ac.ebi.age.authz.impl.PermissionManagerImpl;
 import uk.ac.ebi.age.authz.impl.SerializedAuthDBImpl;
+import uk.ac.ebi.age.authz.impl.SessionManagerImpl;
+import uk.ac.ebi.age.entity.CommonID;
+import uk.ac.ebi.age.entity.EntityDomain;
+import uk.ac.ebi.age.ext.authz.TagRef;
 import uk.ac.ebi.age.ext.log.SimpleLogNode;
 import uk.ac.ebi.age.ext.submission.HistoryEntry;
 import uk.ac.ebi.age.ext.submission.SubmissionDBException;
@@ -54,11 +63,12 @@ import uk.ac.ebi.age.model.SemanticModel;
 import uk.ac.ebi.age.service.submission.SubmissionDB;
 import uk.ac.ebi.age.service.submission.impl.H2SubmissionDB;
 import uk.ac.ebi.age.storage.AgeStorageAdm;
+import uk.ac.ebi.age.transaction.ReadLock;
 
 import com.pri.util.M2codec;
 
 
-public class AgeAdmin
+public class AgeAdmin implements SecurityChangedListener
 {
  private static AgeAdmin instance;
 
@@ -67,11 +77,10 @@ public class AgeAdmin
   return instance;
  }
 
- private SessionPool   spool;
- private UserDatabase  udb;
+ private SessionManager   spool;
  private AgeStorageAdm storage;
  private SubmissionDB submissionDB;
- private AnnotationStorage annotationStorage;
+ private AnnotationManager annotationMngr;
  
  private Configuration configuration;
 
@@ -84,15 +93,30 @@ public class AgeAdmin
   if(conf.getTmpDir() == null)
    conf.setTmpDir(new File("var/tmp"));
 
-  if(conf.getSessionPool() == null)
-   conf.setSessionPool(spool = new SessionPoolImpl());
+  conf.getTmpDir().mkdirs();
+  
+  for( File tf : conf.getTmpDir().listFiles() )
+  {
+   if( tf.isDirectory() )
+   {
+    try
+    {
+     FileUtils.deleteDirectory(tf);
+    }
+    catch(IOException e1)
+    {
+     throw new AgeAdminException("Can't clean temporary dir: "+conf.getTmpDir().getAbsolutePath(),e1);
+    }
+   }
+   else
+    tf.delete();
+  }
+  
+  if(conf.getSessionManager() == null)
+   conf.setSessionManager(spool = new SessionManagerImpl( conf.getTmpDir() ));
   else
-   spool = conf.getSessionPool();
+   spool = conf.getSessionManager();
 
-  if(conf.getUserDatabase() == null)
-   conf.setUserDatabase(udb = new TestUserDataBase());
-  else
-   udb = conf.getUserDatabase();
 
   if(conf.getUploadManager() == null)
    conf.setUploadManager(new UploadManager());
@@ -107,14 +131,6 @@ public class AgeAdmin
   else
    submissionDB=conf.getSubmissionDB();
   
-  if(conf.getAnnotationStorage() == null)
-    conf.setAnnotationStorage( annotationStorage = new InMemoryAnnotationStorage(conf.getAnnotationDbDir()) );
-  else
-   annotationStorage=conf.getAnnotationStorage();
-  
-  if( conf.getSubmissionManager() == null )
-   conf.setSubmissionManager( new SubmissionManager(storage, submissionDB ) );
-
   if( conf.getTxResourceManager() == null )
   {
    conf.setTxResourceManager( new FileResourceManager(conf.getBaseDir().getAbsolutePath(),
@@ -131,6 +147,21 @@ public class AgeAdmin
    }
   }
 
+  if(conf.getAnnotationManager() == null)
+  {
+   try
+   {
+    conf.setAnnotationManager( annotationMngr = new InMemoryAnnotationStorage(conf.getTxResourceManager(),Configuration.annotationRelPath) );
+   }
+   catch(uk.ac.ebi.age.annotation.DBInitException e)
+   {
+    e.printStackTrace();
+    throw new AgeAdminException(e);
+   }
+  }
+  else
+   annotationMngr=conf.getAnnotationManager();
+
   if( conf.getAuthDB() == null )
   {
    try
@@ -143,6 +174,15 @@ public class AgeAdmin
     throw new AgeAdminException(e);
    }
   }
+  
+  conf.getAuthDB().addSecurityChangedListener(this);
+  
+  if( conf.getPermissionManager() == null )
+   conf.setPermissionManager( new PermissionManagerImpl(spool, conf.getAuthDB(), annotationMngr) );
+  
+  if( conf.getSubmissionManager() == null )
+   conf.setSubmissionManager( new SubmissionManager(storage, submissionDB, conf.getPermissionManager() ) );
+
 //  if( conf.getClassifierDB() == null )
 //  {
 //   if( conf.getAuthDB() instanceof ClassifierDB )
@@ -171,7 +211,7 @@ public class AgeAdmin
    conf.setFileSourceManager( new FileSourceManager() );
 
   
-  conf.getUploadManager().addUploadCommandListener("SetModel", new SemanticUploader(storage));
+//  conf.getUploadManager().addUploadCommandListener("SetModel", new SemanticUploader(storage));
   conf.getUploadManager().addUploadCommandListener(SubmissionConstants.SUBMISSON_COMMAND, new SubmissionUploader(conf.getSubmissionManager()));
 
   conf.getFileSourceManager().addFileSource(Constants.attachmentRequestSubject, new AttachmentFileSource(conf.getSubmissionDB()) );
@@ -188,9 +228,6 @@ public class AgeAdmin
   if(spool != null)
    spool.shutdown();
 
-  if(udb != null)
-   udb.shutdown();
-  
   try
   {
    Configuration.getDefaultConfiguration().getTxResourceManager().stop(FileResourceManager.SHUTDOWN_MODE_NORMAL);
@@ -207,27 +244,37 @@ public class AgeAdmin
 
  public Session login(String userName, String password, String clientAddr) throws UserAuthException
  {
-//  UserDatabase udb = Configuration.getDefaultConfiguration().getUserDatabase();
-
-  UserProfile prof = null;
-
-  if(userName == null || userName.length() == 0)
-   prof = udb.getAnonymousProfile();
-  else
+  if( userName == null )
+   throw new UserAuthException("Invalid user name");
+  
+  AuthDB authDB = configuration.getAuthDB();
+  
+  ReadLock lck = authDB.getReadLock();
+  try
   {
-   prof = udb.getUserProfile(userName);
-
-   if(prof == null)
+//   User u = configuration.getAuthDB().getUser(lck, userName);
+//   
+//   if( u == null )
+//    throw new UserAuthException("Invalid user name");
+   
+   try
+   {
+    if( ! authDB.checkUserPassword(lck, userName, password) )
+     throw new UserAuthException("Invalid user password");
+   }
+   catch(AuthDBException e)
+   {
     throw new UserAuthException("Invalid user name");
-
-   if(!prof.checkPassword(password))
-    throw new UserAuthException("Invalid user password");
-
+   }
   }
+  finally
+  {
+   lck.release();
+  }
+  
+  return spool.createSession(userName);
+  
 
-  Session sess = spool.createSession(prof, new String[] { userName, clientAddr });
-
-  return sess;
  }
 
  public ModelImprint getModelImprint( )
@@ -242,18 +289,22 @@ public class AgeAdmin
   return spool.getSession(value);
  }
 
- public ModelStorage getModelStorage(Session userSession)
+ public ModelStorage getModelStorage()
  {
   ModelStorage stor = new ModelStorage();
   
   stor.setPublicDirectory( imprintDirectory( configuration.getPublicModelDir() ) );
-  stor.setUserDirectory( imprintDirectory( new File( configuration.getUserBaseDir(),
-    String.valueOf(userSession.getUserProfile().getUserId())+File.separatorChar+configuration.getModelRelPath()) ) );
+  
+  Session sess = Configuration.getDefaultConfiguration().getSessionManager().getSession();
+  
+  if( sess != null )
+    stor.setUserDirectory( imprintDirectory( new File( configuration.getUserBaseDir(),
+      M2codec.encode(sess.getUser())+File.separatorChar+configuration.getModelRelPath()) ) );
   
   return stor;
  }
 
- private File pathToFile( ModelPath storePath, int uid ) throws ModelStorageException
+ private File pathToFile( ModelPath storePath, String uid ) throws ModelStorageException
  {
   StringBuilder sb = new StringBuilder(400);
   
@@ -261,10 +312,11 @@ public class AgeAdmin
   
   if( storePath.isPublic() )
    baseDir = configuration.getPublicModelDir();
-  else
+  else if( uid != null )
    baseDir = new File(configuration.getUserBaseDir(),
-     String.valueOf(uid)+File.separatorChar+configuration.getModelRelPath());
-
+     M2codec.encode(uid)+File.separatorChar+configuration.getModelRelPath());
+  else
+   throw new ModelStorageException("User not logged in");
   
   if( storePath.getPathElements() != null )
   {
@@ -280,9 +332,11 @@ public class AgeAdmin
   return  new File( stDir, M2codec.encode(storePath.getModelName()) );
  }
  
- public void saveModel(ModelImprint model, ModelPath storePath, Session userSession) throws ModelStorageException
+ public void saveModel(ModelImprint model, ModelPath storePath) throws ModelStorageException
  {
-  File modelFile = pathToFile(storePath, userSession.getUserProfile().getUserId());
+  Session sess = Configuration.getDefaultConfiguration().getSessionManager().getSession();
+  
+  File modelFile = pathToFile(storePath, sess!=null?sess.getUser():null);
   
   ObjectOutputStream oos=null;
   try
@@ -336,9 +390,12 @@ public class AgeAdmin
   return dir;
  }
 
- public ModelImprint getModel(ModelPath path, Session userSession) throws ModelStorageException
+ public ModelImprint getModel(ModelPath path) throws ModelStorageException
  {
-  File modelFile = pathToFile(path, userSession.getUserProfile().getUserId());
+  Session sess = Configuration.getDefaultConfiguration().getSessionManager().getSession();
+
+  
+  File modelFile = pathToFile(path, sess!=null?sess.getUser():null );
 
   if( ! modelFile.exists() )
    throw new ModelStorageException("Model doesn't exist");
@@ -374,9 +431,9 @@ public class AgeAdmin
   }
  }
 
- public void installModel(ModelPath modelPath, Session userSession) throws ModelStorageException
+ public void installModel(ModelPath modelPath) throws ModelStorageException
  {
-  ModelImprint modImp = getModel(modelPath, userSession);
+  ModelImprint modImp = getModel(modelPath);
 
   SemanticModel sm = Age2ImprintConverter.convertImprintToModel(modImp);
   
@@ -395,7 +452,7 @@ public class AgeAdmin
 
 
 
- public SubmissionReport getSubmissions(SubmissionQuery q, Session session) throws SubmissionDBException
+ public SubmissionReport getSubmissions(SubmissionQuery q) throws SubmissionDBException
  {
   // TODO check permission to list all submissions
   
@@ -404,7 +461,7 @@ public class AgeAdmin
 
 
 
- public List<HistoryEntry> getSubmissionHistory(String sbmId, Session session) throws SubmissionDBException
+ public List<HistoryEntry> getSubmissionHistory(String sbmId) throws SubmissionDBException
  {
   // TODO check permission to list all submissions
 
@@ -413,39 +470,68 @@ public class AgeAdmin
 
 
 
- public SimpleLogNode deleteSubmission(String id, Session userSession) throws SubmissionDBException
+ public SimpleLogNode deleteSubmission(String id) throws SubmissionDBException
  {
   // TODO check permission to list all submissions
 
   BufferLogger log = new BufferLogger();
   
-  configuration.getSubmissionManager().removeSubmission(id, userSession.getUserProfile(), log.getRootNode());
+  configuration.getSubmissionManager().removeSubmission(id, log.getRootNode());
   
   return log.getRootNode();
  }
 
 
 
- public SimpleLogNode restoreSubmission(String id, Session userSession) throws SubmissionDBException
+ public SimpleLogNode restoreSubmission(String id) throws SubmissionDBException
  {
   // TODO check permission to list all submissions
 
   BufferLogger log = new BufferLogger();
 
-  configuration.getSubmissionManager().restoreSubmission(id, userSession.getUserProfile(), log.getRootNode() );
+  configuration.getSubmissionManager().restoreSubmission(id, log.getRootNode() );
   
   return log.getRootNode();
  }
 
-// public void storeSubmission(SubmissionMeta sMeta)
-// {
-//  submissionDB.storeSubmission(sMeta);
-// }
 
 
-// public List<SubmissionImprint> getSubmissions(SubmissionQuery q)
-// {
-//  return submissionDB.getSubmissions(q);
-// }
+ @SuppressWarnings("unchecked")
+ public Collection<TagRef> getSubmissionTags(String param)
+ {
+  // TODO check permission
+  
+  CommonID id = new CommonID();
+  
+  id.setDomain(EntityDomain.CLUSTER);
+  id.setId(param);
+  
+  return (Collection<TagRef>) annotationMngr.getAnnotation(Topic.TAG, id);
+ }
+
+
+
+ public void storeSubmissionTags(String param, Collection<TagRef> result)
+ {
+  CommonID id = new CommonID();
+  
+  id.setDomain(EntityDomain.CLUSTER);
+  id.setId(param);
+  
+  if( ! ( result instanceof ArrayList ) )
+   result = new ArrayList<TagRef>( result );
+  
+  annotationMngr.addAnnotation(Topic.TAG, id, (Serializable)result);
+ }
+
+
+
+ @Override
+ public void securityChanged()
+ {
+  storage.rebuildIndices();
+ }
+
+
  
 }

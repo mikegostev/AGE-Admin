@@ -34,9 +34,13 @@ public class SubmissionDetailsPanel extends VLayout
   setMembersMargin(8);
   setPadding(8);
   
+  final SubmissionMeta simp = (SubmissionMeta)record.getAttributeAsObject("__obj");
+
   DataSource ds = SubmissionConstants.createSubmissionDataSource();
   
   ds.setClientOnly(true);
+
+  record.setAttribute(SubmissionConstants.TAGS.name(), "<a class='el' href='javascript:linkClicked(&quot;clustTags&quot;,&quot;"+simp.getId()+"&quot;)'>manage tags</a>");
 
   ds.addData( record );
   
@@ -49,7 +53,6 @@ public class SubmissionDetailsPanel extends VLayout
 
   addMember(dv);
   
-  final SubmissionMeta simp = (SubmissionMeta)record.getAttributeAsObject("__obj");
   
   List<DataModuleMeta> mods = simp.getDataModules();
   

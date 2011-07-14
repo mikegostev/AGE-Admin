@@ -6,13 +6,12 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import uk.ac.ebi.age.admin.server.service.UploadRequest;
-import uk.ac.ebi.age.admin.server.user.Session;
 
 public class UploadManager
 {
  private Map<String, UploadCommandListener> lsnrs = new TreeMap<String, UploadCommandListener>();
 
- public void processUpload(UploadRequest upReq, Session sess, PrintWriter printWriter)
+ public void processUpload(UploadRequest upReq, PrintWriter printWriter)
  {
   try
   {
@@ -23,7 +22,7 @@ public class UploadManager
 
    if(lsnr != null)
    {
-    lsnr.processUpload(upReq, sess, printWriter);
+    lsnr.processUpload(upReq, printWriter);
 
     // if( lsnr.processUpload(upReq,sess,printWriter) && upReq.getFiles() !=
     // null )

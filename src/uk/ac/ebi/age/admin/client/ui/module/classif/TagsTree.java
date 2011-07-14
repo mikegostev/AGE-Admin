@@ -7,6 +7,7 @@ import uk.ac.ebi.age.admin.client.ui.PlacingManager;
 import uk.ac.ebi.age.admin.client.ui.module.auth.ACLPanel;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.cassif.TagsDSDef;
+import uk.ac.ebi.age.ext.authz.TagRef;
 
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.DSDataFormat;
@@ -18,7 +19,6 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.EditFailedEvent;
 import com.smartgwt.client.widgets.grid.events.EditFailedHandler;
-import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
@@ -29,17 +29,18 @@ import com.smartgwt.client.widgets.tree.events.DataArrivedHandler;
 
 public class TagsTree extends VLayout
 {
- private Layout detailsPanel;
  private DataSource ds;
+ private String classifierId;
+ private TreeGrid tagsTreeGrid;
  
  @SuppressWarnings("serial")
- TagsTree( final String classifId, Layout detp )
+ TagsTree( String classifId, boolean readOnly )
  {
   setWidth100();
   setHeight100();
   setMargin(5);
   
-  detailsPanel = detp;
+  classifierId = classifId;
   
   ds = DataSource.getDataSource(Constants.tagTreeServiceName);
   
@@ -61,141 +62,150 @@ public class TagsTree extends VLayout
   ds.setDefaultParams(new HashMap<String, String>()
     {{
      put(Constants.sessionKey,Session.getSessionId());
-     put(Constants.classifIdParam, classifId);
+     put(Constants.classifIdParam, classifierId);
     }});
 
-  ToolStrip tagTools = new ToolStrip();
-  tagTools.setWidth100();
+  tagsTreeGrid = new TreeGrid();
   
-  final TreeGrid treeGrid = new TreeGrid();
+  tagsTreeGrid.setWidth100();
+  tagsTreeGrid.setHeight100();
+  tagsTreeGrid.setAutoFetchData(true);
+  tagsTreeGrid.setDataSource(ds);
+  tagsTreeGrid.setShowAllRecords(true);
+  tagsTreeGrid.setLoadDataOnDemand(false);
   
-  treeGrid.setWidth100();
-  treeGrid.setHeight100();
-  treeGrid.setAutoFetchData(true);
-  treeGrid.setDataSource(ds);
-  treeGrid.setShowAllRecords(true);
-  treeGrid.setLoadDataOnDemand(false);
-
-  treeGrid.setNodeIcon("icons/classif/tag_blue.png");  
-  treeGrid.setFolderIcon("icons/classif/tag_blue.png");  
-  treeGrid.setShowOpenIcons(false);  
-  treeGrid.setShowDropIcons(false);  
-  treeGrid.setClosedIconSuffix(""); 
-  treeGrid.setShowConnectors(true);
+  tagsTreeGrid.setNodeIcon("icons/classif/tag_blue.png");  
+  tagsTreeGrid.setFolderIcon("icons/classif/tag_blue.png");  
+  tagsTreeGrid.setShowOpenIcons(false);  
+  tagsTreeGrid.setShowDropIcons(false);  
+  tagsTreeGrid.setClosedIconSuffix(""); 
+  tagsTreeGrid.setShowConnectors(true);
   
-  treeGrid.addDataArrivedHandler(new DataArrivedHandler()
+  tagsTreeGrid.addDataArrivedHandler(new DataArrivedHandler()
   {
    public void onDataArrived(DataArrivedEvent event)
    {
-    treeGrid.getData().openAll();
+    tagsTreeGrid.getData().openAll();
    }
   });
- 
-  treeGrid.setFields(new TreeGridField(TagsDSDef.idField.getFieldId(),TagsDSDef.idField.getFieldTitle()),
-    new TreeGridField(TagsDSDef.descField.getFieldId(),TagsDSDef.descField.getFieldTitle()));  
-
+  
+  TreeGridField descField = new TreeGridField(TagsDSDef.descField.getFieldId(),TagsDSDef.descField.getFieldTitle());
+  descField.setCanEdit( ! readOnly );
+  
+  tagsTreeGrid.setFields(new TreeGridField(TagsDSDef.idField.getFieldId(),TagsDSDef.idField.getFieldTitle()),descField );  
+  
 //  treeGrid.getData().openAll();
-
   
-  ToolStripButton hdr = new ToolStripButton();
-  hdr.setTitle("Tags");
-  hdr.setSelected(false);
-  hdr.setIcon( "icons/classif/tag_blue.png" );
-  hdr.setShowDisabled(false);
-  hdr.setDisabled(true);
+
+  if( ! readOnly )
+  {
+   
+   ToolStrip tagTools = new ToolStrip();
+   tagTools.setWidth100();
+   
+   
+   ToolStripButton hdr = new ToolStripButton();
+   hdr.setTitle("Tags");
+   hdr.setSelected(false);
+   hdr.setIcon( "icons/classif/tag_blue.png" );
+   hdr.setShowDisabled(false);
+   hdr.setDisabled(true);
+   
+   tagTools.addButton(hdr);
+   
+   ToolStripButton addBut = new ToolStripButton();
+   addBut.setTitle("Add root tag");
+   addBut.setSelected(true);
+   addBut.setIcon("icons/classif/tag_blue_add.png");
+   addBut.addClickHandler(new ClickHandler()
+   {
+    @Override
+    public void onClick(ClickEvent event)
+    {
+     new TagAddDialog(ds, Constants.rootTagId).show();
+    }
+   });
+   
+   tagTools.addSpacer(20);
+   tagTools.addButton(addBut);
+   
+   ToolStripButton addchBut = new ToolStripButton();
+   addchBut.setTitle("Add child tag");
+   addchBut.setSelected(true);
+   addchBut.setIcon("icons/classif/tag_blue_add.png");
+   addchBut.addClickHandler(new ClickHandler()
+   {
+    @Override
+    public void onClick(ClickEvent event)
+    {
+     ListGridRecord rec = tagsTreeGrid.getSelectedRecord();
+     
+     if( rec == null )
+      return;
+     
+     new TagAddDialog(ds, rec.getAttribute(TagsDSDef.idField.getFieldId())).show();
+    }
+   });
+   
+   tagTools.addSpacer(5);
+   tagTools.addButton(addchBut);
+   
+   ToolStripButton delBut = new ToolStripButton();
+   delBut.setTitle("Delete tag");
+   delBut.setSelected(true);
+   delBut.setIcon("icons/classif/tag_blue_delete.png");
+   delBut.addClickHandler(new ClickHandler()
+   {
+    @Override
+    public void onClick(ClickEvent event)
+    {
+     tagsTreeGrid.removeSelectedData();
+    }
+   });
+   
+   tagTools.addSpacer(5);
+   tagTools.addButton(delBut);
+   
+   ToolStripButton permBut = new ToolStripButton();
+   permBut.setTitle("Edit permissions");
+   permBut.setSelected(true);
+   permBut.setIcon("icons/auth/permission.png");
+   permBut.addClickHandler(new ClickHandler()
+   {
+    @Override
+    public void onClick(ClickEvent event)
+    {
+     ListGridRecord rec = tagsTreeGrid.getSelectedRecord();
+     
+     if( rec == null )
+      return;
+     
+     String tagId = rec.getAttribute(TagsDSDef.idField.getFieldId());
+     
+     Canvas permPan = new ACLPanel( classifierId , tagId, Constants.tagACLServiceName );
+     
+     PlacingManager.placeWidget(permPan, "Tag '"+tagId+"' permissions");
+    }
+   });
+   
+   tagTools.addSpacer(10);
+   tagTools.addButton(permBut);
+   
+   
+   addMember(tagTools);
   
-  tagTools.addButton(hdr);
-
-  ToolStripButton addBut = new ToolStripButton();
-  addBut.setTitle("Add root tag");
-  addBut.setSelected(true);
-  addBut.setIcon("icons/classif/tag_blue_add.png");
-  addBut.addClickHandler(new ClickHandler()
-  {
-   @Override
-   public void onClick(ClickEvent event)
-   {
-    new TagAddDialog(ds, Constants.rootTagId).show();
-   }
-  });
-
-  tagTools.addSpacer(20);
-  tagTools.addButton(addBut);
- 
-  ToolStripButton addchBut = new ToolStripButton();
-  addchBut.setTitle("Add child tag");
-  addchBut.setSelected(true);
-  addchBut.setIcon("icons/classif/tag_blue_add.png");
-  addchBut.addClickHandler(new ClickHandler()
-  {
-   @Override
-   public void onClick(ClickEvent event)
-   {
-    ListGridRecord rec = treeGrid.getSelectedRecord();
-    
-    if( rec == null )
-     return;
-    
-    new TagAddDialog(ds, rec.getAttribute(TagsDSDef.idField.getFieldId())).show();
-   }
-  });
-
-  tagTools.addSpacer(5);
-  tagTools.addButton(addchBut);
-
-  ToolStripButton delBut = new ToolStripButton();
-  delBut.setTitle("Delete tag");
-  delBut.setSelected(true);
-  delBut.setIcon("icons/classif/tag_blue_delete.png");
-  delBut.addClickHandler(new ClickHandler()
-  {
-   @Override
-   public void onClick(ClickEvent event)
-   {
-    treeGrid.removeSelectedData();
-   }
-  });
-
-  tagTools.addSpacer(5);
-  tagTools.addButton(delBut);
-
-  ToolStripButton permBut = new ToolStripButton();
-  permBut.setTitle("Edit permissions");
-  permBut.setSelected(true);
-  permBut.setIcon("icons/auth/permission.png");
-  permBut.addClickHandler(new ClickHandler()
-  {
-   @Override
-   public void onClick(ClickEvent event)
-   {
-    ListGridRecord rec = treeGrid.getSelectedRecord();
-    
-    if( rec == null )
-     return;
-    
-    String tagId = rec.getAttribute(TagsDSDef.idField.getFieldId());
-    
-    Canvas permPan = new ACLPanel( classifId , tagId, Constants.tagACLServiceName );
-    
-    PlacingManager.placeWidget(permPan, "Tag '"+tagId+"' permissions");
-   }
-  });
-
-  tagTools.addSpacer(10);
-  tagTools.addButton(permBut);
-
+  }
   
-  addMember(tagTools);
 
 
-  treeGrid.addEditFailedHandler(new EditFailedHandler()
+  tagsTreeGrid.addEditFailedHandler(new EditFailedHandler()
   {
    @Override
    public void onEditFailed(EditFailedEvent event)
    {
     SC.warn(event.getDsResponse().getAttributeAsString("data"));
 
-    treeGrid.discardAllEdits();
+    tagsTreeGrid.discardAllEdits();
    }
   });
 
@@ -218,18 +228,18 @@ public class TagsTree extends VLayout
 //   }
 //  });
 
-  addMember(treeGrid);
+  addMember(tagsTreeGrid);
 
  }
  
- private void clearDetailsPanel()
+ public TagRef getSelectedTag()
  {
-  Canvas[] membs = detailsPanel.getMembers();
+  ListGridRecord rec = tagsTreeGrid.getSelectedRecord();
   
-  detailsPanel.removeMembers(membs);
-  
-  for(Canvas c : membs )
-   c.destroy();
+  if(rec == null)
+   return null;
+ 
+  return new TagRef( classifierId, rec.getAttribute(TagsDSDef.idField.getFieldId()) );
  }
 
 }

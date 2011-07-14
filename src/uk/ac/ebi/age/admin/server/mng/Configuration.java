@@ -5,17 +5,17 @@ import java.io.File;
 import org.apache.commons.transaction.file.FileResourceManager;
 
 import uk.ac.ebi.age.admin.server.service.ds.DataSourceServiceRouter;
-import uk.ac.ebi.age.admin.server.user.SessionPool;
-import uk.ac.ebi.age.admin.server.user.UserDatabase;
 import uk.ac.ebi.age.admin.shared.Constants;
-import uk.ac.ebi.age.annotation.AnnotationStorage;
+import uk.ac.ebi.age.annotation.AnnotationManager;
 import uk.ac.ebi.age.authz.AuthDB;
+import uk.ac.ebi.age.authz.PermissionManager;
+import uk.ac.ebi.age.authz.SessionManager;
 import uk.ac.ebi.age.mng.submission.SubmissionManager;
 import uk.ac.ebi.age.service.submission.SubmissionDB;
 
 public class Configuration
 {
- public static final String SESSION_COOKIE_NAME = "AGEADMSESS";
+// public static final String SESSION_COOKIE_NAME = "AGEADMSESS";
  
  public static final String pubResRelPath="public";
  public static final String modelRelPath="model";
@@ -33,13 +33,13 @@ public class Configuration
   return defaultConfig;
  }
 
- private UserDatabase userDatabase;
- private SessionPool sessionPool;
+ private SessionManager sessionPool;
  private UploadManager uploadManager;
  private SubmissionDB submissionDB;
  private SubmissionManager submissionManager;
- private AnnotationStorage annotationStorage;
+ private AnnotationManager annotationStorage;
  private FileResourceManager txResMngr;
+ private PermissionManager permissionManager;
 
  private File tmpDir;
  private File baseDir;
@@ -53,13 +53,9 @@ public class Configuration
 
  private AuthDB authDB;
 
- public UserDatabase getUserDatabase()
- {
-  return userDatabase;
- }
 
 
- public SessionPool getSessionPool()
+ public SessionManager getSessionManager()
  {
   return sessionPool;
  }
@@ -77,13 +73,7 @@ public class Configuration
  }
 
 
- public void setUserDatabase(UserDatabase userDatabase)
- {
-  this.userDatabase = userDatabase;
- }
-
-
- public void setSessionPool(SessionPool sessionPool)
+ public void setSessionManager(SessionManager sessionPool)
  {
   this.sessionPool = sessionPool;
  }
@@ -141,11 +131,6 @@ public class Configuration
   return new File(baseDir,submissionRelPath);
  }
 
- public File getAnnotationDbDir()
- {
-  return new File(baseDir,annotationRelPath);
- }
-
  public SubmissionDB getSubmissionDB()
  {
   return submissionDB;
@@ -182,13 +167,13 @@ public class Configuration
  }
 
 
- public AnnotationStorage getAnnotationStorage()
+ public AnnotationManager getAnnotationManager()
  {
   return annotationStorage;
  }
 
 
- public void setAnnotationStorage(AnnotationStorage annotationStorage)
+ public void setAnnotationManager(AnnotationManager annotationStorage)
  {
   this.annotationStorage = annotationStorage;
  }
@@ -225,6 +210,18 @@ public class Configuration
  public void setTxResourceManager(FileResourceManager txResMngr)
  {
   this.txResMngr = txResMngr;
+ }
+
+
+ public PermissionManager getPermissionManager()
+ {
+  return permissionManager;
+ }
+
+
+ public void setPermissionManager(PermissionManager permissionManager)
+ {
+  this.permissionManager = permissionManager;
  }
 
 }

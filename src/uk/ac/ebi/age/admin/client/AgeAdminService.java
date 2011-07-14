@@ -1,5 +1,6 @@
 package uk.ac.ebi.age.admin.client;
 
+import java.util.Collection;
 import java.util.List;
 
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
@@ -7,6 +8,7 @@ import uk.ac.ebi.age.admin.client.model.ModelStorage;
 import uk.ac.ebi.age.admin.client.model.ModelStorageException;
 import uk.ac.ebi.age.admin.shared.ModelPath;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
+import uk.ac.ebi.age.ext.authz.TagRef;
 import uk.ac.ebi.age.ext.log.SimpleLogNode;
 import uk.ac.ebi.age.ext.submission.HistoryEntry;
 import uk.ac.ebi.age.ext.submission.SubmissionDBException;
@@ -54,4 +56,8 @@ public interface AgeAdminService extends RemoteService
  SimpleLogNode deleteSubmission(String id) throws UserAuthException, SubmissionDBException;
 
  SimpleLogNode restoreSubmission(String id) throws UserAuthException, SubmissionDBException;
+
+ Collection<TagRef> getSubmissionTags(String param) throws UserAuthException;
+
+ void storeSubmissionTags(String param, Collection<TagRef> result);
 }

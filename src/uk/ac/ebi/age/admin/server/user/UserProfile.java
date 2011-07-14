@@ -3,9 +3,7 @@ package uk.ac.ebi.age.admin.server.user;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import uk.ac.ebi.age.model.SubmissionContext;
-
-public class UserProfile implements SubmissionContext
+public class UserProfile
 {
  private int id;
  private boolean isUploadAllowed;
@@ -74,25 +72,21 @@ public class UserProfile implements SubmissionContext
   this.isUploadAllowed = isUploadAllowed;
  }
 
- @Override
  public boolean isCustomAttributeClassAllowed()
  {
   return true;
  }
 
- @Override
  public boolean isCustomClassAllowed()
  {
   return true;
  }
 
- @Override
  public boolean isCustomRelationClassAllowed()
  {
   return true;
  }
 
- @Override
  public boolean isCustomQualifierAllowed()
  {
   return true;

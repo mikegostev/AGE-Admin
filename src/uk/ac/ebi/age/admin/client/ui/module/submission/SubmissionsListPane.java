@@ -1,16 +1,25 @@
 package uk.ac.ebi.age.admin.client.ui.module.submission;
 
+import java.util.Collection;
 import java.util.Date;
 
+import uk.ac.ebi.age.admin.client.AgeAdminService;
+import uk.ac.ebi.age.admin.client.ui.module.classif.TagSelectedListener;
+import uk.ac.ebi.age.admin.client.ui.module.classif.TagsListDialog;
+import uk.ac.ebi.age.ext.authz.TagRef;
 import uk.ac.ebi.age.ext.submission.SubmissionMeta;
 import uk.ac.ebi.age.ext.submission.SubmissionQuery;
 import uk.ac.ebi.age.ext.submission.SubmissionReport;
+import uk.ac.ebi.age.ui.client.LinkClickListener;
+import uk.ac.ebi.age.ui.client.LinkManager;
 import uk.ac.ebi.age.ui.client.module.PagingRuler;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.ExpansionMode;
 import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
@@ -108,6 +117,50 @@ public class SubmissionsListPane extends VLayout
 //  lb.setAlign(Alignment.CENTER);
 //  
 //  addMember(lb);
+  
+  LinkManager.getInstance().addLinkClickListener("clustTags", new LinkClickListener()
+  {
+   @Override
+   public void linkClicked(final String param)
+   {
+    AgeAdminService.Util.getInstance().getSubmissionTags( param, new AsyncCallback<Collection<TagRef>>()
+      {
+       
+       @Override
+       public void onSuccess(final Collection<TagRef> result)
+       {
+        new TagsListDialog(result, new TagSelectedListener()
+        {
+         @Override
+         public void tagSelected(Collection<TagRef> tr)
+         {
+          
+          AgeAdminService.Util.getInstance().storeSubmissionTags( param, tr, new AsyncCallback<Void>(){
+
+           @Override
+           public void onFailure(Throwable caught)
+           {
+            SC.warn("System failure: "+caught.getMessage());     
+           }
+
+           @Override
+           public void onSuccess(Void result)
+           {
+           }} );
+          
+         }
+        }).show();
+       }
+       
+       @Override
+       public void onFailure(Throwable caught)
+       {
+        // TODO Auto-generated method stub
+        
+       }
+      });
+   }
+  });
  }
  
  public void showResult( SubmissionReport result , SubmissionQuery qry, int cpage )

@@ -18,7 +18,8 @@ public enum SubmissionConstants
  VIS("Visibilty"),
  STS("Status"),
  RMVD("Removed"),
- ACTV("Active");
+ ACTV("Active"),
+ TAGS("Tags");
 
  
  SubmissionConstants(String s)
@@ -43,6 +44,7 @@ public enum SubmissionConstants
   ds.addField(new DataSourceTextField(SubmissionConstants.MDFR.name(), SubmissionConstants.MDFR.title()));
   ds.addField(new DataSourceDateField(SubmissionConstants.CTIME.name(), SubmissionConstants.CTIME.title()));
   ds.addField(new DataSourceDateField(SubmissionConstants.MTIME.name(), SubmissionConstants.MTIME.title()));
+  ds.addField(new DataSourceTextField(SubmissionConstants.TAGS.name(), SubmissionConstants.TAGS.title()));
   ds.addField(new DataSourceTextField(SubmissionConstants.STS.name(), SubmissionConstants.STS.title()));
 
   

@@ -14,8 +14,8 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
 
 import uk.ac.ebi.age.admin.server.mng.Configuration;
-import uk.ac.ebi.age.admin.server.user.Session;
 import uk.ac.ebi.age.admin.shared.Constants;
+import uk.ac.ebi.age.authz.Session;
 
 import com.pri.util.stream.StreamPump;
 
@@ -26,17 +26,25 @@ public class UploadSvc extends ServiceServlet
 
  protected void service(HttpServletRequest req, HttpServletResponse resp, Session sess) throws IOException
  {
+  //TODO permission control
+//  if( ! sess.getUserProfile().isUploadAllowed() )
+//  {
+//   resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+//   return;
+//  }
+  
+  if( sess == null )
+  {
+   resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+   return;
+  }
+  
   if( ! req.getMethod().equals("POST") )
   {
    resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
    return;
   }
   
-  if( ! sess.getUserProfile().isUploadAllowed() )
-  {
-   resp.sendError(HttpServletResponse.SC_FORBIDDEN);
-   return;
-  }
   
   boolean isMultipart = ServletFileUpload.isMultipartContent(req);
 
@@ -102,6 +110,6 @@ public class UploadSvc extends ServiceServlet
    return;
   }
   
-  Configuration.getDefaultConfiguration().getUploadManager().processUpload(upReq,sess, resp.getWriter());
+  Configuration.getDefaultConfiguration().getUploadManager().processUpload(upReq, resp.getWriter());
  }
 }

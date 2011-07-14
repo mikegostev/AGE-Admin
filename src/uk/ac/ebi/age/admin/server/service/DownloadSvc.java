@@ -12,21 +12,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import uk.ac.ebi.age.admin.server.mng.Configuration;
 import uk.ac.ebi.age.admin.server.mng.FileSource;
-import uk.ac.ebi.age.admin.server.user.Session;
 import uk.ac.ebi.age.admin.shared.Constants;
+import uk.ac.ebi.age.authz.Session;
 
 
 public class DownloadSvc extends ServiceServlet
 {
+ private static final long serialVersionUID = 1L;
 
  @Override
  protected void service(HttpServletRequest req, HttpServletResponse resp, Session sess) throws ServletException, IOException
  {
-  if( ! sess.getUserProfile().isDownloadsAllowed() )
-  {
-   resp.sendError(HttpServletResponse.SC_FORBIDDEN);
-   return;
-  }
+  //TODO permission control
+  
   
   boolean isGet = false;
   
@@ -40,6 +38,7 @@ public class DownloadSvc extends ServiceServlet
   
   Map<String,String> paramMap = new HashMap<String,String>();
   
+  @SuppressWarnings("unchecked")
   Enumeration<String> pn = req.getParameterNames();
   String handler = null;
   

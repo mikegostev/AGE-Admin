@@ -6,8 +6,14 @@ import java.io.FileInputStream;
 import java.io.PrintWriter;
 
 import uk.ac.ebi.age.admin.server.service.UploadRequest;
-import uk.ac.ebi.age.admin.server.user.Session;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
+import uk.ac.ebi.age.annotation.Topic;
+import uk.ac.ebi.age.authz.ACR.Permit;
+import uk.ac.ebi.age.authz.BuiltInUsers;
+import uk.ac.ebi.age.authz.Session;
+import uk.ac.ebi.age.entity.CommonID;
+import uk.ac.ebi.age.entity.EntityDomain;
+import uk.ac.ebi.age.ext.authz.SystemAction;
 import uk.ac.ebi.age.ext.log.LogNode.Level;
 import uk.ac.ebi.age.ext.submission.DataModuleMeta;
 import uk.ac.ebi.age.ext.submission.Factory;
@@ -33,23 +39,24 @@ public class SubmissionUploader implements UploadCommandListener
  }
 
  @Override
- public boolean processUpload(UploadRequest upReq, Session sess, PrintWriter out)
+ public boolean processUpload(UploadRequest upReq, PrintWriter out)
  {
   BufferLogger log = new BufferLogger();
 
   try
   {
-   if(!sess.getUserProfile().isUploadAllowed())
+   Session sess = Configuration.getDefaultConfiguration().getSessionManager().getSession();
+   
+   String userName = sess!=null?sess.getUser():BuiltInUsers.ANONYMOUS.getName();
+   
+   if( Configuration.getDefaultConfiguration().getPermissionManager().checkSystemPermission(SystemAction.CREATESUBM, userName) != Permit.ALLOW )
    {
-    log.getRootNode().log(Level.ERROR, "User '" + sess.getUserProfile().getUserName() + "' is not allowed to load data");
+    log.getRootNode().log(Level.ERROR, "User '" + sess.getUser() + "' is not allowed to load data");
     return false;
    }
 
    try
    {
-    
-    String userName = sess.getUserProfile().getUserName();
-    
     SubmissionMeta sMeta = Factory.createSubmissionMeta();
     
     String val = upReq.getParams().get(SubmissionConstants.SUBMISSON_STATUS);
@@ -261,8 +268,15 @@ public class SubmissionUploader implements UploadCommandListener
      }
     }
 
-    sbmManager.storeSubmission(sMeta, updateDescr, sess.getUserProfile(), log.getRootNode());
-    
+    if( sbmManager.storeSubmission(sMeta, updateDescr, log.getRootNode()) || sMeta.getStatus() == Status.NEW )
+    {
+     CommonID id = new CommonID();
+     
+     id.setDomain( EntityDomain.CLUSTER );
+     id.setId(sMeta.getId());
+     
+     Configuration.getDefaultConfiguration().getAnnotationManager().addAnnotation(Topic.OWNER, id, userName) ;
+    }
 //    if(  SubmissionManager.getInstance()
 //      .storeSubmission(sMeta, sess.getUserProfile(), admin.getStorageAdmin(), log.getRootNode()) )
 //    {

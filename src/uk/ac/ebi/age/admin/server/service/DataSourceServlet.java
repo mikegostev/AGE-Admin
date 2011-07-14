@@ -18,12 +18,13 @@ import uk.ac.ebi.age.admin.server.service.ds.DataSourceRequest.RequestType;
 import uk.ac.ebi.age.admin.server.service.ds.DataSourceResponse;
 import uk.ac.ebi.age.admin.shared.ds.DSDef;
 import uk.ac.ebi.age.admin.shared.ds.DSField;
+import uk.ac.ebi.age.authz.Session;
 
 import com.pri.util.StringUtils;
 import com.pri.util.collection.MapIterator;
 import com.smartgwt.client.rpc.RPCResponse;
 
-public class DataSourceServlet extends HttpServlet
+public class DataSourceServlet extends ServiceServlet
 {
  private static final long serialVersionUID = 1L;
 
@@ -36,7 +37,7 @@ public class DataSourceServlet extends HttpServlet
   // TODO Auto-generated constructor stub
  }
 
- protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+ protected void service(HttpServletRequest request, HttpServletResponse response, Session sess ) throws ServletException, IOException
  {
 //  String query = request.getQueryString();
   

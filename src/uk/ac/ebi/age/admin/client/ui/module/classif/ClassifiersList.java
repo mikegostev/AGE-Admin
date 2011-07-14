@@ -5,6 +5,7 @@ import java.util.HashMap;
 import uk.ac.ebi.age.admin.client.Session;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.cassif.ClassifierDSDef;
+import uk.ac.ebi.age.ext.authz.TagRef;
 
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.Alignment;
@@ -36,7 +37,10 @@ public class ClassifiersList extends VLayout
  private DataSource ds;
  private Layout detailsPanel;
  
- public ClassifiersList(Layout detp)
+ private TagsTree tagsTree;
+ 
+ @SuppressWarnings("serial")
+ public ClassifiersList(Layout detp, final boolean readOnly)
  {
   setWidth100();
   setHeight100();
@@ -60,58 +64,59 @@ public class ClassifiersList extends VLayout
      }});
   }
   
-
-  
-  
-  ToolStrip grpTools = new ToolStrip();
-  grpTools.setWidth100();
-
   final ListGrid list = new ListGrid();
   list.setCanDragRecordsOut(true);
   list.setDragDataAction(DragDataAction.COPY);
-  
-  ToolStripButton hdr = new ToolStripButton();
-  hdr.setTitle("Classifiers");
-  hdr.setSelected(false);
-  hdr.setIcon( "icons/classif/classifier.png" );
-  hdr.setShowDisabled(false);
-  hdr.setDisabled(true);
-  
-  grpTools.addButton(hdr);
 
-  ToolStripButton addBut = new ToolStripButton();
-  addBut.setTitle("Add classifier");
-  addBut.setSelected(true);
-  addBut.setIcon("icons/classif/classifier_add.png");
-  addBut.addClickHandler(new ClickHandler()
+  if( ! readOnly )
   {
-   @Override
-   public void onClick(ClickEvent event)
+   ToolStrip grpTools = new ToolStrip();
+   grpTools.setWidth100();
+   
+   ToolStripButton hdr = new ToolStripButton();
+   hdr.setTitle("Classifiers");
+   hdr.setSelected(false);
+   hdr.setIcon( "icons/classif/classifier.png" );
+   hdr.setShowDisabled(false);
+   hdr.setDisabled(true);
+   
+   grpTools.addButton(hdr);
+   
+   ToolStripButton addBut = new ToolStripButton();
+   addBut.setTitle("Add classifier");
+   addBut.setSelected(true);
+   addBut.setIcon("icons/classif/classifier_add.png");
+   addBut.addClickHandler(new ClickHandler()
    {
-    new ClassifierAddDialog(ds).show();
-   }
-  });
-
-  grpTools.addSpacer(20);
-  grpTools.addButton(addBut);
-
-  ToolStripButton delBut = new ToolStripButton();
-  delBut.setTitle("Delete classifier");
-  delBut.setSelected(true);
-  delBut.setIcon("icons/classif/classifier_delete.png");
-  delBut.addClickHandler(new ClickHandler()
-  {
-   @Override
-   public void onClick(ClickEvent event)
+    @Override
+    public void onClick(ClickEvent event)
+    {
+     new ClassifierAddDialog(ds).show();
+    }
+   });
+   
+   grpTools.addSpacer(20);
+   grpTools.addButton(addBut);
+   
+   ToolStripButton delBut = new ToolStripButton();
+   delBut.setTitle("Delete classifier");
+   delBut.setSelected(true);
+   delBut.setIcon("icons/classif/classifier_delete.png");
+   delBut.addClickHandler(new ClickHandler()
    {
-    list.removeSelectedData();
-   }
-  });
-
-  grpTools.addSpacer(5);
-  grpTools.addButton(delBut);
-
-  addMember(grpTools);
+    @Override
+    public void onClick(ClickEvent event)
+    {
+     list.removeSelectedData();
+    }
+   });
+   
+   grpTools.addSpacer(5);
+   grpTools.addButton(delBut);
+   
+   addMember(grpTools);
+  }
+  
 
 
   ListGridField icnField = new ListGridField("clsIcon", "");
@@ -123,9 +128,10 @@ public class ClassifiersList extends VLayout
   ListGridField idField = new ListGridField(ClassifierDSDef.idField.getFieldId(), ClassifierDSDef.idField.getFieldTitle());
   idField.setWidth(200);
 
-  ListGridField nameField = new ListGridField(ClassifierDSDef.descField.getFieldId(), ClassifierDSDef.descField.getFieldTitle());
-
-  list.setFields(icnField, idField, nameField);
+  ListGridField descField = new ListGridField(ClassifierDSDef.descField.getFieldId(), ClassifierDSDef.descField.getFieldTitle());
+  descField.setCanEdit(! readOnly );
+  
+  list.setFields(icnField, idField, descField);
 
   list.setWidth100();
   list.setHeight100();
@@ -162,9 +168,9 @@ public class ClassifiersList extends VLayout
     if( event.getSelection() == null || event.getSelection().length != 1 )
      return;
     
-    TagsTree gpl = new TagsTree( event.getSelectedRecord().getAttribute(ClassifierDSDef.idField.getFieldId()), null );
+    tagsTree = new TagsTree( event.getSelectedRecord().getAttribute(ClassifierDSDef.idField.getFieldId()), readOnly );
     
-    detailsPanel.addMember(gpl);
+    detailsPanel.addMember(tagsTree);
    }
   });
 
@@ -179,6 +185,15 @@ public class ClassifiersList extends VLayout
   
   for(Canvas c : membs )
    c.destroy();
+ }
+
+ public TagRef getSelectedTag()
+ {
+  if( tagsTree == null )
+   return null;
+  
+  
+  return tagsTree.getSelectedTag();
  }
 
 }

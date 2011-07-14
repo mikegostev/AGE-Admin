@@ -1,10 +1,12 @@
 package uk.ac.ebi.age.admin.client;
 
+import java.util.Collection;
 import java.util.List;
 
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
 import uk.ac.ebi.age.admin.shared.ModelPath;
+import uk.ac.ebi.age.ext.authz.TagRef;
 import uk.ac.ebi.age.ext.log.SimpleLogNode;
 import uk.ac.ebi.age.ext.submission.HistoryEntry;
 import uk.ac.ebi.age.ext.submission.SubmissionQuery;
@@ -34,5 +36,9 @@ public interface AgeAdminServiceAsync
  void deleteSubmission(String id, AsyncCallback<SimpleLogNode> asyncCallback);
 
  void restoreSubmission(String id, AsyncCallback<SimpleLogNode> asyncCallback);
+
+ void getSubmissionTags(String param, AsyncCallback<Collection<TagRef>> asyncCallback);
+
+ void storeSubmissionTags(String param, Collection<TagRef> result, AsyncCallback<Void> asyncCallback);
 
 }

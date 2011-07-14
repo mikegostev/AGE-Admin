@@ -2,7 +2,7 @@ package uk.ac.ebi.age.admin.shared;
 
 public class Constants
 {
- public static final String sessionKey="_$SESS";
+ public static final String sessionKey="AGESESS";
  
  public static final String uploadHandlerParameter = "Subject";
 
