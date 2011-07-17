@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.PrintWriter;
 
 import uk.ac.ebi.age.admin.server.service.UploadRequest;
+import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
 import uk.ac.ebi.age.annotation.Topic;
 import uk.ac.ebi.age.authz.ACR.Permit;
@@ -302,9 +303,9 @@ public class SubmissionUploader implements UploadCommandListener
   }
   finally
   {
-   out.print("<html><body>OK-"+upReq.getParams().get(SubmissionConstants.SUBMISSON_KEY)+"<pre>(");
+   out.print("<html><body>OK-"+upReq.getParams().get(SubmissionConstants.SUBMISSON_KEY)+"<pre>\n"+Constants.beginJSONSign+"\n(");
    out.print(Log2JSON.convert(log.getRootNode()));
-   out.print(")</pre></body></html>");
+   out.print(")\n"+Constants.endJSONSign+"\n</pre></body></html>");
   }
 
   return true;

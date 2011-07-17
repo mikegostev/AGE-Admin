@@ -14,6 +14,7 @@ public class UserDSDef extends DSDef
  public static UserDSDef instance;
  public static DSField userIdField = new DSField("userid",FieldType.TEXT,"User ID");
  public static DSField userNameField = new DSField("username",FieldType.TEXT,"User Name");
+ public static DSField userEmailField = new DSField("email",FieldType.TEXT,"E-Mail");
  public static DSField userPassField = new DSField("userpass",FieldType.PASSWORD,"Password");
  
  static
@@ -29,6 +30,7 @@ public class UserDSDef extends DSDef
  {
   addField( userIdField );
   addField( userNameField );
+  addField( userEmailField );
   addField( userPassField );
  }
 
@@ -64,9 +66,11 @@ public class UserDSDef extends DSDef
   DataSourceField nameF = new DataSourceField(userNameField.getFieldId(), userNameField.getType(), userNameField.getFieldTitle());
   idF.setPrimaryKey(true);
   nameF.setCanEdit(true);
+ 
+  DataSourceField emailF = new DataSourceField(userEmailField.getFieldId(), userEmailField.getType(), userEmailField.getFieldTitle());
+
   
-  
-  ds.setFields(idF,nameF);
+  ds.setFields(idF,nameF,emailF);
   
   ds.setID(Constants.userListServiceName);
   

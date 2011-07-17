@@ -18,6 +18,7 @@ public class LogTree extends TreeGrid
   setHeight100();
   
   setShowConnectors(true);
+  setShowHeader(false);
   
 //  Tree data = new Tree();
   

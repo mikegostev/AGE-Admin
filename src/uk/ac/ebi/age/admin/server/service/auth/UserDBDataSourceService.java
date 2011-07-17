@@ -103,6 +103,7 @@ public class UserDBDataSourceService implements DataSourceBackendService
   
   String userId = vmap.get(UserDSDef.userIdField);
   String userName = vmap.get(UserDSDef.userNameField);
+  String userEmail = vmap.get(UserDSDef.userEmailField);
   String userPass = vmap.get(UserDSDef.userPassField);
   
   if( userId == null )
@@ -117,7 +118,7 @@ public class UserDBDataSourceService implements DataSourceBackendService
 
   try
   {
-   db.addUser( trn, userId, userName, userPass );
+   db.addUser( trn, userId, userName, userEmail, userPass );
    
    try
    {
@@ -156,6 +157,7 @@ public class UserDBDataSourceService implements DataSourceBackendService
   
   String userId = vmap.get(UserDSDef.userIdField);
   String userName = vmap.get(UserDSDef.userNameField);
+  String userEmail = vmap.get(UserDSDef.userEmailField);
   String userPass = vmap.get(UserDSDef.userPassField);
   
   if( userId == null )
@@ -173,7 +175,7 @@ public class UserDBDataSourceService implements DataSourceBackendService
    if( userPass != null )
     db.setUserPassword(  trn, userId, userPass  );
    else
-    db.updateUser( trn, userId, userName);
+    db.updateUser( trn, userId, userName, userEmail);
    
    try
    {

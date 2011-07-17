@@ -155,13 +155,20 @@ public class DataSourceServlet extends ServiceServlet
     else
      outw.write(",{");
     
+    boolean fieldFirst = true;
+    
     for( DSField dsf : dsd.getFields() )
     {
      String val = dataIter.get(dsf);
      
+     if( fieldFirst )
+      fieldFirst=false;
+     else
+      outw.write(",");
+     
      val = val==null?"":StringUtils.escapeByBackslash(val,'\'');
      
-     outw.write("'"+StringUtils.escapeByBackslash(dsf.getFieldId(),'\'')+"': '"+val+"',");
+     outw.write("'"+StringUtils.escapeByBackslash(dsf.getFieldId(),'\'')+"': '"+val+"'");
     }
      
     outw.write("}");

@@ -46,6 +46,11 @@ public class UserAddForm extends DynamicForm
   nameField.setTitle(UserDSDef.userNameField.getFieldTitle());  
   nameField.setRequired(true);  
   
+  TextItem emailField = new TextItem();
+  emailField.setName(UserDSDef.userEmailField.getFieldId());
+  emailField.setTitle(UserDSDef.userEmailField.getFieldTitle());  
+  emailField.setRequired(false);  
+
   PasswordItem passwordItem = new PasswordItem();  
   passwordItem.setName(UserDSDef.userPassField.getFieldId());  
   passwordItem.setTitle(UserDSDef.userPassField.getFieldTitle());  
@@ -99,7 +104,7 @@ public class UserAddForm extends DynamicForm
   });  
   cancelItem.setStartRow(false);
 
-  form.setFields(header, idField, nameField, passwordItem, passwordItem2, sp,  addItem, cancelItem);  
+  form.setFields(header, idField, nameField, emailField, passwordItem, passwordItem2, sp,  addItem, cancelItem);  
  }
  
 }

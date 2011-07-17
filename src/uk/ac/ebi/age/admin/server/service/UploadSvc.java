@@ -78,6 +78,7 @@ public class UploadSvc extends ServiceServlet
       try
       {
        upReq.setCommand(Streams.asString(stream));
+       stream.close();
       }
       catch (Exception e)
       {

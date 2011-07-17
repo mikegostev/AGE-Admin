@@ -22,6 +22,7 @@ public class UserList extends ListGrid
 {
  private DataSource ds;
  
+ @SuppressWarnings("serial")
  public UserList()
  {
   ds = DataSource.getDataSource(Constants.userListServiceName);
@@ -53,10 +54,13 @@ public class UserList extends ListGrid
   
   ListGridField idField = new ListGridField( UserDSDef.userIdField.getFieldId(), UserDSDef.userIdField.getFieldTitle());
   idField.setWidth(200);
-
-  ListGridField nameField = new ListGridField( UserDSDef.userNameField.getFieldId(), UserDSDef.userNameField.getFieldTitle());
+  idField.setCanEdit(false);
   
-  list.setFields(icnField,idField,nameField);
+  ListGridField nameField = new ListGridField( UserDSDef.userNameField.getFieldId(), UserDSDef.userNameField.getFieldTitle());
+
+  ListGridField emailField = new ListGridField( UserDSDef.userEmailField.getFieldId(), UserDSDef.userEmailField.getFieldTitle());
+  
+  list.setFields(icnField,idField,nameField,emailField);
   
   list.setWidth100();
   list.setHeight100();

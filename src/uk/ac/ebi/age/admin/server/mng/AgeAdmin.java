@@ -44,6 +44,7 @@ import uk.ac.ebi.age.authz.AuthDB;
 import uk.ac.ebi.age.authz.SecurityChangedListener;
 import uk.ac.ebi.age.authz.Session;
 import uk.ac.ebi.age.authz.SessionManager;
+import uk.ac.ebi.age.authz.User;
 import uk.ac.ebi.age.authz.exception.AuthDBException;
 import uk.ac.ebi.age.authz.exception.DBInitException;
 import uk.ac.ebi.age.authz.impl.PermissionManagerImpl;
@@ -252,15 +253,18 @@ public class AgeAdmin implements SecurityChangedListener
   ReadLock lck = authDB.getReadLock();
   try
   {
-//   User u = configuration.getAuthDB().getUser(lck, userName);
-//   
-//   if( u == null )
-//    throw new UserAuthException("Invalid user name");
-   
    try
    {
-    if( ! authDB.checkUserPassword(lck, userName, password) )
-     throw new UserAuthException("Invalid user password");
+    User u = authDB.getUser(lck, userName);
+    
+    if( u == null )
+     u = authDB.getUserByEmail(lck, userName);
+    
+    if( u == null )
+     throw new UserAuthException("User or password is not valid");
+
+    if( ! authDB.checkUserPassword(lck, u.getId(), password) )
+     throw new UserAuthException("User or password is not valid");
    }
    catch(AuthDBException e)
    {

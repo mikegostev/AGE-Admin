@@ -19,7 +19,7 @@ public class TagAddDialog extends Window
 
  public TagAddDialog(DataSource ds, String parent)
  {
-  setTitle("Add Group");
+  setTitle("Add Tag");
   setShowMinimizeButton(false);
   setIsModal(true);
   setShowModalMask(true);

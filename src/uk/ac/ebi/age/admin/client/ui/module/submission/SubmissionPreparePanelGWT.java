@@ -22,15 +22,17 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.WidgetCanvas;
+import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
 public class SubmissionPreparePanelGWT extends VLayout
 {
- private int n = 1;
- private long key = System.currentTimeMillis();
- private int nMods = 1;
+ private int           n     = 1;
+ private long          key   = System.currentTimeMillis();
+ private int           nMods = 1;
  private VerticalPanel panel;
 
  public SubmissionPreparePanelGWT()
@@ -39,41 +41,60 @@ public class SubmissionPreparePanelGWT extends VLayout
   setLayoutLeftMargin(15);
   setLayoutTopMargin(15);
   setMembersMargin(15);
+  setShowCustomScrollbars(false);
+  setOverflow(Overflow.AUTO);
 
   setHeight100();
-  setWidth100();
+  setWidth(700);
 
   setBorder("1px solid #6a5a6a");
 
-  DecoratorPanel decp = new DecoratorPanel();
-  decp.setHeight("100%");
-//  decp.setWidth("500px");
+  final DecoratorPanel decp = new DecoratorPanel();
+  // decp.setHeight("100%");
+
+  decp.setWidth("650px");
+
   final WidgetCanvas wc = new WidgetCanvas(decp);
-  wc.setHeight100();
+  wc.setOverflow(Overflow.VISIBLE);
+  // final Layout wc = new Layout();
+  // wc.setHeight100();
+//  wc.setBorder("1px dotted red");
+//  wc.setShowCustomScrollbars(false);
+  // wc.setWidth(800);
+  // wc.addMember(decp);
+  
+  final Layout l = new Layout();
+
+  l.setHeight100();
+  l.setWidth(700);
+  l.setShowCustomScrollbars(false);
+  l.setOverflow(Overflow.AUTO);
+  l.addMember(wc);
+//  l.setBorder("1px dotted navy");
 
   final FormPanel form = new FormPanel();
   form.setAction("upload");
   form.setEncoding(FormPanel.ENCODING_MULTIPART);
   form.setMethod(FormPanel.METHOD_POST);
 
-//  form.setWidth("500px");
+  // form.setWidth("501px");
 
   panel = new VerticalPanel();
   panel.setSpacing(10);
-  panel.setWidth("500px");
+  // panel.setWidth("502px");
   form.setWidget(panel);
 
-  panel.add( new Hidden(Constants.uploadHandlerParameter,SubmissionConstants.SUBMISSON_COMMAND) );
-  panel.add( new Hidden(SubmissionConstants.SUBMISSON_KEY,String.valueOf(key) ) );
-  panel.add( new Hidden(SubmissionConstants.SUBMISSON_STATUS, Status.NEW.name() ) );
-  
+  panel.add(new Hidden(Constants.uploadHandlerParameter, SubmissionConstants.SUBMISSON_COMMAND));
+  panel.add(new Hidden(SubmissionConstants.SUBMISSON_KEY, String.valueOf(key)));
+  panel.add(new Hidden(SubmissionConstants.SUBMISSON_STATUS, Status.NEW.name()));
+
   FlexTable btPan = new FlexTable();
   btPan.setCellSpacing(6);
   btPan.setWidth("100%");
   FlexCellFormatter cellFormatter = btPan.getFlexCellFormatter();
 
   panel.add(btPan);
-  
+
   final NewDMPanel.RemoveListener rmListener = new RemoveListener()
   {
    @Override
@@ -88,22 +109,24 @@ public class SubmissionPreparePanelGWT extends VLayout
   {
    public void onClick(com.google.gwt.event.dom.client.ClickEvent event)
    {
-    panel.insert(new NewFilePanel(n++,rmListener), panel.getWidgetCount()-1);
+    panel.insert(new NewFilePanel(n++, rmListener), panel.getWidgetCount() - 1);
+    wc.adjustForContent(true);
 
     renumberPanels();
    }
   });
   btPan.setWidget(0, 0, addBt);
-  
+
   cellFormatter.setHorizontalAlignment(0, 1, HasHorizontalAlignment.ALIGN_CENTER);
   addBt = new Button("Add Data Module", new com.google.gwt.event.dom.client.ClickHandler()
   {
    public void onClick(com.google.gwt.event.dom.client.ClickEvent event)
    {
-    panel.insert(new NewDMPanel(n++,rmListener), nMods+6);
+    panel.insert(new NewDMPanel(n++, rmListener), nMods + 6);
     nMods++;
     wc.adjustForContent(true);
-    
+    // decp.adjustForContent(true);
+
     renumberPanels();
    }
   });
@@ -116,7 +139,7 @@ public class SubmissionPreparePanelGWT extends VLayout
   tb.setWidth("97%");
   panel.add(tb);
 
-  panel.add(new NewDMPanel(n++,rmListener));
+  panel.add(new NewDMPanel(n++, rmListener));
 
   Button sbmBt = new Button("Submit", new com.google.gwt.event.dom.client.ClickHandler()
   {
@@ -125,58 +148,57 @@ public class SubmissionPreparePanelGWT extends VLayout
     form.submit();
    }
   });
-  
+
   panel.add(sbmBt);
   panel.setCellHorizontalAlignment(sbmBt, HasHorizontalAlignment.ALIGN_RIGHT);
-  
+
   form.addSubmitHandler(new FormPanel.SubmitHandler()
   {
    public void onSubmit(SubmitEvent event)
    {
     String err = "";
-    
-    
-    int ndm=0;
-    for( Widget w : panel )
+
+    int ndm = 0;
+    for(Widget w : panel)
     {
-     if( w instanceof NewDMPanel )
+     if(w instanceof NewDMPanel)
      {
       ndm++;
-      
-      NewDMPanel dmp = (NewDMPanel)w;
-      
-      if( dmp.getDescription().trim().length() == 0 )
-       err+="Description of data module "+ndm+" is empty\n";
-      
-      if( dmp.getFile().trim().length() == 0 )
-       err+="File for data module "+ndm+" is not selected\n";
+
+      NewDMPanel dmp = (NewDMPanel) w;
+
+      if(dmp.getDescription().trim().length() == 0)
+       err += "Description of data module " + ndm + " is empty\n";
+
+      if(dmp.getFile().trim().length() == 0)
+       err += "File for data module " + ndm + " is not selected\n";
      }
-     else if( w instanceof NewFilePanel )
+     else if(w instanceof NewFilePanel)
      {
       ndm++;
-      
-      NewFilePanel dmp = (NewFilePanel)w;
-      
-      if( dmp.getID().trim().length() == 0 )
-       err+="ID for file "+ndm+" is not specified\n";
-      
-      if( dmp.getFile().trim().length() == 0 )
-       err+="File for data module "+ndm+" is not selected\n";
+
+      NewFilePanel dmp = (NewFilePanel) w;
+
+      if(dmp.getID().trim().length() == 0)
+       err += "ID for file " + ndm + " is not specified\n";
+
+      if(dmp.getFile().trim().length() == 0)
+       err += "File for data module " + ndm + " is not selected\n";
      }
-     else if( w instanceof TextArea )
+     else if(w instanceof TextArea)
      {
-      if( ((TextArea)w).getText().trim().length() == 0 )
+      if(((TextArea) w).getText().trim().length() == 0)
        err += "Submission description is empty\n";
      }
-     
+
     }
-    
-    if( err.length() > 0 )
+
+    if(err.length() > 0)
     {
-     Window.alert("ERROR:\n"+err);
+     Window.alert("ERROR:\n" + err);
      event.cancel();
     }
-    
+
    }
   });
 
@@ -185,65 +207,62 @@ public class SubmissionPreparePanelGWT extends VLayout
    public void onSubmitComplete(SubmitCompleteEvent event)
    {
     String txt = event.getResults();
-    
-    if( txt.indexOf("OK-"+key) == -1 )
+
+    if(txt.indexOf("OK-" + key) == -1)
     {
      SC.warn("Error occured. Possibly you are not logged on or your session is expired");
      return;
     }
     
-    int posB = txt.indexOf("<pre>");
-    int posE = txt.lastIndexOf("</pre>");
-    
-    txt = txt.substring(posB+5,posE);
-    
+    int posB = txt.indexOf(Constants.beginJSONSign);
+    int posE = txt.lastIndexOf(Constants.endJSONSign);
+
+    txt = txt.substring(posB + Constants.beginJSONSign.length(), posE);
+
     System.out.println(txt);
-    
-    LogNode rLn = ROJSLogNode.convert(txt); 
-    
-    new LogWindow("Submission creation log",rLn).show();
+
+    LogNode rLn = ROJSLogNode.convert(txt);
+
+    new LogWindow("Submission creation log", rLn).show();
 
    }
   });
 
   decp.setWidget(form);
 
-  
   addMember(wc);
+  // addMember(form);
 
-  
  }
- 
+
  private void renumberPanels()
  {
-  n=0;
-  nMods=0;
-  
-  for( Widget w : panel )
+  n = 0;
+  nMods = 0;
+
+  for(Widget w : panel)
   {
-   if( w instanceof NewDMPanel )
+   if(w instanceof NewDMPanel)
    {
     n++;
     nMods++;
-    
-    NewDMPanel dmp = (NewDMPanel)w;
-    
+
+    NewDMPanel dmp = (NewDMPanel) w;
+
     dmp.setOrder(n);
-    
+
    }
-   else if( w instanceof NewFilePanel )
+   else if(w instanceof NewFilePanel)
    {
     n++;
 
-    NewFilePanel fp = (NewFilePanel)w;
-    
+    NewFilePanel fp = (NewFilePanel) w;
+
     fp.setOrder(n);
    }
-   
+
   }
 
  }
-
-
 
 }

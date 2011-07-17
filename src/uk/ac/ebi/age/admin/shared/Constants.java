@@ -46,6 +46,9 @@ public class Constants
 
  public static final String rootTagId = "__rootTag";
 
+ public static final String beginJSONSign = "//REPORT BEGIN";
+ public static final String endJSONSign = "//REPORT END";
+
 
 
 }
