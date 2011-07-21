@@ -9,6 +9,7 @@ import uk.ac.ebi.age.admin.client.model.ModelStorageException;
 import uk.ac.ebi.age.admin.shared.ModelPath;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
 import uk.ac.ebi.age.ext.authz.TagRef;
+import uk.ac.ebi.age.ext.log.LogNode;
 import uk.ac.ebi.age.ext.log.SimpleLogNode;
 import uk.ac.ebi.age.ext.submission.HistoryEntry;
 import uk.ac.ebi.age.ext.submission.SubmissionDBException;
@@ -47,7 +48,7 @@ public interface AgeAdminService extends RemoteService
 
  ModelImprint getModel(ModelPath path) throws ModelStorageException, UserAuthException;
 
- void installModel(ModelPath modelPath) throws UserAuthException, ModelStorageException;
+ LogNode installModel(ModelPath modelPath) throws UserAuthException, ModelStorageException;
 
  SubmissionReport getSubmissions(SubmissionQuery q) throws UserAuthException, SubmissionDBException;
 

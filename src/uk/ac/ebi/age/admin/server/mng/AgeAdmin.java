@@ -53,6 +53,7 @@ import uk.ac.ebi.age.authz.impl.SessionManagerImpl;
 import uk.ac.ebi.age.entity.CommonID;
 import uk.ac.ebi.age.entity.EntityDomain;
 import uk.ac.ebi.age.ext.authz.TagRef;
+import uk.ac.ebi.age.ext.log.LogNode;
 import uk.ac.ebi.age.ext.log.SimpleLogNode;
 import uk.ac.ebi.age.ext.submission.HistoryEntry;
 import uk.ac.ebi.age.ext.submission.SubmissionDBException;
@@ -435,7 +436,7 @@ public class AgeAdmin implements SecurityChangedListener
   }
  }
 
- public void installModel(ModelPath modelPath) throws ModelStorageException
+ public LogNode installModel(ModelPath modelPath) throws ModelStorageException
  {
   ModelImprint modImp = getModel(modelPath);
 
@@ -443,8 +444,14 @@ public class AgeAdmin implements SecurityChangedListener
   
   BufferLogger bLog = new BufferLogger();
   
-  if( ! storage.updateSemanticModel(sm, bLog.getRootNode()) )
-   throw new ModelStorageException("Model installation failed");
+  storage.updateSemanticModel(sm, bLog.getRootNode());
+
+  SimpleLogNode.setLevels(bLog.getRootNode());
+  
+  return bLog.getRootNode();
+  
+//  if( ! storage.updateSemanticModel(sm, bLog.getRootNode()) )
+//   throw new ModelStorageException("Model installation failed");
  }
 
 

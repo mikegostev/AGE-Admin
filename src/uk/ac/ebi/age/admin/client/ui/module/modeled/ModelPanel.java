@@ -8,8 +8,10 @@ import uk.ac.ebi.age.admin.client.ui.AttributeMetaClassDef;
 import uk.ac.ebi.age.admin.client.ui.ClassAuxData;
 import uk.ac.ebi.age.admin.client.ui.ClassMetaClassDef;
 import uk.ac.ebi.age.admin.client.ui.RelationMetaClassDef;
+import uk.ac.ebi.age.admin.client.ui.module.log.LogWindow;
 import uk.ac.ebi.age.admin.shared.ModelPath;
 import uk.ac.ebi.age.admin.shared.StoreNode;
+import uk.ac.ebi.age.ext.log.LogNode;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.types.Side;
@@ -208,7 +210,7 @@ public class ModelPanel extends TabSet implements ModelMngr
  @Override
  public void installModel(ModelPath modelPath)
  {
-  AgeAdminService.Util.getInstance().installModel( modelPath, new AsyncCallback<Void>(){
+  AgeAdminService.Util.getInstance().installModel( modelPath, new AsyncCallback<LogNode>(){
 
    @Override
    public void onFailure(Throwable arg0)
@@ -217,9 +219,10 @@ public class ModelPanel extends TabSet implements ModelMngr
    }
 
    @Override
-   public void onSuccess( Void arg)
+   public void onSuccess( LogNode arg)
    {
-    SC.say("Model installed");
+    new LogWindow("Model installation log", arg).show();
+    //SC.say("Model installed");
    }
    });
  }

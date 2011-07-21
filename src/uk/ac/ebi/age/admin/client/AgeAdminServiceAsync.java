@@ -7,6 +7,7 @@ import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
 import uk.ac.ebi.age.admin.shared.ModelPath;
 import uk.ac.ebi.age.ext.authz.TagRef;
+import uk.ac.ebi.age.ext.log.LogNode;
 import uk.ac.ebi.age.ext.log.SimpleLogNode;
 import uk.ac.ebi.age.ext.submission.HistoryEntry;
 import uk.ac.ebi.age.ext.submission.SubmissionQuery;
@@ -27,7 +28,7 @@ public interface AgeAdminServiceAsync
 
  void getModel(ModelPath path, AsyncCallback<ModelImprint> asyncCallback);
 
- void installModel(ModelPath modelPath, AsyncCallback<Void> asyncCallback);
+ void installModel(ModelPath modelPath, AsyncCallback<LogNode> asyncCallback);
 
  void getSubmissions(SubmissionQuery q, AsyncCallback<SubmissionReport> asyncCallback);
 

@@ -16,6 +16,7 @@ import uk.ac.ebi.age.admin.server.mng.Configuration;
 import uk.ac.ebi.age.admin.shared.ModelPath;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
 import uk.ac.ebi.age.ext.authz.TagRef;
+import uk.ac.ebi.age.ext.log.LogNode;
 import uk.ac.ebi.age.ext.log.SimpleLogNode;
 import uk.ac.ebi.age.ext.submission.HistoryEntry;
 import uk.ac.ebi.age.ext.submission.SubmissionDBException;
@@ -75,9 +76,9 @@ public class AgeAdminServiceImpl extends SessionRemoteServiceServlet implements 
  }
 
  @Override
- public void installModel(ModelPath modelPath) throws UserAuthException, ModelStorageException
+ public LogNode installModel(ModelPath modelPath) throws UserAuthException, ModelStorageException
  {
-  adm.installModel( modelPath );
+  return adm.installModel( modelPath );
  }
 
  @Override

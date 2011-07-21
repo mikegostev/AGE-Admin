@@ -10,6 +10,7 @@ import uk.ac.ebi.age.ext.submission.Status;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DecoratorPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
@@ -95,6 +96,8 @@ public class SubmissionPreparePanelGWT extends VLayout
 
   panel.add(btPan);
 
+  
+  
   final NewDMPanel.RemoveListener rmListener = new RemoveListener()
   {
    @Override
@@ -104,7 +107,19 @@ public class SubmissionPreparePanelGWT extends VLayout
    }
   };
 
-  cellFormatter.setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_CENTER);
+  int col=0;
+  
+  Label voLbl = new Label("Verify only");
+  cellFormatter.setHorizontalAlignment(0, col, HasHorizontalAlignment.ALIGN_RIGHT);
+  btPan.setWidget(0, col, voLbl);
+
+  CheckBox verifOnly = new CheckBox();
+  verifOnly.setName(SubmissionConstants.VERIFY_ONLY);
+  verifOnly.setTitle("Verify only");
+  cellFormatter.setHorizontalAlignment(0, ++col, HasHorizontalAlignment.ALIGN_LEFT);
+  btPan.setWidget(0, col, verifOnly);
+  
+  cellFormatter.setHorizontalAlignment(0, ++col, HasHorizontalAlignment.ALIGN_CENTER);
   Button addBt = new Button("Add File", new com.google.gwt.event.dom.client.ClickHandler()
   {
    public void onClick(com.google.gwt.event.dom.client.ClickEvent event)
@@ -115,9 +130,9 @@ public class SubmissionPreparePanelGWT extends VLayout
     renumberPanels();
    }
   });
-  btPan.setWidget(0, 0, addBt);
+  btPan.setWidget(0, col, addBt);
 
-  cellFormatter.setHorizontalAlignment(0, 1, HasHorizontalAlignment.ALIGN_CENTER);
+  cellFormatter.setHorizontalAlignment(0, ++col, HasHorizontalAlignment.ALIGN_CENTER);
   addBt = new Button("Add Data Module", new com.google.gwt.event.dom.client.ClickHandler()
   {
    public void onClick(com.google.gwt.event.dom.client.ClickEvent event)
@@ -130,7 +145,7 @@ public class SubmissionPreparePanelGWT extends VLayout
     renumberPanels();
    }
   });
-  btPan.setWidget(0, 1, addBt);
+  btPan.setWidget(0, col, addBt);
 
   panel.add(new Label("Submission description:"));
 

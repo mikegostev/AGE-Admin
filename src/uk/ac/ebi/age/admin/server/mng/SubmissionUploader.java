@@ -269,7 +269,9 @@ public class SubmissionUploader implements UploadCommandListener
      }
     }
 
-    if( sbmManager.storeSubmission(sMeta, updateDescr, log.getRootNode()) || sMeta.getStatus() == Status.NEW )
+    boolean verifyOnly = "on".equals(upReq.getParams().get(SubmissionConstants.VERIFY_ONLY));
+    
+    if( sbmManager.storeSubmission(sMeta, updateDescr, log.getRootNode(), verifyOnly ) || sMeta.getStatus() == Status.NEW )
     {
      CommonID id = new CommonID();
      

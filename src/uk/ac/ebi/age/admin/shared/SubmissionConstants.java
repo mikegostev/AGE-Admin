@@ -33,6 +33,8 @@ public class SubmissionConstants
  public static final String ATTACHMENT_GLOBAL = "attachGlobal";
 
  public static final String THE_UPDATE_DESCR = "updateDesc";
+ 
+ public static final String VERIFY_ONLY = "verifyOnly";
 
  
 }
