@@ -9,6 +9,8 @@ import com.smartgwt.client.data.Record;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.events.CellSavedEvent;
+import com.smartgwt.client.widgets.grid.events.CellSavedHandler;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
@@ -45,6 +47,7 @@ public class TagListPanel extends VLayout
     
     rec.setAttribute(TagList.classifierFieldName, tr.getClassiferName());
     rec.setAttribute(TagList.tagFieldName, tr.getTagName());
+    rec.setAttribute(TagList.tagValueFieldName, tr.getTagValue());
     rec.setAttribute("__tagRef", tr);
    
     recs[i++] = rec;
@@ -123,6 +126,16 @@ public class TagListPanel extends VLayout
   addMember(grpTools);
 
   addMember(list);
+  
+  list.addCellSavedHandler( new CellSavedHandler()
+  {
+   
+   @Override
+   public void onCellSaved(CellSavedEvent event)
+   {
+    ((TagRef)event.getRecord().getAttributeAsObject("__tagRef")).setTagValue(event.getRecord().getAttribute(TagList.tagValueFieldName));
+   }
+  });
  }
  
  public void destroy()

@@ -11,6 +11,7 @@ public class TagList extends ListGrid
 {
  public static final String classifierFieldName =  "clsf";
  public static final String tagFieldName =  "tag";
+ public static final String tagValueFieldName =  "value";
  
  public TagList()
  {
@@ -32,8 +33,11 @@ public class TagList extends ListGrid
 
   ListGridField tagField = new ListGridField(tagFieldName, "Tag");
   tagField.setCanEdit(false);
+ 
+  ListGridField tagValField = new ListGridField(tagValueFieldName, "Value");
+  tagValField.setCanEdit(true);
 
-  list.setFields(icnField, classifField, tagField);
+  list.setFields(icnField, classifField, tagField, tagValField);
 
   list.setWidth100();
   list.setHeight100();
