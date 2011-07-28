@@ -266,6 +266,8 @@ public class AgeAdmin implements SecurityChangedListener
 
     if( ! authDB.checkUserPassword(lck, u.getId(), password) )
      throw new UserAuthException("User or password is not valid");
+
+    return spool.createSession(u.getId());
    }
    catch(AuthDBException e)
    {
@@ -277,7 +279,6 @@ public class AgeAdmin implements SecurityChangedListener
    lck.release();
   }
   
-  return spool.createSession(userName);
   
 
  }
