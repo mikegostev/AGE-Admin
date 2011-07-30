@@ -1,7 +1,7 @@
 package uk.ac.ebi.age.admin.client.ui.module.submission;
 
 import uk.ac.ebi.age.admin.client.log.ROJSLogNode;
-import uk.ac.ebi.age.admin.client.ui.module.log.LogWindow2;
+import uk.ac.ebi.age.admin.client.ui.module.log.LogWindow3;
 import uk.ac.ebi.age.admin.client.ui.module.submission.NewDMPanel.RemoveListener;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
@@ -238,7 +238,7 @@ public class SubmissionPreparePanelGWT extends VLayout
 
     LogNode rLn = ROJSLogNode.convert(txt);
 
-    new LogWindow2("Submission creation log", rLn).show();
+    new LogWindow3("Submission creation log", rLn).show();
 
    }
   });

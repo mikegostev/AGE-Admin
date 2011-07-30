@@ -36,6 +36,11 @@ public final class ROJSLogNode extends JavaScriptObject implements LogNode
  }
 
  @Override
+ public void success()
+ {
+ }
+
+ @Override
  public List<? extends LogNode> getSubNodes()
  {
   return new ListOnJsArray<ROJSLogNode>(getSubnodes());
@@ -51,4 +56,5 @@ public final class ROJSLogNode extends JavaScriptObject implements LogNode
  {
   return Level.valueOf(getLevelAsString());
  }
+
 }

@@ -10,10 +10,19 @@ public class LogTreeNode extends TreeNode
  
  public LogTreeNode( LogNode ln )
  {
-//  setTitle(ln.getMessage());
   setIcon("../admin_images/icons/log/"+ln.getLevel()+".png");
   setTitle("<span class='logMsg"+ln.getLevel()+"'>"+ln.getMessage()+"</span>");
-  setAttribute("Name", "<span class='logMsg"+ln.getLevel()+"'>"+ln.getMessage()+"</span>");
+  setAttribute("__obj", ln);
+  
+  boolean folder = ln.getSubNodes() != null && ln.getSubNodes().size() > 0 ;
+  
+  
+  setIsFolder(folder);
+ }
+ 
+ public LogNode getNode()
+ {
+  return (LogNode) getAttributeAsObject("__obj");
  }
 
 }

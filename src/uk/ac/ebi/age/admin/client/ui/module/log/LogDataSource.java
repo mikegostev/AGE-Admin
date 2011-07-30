@@ -1,5 +1,7 @@
 package uk.ac.ebi.age.admin.client.ui.module.log;
 
+import java.util.List;
+
 import uk.ac.ebi.age.ext.log.LogNode;
 
 import com.smartgwt.client.data.DSRequest;
@@ -19,12 +21,11 @@ public class LogDataSource extends LocalDataSource
   rootNode = root;
   
   setIconField("status");
-  setTitleField("name");
-  setDataField("name");
+  setTitleField("message");
   
   
   DataSourceTextField idField = new DataSourceTextField("id");
-  DataSourceTextField nameField = new DataSourceTextField("name", "Message");
+  DataSourceTextField nameField = new DataSourceTextField("message", "Message");
   DataSourceImageField icnFiels = new DataSourceImageField("status");
   
   
@@ -45,10 +46,9 @@ public class LogDataSource extends LocalDataSource
  protected void executeFetch(String requestId, DSRequest request, DSResponse response)
  {
   String[] prop = JSOHelper.getProperties(request.getData());
-  System.out.println(rootNode.hashCode()); 
   
-  for( String s: prop)
-   System.out.println(s+"="+JSOHelper.getAttribute(request.getData(), s));
+//  for( String s: prop)
+//   System.out.println(s+"="+JSOHelper.getAttribute(request.getData(), s));
   
   Record[] returnRecords = null ; 
     
@@ -62,15 +62,31 @@ public class LogDataSource extends LocalDataSource
    returnRecords[0]=res;
    
    res.setAttribute("id", rootNode.hashCode());
-   res.setAttribute("name", "Log");
+   res.setAttribute("message", "Log");
    res.setAttribute("status", "icons/log/"+rootNode.getLevel().name()+".png");
   }
   else
   {
-   for( LogNode ln : rootNode.getSubNodes())
-    System.out.println("hash="+ln.hashCode());
-     
    String[] path = parent.split(":");
+   
+   List<? extends LogNode> nodes = getNodes(path,0, rootNode);
+   
+   if( nodes == null )
+    return;
+   
+   returnRecords = new Record[ nodes.size() ];
+   
+   int i=0;
+   for( LogNode ln : nodes )
+   {
+    Record res = new ListGridRecord();
+    
+    returnRecords[i++]=res;
+    
+    res.setAttribute("id", parent+":"+ln.hashCode());
+    res.setAttribute("message", ln.getMessage());
+    res.setAttribute("status", "icons/log/"+ln.getLevel().name()+".png");
+   }
   }
     
   response.setData(returnRecords);
@@ -95,6 +111,30 @@ public class LogDataSource extends LocalDataSource
 //  processResponse(requestId, response);
  }
 
+ private List<? extends LogNode> getNodes( String[] path, int depth, LogNode nd )
+ {
+  if( depth == (path.length-1) )
+  {
+   if( path[depth].equals( String.valueOf( nd.hashCode() ) ) )
+    return nd.getSubNodes();
+   else
+    return null;
+  }
+  
+  if( nd.getSubNodes() == null )
+   return null;
+  
+  String nid = path[depth+1];
+  
+  for( LogNode ln : nd.getSubNodes() )
+  {
+   if( nid.equals( String.valueOf( ln.hashCode() ) ) )
+    return getNodes(path, depth+1, ln);
+  }
+  
+  return null;
+ }
+ 
  @Override
  protected void executeAdd(String requestId, DSRequest request, DSResponse response)
  {

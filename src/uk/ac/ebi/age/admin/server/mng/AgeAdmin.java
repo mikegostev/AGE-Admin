@@ -54,12 +54,14 @@ import uk.ac.ebi.age.entity.CommonID;
 import uk.ac.ebi.age.entity.EntityDomain;
 import uk.ac.ebi.age.ext.authz.TagRef;
 import uk.ac.ebi.age.ext.log.LogNode;
+import uk.ac.ebi.age.ext.log.LogNode.Level;
 import uk.ac.ebi.age.ext.log.SimpleLogNode;
 import uk.ac.ebi.age.ext.submission.HistoryEntry;
 import uk.ac.ebi.age.ext.submission.SubmissionDBException;
 import uk.ac.ebi.age.ext.submission.SubmissionQuery;
 import uk.ac.ebi.age.ext.submission.SubmissionReport;
-import uk.ac.ebi.age.log.impl.BufferLogger;
+import uk.ac.ebi.age.log.BufferLogger;
+import uk.ac.ebi.age.log.TooManyErrorsException;
 import uk.ac.ebi.age.mng.submission.SubmissionManager;
 import uk.ac.ebi.age.model.SemanticModel;
 import uk.ac.ebi.age.service.submission.SubmissionDB;
@@ -443,10 +445,17 @@ public class AgeAdmin implements SecurityChangedListener
 
   SemanticModel sm = Age2ImprintConverter.convertImprintToModel(modImp);
   
-  BufferLogger bLog = new BufferLogger();
+  BufferLogger bLog = new BufferLogger( uk.ac.ebi.age.conf.Constants.MAX_ERRORS );
   
-  storage.updateSemanticModel(sm, bLog.getRootNode());
-
+  try
+  {
+   storage.updateSemanticModel(sm, bLog.getRootNode());
+  }
+  catch (TooManyErrorsException e) 
+  {
+   bLog.getRootNode().log(Level.ERROR, "Too many errors: "+e.getErrorCount());
+  }
+  
   SimpleLogNode.setLevels(bLog.getRootNode());
   
   return bLog.getRootNode();
@@ -481,27 +490,38 @@ public class AgeAdmin implements SecurityChangedListener
  }
 
 
-
  public SimpleLogNode deleteSubmission(String id) throws SubmissionDBException
  {
   // TODO check permission to list all submissions
 
-  BufferLogger log = new BufferLogger();
+  BufferLogger log = new BufferLogger(uk.ac.ebi.age.conf.Constants.MAX_ERRORS);
   
-  configuration.getSubmissionManager().removeSubmission(id, log.getRootNode());
-  
+  try
+  {
+   configuration.getSubmissionManager().removeSubmission(id, log.getRootNode());
+  }
+  catch(TooManyErrorsException e)
+  {
+   log.getRootNode().log(Level.ERROR, "Too many errors: " + e.getErrorCount());
+  }
+
   return log.getRootNode();
  }
-
-
 
  public SimpleLogNode restoreSubmission(String id) throws SubmissionDBException
  {
   // TODO check permission to list all submissions
 
-  BufferLogger log = new BufferLogger();
+  BufferLogger log = new BufferLogger(uk.ac.ebi.age.conf.Constants.MAX_ERRORS);
 
-  configuration.getSubmissionManager().restoreSubmission(id, log.getRootNode() );
+  try
+  {
+   configuration.getSubmissionManager().restoreSubmission(id, log.getRootNode() );
+  }
+  catch(TooManyErrorsException e)
+  {
+   log.getRootNode().log(Level.ERROR, "Too many errors: " + e.getErrorCount());
+  }
   
   return log.getRootNode();
  }

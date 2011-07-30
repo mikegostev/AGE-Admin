@@ -6,7 +6,6 @@ import uk.ac.ebi.age.ext.log.LogNode;
 
 import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeGrid;
-import com.smartgwt.client.widgets.tree.TreeGridField;
 import com.smartgwt.client.widgets.tree.TreeNode;
 
 public class LogTree2 extends TreeGrid
@@ -27,7 +26,9 @@ public class LogTree2 extends TreeGrid
   
   setCustomIconProperty("status");
   
-  setFields( new TreeGridField("name") );
+  setScrollRedrawDelay(1);
+  
+//  setFields( new TreeGridField("name") );
 //  setTitleField("message");
   
 //  data.openFolder(clsRoot);

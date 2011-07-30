@@ -21,8 +21,9 @@ import uk.ac.ebi.age.ext.submission.Factory;
 import uk.ac.ebi.age.ext.submission.FileAttachmentMeta;
 import uk.ac.ebi.age.ext.submission.Status;
 import uk.ac.ebi.age.ext.submission.SubmissionMeta;
+import uk.ac.ebi.age.log.BufferLogger;
 import uk.ac.ebi.age.log.Log2JSON;
-import uk.ac.ebi.age.log.impl.BufferLogger;
+import uk.ac.ebi.age.log.TooManyErrorsException;
 import uk.ac.ebi.age.mng.submission.AttachmentAux;
 import uk.ac.ebi.age.mng.submission.ModuleAux;
 import uk.ac.ebi.age.mng.submission.SubmissionManager;
@@ -42,7 +43,7 @@ public class SubmissionUploader implements UploadCommandListener
  @Override
  public boolean processUpload(UploadRequest upReq, PrintWriter out)
  {
-  BufferLogger log = new BufferLogger();
+  BufferLogger log = new BufferLogger( uk.ac.ebi.age.conf.Constants.MAX_ERRORS );
 
   try
   {
@@ -290,6 +291,11 @@ public class SubmissionUploader implements UploadCommandListener
      
      // BufferLogger.printBranch(log.getRootNode());
 
+   }
+   catch( TooManyErrorsException e )
+   {
+    log.getRootNode().log(Level.ERROR, "Too many errors: "+e.getErrorCount());
+    return false;
    }
    catch(Exception e)
    {
