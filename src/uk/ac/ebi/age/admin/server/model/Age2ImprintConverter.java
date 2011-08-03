@@ -365,6 +365,7 @@ public class Age2ImprintConverter
     atatRule.setCardinality(atrl.getCardinality());
     atatRule.setCardinalityType( convertCardinalityI2M( atrl.getCardinalityType() ) );
     atatRule.setSubclassesIncluded(atrl.isSubclassesIncluded());
+    atatRule.setSubclassesCountedSeparately(atrl.isSubclassesCountedSeparately() );
     atatRule.setType( convertRestrictionTypeI2M( atrl.getType() ) );
     atatRule.setValueUnique(atrl.isValueUnique());
 
@@ -675,6 +676,7 @@ public class Age2ImprintConverter
     arimp.setCardinality(atatrl.getCardinality());
     arimp.setCardinalityType(convertCardinalityM2I(atatrl.getCardinalityType()));
     arimp.setSubclassesIncluded(atatrl.isSubclassesIncluded());
+    arimp.setSubclassesCountedSeparately(atatrl.isSubclassesCountedSeparately());
     arimp.setType(convertRestrictionTypeM2I(atatrl.getType()));
     arimp.setValueUnique(atatrl.isValueUnique());
 

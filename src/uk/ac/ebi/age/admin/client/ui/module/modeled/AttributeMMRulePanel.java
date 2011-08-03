@@ -43,6 +43,7 @@ public class AttributeMMRulePanel extends AttributeRulePanel
  private ListGrid qTbl;
  private TextItem cardVal;
  private CheckboxItem subclCb;
+ private CheckboxItem subclCntSep;
  private CheckboxItem valUniq;
 // private CheckboxItem qualUniq;
  
@@ -146,7 +147,10 @@ public class AttributeMMRulePanel extends AttributeRulePanel
   valUniq = new CheckboxItem("valuniq");
   valUniq.setTitle("Values must be unique");
   
-  rangeForm.setItems(cardType,cardVal,valUniq);
+  subclCntSep = new CheckboxItem();
+  subclCntSep.setTitle("Count subclasses separately");
+  
+  rangeForm.setItems(cardType,cardVal,valUniq,subclCntSep);
   
   addMember(rangeForm);
   
@@ -276,6 +280,7 @@ public class AttributeMMRulePanel extends AttributeRulePanel
   cardVal.setValue(rule.getCardinality());
   
   valUniq.setValue(rule.isValueUnique());
+  subclCntSep.setValue(rule.isSubclassesCountedSeparately());
   
   if( rule.getQualifiers() != null )
   {
@@ -330,6 +335,7 @@ public class AttributeMMRulePanel extends AttributeRulePanel
   rule.setAttributeClass(targetClass);
 
   rule.setValueUnique(valUniq.getValueAsBoolean());
+  rule.setSubclassesCountedSeparately(subclCntSep.getValueAsBoolean());
   
   ListGridRecord[] recs = qTbl.getRecords();
 

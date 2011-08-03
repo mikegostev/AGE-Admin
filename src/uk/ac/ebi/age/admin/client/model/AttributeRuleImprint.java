@@ -17,6 +17,8 @@ public class AttributeRuleImprint implements IsSerializable, Serializable
  private Collection<QualifierRuleImprint> qualifiers;
  private boolean valueUnique;
  private boolean subclassesIncluded=true;
+ private boolean subclassesCountedSeparately=true;
+ 
 // private QualifiersCondition qualifiersCondition = QualifiersCondition.ANY ;
 
  private int id;
@@ -242,4 +244,15 @@ public class AttributeRuleImprint implements IsSerializable, Serializable
  {
   this.id = id;
  }
+
+ public boolean isSubclassesCountedSeparately()
+ {
+  return subclassesCountedSeparately;
+ }
+
+ public void setSubclassesCountedSeparately(boolean subclassesCountedSeparately)
+ {
+  this.subclassesCountedSeparately = subclassesCountedSeparately;
+ }
+
 }
