@@ -77,13 +77,7 @@ public class Age2ImprintConverter
    @Override
    public AgeAnnotationClassWritable create(AgeAnnotationClassImprint parent, AgeAnnotationClassWritable mCls)
    {
-    AgeAnnotationClassWritable aac = mCls.getSemanticModel().createAgeAnnotationClass( parent.getName(), parent.getId(), mCls );
-
-    if( parent.getAliases() != null )
-    {
-     for( String ali : parent.getAliases() )
-      aac.addAlias( ali );
-    }
+    AgeAnnotationClassWritable aac = mCls.getSemanticModel().createAgeAnnotationClass( parent.getName(), parent.getAliases(), parent.getId(), mCls );
     
     aac.setAbstract( parent.isAbstract() );
     
@@ -118,13 +112,7 @@ public class Age2ImprintConverter
     @Override
     public AgeClassWritable create(AgeClassImprint parent, AgeClassWritable mCls)
     {
-     AgeClassWritable aac = mCls.getSemanticModel().createAgeClass(parent.getName(), parent.getId(), parent.getPrefix(),mCls);
-
-     if(parent.getAliases() != null)
-     {
-      for(String ali : parent.getAliases())
-       aac.addAlias(ali);
-     }
+     AgeClassWritable aac = mCls.getSemanticModel().createAgeClass(parent.getName(), parent.getAliases(), parent.getId(), parent.getPrefix(),mCls);
 
      aac.setAbstract(parent.isAbstract());
 
@@ -192,13 +180,7 @@ public class Age2ImprintConverter
       break;
    }
     
-    AgeAttributeClassWritable aac = mCls.getSemanticModel().createAgeAttributeClass( parent.getName(), parent.getId(), typ, mCls );
-
-    if( parent.getAliases() != null )
-    {
-     for( String ali : parent.getAliases() )
-      aac.addAlias( ali );
-    }
+    AgeAttributeClassWritable aac = mCls.getSemanticModel().createAgeAttributeClass( parent.getName(), parent.getAliases(), parent.getId(), typ, mCls );
     
     aac.setAbstract( parent.isAbstract() );
     
@@ -240,13 +222,7 @@ public class Age2ImprintConverter
     @Override
     public AgeRelationClassWritable create(AgeRelationClassImprint parent, AgeRelationClassWritable mCls)
     {
-     AgeRelationClassWritable aac = mCls.getSemanticModel().createAgeRelationClass(parent.getName(), parent.getId(), mCls);
-
-     if(parent.getAliases() != null)
-     {
-      for(String ali : parent.getAliases())
-       aac.addAlias(ali);
-     }
+     AgeRelationClassWritable aac = mCls.getSemanticModel().createAgeRelationClass(parent.getName(), parent.getAliases(), parent.getId(), mCls);
 
      aac.setAbstract(parent.isAbstract());
 
@@ -464,6 +440,12 @@ public class Age2ImprintConverter
     cImp.setName(acls.getName());
     cImp.setId(acls.getId());
     cImp.setAbstract(acls.isAbstract());
+    
+    if( acls.getAliases() != null )
+    {
+     for( String al : acls.getAliases() )
+      cImp.addAlias(al);
+    }
 
     return cImp;
    }
@@ -496,6 +478,13 @@ public class Age2ImprintConverter
     cImp.setName(acls.getName());
     cImp.setId(acls.getId());
     cImp.setAbstract(acls.isAbstract());
+
+    if( acls.getAliases() != null )
+    {
+     for( String al : acls.getAliases() )
+      cImp.addAlias(al);
+    }
+
     
     return cImp;
    }
@@ -571,6 +560,12 @@ public class Age2ImprintConverter
     else
      cImp.setAbstract(true);
 
+    if( acls.getAliases() != null )
+    {
+     for( String al : acls.getAliases() )
+      cImp.addAlias(al);
+    }
+
 
     return cImp;
    }
@@ -608,6 +603,12 @@ public class Age2ImprintConverter
     cImp.setInverseFunctional(rlCls.isInverseFunctional());
     cImp.setSymmetric(rlCls.isSymmetric());
     cImp.setTransitive(rlCls.isTransitive());
+
+    if( acls.getAliases() != null )
+    {
+     for( String al : acls.getAliases() )
+      cImp.addAlias(al);
+    }
 
     return cImp;
    }
