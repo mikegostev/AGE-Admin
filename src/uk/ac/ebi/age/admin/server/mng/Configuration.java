@@ -11,6 +11,9 @@ import uk.ac.ebi.age.authz.AuthDB;
 import uk.ac.ebi.age.authz.PermissionManager;
 import uk.ac.ebi.age.authz.SessionManager;
 import uk.ac.ebi.age.mng.submission.SubmissionManager;
+import uk.ac.ebi.age.parser.AgeTab2AgeConverter;
+import uk.ac.ebi.age.parser.AgeTabSyntaxParser;
+import uk.ac.ebi.age.parser.SyntaxProfile;
 import uk.ac.ebi.age.service.submission.SubmissionDB;
 
 public class Configuration
@@ -40,7 +43,10 @@ public class Configuration
  private AnnotationManager annotationStorage;
  private FileResourceManager txResMngr;
  private PermissionManager permissionManager;
-
+ private AgeTabSyntaxParser ageTabSyntaxParser;
+ private AgeTab2AgeConverter ageTab2AgeConverter;
+ private SyntaxProfile syntaxProfile;
+ 
  private File tmpDir;
  private File baseDir;
  private File userBaseDir;
@@ -223,6 +229,44 @@ public class Configuration
  {
   this.permissionManager = permissionManager;
  }
+
+
+ public AgeTabSyntaxParser getAgeTabSyntaxParser()
+ {
+  return ageTabSyntaxParser;
+ }
+
+
+ public void setAgeTabSyntaxParser(AgeTabSyntaxParser ageTabSyntaxParser)
+ {
+  this.ageTabSyntaxParser = ageTabSyntaxParser;
+ }
+
+
+ public AgeTab2AgeConverter getAgeTab2AgeConverter()
+ {
+  return ageTab2AgeConverter;
+ }
+
+
+ public void setAgeTab2AgeConverter(AgeTab2AgeConverter ageTab2AgeConverter)
+ {
+  this.ageTab2AgeConverter = ageTab2AgeConverter;
+ }
+
+
+ public SyntaxProfile getSyntaxProfile()
+ {
+  return syntaxProfile;
+ }
+
+
+ public void setSyntaxProfile(SyntaxProfile syntaxProfile)
+ {
+  this.syntaxProfile = syntaxProfile;
+ }
+
+
 
 }
 

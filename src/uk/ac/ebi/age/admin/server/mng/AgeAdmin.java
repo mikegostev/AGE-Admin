@@ -64,6 +64,9 @@ import uk.ac.ebi.age.log.BufferLogger;
 import uk.ac.ebi.age.log.TooManyErrorsException;
 import uk.ac.ebi.age.mng.submission.SubmissionManager;
 import uk.ac.ebi.age.model.SemanticModel;
+import uk.ac.ebi.age.parser.SyntaxProfile;
+import uk.ac.ebi.age.parser.impl.AgeTab2AgeConverterImpl;
+import uk.ac.ebi.age.parser.impl.AgeTabSyntaxParserImpl;
 import uk.ac.ebi.age.service.submission.SubmissionDB;
 import uk.ac.ebi.age.service.submission.impl.H2SubmissionDB;
 import uk.ac.ebi.age.storage.AgeStorageAdm;
@@ -181,11 +184,23 @@ public class AgeAdmin implements SecurityChangedListener
   
   conf.getAuthDB().addSecurityChangedListener(this);
   
+  
   if( conf.getPermissionManager() == null )
    conf.setPermissionManager( new PermissionManagerImpl(spool, conf.getAuthDB(), annotationMngr) );
+
+  if( conf.getSyntaxProfile() == null )
+   conf.setSyntaxProfile( new SyntaxProfile() );
+  
+  if( conf.getAgeTabSyntaxParser() == null )
+   conf.setAgeTabSyntaxParser( new AgeTabSyntaxParserImpl( conf.getSyntaxProfile() ) );
+  
+  conf.setSyntaxProfile( conf.getAgeTabSyntaxParser().getSyntaxProfile() );
+  
+  if( conf.getAgeTab2AgeConverter() == null )
+   conf.setAgeTab2AgeConverter( new AgeTab2AgeConverterImpl(conf.getPermissionManager()) );
   
   if( conf.getSubmissionManager() == null )
-   conf.setSubmissionManager( new SubmissionManager(storage, submissionDB, conf.getPermissionManager() ) );
+   conf.setSubmissionManager( new SubmissionManager(storage, submissionDB, conf.getAgeTabSyntaxParser(), conf.getAgeTab2AgeConverter() ) );
 
 //  if( conf.getClassifierDB() == null )
 //  {
