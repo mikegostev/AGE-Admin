@@ -294,7 +294,11 @@ public class SubmissionUploader implements UploadCommandListener
    }
    catch( TooManyErrorsException e )
    {
-    log.getRootNode().log(Level.ERROR, "Too many errors: "+e.getErrorCount());
+    int errs = e.getErrorCount();
+    
+    log.resetErrorCounter();
+    
+    log.getRootNode().log(Level.ERROR, "Too many errors: "+errs);
     return false;
    }
    catch(Exception e)
