@@ -26,6 +26,7 @@ public class LoginSvc extends HttpServlet
    
    resp.addCookie( new Cookie(Constants.sessionKey, sessId) );
    
+   resp.getWriter().println("OK:"+sessId);
   }
   catch (Exception e) 
   {
@@ -33,7 +34,6 @@ public class LoginSvc extends HttpServlet
    return;
   }
   
-  resp.getWriter().println("OK");
 
  }
 }

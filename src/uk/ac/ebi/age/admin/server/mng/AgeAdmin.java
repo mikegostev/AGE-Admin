@@ -284,6 +284,11 @@ public class AgeAdmin implements SecurityChangedListener
     if( ! authDB.checkUserPassword(lck, u.getId(), password) )
      throw new UserAuthException("User or password is not valid");
 
+    Session s = spool.getSessionByUser( u.getId() );
+    
+    if( s != null )
+     return s;
+    
     return spool.createSession(u.getId());
    }
    catch(AuthDBException e)
@@ -307,10 +312,10 @@ public class AgeAdmin implements SecurityChangedListener
   return Age2ImprintConverter.convertModelToImprint(sm);
  }
 
- public Session getSession(String value)
- {
-  return spool.getSession(value);
- }
+// public Session getSession(String value)
+// {
+//  return spool.getSession(value);
+// }
 
  public ModelStorage getModelStorage()
  {

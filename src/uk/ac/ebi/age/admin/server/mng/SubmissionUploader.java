@@ -86,6 +86,14 @@ public class SubmissionUploader implements UploadCommandListener
     
     val = upReq.getParams().get(SubmissionConstants.SUBMISSON_ID);
     
+    if( val != null )
+    {
+     val = val.trim();
+     if( val.length() == 0 )
+      val=null;
+    }
+    
+     
     if( val == null && blkSts != Status.NEW )
     {
      log.getRootNode().log(Level.ERROR, "Submission ID is not provided");
@@ -315,8 +323,10 @@ public class SubmissionUploader implements UploadCommandListener
   }
   finally
   {
-   out.print("<html><body>OK-"+upReq.getParams().get(SubmissionConstants.SUBMISSON_KEY)+"<pre>\n"+Constants.beginJSONSign+"\n(");
-   out.print(Log2JSON.convert(log.getRootNode()));
+   String logBody = Log2JSON.convert(log.getRootNode());
+   
+   out.print("<html><body>OK-"+upReq.getParams().get(SubmissionConstants.SUBMISSON_KEY)+":["+log.getRootNode().getLevel().name()+"]<pre>\n"+Constants.beginJSONSign+"\n(");
+   out.print(logBody);
    out.print(")\n"+Constants.endJSONSign+"\n</pre></body></html>");
   }
 
