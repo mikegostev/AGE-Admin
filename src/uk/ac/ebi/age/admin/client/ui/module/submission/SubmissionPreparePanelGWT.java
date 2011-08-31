@@ -234,8 +234,6 @@ public class SubmissionPreparePanelGWT extends VLayout
 
     txt = txt.substring(posB + Constants.beginJSONSign.length(), posE);
 
-    System.out.println(txt);
-
     LogNode rLn = ROJSLogNode.convert(txt);
 
     new LogWindow3("Submission creation log", rLn).show();
