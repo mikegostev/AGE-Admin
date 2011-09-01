@@ -54,8 +54,13 @@ public class LogTree3 extends TreeGrid
    @Override
    public void onFolderOpened(FolderOpenedEvent event)
    {
-    if( ! event.getNode().getAttributeAsBoolean("_expanded") )
-     fillNode( (LogTreeNode)event.getNode() );
+    
+    TreeNode tnd = event.getNode();
+    if( ! tnd.getAttributeAsBoolean("_expanded") )
+    {
+     fillNode( (LogTreeNode)tnd );
+    }
+    
    }
   });
   
@@ -70,6 +75,9 @@ public class LogTree3 extends TreeGrid
  private void fillNode( LogTreeNode nd )
  {
   LogNode n  = nd.getNode();
+  
+//  SC.warn("LogNode: "+n.getMessage()+" - "+(n.getSubNodes()==null?"null":n.getSubNodes().size()));
+
   
   if( n.getSubNodes() == null )
    return;
