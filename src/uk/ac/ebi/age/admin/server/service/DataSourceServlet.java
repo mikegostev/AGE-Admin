@@ -50,8 +50,8 @@ public class DataSourceServlet extends ServiceServlet
   {
    String pName = prmNames.nextElement().toString();
    
-   for(String pv : request.getParameterValues(pName))
-    System.out.println(pName+"="+pv);
+//   for(String pv : request.getParameterValues(pName))
+//    System.out.println(pName+"="+pv);
    
    dsr.addRequestParameter(pName, request.getParameter(pName));
   }

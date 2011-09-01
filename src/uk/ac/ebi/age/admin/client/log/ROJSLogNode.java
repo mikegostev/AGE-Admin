@@ -43,7 +43,12 @@ public final class ROJSLogNode extends JavaScriptObject implements LogNode
  @Override
  public List<? extends LogNode> getSubNodes()
  {
-  return new ListOnJsArray<ROJSLogNode>(getSubnodes());
+  JsArray<ROJSLogNode> snds = getSubnodes();
+  
+  if( snds == null )
+   return null;
+  
+  return new ListOnJsArray<ROJSLogNode>( snds );
  }
 
  @Override
