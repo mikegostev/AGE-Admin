@@ -94,7 +94,7 @@ public class SubmissionUploader implements UploadCommandListener
     }
     
      
-    if( val == null && blkSts != Status.NEW )
+    if( val == null && blkSts != Status.NEW && blkSts != Status.UPDATEORNEW )
     {
      log.getRootNode().log(Level.ERROR, "Submission ID is not provided");
      
@@ -156,7 +156,7 @@ public class SubmissionUploader implements UploadCommandListener
  
       val = upReq.getParams().get(SubmissionConstants.MODULE_ID+partNo);
       
-      if( val == null && blkSts != Status.NEW )
+      if( val == null && blkSts != Status.NEW && blkSts != Status.UPDATEORNEW )
       {
        log.getRootNode().log(Level.ERROR, "Module "+partNo+". ID is not provided");
        
@@ -165,10 +165,10 @@ public class SubmissionUploader implements UploadCommandListener
       
       dmMeta.setId( val );
       
-      if( blkSts == Status.NEW || "on".equals(upReq.getParams().get(SubmissionConstants.MODULE_DESCRIPTION_UPDATE+partNo)) )
+      if( blkSts == Status.NEW || blkSts == Status.UPDATEORNEW || "on".equals(upReq.getParams().get(SubmissionConstants.MODULE_DESCRIPTION_UPDATE+partNo)) )
        dmMeta.setDescription(upReq.getParams().get(SubmissionConstants.MODULE_DESCRIPTION+partNo));
 
-      if( blkSts == Status.NEW || "on".equals(upReq.getParams().get(SubmissionConstants.MODULE_FILE_UPDATE+partNo)) )
+      if( blkSts == Status.NEW || blkSts == Status.UPDATEORNEW || "on".equals(upReq.getParams().get(SubmissionConstants.MODULE_FILE_UPDATE+partNo)) )
       {
        File modFile = upReq.getFiles().get(SubmissionConstants.MODULE_FILE+partNo);
        
@@ -240,7 +240,7 @@ public class SubmissionUploader implements UploadCommandListener
       
       val = upReq.getParams().get(SubmissionConstants.ATTACHMENT_ID+partNo);
       
-      if( val == null && blkSts != Status.NEW )
+      if( val == null && blkSts != Status.NEW && blkSts != Status.UPDATEORNEW  )
       {
        log.getRootNode().log(Level.ERROR, "Attachment "+partNo+". ID is not provided");
        
@@ -260,10 +260,10 @@ public class SubmissionUploader implements UploadCommandListener
        atAux.setNewId( upReq.getParams().get(SubmissionConstants.ATTACHMENT_NEW_ID+partNo) );
       
       
-      if( blkSts == Status.NEW || "on".equals( upReq.getParams().get(SubmissionConstants.ATTACHMENT_DESC_UPDATE+partNo) ) )
+      if( blkSts == Status.NEW || blkSts == Status.UPDATEORNEW || "on".equals( upReq.getParams().get(SubmissionConstants.ATTACHMENT_DESC_UPDATE+partNo) ) )
        fatt.setDescription( upReq.getParams().get(SubmissionConstants.ATTACHMENT_DESC+partNo) );
 
-      if( blkSts == Status.NEW || "on".equals( upReq.getParams().get(SubmissionConstants.ATTACHMENT_FILE_UPDATE+partNo) ) )
+      if( blkSts == Status.NEW || blkSts == Status.UPDATEORNEW || "on".equals( upReq.getParams().get(SubmissionConstants.ATTACHMENT_FILE_UPDATE+partNo) ) )
       {
        File attFile = upReq.getFiles().get(SubmissionConstants.ATTACHMENT_FILE+partNo);
        
