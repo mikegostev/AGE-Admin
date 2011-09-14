@@ -8,12 +8,9 @@ import java.io.PrintWriter;
 import uk.ac.ebi.age.admin.server.service.UploadRequest;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
-import uk.ac.ebi.age.annotation.Topic;
 import uk.ac.ebi.age.authz.ACR.Permit;
 import uk.ac.ebi.age.authz.BuiltInUsers;
 import uk.ac.ebi.age.authz.Session;
-import uk.ac.ebi.age.entity.CommonID;
-import uk.ac.ebi.age.entity.EntityDomain;
 import uk.ac.ebi.age.ext.authz.SystemAction;
 import uk.ac.ebi.age.ext.log.LogNode.Level;
 import uk.ac.ebi.age.ext.submission.DataModuleMeta;
@@ -280,25 +277,8 @@ public class SubmissionUploader implements UploadCommandListener
 
     boolean verifyOnly = "on".equals(upReq.getParams().get(SubmissionConstants.VERIFY_ONLY));
     
-    if( sbmManager.storeSubmission(sMeta, updateDescr, log.getRootNode(), verifyOnly ) || sMeta.getStatus() == Status.NEW )
-    {
-     CommonID id = new CommonID();
-     
-     id.setDomain( EntityDomain.CLUSTER );
-     id.setId(sMeta.getId());
-     
-     Configuration.getDefaultConfiguration().getAnnotationManager().addAnnotation(Topic.OWNER, id, userName) ;
-    }
-//    if(  SubmissionManager.getInstance()
-//      .storeSubmission(sMeta, sess.getUserProfile(), admin.getStorageAdmin(), log.getRootNode()) )
-//    {
-//     sMeta.setId(SubmissionConstants.submissionIDPrefix+IdGenerator.getInstance().getStringId(SubmissionConstants.submissionIDDomain));
-//    
-//     admin.storeSubmission( sMeta );
-//    }
-     
-     // BufferLogger.printBranch(log.getRootNode());
-
+    sbmManager.storeSubmission(sMeta, updateDescr, log.getRootNode(), verifyOnly );
+    
    }
    catch( TooManyErrorsException e )
    {
