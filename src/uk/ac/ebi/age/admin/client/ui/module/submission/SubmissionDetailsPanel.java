@@ -256,7 +256,44 @@ public class SubmissionDetailsPanel extends VLayout
    btLay.addMember(rmb);
   }
   
+  Button trank = new Button("Tranklucate");
+
+  trank.addClickHandler(new ClickHandler()
+  {
+   @Override
+   public void onClick(ClickEvent event)
+   {
+    SC.ask("Tranklucate submission", "Do you really want to tranklucate (wipe out) this submission", new BooleanCallback()
+    {
+     
+     @Override
+     public void execute(Boolean value)
+     {
+      if( value != null && value )
+      {
+       AgeAdminService.Util.getInstance().tranklucateSubmission(simp.getId(), new AsyncCallback<SimpleLogNode>()
+       {
+
+        @Override
+        public void onSuccess( SimpleLogNode res )
+        {
+         SimpleLogNode.setLevels( res );
+         new LogWindow("Submission deletion log", res).show();
+        }
+
+        @Override
+        public void onFailure(Throwable caught)
+        {
+         SC.say("Operation error: "+caught.getMessage());
+        }
+       });
+      }     
+      }       
+     });
+    }
+  });
   
+  btLay.addMember(trank);
   
   addMember(btLay);
  }

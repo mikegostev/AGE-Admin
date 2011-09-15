@@ -100,6 +100,12 @@ public class AgeAdminServiceImpl extends SessionRemoteServiceServlet implements 
  }
  
  @Override
+ public SimpleLogNode tranklucateSubmission(String id)
+ {
+  return adm.tranklucateSubmission(id);
+ }
+ 
+ @Override
  public SimpleLogNode restoreSubmission(String id) throws UserAuthException, SubmissionDBException
  {
   return adm.restoreSubmission(id);
@@ -120,5 +126,7 @@ public class AgeAdminServiceImpl extends SessionRemoteServiceServlet implements 
  {
   adm.storeSubmissionTags(param,result);
  }
+
+
 
 }

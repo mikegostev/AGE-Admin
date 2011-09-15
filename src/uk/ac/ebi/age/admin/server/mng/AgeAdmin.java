@@ -528,6 +528,27 @@ public class AgeAdmin implements SecurityChangedListener
   return log.getRootNode();
  }
 
+
+
+ public SimpleLogNode tranklucateSubmission(String id)
+ {
+  // TODO check permission to list all submissions
+
+  BufferLogger log = new BufferLogger(uk.ac.ebi.age.conf.Constants.MAX_ERRORS);
+  
+  try
+  {
+   configuration.getSubmissionManager().tranklucateSubmission(id, log.getRootNode());
+  }
+  catch(TooManyErrorsException e)
+  {
+   log.getRootNode().log(Level.ERROR, "Too many errors: " + e.getErrorCount());
+  }
+
+  return log.getRootNode();
+ }
+
+ 
  public SimpleLogNode restoreSubmission(String id) throws SubmissionDBException
  {
   // TODO check permission to list all submissions
@@ -583,6 +604,7 @@ public class AgeAdmin implements SecurityChangedListener
  {
   storage.rebuildIndices();
  }
+
 
 
  

@@ -42,4 +42,6 @@ public interface AgeAdminServiceAsync
 
  void storeSubmissionTags(String param, Collection<TagRef> result, AsyncCallback<Void> asyncCallback);
 
+ void tranklucateSubmission(String id, AsyncCallback<SimpleLogNode> asyncCallback);
+
 }

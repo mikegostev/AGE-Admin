@@ -61,4 +61,6 @@ public interface AgeAdminService extends RemoteService
  Collection<TagRef> getSubmissionTags(String param) throws UserAuthException;
 
  void storeSubmissionTags(String param, Collection<TagRef> result);
+
+ SimpleLogNode tranklucateSubmission(String id);
 }
