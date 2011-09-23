@@ -34,7 +34,6 @@ public class ModelGeneralPanel extends HLayout
    @Override
    public void onDraw(DrawEvent event)
    {
-    System.out.println("Storage panel draw");
     AgeAdminService.Util.getInstance().getModelStorage(new AsyncCallback<ModelStorage>()
     {
      
