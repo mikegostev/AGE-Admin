@@ -178,6 +178,7 @@ public class Age2ImprintConverter
      case OBJECT:
       typ = DataType.OBJECT;
       break;
+
    }
     
     AgeAttributeClassWritable aac = mCls.getSemanticModel().createAgeAttributeClass( parent.getName(), parent.getAliases(), parent.getId(), typ, mCls );

@@ -12,10 +12,10 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.transaction.file.FileResourceManager;
 import org.apache.commons.transaction.file.ResourceManagerSystemException;
-import org.apache.commons.transaction.util.CommonsLoggingLogger;
+import org.apache.commons.transaction.util.Log4jLogger;
+import org.apache.log4j.Logger;
 
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
@@ -141,7 +141,7 @@ public class AgeAdmin implements SecurityChangedListener
   if( conf.getTxResourceManager() == null )
   {
    conf.setTxResourceManager( new FileResourceManager(conf.getBaseDir().getAbsolutePath(),
-     new File(conf.getTmpDir(),"tx").getAbsolutePath() , false, new CommonsLoggingLogger(LogFactory.getLog(FileResourceManager.class))) );
+     new File(conf.getTmpDir(),"tx").getAbsolutePath() , false, new Log4jLogger( Logger.getLogger(FileResourceManager.class) ) ) );
    
    try
    {
