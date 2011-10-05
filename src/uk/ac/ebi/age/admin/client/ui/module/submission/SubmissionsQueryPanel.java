@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 
 import uk.ac.ebi.age.admin.client.AgeAdminService;
+import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.ext.submission.SubmissionQuery;
 import uk.ac.ebi.age.ext.submission.SubmissionQuery.Selector;
 import uk.ac.ebi.age.ext.submission.SubmissionReport;
@@ -209,6 +210,9 @@ public class SubmissionsQueryPanel extends HLayout
    q.setModifiedTo(dt.getTime()+24L*3600L*1000L);
   else
    q.setModifiedTo(-1);
+  
+  q.setOffset(0);
+  q.setLimit(Constants.SUBMISSIONS_PER_PAGE);
   
   AgeAdminService.Util.getInstance().getSubmissions( q, new AsyncCallback<SubmissionReport>()
   {

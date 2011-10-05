@@ -49,6 +49,8 @@ public class Constants
  public static final String beginJSONSign = "//REPORT BEGIN";
  public static final String endJSONSign = "//REPORT END";
 
+ public static final int SUBMISSIONS_PER_PAGE = 30;
+
 
 
 }

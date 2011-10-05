@@ -6,6 +6,7 @@ import java.util.Date;
 import uk.ac.ebi.age.admin.client.AgeAdminService;
 import uk.ac.ebi.age.admin.client.ui.module.classif.TagSelectedListener;
 import uk.ac.ebi.age.admin.client.ui.module.classif.TagsListDialog;
+import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.ext.authz.TagRef;
 import uk.ac.ebi.age.ext.submission.SubmissionMeta;
 import uk.ac.ebi.age.ext.submission.SubmissionQuery;
@@ -28,7 +29,6 @@ import com.smartgwt.client.widgets.layout.VLayout;
 
 public class SubmissionsListPane extends VLayout
 {
- public final static int MAX_SUBMISSIONS_PER_PAGE=20;
  
  private SubmissionQuery query;
  
@@ -117,6 +117,48 @@ public class SubmissionsListPane extends VLayout
 //  lb.setAlign(Alignment.CENTER);
 //  
 //  addMember(lb);
+
+  LinkManager.getInstance().addLinkClickListener("submPage", new LinkClickListener()
+  {
+
+   @Override
+   public void linkClicked(String param)
+   {
+    final int pgNum;
+    
+    try
+    {
+     pgNum = Integer.parseInt(param);
+    }
+    catch (Exception e) 
+    {
+     return;
+    }
+    
+    if( pgNum <= 0 )
+     return;
+    
+    query.setOffset( (pgNum-1)*Constants.SUBMISSIONS_PER_PAGE );
+    
+    AgeAdminService.Util.getInstance().getSubmissions( query, new AsyncCallback<SubmissionReport>()
+      {
+       
+       @Override
+       public void onSuccess(SubmissionReport result)
+       {
+        showResult(result, query, pgNum);
+       }
+       
+       @Override
+       public void onFailure(Throwable caught)
+       {
+        SC.warn("Action failed: "+caught.getMessage());
+       }
+      });
+    
+   }}
+  );
+
   
   LinkManager.getInstance().addLinkClickListener("clustTags", new LinkClickListener()
   {
@@ -155,8 +197,7 @@ public class SubmissionsListPane extends VLayout
        @Override
        public void onFailure(Throwable caught)
        {
-        // TODO Auto-generated method stub
-        
+        SC.warn("Action failed: "+caught.getMessage());
        }
       });
    }
@@ -170,9 +211,9 @@ public class SubmissionsListPane extends VLayout
   resultGrid.selectAllRecords();
   resultGrid.removeSelectedData();
   
-  if( result.getTotalSubmissions() > MAX_SUBMISSIONS_PER_PAGE )
+  if( result.getTotalSubmissions() > Constants.SUBMISSIONS_PER_PAGE )
   {
-   pagingRuler.setContents(cpage, result.getTotalSubmissions(), MAX_SUBMISSIONS_PER_PAGE, null, null);
+   pagingRuler.setContents(cpage, result.getTotalSubmissions(), Constants.SUBMISSIONS_PER_PAGE, null, null);
    pagingRuler.setVisible(true);
   }
   else
