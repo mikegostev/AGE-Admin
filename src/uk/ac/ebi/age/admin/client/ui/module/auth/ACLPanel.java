@@ -294,24 +294,43 @@ public class ACLPanel extends HLayout
   aclTools.addSpacer(20);
   aclTools.addButton(addBut);
 
-  ToolStripButton delBut = new ToolStripButton();
-  delBut.setTitle("Deny");
-  delBut.setSelected(true);
-  delBut.setIcon("icons/auth/deny.png");
-  delBut.addClickHandler(new AddARCHandler()
+  {
+   ToolStripButton denyBut = new ToolStripButton();
+   denyBut.setTitle("Deny");
+   denyBut.setSelected(true);
+   denyBut.setIcon("icons/auth/deny.png");
+   denyBut.addClickHandler(new AddARCHandler()
+   {
+    @Override
+    public void onClick(ClickEvent event)
+    {
+     ListGridRecord acrr = makeRecord("deny");
+
+     if(acrr != null)
+      acl.getDataSource().addData(acrr);
+    }
+   });
+
+   aclTools.addSpacer(5);
+   aclTools.addButton(denyBut);
+  }
+
+  ToolStripButton remBut = new ToolStripButton();
+  remBut.setTitle("Remove");
+  remBut.setSelected(true);
+  remBut.setIcon("icons/auth/permission_delete.png");
+  remBut.addClickHandler(new AddARCHandler()
   {
    @Override
    public void onClick(ClickEvent event)
    {
-    ListGridRecord acrr = makeRecord("deny");
-    
-    if( acrr != null )
-     acl.getDataSource().addData(acrr);
+    acl.removeSelectedData();
    }
   });
 
   aclTools.addSpacer(5);
-  aclTools.addButton(delBut);
+  aclTools.addButton(remBut);
+  
   
   aclPanel.addMember(aclTools);
 
