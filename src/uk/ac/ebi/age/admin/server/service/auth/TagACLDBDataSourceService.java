@@ -276,8 +276,10 @@ public class TagACLDBDataSourceService implements DataSourceBackendService
 
  private DataSourceResponse processFetch(DataSourceRequest dsr)
  {
-  ReadLock rl = db.getReadLock();
-  DataSourceResponse resp = new DataSourceResponse(rl);
+  final ReadLock lck = db.getReadLock();
+  
+  DataSourceResponse resp = new DataSourceResponse(db,lck);
+
   
   String tagId = dsr.getRequestParametersMap().get(Constants.tagIdParam);
   
@@ -298,7 +300,7 @@ public class TagACLDBDataSourceService implements DataSourceBackendService
   
   try
   {
-   Collection<? extends ACR> acrs = db.getACL( rl, classifId, tagId );
+   Collection<? extends ACR> acrs = db.getACL( lck, classifId, tagId );
    
    resp.setTotal( acrs.size() );
    resp.setSize( acrs.size() );

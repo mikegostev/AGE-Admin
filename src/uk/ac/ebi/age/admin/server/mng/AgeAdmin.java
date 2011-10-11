@@ -37,9 +37,10 @@ import uk.ac.ebi.age.admin.shared.ModelPath;
 import uk.ac.ebi.age.admin.shared.StoreNode;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
+import uk.ac.ebi.age.annotation.AnnotationDBException;
 import uk.ac.ebi.age.annotation.AnnotationManager;
 import uk.ac.ebi.age.annotation.Topic;
-import uk.ac.ebi.age.annotation.impl.InMemoryAnnotationStorage;
+import uk.ac.ebi.age.annotation.impl.H2AnnotationStorage;
 import uk.ac.ebi.age.authz.AuthDB;
 import uk.ac.ebi.age.authz.SecurityChangedListener;
 import uk.ac.ebi.age.authz.Session;
@@ -50,8 +51,7 @@ import uk.ac.ebi.age.authz.exception.DBInitException;
 import uk.ac.ebi.age.authz.impl.PermissionManagerImpl;
 import uk.ac.ebi.age.authz.impl.SerializedAuthDBImpl;
 import uk.ac.ebi.age.authz.impl.SessionManagerImpl;
-import uk.ac.ebi.age.entity.CommonID;
-import uk.ac.ebi.age.entity.EntityDomain;
+import uk.ac.ebi.age.entity.ClusterEntity;
 import uk.ac.ebi.age.ext.authz.TagRef;
 import uk.ac.ebi.age.ext.log.LogNode;
 import uk.ac.ebi.age.ext.log.LogNode.Level;
@@ -158,9 +158,10 @@ public class AgeAdmin implements SecurityChangedListener
   {
    try
    {
-    conf.setAnnotationManager( annotationMngr = new InMemoryAnnotationStorage(conf.getTxResourceManager(),Configuration.annotationRelPath) );
+    conf.setAnnotationManager( annotationMngr = new H2AnnotationStorage( new File( Configuration.getDefaultConfiguration().getBaseDir(), Configuration.annotationRelPath) ) );
+//    conf.setAnnotationManager( annotationMngr = new InMemoryAnnotationStorage(conf.getTxResourceManager(),Configuration.annotationRelPath) );
    }
-   catch(uk.ac.ebi.age.annotation.DBInitException e)
+   catch(uk.ac.ebi.age.annotation.AnnotationDBInitException e)
    {
     e.printStackTrace();
     throw new AgeAdminException(e);
@@ -298,7 +299,7 @@ public class AgeAdmin implements SecurityChangedListener
   }
   finally
   {
-   lck.release();
+   authDB.releaseLock(lck);
   }
   
   
@@ -570,31 +571,35 @@ public class AgeAdmin implements SecurityChangedListener
 
 
  @SuppressWarnings("unchecked")
- public Collection<TagRef> getSubmissionTags(String param)
+ public Collection<TagRef> getSubmissionTags(String param) throws SubmissionDBException
  {
   // TODO check permission
   
-  CommonID id = new CommonID();
-  
-  id.setDomain(EntityDomain.CLUSTER);
-  id.setId(param);
-  
-  return (Collection<TagRef>) annotationMngr.getAnnotation(Topic.TAG, id);
+  try
+  {
+   return (Collection<TagRef>) annotationMngr.getAnnotation(Topic.TAG, new ClusterEntity(param), false);
+  }
+  catch(AnnotationDBException e)
+  {
+   throw new SubmissionDBException("Annotation DB error: "+e.getMessage(), e);
+  }
  }
 
 
 
- public void storeSubmissionTags(String param, Collection<TagRef> result)
+ public void storeSubmissionTags(String param, Collection<TagRef> result) throws SubmissionDBException
  {
-  CommonID id = new CommonID();
-  
-  id.setDomain(EntityDomain.CLUSTER);
-  id.setId(param);
-  
   if( ! ( result instanceof ArrayList ) )
    result = new ArrayList<TagRef>( result );
   
-  annotationMngr.addAnnotation(Topic.TAG, id, (Serializable)result);
+  try
+  {
+   annotationMngr.addAnnotation(Topic.TAG,  new ClusterEntity(param), (Serializable)result);
+  }
+  catch(AnnotationDBException e)
+  {
+   throw new SubmissionDBException("Annotation DB error: "+e.getMessage(), e);
+  }
  }
 
 

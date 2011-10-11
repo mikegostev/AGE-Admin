@@ -114,7 +114,7 @@ public class AgeAdminServiceImpl extends SessionRemoteServiceServlet implements 
 
 
  @Override
- public Collection<TagRef> getSubmissionTags(String param) throws UserAuthException
+ public Collection<TagRef> getSubmissionTags(String param) throws UserAuthException, SubmissionDBException
  {
   return adm.getSubmissionTags(param);
  }
@@ -122,7 +122,7 @@ public class AgeAdminServiceImpl extends SessionRemoteServiceServlet implements 
 
 
  @Override
- public void storeSubmissionTags(String param, Collection<TagRef> result)
+ public void storeSubmissionTags(String param, Collection<TagRef> result) throws SubmissionDBException
  {
   adm.storeSubmissionTags(param,result);
  }

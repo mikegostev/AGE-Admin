@@ -257,13 +257,13 @@ public class SystemACLDBDataSourceService implements DataSourceBackendService
 
  private DataSourceResponse processFetch(DataSourceRequest dsr)
  {
-  ReadLock rl = db.getReadLock();
-  DataSourceResponse resp = new DataSourceResponse(rl);
+  final ReadLock lck = db.getReadLock();
   
+  DataSourceResponse resp = new DataSourceResponse(db,lck);
   
   try
   {
-   Collection<? extends ACR> acrs = db.getSysACL( rl);
+   Collection<? extends ACR> acrs = db.getSysACL( lck );
    
    resp.setTotal( acrs.size() );
    resp.setSize( acrs.size() );

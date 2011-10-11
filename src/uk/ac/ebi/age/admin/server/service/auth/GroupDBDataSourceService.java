@@ -196,8 +196,9 @@ public class GroupDBDataSourceService implements DataSourceBackendService
  {
   Map<DSField, String> vmap = dsr.getValueMap();
   
-  ReadLock rl = db.getReadLock();
-  DataSourceResponse resp = new DataSourceResponse(rl);
+  final ReadLock rl = db.getReadLock();
+
+  DataSourceResponse resp = new DataSourceResponse(db,rl);
   
   if( vmap == null || vmap.size() == 0 )
   {

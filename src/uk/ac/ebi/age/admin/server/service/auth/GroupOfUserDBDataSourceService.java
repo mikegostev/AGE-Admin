@@ -168,8 +168,9 @@ public class GroupOfUserDBDataSourceService implements DataSourceBackendService
 
  private DataSourceResponse processFetch(DataSourceRequest dsr)
  {
-  ReadLock rl = db.getReadLock();
-  DataSourceResponse resp = new DataSourceResponse(rl);
+  final ReadLock rl = db.getReadLock();
+  DataSourceResponse resp = new DataSourceResponse(db,rl);
+
   
   String userId = dsr.getRequestParametersMap().get(Constants.userIdParam);
   

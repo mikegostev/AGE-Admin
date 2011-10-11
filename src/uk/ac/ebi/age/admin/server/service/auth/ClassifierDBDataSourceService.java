@@ -194,9 +194,9 @@ public class ClassifierDBDataSourceService implements DataSourceBackendService
 
  private DataSourceResponse processFetch(DataSourceRequest dsr)
  {
-  ReadLock lck = db.getReadLock();
+  final ReadLock lck = db.getReadLock();
   
-  DataSourceResponse resp = new DataSourceResponse( lck );
+  DataSourceResponse resp = new DataSourceResponse(db,lck);
   
   Map<DSField, String> vmap = dsr.getValueMap();
   

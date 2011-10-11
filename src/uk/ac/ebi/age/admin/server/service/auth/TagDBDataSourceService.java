@@ -209,8 +209,10 @@ public class TagDBDataSourceService implements DataSourceBackendService
 
  private DataSourceResponse processFetch(DataSourceRequest dsr)
  {
-  ReadLock lck = db.getReadLock();
-  DataSourceResponse resp = new DataSourceResponse( lck );
+  final ReadLock lck = db.getReadLock();
+  
+  DataSourceResponse resp = new DataSourceResponse(db,lck);
+
   
   String clsId = dsr.getRequestParametersMap().get(Constants.classifIdParam);
   
@@ -220,7 +222,7 @@ public class TagDBDataSourceService implements DataSourceBackendService
    return resp;
   }
   
-  Map<DSField, String> vmap = dsr.getValueMap();
+//  Map<DSField, String> vmap = dsr.getValueMap();
 //  String parentTagId = vmap.get(TagsDSDef.parentField); parentTagId.equals("_root")?null:parentTagId
   
   try

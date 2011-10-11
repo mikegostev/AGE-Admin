@@ -296,8 +296,10 @@ public class ProfilePermissionsDBDataSourceService implements DataSourceBackendS
 
  private DataSourceResponse processFetch(DataSourceRequest dsr)
  {
-  ReadLock lck = db.getReadLock();
-  DataSourceResponse resp = new DataSourceResponse( lck );
+  final ReadLock lck = db.getReadLock();
+  
+  DataSourceResponse resp = new DataSourceResponse(db,lck);
+
   
   String profId = dsr.getRequestParametersMap().get(Constants.profileIdParam);
   

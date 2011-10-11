@@ -196,8 +196,10 @@ public class ProfileDBDataSourceService implements DataSourceBackendService
 
  private DataSourceResponse processFetch(DataSourceRequest dsr)
  {
-  ReadLock lck = db.getReadLock();
-  DataSourceResponse resp = new DataSourceResponse( lck );
+  final ReadLock lck = db.getReadLock();
+  
+  DataSourceResponse resp = new DataSourceResponse(db,lck);
+
   
   Map<DSField, String> vmap = dsr.getValueMap();
   

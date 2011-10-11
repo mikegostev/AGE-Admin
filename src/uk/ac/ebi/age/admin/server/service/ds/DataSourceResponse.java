@@ -1,13 +1,15 @@
 package uk.ac.ebi.age.admin.server.service.ds;
 
 import uk.ac.ebi.age.admin.shared.ds.DSField;
-import uk.ac.ebi.age.transaction.Lock;
+import uk.ac.ebi.age.transaction.ReadLock;
+import uk.ac.ebi.age.transaction.TransactionalDB;
 
 import com.pri.util.collection.MapIterator;
 
 public class DataSourceResponse
 {
- private Lock lck;
+ private TransactionalDB db;
+ private ReadLock lck;
  private int size;
  private int total;
  private MapIterator<DSField, String> iterator;
@@ -16,9 +18,11 @@ public class DataSourceResponse
  public DataSourceResponse()
  {}
  
- public DataSourceResponse( Lock l )
+ public DataSourceResponse(TransactionalDB db, ReadLock lck)
  {
-  lck=l;
+  super();
+  this.db = db;
+  this.lck = lck;
  }
  
  public void setTotal(int ttl)
@@ -61,10 +65,10 @@ public class DataSourceResponse
   return errorMessage;
  }
 
- public void release()
+ public final void release()
  {
-  if( lck != null )
-   lck.release();
+  if( db!=null )
+   db.releaseLock(lck);
  }
  
 }
