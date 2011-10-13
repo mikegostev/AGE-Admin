@@ -1,5 +1,6 @@
 package uk.ac.ebi.age.admin.client.ui.module.submission;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import uk.ac.ebi.age.admin.client.AgeAdminService;
 import uk.ac.ebi.age.admin.client.ui.PlacingManager;
 import uk.ac.ebi.age.admin.client.ui.module.log.LogWindow;
 import uk.ac.ebi.age.admin.shared.Constants;
+import uk.ac.ebi.age.ext.authz.TagRef;
 import uk.ac.ebi.age.ext.log.SimpleLogNode;
 import uk.ac.ebi.age.ext.submission.DataModuleMeta;
 import uk.ac.ebi.age.ext.submission.FileAttachmentMeta;
@@ -40,7 +42,9 @@ public class SubmissionDetailsPanel extends VLayout
   
   ds.setClientOnly(true);
 
-  record.setAttribute(SubmissionConstants.TAGS.name(), "<a class='el' href='javascript:linkClicked(&quot;clustTags&quot;,&quot;"+simp.getId()+"&quot;)'>manage tags</a>");
+ 
+  record.setAttribute(SubmissionConstants.TAGS.name(), tagList(simp.getTags())
+    +" <a class='el' href='javascript:linkClicked(&quot;clustTags&quot;,&quot;"+simp.getId()+"&quot;)'>manage tags</a>");
 
   ds.addData( record );
   
@@ -75,6 +79,7 @@ public class SubmissionDetailsPanel extends VLayout
       DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format(new Date(dmImp.getSubmissionTime())));
     rec.setAttribute(SubmissionConstants.MTIME.name(),
       DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format(new Date(dmImp.getModificationTime())));
+    rec.setAttribute(SubmissionConstants.TAGS.name(), tagList(dmImp.getTags()));
     rec.setAttribute(SubmissionConstants.SRC_FILE.name(), "<a target='_blank' href='download?"
       +Constants.downloadHandlerParameter+"="+Constants.documentRequestSubject
       +"&"+Constants.clusterIdParameter+"="+simp.getId()
@@ -118,6 +123,7 @@ public class SubmissionDetailsPanel extends VLayout
     rec.setAttribute(SubmissionConstants.MTIME.name(),
       DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format(new Date(faImp.getModificationTime())));
 //    rec.setAttribute(SubmissionFields.SRC_FILE.name(), dmImp.getId());
+    rec.setAttribute(SubmissionConstants.TAGS.name(), tagList(faImp.getTags()));
     rec.setAttribute(SubmissionConstants.SRC_FILE.name(), "<a target='_blank' href='download?"
       +Constants.downloadHandlerParameter+"="+Constants.attachmentRequestSubject
       +"&"+Constants.clusterIdParameter+"="+simp.getId()
@@ -298,4 +304,32 @@ public class SubmissionDetailsPanel extends VLayout
   addMember(btLay);
  }
 
+ public static String tagList( Collection<TagRef> tags )
+ {
+  String tagStr = "";
+  
+  if( tags != null )
+  {
+   StringBuilder sb = new StringBuilder();
+   
+   boolean first = true;
+   for( TagRef tr : tags )
+   {
+    if( ! first )
+     sb.append("; ");
+    else
+     first=false;
+    
+    sb.append(tr.getClassiferName()).append(':').append(tr.getTagName());
+    
+    if( tr.getTagValue() != null )
+     sb.append('=').append(tr.getTagValue());
+   } 
+
+   tagStr = sb.toString();
+  } 
+  
+  return tagStr;
+ }
+ 
 }

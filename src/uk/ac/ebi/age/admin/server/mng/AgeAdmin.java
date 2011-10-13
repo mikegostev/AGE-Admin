@@ -51,13 +51,18 @@ import uk.ac.ebi.age.authz.exception.DBInitException;
 import uk.ac.ebi.age.authz.impl.PermissionManagerImpl;
 import uk.ac.ebi.age.authz.impl.SerializedAuthDBImpl;
 import uk.ac.ebi.age.authz.impl.SessionManagerImpl;
+import uk.ac.ebi.age.entity.AttachmentEntity;
 import uk.ac.ebi.age.entity.ClusterEntity;
+import uk.ac.ebi.age.entity.ModuleEntity;
 import uk.ac.ebi.age.ext.authz.TagRef;
 import uk.ac.ebi.age.ext.log.LogNode;
 import uk.ac.ebi.age.ext.log.LogNode.Level;
 import uk.ac.ebi.age.ext.log.SimpleLogNode;
+import uk.ac.ebi.age.ext.submission.DataModuleMeta;
+import uk.ac.ebi.age.ext.submission.FileAttachmentMeta;
 import uk.ac.ebi.age.ext.submission.HistoryEntry;
 import uk.ac.ebi.age.ext.submission.SubmissionDBException;
+import uk.ac.ebi.age.ext.submission.SubmissionMeta;
 import uk.ac.ebi.age.ext.submission.SubmissionQuery;
 import uk.ac.ebi.age.ext.submission.SubmissionReport;
 import uk.ac.ebi.age.log.BufferLogger;
@@ -494,11 +499,82 @@ public class AgeAdmin implements SecurityChangedListener
 
 
 
+ @SuppressWarnings("unchecked")
  public SubmissionReport getSubmissions(SubmissionQuery q) throws SubmissionDBException
  {
   // TODO check permission to list all submissions
   
-  return submissionDB.getSubmissions(q);
+  SubmissionReport rep = submissionDB.getSubmissions(q);
+  
+  ClusterEntity ent = new ClusterEntity(null);
+  
+  
+  ReadLock rl = annotationMngr.getReadLock();
+  
+  try
+  {
+
+   for(SubmissionMeta sm : rep.getSubmissions())
+   {
+    ent.setEntityID(sm.getId());
+
+    try
+    {
+     sm.setTags((Collection<TagRef>) annotationMngr.getAnnotation(rl, Topic.TAG, ent, false));
+    }
+    catch(AnnotationDBException e)
+    {
+     e.printStackTrace();
+    }
+
+    if(sm.getDataModules() != null)
+    {
+     ModuleEntity me = new ModuleEntity(ent, null);
+
+     for(DataModuleMeta dmm : sm.getDataModules())
+     {
+      me.setEntityId(dmm.getId());
+
+      try
+      {
+       dmm.setTags((Collection<TagRef>) annotationMngr.getAnnotation(rl, Topic.TAG, me, false));
+      }
+      catch(AnnotationDBException e)
+      {
+       e.printStackTrace();
+      }
+
+     }
+    }
+
+    if(sm.getAttachments() != null)
+    {
+     AttachmentEntity ae = new AttachmentEntity(ent, null);
+
+     for(FileAttachmentMeta atm : sm.getAttachments())
+     {
+      ae.setEntityId(atm.getId());
+
+      try
+      {
+       atm.setTags((Collection<TagRef>) annotationMngr.getAnnotation(rl, Topic.TAG, ae, false));
+      }
+      catch(AnnotationDBException e)
+      {
+       e.printStackTrace();
+      }
+
+     }
+    }
+   }
+
+  }
+  finally
+  {
+   annotationMngr.releaseLock(rl);
+  }
+  
+  return rep;
  }
 
 

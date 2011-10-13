@@ -61,6 +61,7 @@ public enum SubmissionConstants
   ds.addField(new DataSourceTextField(SubmissionConstants.MDFR.name(), SubmissionConstants.MDFR.title()));
   ds.addField(new DataSourceDateField(SubmissionConstants.CTIME.name(), SubmissionConstants.CTIME.title()));
   ds.addField(new DataSourceDateField(SubmissionConstants.MTIME.name(), SubmissionConstants.MTIME.title()));
+  ds.addField(new DataSourceDateField(SubmissionConstants.TAGS.name(), SubmissionConstants.TAGS.title()));
   ds.addField(new DataSourceTextField(SubmissionConstants.SRC_FILE.name(), SubmissionConstants.SRC_FILE.title()));
   
   return ds;
@@ -77,6 +78,7 @@ public enum SubmissionConstants
   ds.addField(new DataSourceTextField(SubmissionConstants.MDFR.name(), SubmissionConstants.MDFR.title()));
   ds.addField(new DataSourceDateField(SubmissionConstants.CTIME.name(), SubmissionConstants.CTIME.title()));
   ds.addField(new DataSourceDateField(SubmissionConstants.MTIME.name(), SubmissionConstants.MTIME.title()));
+  ds.addField(new DataSourceDateField(SubmissionConstants.TAGS.name(), SubmissionConstants.TAGS.title()));
   ds.addField(new DataSourceTextField(SubmissionConstants.SRC_FILE.name(), SubmissionConstants.SRC_FILE.title()));
   
   return ds;
