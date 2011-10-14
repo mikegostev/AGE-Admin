@@ -175,6 +175,7 @@ public class ClassifiersList extends VLayout
   });
 
   addMember(list);
+
  }
  
  private void clearDetailsPanel()

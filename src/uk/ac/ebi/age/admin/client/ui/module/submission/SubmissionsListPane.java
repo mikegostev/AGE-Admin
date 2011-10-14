@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.Date;
 
 import uk.ac.ebi.age.admin.client.AgeAdminService;
+import uk.ac.ebi.age.admin.client.ui.module.classif.TagSelectDialog2;
 import uk.ac.ebi.age.admin.client.ui.module.classif.TagSelectedListener;
-import uk.ac.ebi.age.admin.client.ui.module.classif.TagsListDialog;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.ext.authz.TagRef;
 import uk.ac.ebi.age.ext.submission.SubmissionMeta;
@@ -171,7 +171,7 @@ public class SubmissionsListPane extends VLayout
        @Override
        public void onSuccess(final Collection<TagRef> result)
        {
-        new TagsListDialog(result, new TagSelectedListener()
+        new TagSelectDialog2(result, new TagSelectedListener()
         {
          @Override
          public void tagSelected(Collection<TagRef> tr)
