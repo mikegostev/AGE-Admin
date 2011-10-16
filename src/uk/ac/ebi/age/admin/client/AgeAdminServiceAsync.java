@@ -7,6 +7,7 @@ import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
 import uk.ac.ebi.age.admin.shared.ModelPath;
 import uk.ac.ebi.age.ext.authz.TagRef;
+import uk.ac.ebi.age.ext.entity.Entity;
 import uk.ac.ebi.age.ext.log.LogNode;
 import uk.ac.ebi.age.ext.log.SimpleLogNode;
 import uk.ac.ebi.age.ext.submission.HistoryEntry;
@@ -38,10 +39,14 @@ public interface AgeAdminServiceAsync
 
  void restoreSubmission(String id, AsyncCallback<SimpleLogNode> asyncCallback);
 
- void getSubmissionTags(String param, AsyncCallback<Collection<TagRef>> asyncCallback);
+// void getSubmissionTags(String param, AsyncCallback<Collection<TagRef>> asyncCallback);
 
- void storeSubmissionTags(String param, Collection<TagRef> result, AsyncCallback<Void> asyncCallback);
+// void storeSubmissionTags(String param, Collection<TagRef> result, AsyncCallback<Void> asyncCallback);
 
  void tranklucateSubmission(String id, AsyncCallback<SimpleLogNode> asyncCallback);
+
+ void getEntityTags(Entity instance, AsyncCallback<Collection<TagRef>> asyncCallback);
+
+ void storeEntityTags(Entity instance, Collection<TagRef> tr, AsyncCallback<Void> asyncCallback);
 
 }

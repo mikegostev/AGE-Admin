@@ -9,6 +9,7 @@ import uk.ac.ebi.age.admin.client.model.ModelStorageException;
 import uk.ac.ebi.age.admin.shared.ModelPath;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
 import uk.ac.ebi.age.ext.authz.TagRef;
+import uk.ac.ebi.age.ext.entity.Entity;
 import uk.ac.ebi.age.ext.log.LogNode;
 import uk.ac.ebi.age.ext.log.SimpleLogNode;
 import uk.ac.ebi.age.ext.submission.HistoryEntry;
@@ -58,9 +59,17 @@ public interface AgeAdminService extends RemoteService
 
  SimpleLogNode restoreSubmission(String id) throws UserAuthException, SubmissionDBException;
 
- Collection<TagRef> getSubmissionTags(String param) throws UserAuthException, SubmissionDBException;
-
- void storeSubmissionTags(String param, Collection<TagRef> result) throws SubmissionDBException;
 
  SimpleLogNode tranklucateSubmission(String id) throws SubmissionDBException;
+
+ Collection<TagRef> getEntityTags(Entity instance);
+
+ void storeEntityTags(Entity instance, Collection<TagRef> tr);
+
+ 
+ 
+ 
+// Collection<TagRef> getSubmissionTags(String param) throws UserAuthException, SubmissionDBException;
+// 
+// void storeSubmissionTags(String param, Collection<TagRef> result) throws SubmissionDBException;
 }
