@@ -3,6 +3,7 @@ package uk.ac.ebi.age.admin.client.ui.module.classif;
 import java.util.HashMap;
 
 import uk.ac.ebi.age.admin.client.Session;
+import uk.ac.ebi.age.admin.client.ui.ObjectSelectedListened;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.cassif.ClassifierDSDef;
 import uk.ac.ebi.age.ext.authz.TagRef;
@@ -19,6 +20,8 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.events.DataArrivedEvent;
+import com.smartgwt.client.widgets.grid.events.DataArrivedHandler;
 import com.smartgwt.client.widgets.grid.events.EditFailedEvent;
 import com.smartgwt.client.widgets.grid.events.EditFailedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
@@ -38,14 +41,19 @@ public class ClassifiersList extends VLayout
  private Layout detailsPanel;
  
  private TagsTree tagsTree;
+ private ListGrid classifierList;
+ 
+ private ObjectSelectedListened<TagRef> selListener;
  
  @SuppressWarnings("serial")
- public ClassifiersList(Layout detp, final boolean readOnly)
+ public ClassifiersList(Layout detp, final boolean readOnly, ObjectSelectedListened<TagRef> lsnr)
  {
   setWidth100();
   setHeight100();
   setMargin(5);
 
+  selListener = lsnr;
+  
   detailsPanel = detp;
   
   ds = DataSource.getDataSource(Constants.classifierListServiceName);
@@ -64,9 +72,9 @@ public class ClassifiersList extends VLayout
      }});
   }
   
-  final ListGrid list = new ListGrid();
-  list.setCanDragRecordsOut(true);
-  list.setDragDataAction(DragDataAction.COPY);
+  classifierList = new ListGrid();
+  classifierList.setCanDragRecordsOut(true);
+  classifierList.setDragDataAction(DragDataAction.COPY);
 
   if( ! readOnly )
   {
@@ -107,7 +115,7 @@ public class ClassifiersList extends VLayout
     @Override
     public void onClick(ClickEvent event)
     {
-     list.removeSelectedData();
+     classifierList.removeSelectedData();
     }
    });
    
@@ -131,33 +139,33 @@ public class ClassifiersList extends VLayout
   ListGridField descField = new ListGridField(ClassifierDSDef.descField.getFieldId(), ClassifierDSDef.descField.getFieldTitle());
   descField.setCanEdit(! readOnly );
   
-  list.setFields(icnField, idField, descField);
+  classifierList.setFields(icnField, idField, descField);
 
-  list.setWidth100();
-  list.setHeight100();
-  list.setAutoFetchData(true);
-  list.setDataSource(ds);
+  classifierList.setWidth100();
+  classifierList.setHeight100();
+  classifierList.setAutoFetchData(true);
+  classifierList.setDataSource(ds);
 
-  list.setShowFilterEditor(true);
-  list.setFilterOnKeypress(true);
+  classifierList.setShowFilterEditor(true);
+  classifierList.setFilterOnKeypress(true);
 
-  list.setShowAllRecords(false);
-  list.setDrawAheadRatio(1.5F);
-  list.setScrollRedrawDelay(0);
+  classifierList.setShowAllRecords(false);
+  classifierList.setDrawAheadRatio(1.5F);
+  classifierList.setScrollRedrawDelay(0);
 
-  list.addEditFailedHandler(new EditFailedHandler()
+  classifierList.addEditFailedHandler(new EditFailedHandler()
   {
    @Override
    public void onEditFailed(EditFailedEvent event)
    {
     SC.warn(event.getDsResponse().getAttributeAsString("data"));
 
-    list.discardAllEdits();
+    classifierList.discardAllEdits();
    }
   });
 
 
-  list.addSelectionChangedHandler(new SelectionChangedHandler()
+  classifierList.addSelectionChangedHandler(new SelectionChangedHandler()
   {
    
    @Override
@@ -168,15 +176,26 @@ public class ClassifiersList extends VLayout
     if( event.getSelection() == null || event.getSelection().length != 1 )
      return;
     
-    tagsTree = new TagsTree( event.getSelectedRecord().getAttribute(ClassifierDSDef.idField.getFieldId()), readOnly );
+    tagsTree = new TagsTree( event.getSelectedRecord().getAttribute(ClassifierDSDef.idField.getFieldId()), readOnly, selListener );
     
     detailsPanel.addMember(tagsTree);
    }
   });
 
-  addMember(list);
+  addMember(classifierList);
 
+  classifierList.addDataArrivedHandler( new DataArrivedHandler()
+  {
+   @Override
+   public void onDataArrived(DataArrivedEvent event)
+   {
+    if( classifierList.getSelectedRecord() == null )
+     classifierList.selectRecord(0);
+   }
+  });
+  
  }
+ 
  
  private void clearDetailsPanel()
  {

@@ -17,6 +17,7 @@ import uk.ac.ebi.age.ext.submission.SubmissionMeta;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.util.BooleanCallback;
 import com.smartgwt.client.util.SC;
@@ -30,6 +31,7 @@ import com.smartgwt.client.widgets.viewer.DetailViewer;
 
 public class SubmissionDetailsPanel extends VLayout
 {
+ private DetailViewer dv;
 
  public SubmissionDetailsPanel(ListGridRecord record)
  {
@@ -48,7 +50,7 @@ public class SubmissionDetailsPanel extends VLayout
 
   ds.addData( record );
   
-  DetailViewer dv = new DetailViewer();
+  dv = new DetailViewer();
   dv.setWidth("90%");
   dv.setDataSource(ds);
   dv.setStyleName("submissionDetails");
@@ -330,6 +332,16 @@ public class SubmissionDetailsPanel extends VLayout
   } 
   
   return tagStr;
+ }
+
+ public void setSubmissionTags(Collection<TagRef> tags)
+ {
+  Record record = dv.getDataSource().getCacheData()[0];
+  
+  record.setAttribute(SubmissionConstants.TAGS.name(), tagList(tags)
+    +" <a class='el' href='javascript:linkClicked(&quot;clustTags&quot;,&quot;"+record.getAttribute(SubmissionConstants.SUBM_ID.name())+"&quot;)'>manage tags</a>");
+
+  dv.getDataSource().updateData(record);
  }
  
 }

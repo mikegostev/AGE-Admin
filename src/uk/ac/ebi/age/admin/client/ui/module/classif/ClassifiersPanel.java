@@ -1,5 +1,6 @@
 package uk.ac.ebi.age.admin.client.ui.module.classif;
 
+import uk.ac.ebi.age.admin.client.ui.ObjectSelectedListened;
 import uk.ac.ebi.age.ext.authz.TagRef;
 
 import com.smartgwt.client.widgets.layout.HLayout;
@@ -11,11 +12,11 @@ public class ClassifiersPanel extends HLayout
  
  public ClassifiersPanel()
  {
-  this( false );
+  this( false, null );
  }
   
- public ClassifiersPanel( boolean readOnly )
- {
+ public ClassifiersPanel( boolean readOnly, ObjectSelectedListened<TagRef> lsnr )
+ { 
   setWidth100();
   setHeight100();
   
@@ -24,7 +25,7 @@ public class ClassifiersPanel extends HLayout
   tagsPanel.setWidth("50%");
   tagsPanel.setHeight100();
   
-  classifierList = new ClassifiersList( tagsPanel, readOnly );
+  classifierList = new ClassifiersList( tagsPanel, readOnly, lsnr );
   classifierList.setWidth("50%");
   
   addMember(classifierList);

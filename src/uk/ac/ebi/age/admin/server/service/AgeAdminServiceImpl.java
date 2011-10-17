@@ -15,7 +15,9 @@ import uk.ac.ebi.age.admin.server.mng.AgeAdmin;
 import uk.ac.ebi.age.admin.server.mng.Configuration;
 import uk.ac.ebi.age.admin.shared.ModelPath;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
+import uk.ac.ebi.age.ext.annotation.AnnotationDBException;
 import uk.ac.ebi.age.ext.authz.TagRef;
+import uk.ac.ebi.age.ext.entity.Entity;
 import uk.ac.ebi.age.ext.log.LogNode;
 import uk.ac.ebi.age.ext.log.SimpleLogNode;
 import uk.ac.ebi.age.ext.submission.HistoryEntry;
@@ -114,17 +116,17 @@ public class AgeAdminServiceImpl extends SessionRemoteServiceServlet implements 
 
 
  @Override
- public Collection<TagRef> getSubmissionTags(String param) throws UserAuthException, SubmissionDBException
+ public Collection<TagRef> getEntityTags(Entity instance)  throws UserAuthException, AnnotationDBException
  {
-  return adm.getSubmissionTags(param);
+  return adm.getEntityTags(instance);
  }
 
 
 
  @Override
- public void storeSubmissionTags(String param, Collection<TagRef> result) throws SubmissionDBException
+ public void storeEntityTags(Entity instance, Collection<TagRef> tr)  throws UserAuthException, AnnotationDBException
  {
-  adm.storeSubmissionTags(param,result);
+  adm.storeEntityTags(instance,tr);
  }
 
 

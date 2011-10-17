@@ -48,6 +48,7 @@ public class TagSelectDialog2 extends Window
    public void onClick(ClickEvent event)
    {
     lsnr.tagSelected( tsPanel.getTags() );
+    close();
    }
   });
 
@@ -59,7 +60,7 @@ public class TagSelectDialog2 extends Window
    @Override
    public void onClick(ClickEvent event)
    {
-    lsnr.tagSelected(null);
+    close();
    }
   });
 

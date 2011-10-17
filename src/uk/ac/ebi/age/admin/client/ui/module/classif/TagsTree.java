@@ -3,6 +3,7 @@ package uk.ac.ebi.age.admin.client.ui.module.classif;
 import java.util.HashMap;
 
 import uk.ac.ebi.age.admin.client.Session;
+import uk.ac.ebi.age.admin.client.ui.ObjectSelectedListened;
 import uk.ac.ebi.age.admin.client.ui.PlacingManager;
 import uk.ac.ebi.age.admin.client.ui.module.auth.ACLPanel;
 import uk.ac.ebi.age.admin.shared.Constants;
@@ -12,11 +13,14 @@ import uk.ac.ebi.age.ext.authz.TagRef;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.DSDataFormat;
 import com.smartgwt.client.types.DSProtocol;
+import com.smartgwt.client.types.DragDataAction;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.events.CellDoubleClickEvent;
+import com.smartgwt.client.widgets.grid.events.CellDoubleClickHandler;
 import com.smartgwt.client.widgets.grid.events.EditFailedEvent;
 import com.smartgwt.client.widgets.grid.events.EditFailedHandler;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -33,12 +37,16 @@ public class TagsTree extends VLayout
  private String classifierId;
  private TreeGrid tagsTreeGrid;
  
+ private ObjectSelectedListened<TagRef> selListener;
+ 
  @SuppressWarnings("serial")
- TagsTree( String classifId, boolean readOnly )
+ TagsTree( String classifId, boolean readOnly, ObjectSelectedListened<TagRef> sl )
  {
   setWidth100();
   setHeight100();
   setMargin(5);
+  
+  this.selListener=sl;
   
   classifierId = classifId;
   
@@ -73,6 +81,8 @@ public class TagsTree extends VLayout
   tagsTreeGrid.setDataSource(ds);
   tagsTreeGrid.setShowAllRecords(true);
   tagsTreeGrid.setLoadDataOnDemand(false);
+  tagsTreeGrid.setCanDragRecordsOut(true);
+  tagsTreeGrid.setDragDataAction(DragDataAction.COPY); 
   
   tagsTreeGrid.setNodeIcon("icons/classif/tag_blue.png");  
   tagsTreeGrid.setFolderIcon("icons/classif/tag_blue.png");  
@@ -88,6 +98,20 @@ public class TagsTree extends VLayout
     tagsTreeGrid.getData().openAll();
    }
   });
+  
+  if( selListener != null )
+  {
+   tagsTreeGrid.addCellDoubleClickHandler(new CellDoubleClickHandler()
+   {
+    @Override
+    public void onCellDoubleClick(CellDoubleClickEvent event)
+    {
+     selListener.objectSelected(  new TagRef( classifierId, event.getRecord().getAttribute(TagsDSDef.idField.getFieldId())) );
+    }
+   });
+   
+  }
+  
   
   TreeGridField descField = new TreeGridField(TagsDSDef.descField.getFieldId(),TagsDSDef.descField.getFieldTitle());
   descField.setCanEdit( ! readOnly );
@@ -240,6 +264,11 @@ public class TagsTree extends VLayout
    return null;
  
   return new TagRef( classifierId, rec.getAttribute(TagsDSDef.idField.getFieldId()) );
+ }
+
+ public String getClassifierId()
+ {
+  return classifierId;
  }
 
 }

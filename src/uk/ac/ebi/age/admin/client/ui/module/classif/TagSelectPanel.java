@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import uk.ac.ebi.age.admin.client.ui.ObjectSelectedListened;
 import uk.ac.ebi.age.ext.authz.TagRef;
 
 import com.smartgwt.client.data.Record;
@@ -21,15 +22,25 @@ public class TagSelectPanel extends HLayout
 {
  private TagList tagList = new TagList();
  
+ 
  public TagSelectPanel( Collection<TagRef> tags )
  {
-  final ClassifiersPanel clsfPnl = new ClassifiersPanel( true );
+  final ClassifiersPanel clsfPnl = new ClassifiersPanel( true, new ObjectSelectedListened<TagRef>()
+  {
+   @Override
+   public void objectSelected(TagRef obj)
+   {
+    tagList.addTagRef(obj);
+   }
+  } );
 
   clsfPnl.setWidth("66%");
   
   addMember(clsfPnl);
   
   VLayout tPnl = new VLayout();
+  
+  tPnl.setMargin(5);
   
   tPnl.setWidth("33%");
   
@@ -57,7 +68,7 @@ public class TagSelectPanel extends HLayout
     rec.setAttribute(TagList.classifierFieldName, tr.getClassiferName());
     rec.setAttribute(TagList.tagFieldName, tr.getTagName());
     rec.setAttribute(TagList.tagValueFieldName, tr.getTagValue());
-    rec.setAttribute("__tagRef", tr);
+    rec.setAttribute(TagList.tagRefFieldName, tr);
    
     recs[i++] = rec;
    }
@@ -90,7 +101,7 @@ public class TagSelectPanel extends HLayout
     
     for( Record r : tagList.getRecords() )
     {
-     TagRef etr = (TagRef)r.getAttributeAsObject("__tagRef");
+     TagRef etr = (TagRef)r.getAttributeAsObject(TagList.tagRefFieldName);
      
      if( etr.getClassiferName().equals(tr.getClassiferName()) && etr.getTagName().equals( tr.getTagName() ) )
       return;
@@ -100,7 +111,7 @@ public class TagSelectPanel extends HLayout
     
     rec.setAttribute(TagList.classifierFieldName, tr.getClassiferName());
     rec.setAttribute(TagList.tagFieldName, tr.getTagName());
-    rec.setAttribute("__tagRef", tr);
+    rec.setAttribute(TagList.tagRefFieldName, tr);
     
     tagList.addData(rec);
    }
@@ -135,7 +146,7 @@ public class TagSelectPanel extends HLayout
    @Override
    public void onCellSaved(CellSavedEvent event)
    {
-    ((TagRef)event.getRecord().getAttributeAsObject("__tagRef")).setTagValue(event.getRecord().getAttribute(TagList.tagValueFieldName));
+    ((TagRef)event.getRecord().getAttributeAsObject(TagList.tagRefFieldName)).setTagValue(event.getRecord().getAttribute(TagList.tagValueFieldName));
    }
   });
  }
@@ -146,7 +157,7 @@ public class TagSelectPanel extends HLayout
   
   for( Record r : tagList.getRecords() )
   {
-   tags.add( (TagRef) r.getAttributeAsObject("__tagRef") );
+   tags.add( (TagRef) r.getAttributeAsObject(TagList.tagRefFieldName) );
   }
   
   return tags;

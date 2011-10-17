@@ -1,6 +1,7 @@
 package uk.ac.ebi.age.admin.client.ui.module.auth;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import uk.ac.ebi.age.admin.client.AgeAdminService;
 import uk.ac.ebi.age.admin.client.ui.module.classif.TagSelectDialog2;
@@ -12,7 +13,6 @@ import uk.ac.ebi.age.ui.client.LinkClickListener;
 import uk.ac.ebi.age.ui.client.LinkManager;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.pri.util.collection.Collections;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -26,6 +26,8 @@ public class SystemPermissionsPanel extends VLayout implements LinkClickListener
   addMember( graphTags = new Label() );
   addMember(new ACLPanel(null, null, Constants.sysACLServiceName));
   
+  graphTags.setHeight(30);
+  graphTags.setWidth100();
   
   LinkManager.getInstance().addLinkClickListener("graphTags", this);
 
@@ -69,7 +71,7 @@ public class SystemPermissionsPanel extends VLayout implements LinkClickListener
     contents+= "="+tr.getTagValue();
   }
   
-  contents += "&nbsp;&nbsp;,<a href='javascript:linkClicked(&quot;graphTags&quot;,null)'>manage tags</a>";
+  contents += "&nbsp;&nbsp;<a href='javascript:linkClicked(&quot;graphTags&quot;,null)'>manage tags</a>";
   
   graphTags.setContents(contents);
  }

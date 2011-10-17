@@ -8,6 +8,7 @@ import uk.ac.ebi.age.admin.client.ui.module.classif.TagSelectDialog2;
 import uk.ac.ebi.age.admin.client.ui.module.classif.TagSelectedListener;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.ext.authz.TagRef;
+import uk.ac.ebi.age.ext.entity.ClusterEntity;
 import uk.ac.ebi.age.ext.submission.SubmissionMeta;
 import uk.ac.ebi.age.ext.submission.SubmissionQuery;
 import uk.ac.ebi.age.ext.submission.SubmissionReport;
@@ -18,6 +19,7 @@ import uk.ac.ebi.age.ui.client.module.PagingRuler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.ExpansionMode;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.util.SC;
@@ -25,6 +27,8 @@ import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.events.RecordCollapseEvent;
+import com.smartgwt.client.widgets.grid.events.RecordCollapseHandler;
 import com.smartgwt.client.widgets.layout.VLayout;
 
 public class SubmissionsListPane extends VLayout
@@ -32,7 +36,7 @@ public class SubmissionsListPane extends VLayout
  
  private SubmissionQuery query;
  
- private ListGrid resultGrid = new SubmissionList();
+ private SubmissionList resultGrid = new SubmissionList();
  private PagingRuler pagingRuler = new PagingRuler("submPage");
  
  public SubmissionsListPane()
@@ -83,41 +87,6 @@ public class SubmissionsListPane extends VLayout
   addMember(pagingRuler);
   addMember(resultGrid);
   
-//  resultGrid.addRecordCollapseHandler( new RecordCollapseHandler()
-//  {
-//   
-//   @Override
-//   public void onRecordCollapse(RecordCollapseEvent event)
-//   {
-//    LinkManager.getInstance().removeLinkClickListener(event.getRecord().getAttribute("id"));
-//   }
-//  });
-//  ListGridRecord rec = new ListGridRecord();
-//  
-//  rec.setAttribute("id", "SBM00000X");
-//  rec.setAttribute("desc", "This is my first submission description\nline 2 This is my first submission description\\nline 2This is my first submission description\\nline 2This is my first submission description\\nline 2This is my first submission description\\nline 2");
-//  rec.setAttribute("prop", 100);
-//  
-//  addData(rec);
-  
-//  rec = new ListGridRecord();
-//  
-//  rec.setAttribute("id", "SBM00000X");
-//  rec.setAttribute("desc", "This is my first submission description");
-//  rec.setAttribute("prop", 100);
-//
-//  ds.addData(rec);
-  
-//  rec.setDetailDS(ds);
-  
-//  setAlign(Alignment.CENTER);
-//  
-//  Label lb = new Label("Query result is empty");
-//  
-//  lb.setAlign(Alignment.CENTER);
-//  
-//  addMember(lb);
-
   LinkManager.getInstance().addLinkClickListener("submPage", new LinkClickListener()
   {
 
@@ -165,7 +134,7 @@ public class SubmissionsListPane extends VLayout
    @Override
    public void linkClicked(final String param)
    {
-    AgeAdminService.Util.getInstance().getSubmissionTags( param, new AsyncCallback<Collection<TagRef>>()
+    AgeAdminService.Util.getInstance().getEntityTags( new ClusterEntity(param), new AsyncCallback<Collection<TagRef>>()
       {
        
        @Override
@@ -174,20 +143,26 @@ public class SubmissionsListPane extends VLayout
         new TagSelectDialog2(result, new TagSelectedListener()
         {
          @Override
-         public void tagSelected(Collection<TagRef> tr)
+         public void tagSelected( final Collection<TagRef> tr)
          {
           
-          AgeAdminService.Util.getInstance().storeSubmissionTags( param, tr, new AsyncCallback<Void>(){
+          AgeAdminService.Util.getInstance().storeEntityTags( new ClusterEntity(param), tr, new AsyncCallback<Void>(){
 
            @Override
            public void onFailure(Throwable caught)
            {
-            SC.warn("System failure: "+caught.getMessage());     
+            String fail = caught.getMessage();
+            
+            if( fail == null )
+             fail = caught.getClass().getName();
+
+            SC.warn("System failure: "+fail);     
            }
 
            @Override
            public void onSuccess(Void result)
            {
+            resultGrid.setSubmissionTags(param, tr);
            }} );
           
          }
@@ -197,7 +172,12 @@ public class SubmissionsListPane extends VLayout
        @Override
        public void onFailure(Throwable caught)
        {
-        SC.warn("Action failed: "+caught.getMessage());
+        String fail = caught.getMessage();
+        
+        if( fail == null )
+         fail = caught.getClass().getName();
+        
+        SC.warn("Action failed: "+fail);
        }
       });
    }
@@ -241,11 +221,44 @@ public class SubmissionsListPane extends VLayout
  
  
  
- private class SubmissionList extends ListGrid
+ private class SubmissionList extends ListGrid implements RecordCollapseHandler
  {
+  static final String expansionComponentField = "__expComp";
+  
+  SubmissionList()
+  {
+   addRecordCollapseHandler(this);
+  }
+  
+  public void setSubmissionTags( String clustId, Collection<TagRef> tags )
+  {
+   for( Record r : getRecords() )
+   {
+    if( clustId.equals(r.getAttribute(SubmissionConstants.SUBM_ID.name())) )
+    {
+     SubmissionMeta sm = (SubmissionMeta)r.getAttributeAsObject("__obj");
+     
+     sm.setTags(tags);
+     
+     SubmissionDetailsPanel dpnl = (SubmissionDetailsPanel)r.getAttributeAsObject(expansionComponentField);
+     
+     if( dpnl == null )
+      return;
+     
+     dpnl.setSubmissionTags( tags );
+    
+     return;
+    }
+   }
+  }
+  
   protected Canvas getExpansionComponent(final ListGridRecord record)
   {
-   return new SubmissionDetailsPanel( record );
+   SubmissionDetailsPanel dtl = new SubmissionDetailsPanel( record );
+   
+   record.setAttribute(expansionComponentField, dtl);
+   
+   return dtl;
   }
   
   protected String getCellCSSText(ListGridRecord record, int rowNum, int colNum)
@@ -254,6 +267,15 @@ public class SubmissionsListPane extends VLayout
     return "background-color: #FFD4D0;";
    
    return super.getCellCSSText(record, rowNum, colNum);
+  }
+
+  @Override
+  public void onRecordCollapse(RecordCollapseEvent event)
+  {
+   SubmissionDetailsPanel dtl = (SubmissionDetailsPanel)event.getRecord().getAttributeAsObject(expansionComponentField);
+   dtl.destroy();
+   
+   event.getRecord().setAttribute(expansionComponentField, (Object)null);
   }
  }
  

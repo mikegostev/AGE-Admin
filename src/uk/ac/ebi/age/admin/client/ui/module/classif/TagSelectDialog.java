@@ -29,7 +29,7 @@ public class TagSelectDialog extends Window
   panel.setWidth100();
   panel.setHeight100();
 
-  final ClassifiersPanel clsfPnl = new ClassifiersPanel( true );
+  final ClassifiersPanel clsfPnl = new ClassifiersPanel( true, null );
 
   panel.addMember(clsfPnl);
 

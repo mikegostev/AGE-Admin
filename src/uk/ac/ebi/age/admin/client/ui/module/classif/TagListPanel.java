@@ -48,7 +48,7 @@ public class TagListPanel extends VLayout
     rec.setAttribute(TagList.classifierFieldName, tr.getClassiferName());
     rec.setAttribute(TagList.tagFieldName, tr.getTagName());
     rec.setAttribute(TagList.tagValueFieldName, tr.getTagValue());
-    rec.setAttribute("__tagRef", tr);
+    rec.setAttribute(TagList.tagRefFieldName, tr);
    
     recs[i++] = rec;
    }
@@ -89,7 +89,7 @@ public class TagListPanel extends VLayout
          
          rec.setAttribute(TagList.classifierFieldName, tr.getClassiferName());
          rec.setAttribute(TagList.tagFieldName, tr.getTagName());
-         rec.setAttribute("__tagRef", tr);
+         rec.setAttribute(TagList.tagRefFieldName, tr);
          
          list.addData(rec);
         }
@@ -133,7 +133,7 @@ public class TagListPanel extends VLayout
    @Override
    public void onCellSaved(CellSavedEvent event)
    {
-    ((TagRef)event.getRecord().getAttributeAsObject("__tagRef")).setTagValue(event.getRecord().getAttribute(TagList.tagValueFieldName));
+    ((TagRef)event.getRecord().getAttributeAsObject(TagList.tagRefFieldName)).setTagValue(event.getRecord().getAttribute(TagList.tagValueFieldName));
    }
   });
  }
@@ -149,7 +149,7 @@ public class TagListPanel extends VLayout
   Collection<TagRef> tags = new ArrayList<TagRef>();
   
   for( Record r : list.getRecords() )
-   tags.add( (TagRef)r.getAttributeAsObject("__tagRef") );
+   tags.add( (TagRef)r.getAttributeAsObject(TagList.tagRefFieldName) );
   
   return tags;
  }

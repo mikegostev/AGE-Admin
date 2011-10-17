@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -37,7 +38,6 @@ import uk.ac.ebi.age.admin.shared.ModelPath;
 import uk.ac.ebi.age.admin.shared.StoreNode;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
-import uk.ac.ebi.age.annotation.AnnotationDBException;
 import uk.ac.ebi.age.annotation.AnnotationManager;
 import uk.ac.ebi.age.annotation.Topic;
 import uk.ac.ebi.age.annotation.impl.H2AnnotationStorage;
@@ -51,9 +51,11 @@ import uk.ac.ebi.age.authz.exception.DBInitException;
 import uk.ac.ebi.age.authz.impl.PermissionManagerImpl;
 import uk.ac.ebi.age.authz.impl.SerializedAuthDBImpl;
 import uk.ac.ebi.age.authz.impl.SessionManagerImpl;
+import uk.ac.ebi.age.ext.annotation.AnnotationDBException;
 import uk.ac.ebi.age.ext.authz.TagRef;
 import uk.ac.ebi.age.ext.entity.AttachmentEntity;
 import uk.ac.ebi.age.ext.entity.ClusterEntity;
+import uk.ac.ebi.age.ext.entity.Entity;
 import uk.ac.ebi.age.ext.entity.ModuleEntity;
 import uk.ac.ebi.age.ext.log.LogNode;
 import uk.ac.ebi.age.ext.log.LogNode.Level;
@@ -647,35 +649,22 @@ public class AgeAdmin implements SecurityChangedListener
 
 
  @SuppressWarnings("unchecked")
- public Collection<TagRef> getSubmissionTags(String param) throws SubmissionDBException
+ public Collection<TagRef> getEntityTags(Entity param) throws AnnotationDBException
  {
   // TODO check permission
   
-  try
-  {
-   return (Collection<TagRef>) annotationMngr.getAnnotation(Topic.TAG, new ClusterEntity(param), false);
-  }
-  catch(AnnotationDBException e)
-  {
-   throw new SubmissionDBException("Annotation DB error: "+e.getMessage(), e);
-  }
+  return (Collection<TagRef>) annotationMngr.getAnnotation(Topic.TAG, param, false);
  }
 
 
 
- public void storeSubmissionTags(String param, Collection<TagRef> result) throws SubmissionDBException
+ public void storeEntityTags(Entity param, Collection<TagRef> result) throws AnnotationDBException
  {
-  if( ! ( result instanceof ArrayList ) )
-   result = new ArrayList<TagRef>( result );
+  List<TagRef> list = new ArrayList<TagRef>( result );
   
-  try
-  {
-   annotationMngr.addAnnotation(Topic.TAG,  new ClusterEntity(param), (Serializable)result);
-  }
-  catch(AnnotationDBException e)
-  {
-   throw new SubmissionDBException("Annotation DB error: "+e.getMessage(), e);
-  }
+  Collections.sort(list);
+  
+  annotationMngr.addAnnotation(Topic.TAG, param, (Serializable)list);
  }
 
 

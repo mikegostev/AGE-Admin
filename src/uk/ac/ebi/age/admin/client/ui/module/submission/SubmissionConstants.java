@@ -38,7 +38,10 @@ public enum SubmissionConstants
  {
   DataSource ds = new DataSource();
   
-  ds.addField(new DataSourceTextField(SubmissionConstants.SUBM_ID.name(), SubmissionConstants.SUBM_ID.title()));
+  DataSourceTextField idFld = new DataSourceTextField(SubmissionConstants.SUBM_ID.name(), SubmissionConstants.SUBM_ID.title());
+  idFld.setPrimaryKey(true);
+  
+  ds.addField(idFld);
   ds.addField(new DataSourceTextField(SubmissionConstants.COMM.name(), SubmissionConstants.COMM.title()));
   ds.addField(new DataSourceTextField(SubmissionConstants.CRTR.name(), SubmissionConstants.CRTR.title()));
   ds.addField(new DataSourceTextField(SubmissionConstants.MDFR.name(), SubmissionConstants.MDFR.title()));
@@ -47,7 +50,6 @@ public enum SubmissionConstants
   ds.addField(new DataSourceTextField(SubmissionConstants.TAGS.name(), SubmissionConstants.TAGS.title()));
   ds.addField(new DataSourceTextField(SubmissionConstants.STS.name(), SubmissionConstants.STS.title()));
 
-  
   return ds;
  }
  

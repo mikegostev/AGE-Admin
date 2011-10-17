@@ -1,7 +1,5 @@
 package uk.ac.ebi.age.admin.client.ui.module.auth;
 
-import uk.ac.ebi.age.admin.shared.Constants;
-
 import com.smartgwt.client.types.Side;
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.TabSet;
@@ -31,7 +29,7 @@ public class AuthAdminPanel extends TabSet
 
   genTab = new Tab("System permissions");
   genTab.setIcon("icons/auth/flag_pink.png");
-  genTab.setPane( new ACLPanel(null, null, Constants.sysACLServiceName) );
+  genTab.setPane( new SystemPermissionsPanel() );
   
   addTab(genTab);
 
