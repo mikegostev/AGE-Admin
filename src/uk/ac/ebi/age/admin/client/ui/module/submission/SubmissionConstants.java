@@ -1,8 +1,5 @@
 package uk.ac.ebi.age.admin.client.ui.module.submission;
 
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.fields.DataSourceDateField;
-import com.smartgwt.client.data.fields.DataSourceTextField;
 
 public enum SubmissionConstants
 {
@@ -21,7 +18,8 @@ public enum SubmissionConstants
  ACTV("Active"),
  TAGS("Tags");
 
- 
+ public static final String SUBMISSION_TAG_LINK = "submissionTags";
+
  SubmissionConstants(String s)
  {
   title=s;
@@ -53,38 +51,38 @@ public enum SubmissionConstants
 //  return ds;
 // }
  
- static DataSource createDataModuleDataSource()
- {
-  DataSource ds = new DataSource();
-  
-  ds.addField(new DataSourceTextField(SubmissionConstants.MOD_ID.name(), SubmissionConstants.MOD_ID.title()));
-  ds.addField(new DataSourceTextField(SubmissionConstants.COMM.name(), SubmissionConstants.COMM.title()));
-  ds.addField(new DataSourceTextField(SubmissionConstants.CRTR.name(), SubmissionConstants.CRTR.title()));
-  ds.addField(new DataSourceTextField(SubmissionConstants.MDFR.name(), SubmissionConstants.MDFR.title()));
-  ds.addField(new DataSourceDateField(SubmissionConstants.CTIME.name(), SubmissionConstants.CTIME.title()));
-  ds.addField(new DataSourceDateField(SubmissionConstants.MTIME.name(), SubmissionConstants.MTIME.title()));
-  ds.addField(new DataSourceDateField(SubmissionConstants.TAGS.name(), SubmissionConstants.TAGS.title()));
-  ds.addField(new DataSourceTextField(SubmissionConstants.SRC_FILE.name(), SubmissionConstants.SRC_FILE.title()));
-  
-  return ds;
- }
- 
- static DataSource createAttachmentDataSource()
- {
-  DataSource ds = new DataSource();
-  
-  ds.addField(new DataSourceTextField(SubmissionConstants.FILE_ID.name(), SubmissionConstants.FILE_ID.title()));
-  ds.addField(new DataSourceTextField(SubmissionConstants.COMM.name(), SubmissionConstants.COMM.title()));
-  ds.addField(new DataSourceTextField(SubmissionConstants.VIS.name(), SubmissionConstants.VIS.title()));
-  ds.addField(new DataSourceTextField(SubmissionConstants.CRTR.name(), SubmissionConstants.CRTR.title()));
-  ds.addField(new DataSourceTextField(SubmissionConstants.MDFR.name(), SubmissionConstants.MDFR.title()));
-  ds.addField(new DataSourceDateField(SubmissionConstants.CTIME.name(), SubmissionConstants.CTIME.title()));
-  ds.addField(new DataSourceDateField(SubmissionConstants.MTIME.name(), SubmissionConstants.MTIME.title()));
-  ds.addField(new DataSourceDateField(SubmissionConstants.TAGS.name(), SubmissionConstants.TAGS.title()));
-  ds.addField(new DataSourceTextField(SubmissionConstants.SRC_FILE.name(), SubmissionConstants.SRC_FILE.title()));
-  
-  return ds;
- }
+// static DataSource createDataModuleDataSource()
+// {
+//  DataSource ds = new DataSource();
+//  
+//  ds.addField(new DataSourceTextField(SubmissionConstants.MOD_ID.name(), SubmissionConstants.MOD_ID.title()));
+//  ds.addField(new DataSourceTextField(SubmissionConstants.COMM.name(), SubmissionConstants.COMM.title()));
+//  ds.addField(new DataSourceTextField(SubmissionConstants.CRTR.name(), SubmissionConstants.CRTR.title()));
+//  ds.addField(new DataSourceTextField(SubmissionConstants.MDFR.name(), SubmissionConstants.MDFR.title()));
+//  ds.addField(new DataSourceDateField(SubmissionConstants.CTIME.name(), SubmissionConstants.CTIME.title()));
+//  ds.addField(new DataSourceDateField(SubmissionConstants.MTIME.name(), SubmissionConstants.MTIME.title()));
+//  ds.addField(new DataSourceDateField(SubmissionConstants.TAGS.name(), SubmissionConstants.TAGS.title()));
+//  ds.addField(new DataSourceTextField(SubmissionConstants.SRC_FILE.name(), SubmissionConstants.SRC_FILE.title()));
+//  
+//  return ds;
+// }
+// 
+// static DataSource createAttachmentDataSource()
+// {
+//  DataSource ds = new DataSource();
+//  
+//  ds.addField(new DataSourceTextField(SubmissionConstants.FILE_ID.name(), SubmissionConstants.FILE_ID.title()));
+//  ds.addField(new DataSourceTextField(SubmissionConstants.COMM.name(), SubmissionConstants.COMM.title()));
+//  ds.addField(new DataSourceTextField(SubmissionConstants.VIS.name(), SubmissionConstants.VIS.title()));
+//  ds.addField(new DataSourceTextField(SubmissionConstants.CRTR.name(), SubmissionConstants.CRTR.title()));
+//  ds.addField(new DataSourceTextField(SubmissionConstants.MDFR.name(), SubmissionConstants.MDFR.title()));
+//  ds.addField(new DataSourceDateField(SubmissionConstants.CTIME.name(), SubmissionConstants.CTIME.title()));
+//  ds.addField(new DataSourceDateField(SubmissionConstants.MTIME.name(), SubmissionConstants.MTIME.title()));
+//  ds.addField(new DataSourceDateField(SubmissionConstants.TAGS.name(), SubmissionConstants.TAGS.title()));
+//  ds.addField(new DataSourceTextField(SubmissionConstants.SRC_FILE.name(), SubmissionConstants.SRC_FILE.title()));
+//  
+//  return ds;
+// }
 
 
 

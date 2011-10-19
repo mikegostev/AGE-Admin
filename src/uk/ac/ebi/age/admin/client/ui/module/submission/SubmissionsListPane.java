@@ -8,7 +8,12 @@ import uk.ac.ebi.age.admin.client.ui.module.classif.TagSelectDialog2;
 import uk.ac.ebi.age.admin.client.ui.module.classif.TagSelectedListener;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.ext.authz.TagRef;
+import uk.ac.ebi.age.ext.entity.AttachmentEntity;
 import uk.ac.ebi.age.ext.entity.ClusterEntity;
+import uk.ac.ebi.age.ext.entity.Entity;
+import uk.ac.ebi.age.ext.entity.ModuleEntity;
+import uk.ac.ebi.age.ext.submission.DataModuleMeta;
+import uk.ac.ebi.age.ext.submission.FileAttachmentMeta;
 import uk.ac.ebi.age.ext.submission.SubmissionMeta;
 import uk.ac.ebi.age.ext.submission.SubmissionQuery;
 import uk.ac.ebi.age.ext.submission.SubmissionReport;
@@ -128,12 +133,41 @@ public class SubmissionsListPane extends VLayout
   );
 
   
-  LinkManager.getInstance().addLinkClickListener("clustTags", new LinkClickListener()
+  LinkManager.getInstance().addLinkClickListener(SubmissionConstants.SUBMISSION_TAG_LINK, new LinkClickListener()
   {
    @Override
    public void linkClicked(final String param)
    {
-    AgeAdminService.Util.getInstance().getEntityTags( new ClusterEntity(param), new AsyncCallback<Collection<TagRef>>()
+    final Entity e;
+    
+    final char partType=param.charAt(0);
+    final String clusterId;
+    final String partId;
+    
+    if( partType == 'C' )
+    {
+     clusterId = param.substring(1);
+     partId = null;
+     
+     e = new ClusterEntity( param.substring(1) );
+    }
+    else
+    {
+     int pos = param.indexOf(':');
+     int cidLen = Integer.parseInt(param.substring(1,pos));
+     
+     clusterId = param.substring(pos+1,pos+1+cidLen);
+     partId = param.substring(pos+1+cidLen);
+     
+     ClusterEntity ce =new ClusterEntity( clusterId );
+     
+     if( partType == 'M' )
+      e = new ModuleEntity(ce, partId);
+     else
+      e = new AttachmentEntity(ce, partId);
+    }
+    
+    AgeAdminService.Util.getInstance().getEntityTags( e, new AsyncCallback<Collection<TagRef>>()
       {
        
        @Override
@@ -145,7 +179,7 @@ public class SubmissionsListPane extends VLayout
          public void tagSelected( final Collection<TagRef> tr)
          {
           
-          AgeAdminService.Util.getInstance().storeEntityTags( new ClusterEntity(param), tr, new AsyncCallback<Void>(){
+          AgeAdminService.Util.getInstance().storeEntityTags( e, tr, new AsyncCallback<Void>(){
 
            @Override
            public void onFailure(Throwable caught)
@@ -161,7 +195,7 @@ public class SubmissionsListPane extends VLayout
            @Override
            public void onSuccess(Void result)
            {
-            resultGrid.setSubmissionTags(param, tr);
+            resultGrid.setSubmissionTags( partType, clusterId, partId, param, tr);
            }} );
           
          }
@@ -236,7 +270,7 @@ public class SubmissionsListPane extends VLayout
    addRecordCollapseHandler(this);
   }
   
-  public void setSubmissionTags( String clustId, Collection<TagRef> tags )
+  public void setSubmissionTags( char partType, String clustId, String compId, String dvId, Collection<TagRef> tags )
   {
    for( Record r : getRecords() )
    {
@@ -244,14 +278,40 @@ public class SubmissionsListPane extends VLayout
     {
      SubmissionMeta sm = (SubmissionMeta)r.getAttributeAsObject("__obj");
      
-     sm.setTags(tags);
+     if( partType == 'C' )
+      sm.setTags(tags);
+     else
+     {
+      if( partType == 'M' )
+      {
+       for( DataModuleMeta dmm : sm.getDataModules() )
+       {
+        if( dmm.getId().equals(compId) )
+        {
+         dmm.setTags(tags);
+         break;
+        }
+       }
+      }
+      else
+      {
+       for( FileAttachmentMeta attm : sm.getAttachments() )
+       {
+        if( attm.getId().equals(compId) )
+        {
+         attm.setTags(tags);
+         break;
+        }
+       }
+      }
+     }
      
      SubmissionDetailsPanel dpnl = (SubmissionDetailsPanel)r.getAttributeAsObject(expansionComponentField);
      
      if( dpnl == null )
       return;
      
-     dpnl.setSubmissionTags( tags );
+     dpnl.setSubmissionTags( dvId, tags );
     
      return;
     }

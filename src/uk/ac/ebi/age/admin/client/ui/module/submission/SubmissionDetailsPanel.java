@@ -2,7 +2,9 @@ package uk.ac.ebi.age.admin.client.ui.module.submission;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import uk.ac.ebi.age.admin.client.AgeAdminService;
 import uk.ac.ebi.age.admin.client.ui.PlacingManager;
@@ -16,7 +18,6 @@ import uk.ac.ebi.age.ext.submission.SubmissionMeta;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.util.BooleanCallback;
@@ -32,7 +33,7 @@ import com.smartgwt.client.widgets.viewer.DetailViewerField;
 
 public class SubmissionDetailsPanel extends VLayout
 {
- private DetailViewer submissionDetails;
+ private Map<String, DetailViewer> dvMap = new HashMap<String, DetailViewer>();
 
  public SubmissionDetailsPanel(ListGridRecord record)
  {
@@ -47,11 +48,11 @@ public class SubmissionDetailsPanel extends VLayout
 
  
   record.setAttribute(SubmissionConstants.TAGS.name(), tagList(simp.getTags())
-    +" <a class='el' href='javascript:linkClicked(&quot;clustTags&quot;,&quot;"+simp.getId()+"&quot;)'>manage tags</a>");
+    +" <a class='el' href='javascript:linkClicked(&quot;"+SubmissionConstants.SUBMISSION_TAG_LINK+"&quot;,&quot;C"+simp.getId()+"&quot;)'>manage tags</a>");
 
 //  ds.addData( record );
   
-  submissionDetails = new DetailViewer();
+  DetailViewer submissionDetails = new DetailViewer();
   submissionDetails.setWidth("90%");
 //  submissionDetails.setDataSource(ds);
   submissionDetails.setStyleName("submissionDetails");
@@ -70,6 +71,7 @@ public class SubmissionDetailsPanel extends VLayout
   
   addMember(submissionDetails);
   
+  dvMap.put("C"+simp.getId(), submissionDetails);
   
   List<DataModuleMeta> mods = simp.getDataModules();
   
@@ -78,9 +80,11 @@ public class SubmissionDetailsPanel extends VLayout
 
    for(DataModuleMeta dmImp : mods)
    {
-    DataSource dmds = SubmissionConstants.createDataModuleDataSource();
-    dmds.setClientOnly(true);
+//    DataSource dmds = SubmissionConstants.createDataModuleDataSource();
+//    dmds.setClientOnly(true);
 
+    String dvId = "M"+simp.getId().length()+":"+simp.getId()+dmImp.getId();
+    
     ListGridRecord rec = new ListGridRecord();
 
     rec.setAttribute(SubmissionConstants.MOD_ID.name(), dmImp.getId());
@@ -92,7 +96,8 @@ public class SubmissionDetailsPanel extends VLayout
       DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format(new Date(dmImp.getSubmissionTime())));
     rec.setAttribute(SubmissionConstants.MTIME.name(),
       DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format(new Date(dmImp.getModificationTime())));
-    rec.setAttribute(SubmissionConstants.TAGS.name(), tagList(dmImp.getTags()));
+    rec.setAttribute(SubmissionConstants.TAGS.name(), tagList(dmImp.getTags())
+      +" <a class='el' href='javascript:linkClicked(&quot;"+SubmissionConstants.SUBMISSION_TAG_LINK+"&quot;,&quot;"+dvId+"&quot;)'>manage tags</a>");
     rec.setAttribute(SubmissionConstants.SRC_FILE.name(), "<a target='_blank' href='download?"
       +Constants.downloadHandlerParameter+"="+Constants.documentRequestSubject
       +"&"+Constants.clusterIdParameter+"="+simp.getId()
@@ -101,17 +106,29 @@ public class SubmissionDetailsPanel extends VLayout
       +"'>"+dmImp.getId()+"</a>"
       );
 
-    dmds.addData(rec);
 
     DetailViewer dv = new DetailViewer();
     dv.setWidth("70%");
-    dv.setDataSource(dmds);
     dv.setStyleName("moduleDetails");
 
-    dv.setAutoFetchData(true);
+    
+    dv.setFields(
+      new DetailViewerField(SubmissionConstants.MOD_ID.name(), SubmissionConstants.MOD_ID.title()),
+      new DetailViewerField(SubmissionConstants.COMM.name(), SubmissionConstants.COMM.title()),
+      new DetailViewerField(SubmissionConstants.CRTR.name(), SubmissionConstants.CRTR.title()),
+      new DetailViewerField(SubmissionConstants.MDFR.name(), SubmissionConstants.MDFR.title()),
+      new DetailViewerField(SubmissionConstants.CTIME.name(), SubmissionConstants.CTIME.title()),
+      new DetailViewerField(SubmissionConstants.MTIME.name(), SubmissionConstants.MTIME.title()),
+      new DetailViewerField(SubmissionConstants.TAGS.name(), SubmissionConstants.TAGS.title()),
+      new DetailViewerField(SubmissionConstants.SRC_FILE.name(), SubmissionConstants.STS.title())
+      );
+    
+    dv.setData( new Record[] {rec} );
 
     addMember(dv);
 
+    dvMap.put(dvId, dv);
+    
    }
 
   }
@@ -120,8 +137,7 @@ public class SubmissionDetailsPanel extends VLayout
   {
    for(FileAttachmentMeta faImp : simp.getAttachments())
    {
-    DataSource dmds = SubmissionConstants.createAttachmentDataSource();
-    dmds.setClientOnly(true);
+    String dvId = "A"+simp.getId().length()+":"+simp.getId()+faImp.getId();
 
     ListGridRecord rec = new ListGridRecord();
 
@@ -135,8 +151,8 @@ public class SubmissionDetailsPanel extends VLayout
       DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format(new Date(faImp.getSubmissionTime())));
     rec.setAttribute(SubmissionConstants.MTIME.name(),
       DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT).format(new Date(faImp.getModificationTime())));
-//    rec.setAttribute(SubmissionFields.SRC_FILE.name(), dmImp.getId());
-    rec.setAttribute(SubmissionConstants.TAGS.name(), tagList(faImp.getTags()));
+    rec.setAttribute(SubmissionConstants.TAGS.name(), tagList(faImp.getTags())
+      +" <a class='el' href='javascript:linkClicked(&quot;"+SubmissionConstants.SUBMISSION_TAG_LINK+"&quot;,&quot;"+dvId+"&quot;)'>manage tags</a>");
     rec.setAttribute(SubmissionConstants.SRC_FILE.name(), "<a target='_blank' href='download?"
       +Constants.downloadHandlerParameter+"="+Constants.attachmentRequestSubject
       +"&"+Constants.clusterIdParameter+"="+simp.getId()
@@ -145,16 +161,29 @@ public class SubmissionDetailsPanel extends VLayout
       +"'>"+faImp.getId()+"</a>"
       );
 
-    dmds.addData(rec);
 
     DetailViewer dv = new DetailViewer();
     dv.setWidth("70%");
-    dv.setDataSource(dmds);
     dv.setStyleName("fileDetails");
 
-    dv.setAutoFetchData(true);
+    dv.setFields(
+      new DetailViewerField(SubmissionConstants.FILE_ID.name(), SubmissionConstants.FILE_ID.title()),
+      new DetailViewerField(SubmissionConstants.COMM.name(), SubmissionConstants.COMM.title()),
+      new DetailViewerField(SubmissionConstants.VIS.name(), SubmissionConstants.VIS.title()),
+      new DetailViewerField(SubmissionConstants.CRTR.name(), SubmissionConstants.CRTR.title()),
+      new DetailViewerField(SubmissionConstants.MDFR.name(), SubmissionConstants.MDFR.title()),
+      new DetailViewerField(SubmissionConstants.CTIME.name(), SubmissionConstants.CTIME.title()),
+      new DetailViewerField(SubmissionConstants.MTIME.name(), SubmissionConstants.MTIME.title()),
+      new DetailViewerField(SubmissionConstants.TAGS.name(), SubmissionConstants.TAGS.title()),
+      new DetailViewerField(SubmissionConstants.SRC_FILE.name(), SubmissionConstants.STS.title())
+      );
+    
+    dv.setData( new Record[] {rec} );
+
 
     addMember(dv);
+
+    dvMap.put(dvId, dv);
 
    }
   }
@@ -346,15 +375,20 @@ public class SubmissionDetailsPanel extends VLayout
   
   return tagStr;
  }
-
- public void setSubmissionTags(Collection<TagRef> tags)
+ 
+ public void setSubmissionTags(String id, Collection<TagRef> tags)
  {
-  Record record = submissionDetails.getRecordList().get(0);
+  DetailViewer dv = dvMap.get(id);
+  
+  if( dv == null )
+   return;
+  
+  Record record = dv.getRecordList().get(0);
   
   record.setAttribute(SubmissionConstants.TAGS.name(), tagList(tags)
-    +" <a class='el' href='javascript:linkClicked(&quot;clustTags&quot;,&quot;"+record.getAttribute(SubmissionConstants.SUBM_ID.name())+"&quot;)'>manage tags</a>");
+    +" <a class='el' href='javascript:linkClicked(&quot;"+SubmissionConstants.SUBMISSION_TAG_LINK+"&quot;,&quot;"+id+"&quot;)'>manage tags</a>");
   
-  submissionDetails.setData( new Record[]{ record } );
+  dv.setData( new Record[]{ record } );
  }
- 
+
 }
