@@ -18,7 +18,6 @@ import uk.ac.ebi.age.ui.client.module.PagingRuler;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.ExpansionMode;
 import com.smartgwt.client.types.Overflow;
@@ -60,9 +59,9 @@ public class SubmissionsListPane extends VLayout
   
   resultGrid.setStyleName("reportGrid");
   
-  DataSource ds = SubmissionConstants.createSubmissionDataSource();
-  
-  ds.setClientOnly(true);
+//  DataSource ds = SubmissionConstants.createSubmissionDataSource();
+//  
+//  ds.setClientOnly(true);
   
   resultGrid.setCanExpandRecords(true); 
   
@@ -199,6 +198,11 @@ public class SubmissionsListPane extends VLayout
   else
    pagingRuler.setVisible(false);
   
+  int i = result.getSubmissions().size();
+  
+  ListGridRecord[] data = new ListGridRecord[i];
+  
+  i=0;
   for( SubmissionMeta sgr : result.getSubmissions() )
   {
    ListGridRecord rec = new ListGridRecord();
@@ -213,8 +217,10 @@ public class SubmissionsListPane extends VLayout
 
    rec.setAttribute("__obj", sgr);
    
-   resultGrid.addData(rec);
+   data[i++] = rec;
   }
+  
+  resultGrid.setData(data);
  }
 
 

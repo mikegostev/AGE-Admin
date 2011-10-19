@@ -28,10 +28,11 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.viewer.DetailViewer;
+import com.smartgwt.client.widgets.viewer.DetailViewerField;
 
 public class SubmissionDetailsPanel extends VLayout
 {
- private DetailViewer dv;
+ private DetailViewer submissionDetails;
 
  public SubmissionDetailsPanel(ListGridRecord record)
  {
@@ -40,24 +41,34 @@ public class SubmissionDetailsPanel extends VLayout
   
   final SubmissionMeta simp = (SubmissionMeta)record.getAttributeAsObject("__obj");
 
-  DataSource ds = SubmissionConstants.createSubmissionDataSource();
-  
-  ds.setClientOnly(true);
+//  DataSource ds = SubmissionConstants.createSubmissionDataSource();
+//  
+//  ds.setClientOnly(true);
 
  
   record.setAttribute(SubmissionConstants.TAGS.name(), tagList(simp.getTags())
     +" <a class='el' href='javascript:linkClicked(&quot;clustTags&quot;,&quot;"+simp.getId()+"&quot;)'>manage tags</a>");
 
-  ds.addData( record );
+//  ds.addData( record );
   
-  dv = new DetailViewer();
-  dv.setWidth("90%");
-  dv.setDataSource(ds);
-  dv.setStyleName("submissionDetails");
-  
-  dv.setAutoFetchData(true);
+  submissionDetails = new DetailViewer();
+  submissionDetails.setWidth("90%");
+//  submissionDetails.setDataSource(ds);
+  submissionDetails.setStyleName("submissionDetails");
+  submissionDetails.setData( new Record[]{ record } );
 
-  addMember(dv);
+  submissionDetails.setFields(
+    new DetailViewerField(SubmissionConstants.SUBM_ID.name(), SubmissionConstants.SUBM_ID.title()),
+    new DetailViewerField(SubmissionConstants.COMM.name(), SubmissionConstants.COMM.title()),
+    new DetailViewerField(SubmissionConstants.CRTR.name(), SubmissionConstants.CRTR.title()),
+    new DetailViewerField(SubmissionConstants.MDFR.name(), SubmissionConstants.MDFR.title()),
+    new DetailViewerField(SubmissionConstants.CTIME.name(), SubmissionConstants.CTIME.title()),
+    new DetailViewerField(SubmissionConstants.MTIME.name(), SubmissionConstants.MTIME.title()),
+    new DetailViewerField(SubmissionConstants.TAGS.name(), SubmissionConstants.TAGS.title()),
+    new DetailViewerField(SubmissionConstants.STS.name(), SubmissionConstants.STS.title())
+    );
+  
+  addMember(submissionDetails);
   
   
   List<DataModuleMeta> mods = simp.getDataModules();
@@ -92,7 +103,7 @@ public class SubmissionDetailsPanel extends VLayout
 
     dmds.addData(rec);
 
-    dv = new DetailViewer();
+    DetailViewer dv = new DetailViewer();
     dv.setWidth("70%");
     dv.setDataSource(dmds);
     dv.setStyleName("moduleDetails");
@@ -136,7 +147,7 @@ public class SubmissionDetailsPanel extends VLayout
 
     dmds.addData(rec);
 
-    dv = new DetailViewer();
+    DetailViewer dv = new DetailViewer();
     dv.setWidth("70%");
     dv.setDataSource(dmds);
     dv.setStyleName("fileDetails");
@@ -322,10 +333,12 @@ public class SubmissionDetailsPanel extends VLayout
     else
      first=false;
     
-    sb.append(tr.getClassiferName()).append(':').append(tr.getTagName());
+    sb.append('[').append(tr.getClassiferName()).append(':').append(tr.getTagName());
     
     if( tr.getTagValue() != null )
      sb.append('=').append(tr.getTagValue());
+    
+    sb.append(']');
    } 
 
    tagStr = sb.toString();
@@ -336,12 +349,12 @@ public class SubmissionDetailsPanel extends VLayout
 
  public void setSubmissionTags(Collection<TagRef> tags)
  {
-  Record record = dv.getDataSource().getCacheData()[0];
+  Record record = submissionDetails.getRecordList().get(0);
   
   record.setAttribute(SubmissionConstants.TAGS.name(), tagList(tags)
     +" <a class='el' href='javascript:linkClicked(&quot;clustTags&quot;,&quot;"+record.getAttribute(SubmissionConstants.SUBM_ID.name())+"&quot;)'>manage tags</a>");
-
-  dv.getDataSource().updateData(record);
+  
+  submissionDetails.setData( new Record[]{ record } );
  }
  
 }

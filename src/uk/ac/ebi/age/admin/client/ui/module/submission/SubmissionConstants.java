@@ -34,24 +34,24 @@ public enum SubmissionConstants
   return title;
  }
  
- static DataSource createSubmissionDataSource()
- {
-  DataSource ds = new DataSource();
-  
-  DataSourceTextField idFld = new DataSourceTextField(SubmissionConstants.SUBM_ID.name(), SubmissionConstants.SUBM_ID.title());
-  idFld.setPrimaryKey(true);
-  
-  ds.addField(idFld);
-  ds.addField(new DataSourceTextField(SubmissionConstants.COMM.name(), SubmissionConstants.COMM.title()));
-  ds.addField(new DataSourceTextField(SubmissionConstants.CRTR.name(), SubmissionConstants.CRTR.title()));
-  ds.addField(new DataSourceTextField(SubmissionConstants.MDFR.name(), SubmissionConstants.MDFR.title()));
-  ds.addField(new DataSourceDateField(SubmissionConstants.CTIME.name(), SubmissionConstants.CTIME.title()));
-  ds.addField(new DataSourceDateField(SubmissionConstants.MTIME.name(), SubmissionConstants.MTIME.title()));
-  ds.addField(new DataSourceTextField(SubmissionConstants.TAGS.name(), SubmissionConstants.TAGS.title()));
-  ds.addField(new DataSourceTextField(SubmissionConstants.STS.name(), SubmissionConstants.STS.title()));
-
-  return ds;
- }
+// static DataSource createSubmissionDataSource()
+// {
+//  DataSource ds = new DataSource();
+//  
+//  DataSourceTextField idFld = new DataSourceTextField(SubmissionConstants.SUBM_ID.name(), SubmissionConstants.SUBM_ID.title());
+//  idFld.setPrimaryKey(true);
+//  
+//  ds.addField(idFld);
+//  ds.addField(new DataSourceTextField(SubmissionConstants.COMM.name(), SubmissionConstants.COMM.title()));
+//  ds.addField(new DataSourceTextField(SubmissionConstants.CRTR.name(), SubmissionConstants.CRTR.title()));
+//  ds.addField(new DataSourceTextField(SubmissionConstants.MDFR.name(), SubmissionConstants.MDFR.title()));
+//  ds.addField(new DataSourceDateField(SubmissionConstants.CTIME.name(), SubmissionConstants.CTIME.title()));
+//  ds.addField(new DataSourceDateField(SubmissionConstants.MTIME.name(), SubmissionConstants.MTIME.title()));
+//  ds.addField(new DataSourceTextField(SubmissionConstants.TAGS.name(), SubmissionConstants.TAGS.title()));
+//  ds.addField(new DataSourceTextField(SubmissionConstants.STS.name(), SubmissionConstants.STS.title()));
+//
+//  return ds;
+// }
  
  static DataSource createDataModuleDataSource()
  {
