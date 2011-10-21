@@ -1,6 +1,5 @@
 package uk.ac.ebi.age.admin.client;
 
-import java.util.Collection;
 import java.util.List;
 
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
@@ -45,8 +44,8 @@ public interface AgeAdminServiceAsync
 
  void tranklucateSubmission(String id, AsyncCallback<SimpleLogNode> asyncCallback);
 
- void getEntityTags(Entity instance, AsyncCallback<Collection<TagRef>> asyncCallback);
+ void getEntityTags(Entity instance, AsyncCallback<List<TagRef>> asyncCallback);
 
- void storeEntityTags(Entity instance, Collection<TagRef> tr, AsyncCallback<Void> asyncCallback);
+ void storeEntityTags(Entity instance, List<TagRef> tr, AsyncCallback<Void> asyncCallback);
 
 }

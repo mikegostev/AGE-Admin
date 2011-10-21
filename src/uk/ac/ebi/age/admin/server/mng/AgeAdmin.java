@@ -239,7 +239,8 @@ public class AgeAdmin implements SecurityChangedListener
 
   
 //  conf.getUploadManager().addUploadCommandListener("SetModel", new SemanticUploader(storage));
-  conf.getUploadManager().addUploadCommandListener(SubmissionConstants.SUBMISSON_COMMAND, new SubmissionUploader(conf.getSubmissionManager()));
+  conf.getUploadManager().addUploadCommandListener(SubmissionConstants.SUBMISSON_COMMAND, 
+    new SubmissionUploader(conf.getSubmissionManager(),conf.getAuthDB()));
 
   conf.getFileSourceManager().addFileSource(Constants.attachmentRequestSubject, new AttachmentFileSource(conf.getSubmissionDB()) );
   conf.getFileSourceManager().addFileSource(Constants.documentRequestSubject, new DocumentFileSource(conf.getSubmissionDB()) );
@@ -522,7 +523,7 @@ public class AgeAdmin implements SecurityChangedListener
 
     try
     {
-     sm.setTags((Collection<TagRef>) annotationMngr.getAnnotation(rl, Topic.TAG, ent, false));
+     sm.setTags((List<TagRef>) annotationMngr.getAnnotation(rl, Topic.TAG, ent, false));
     }
     catch(AnnotationDBException e)
     {
@@ -539,7 +540,7 @@ public class AgeAdmin implements SecurityChangedListener
 
       try
       {
-       dmm.setTags((Collection<TagRef>) annotationMngr.getAnnotation(rl, Topic.TAG, me, false));
+       dmm.setTags((List<TagRef>) annotationMngr.getAnnotation(rl, Topic.TAG, me, false));
       }
       catch(AnnotationDBException e)
       {
@@ -559,7 +560,7 @@ public class AgeAdmin implements SecurityChangedListener
 
       try
       {
-       atm.setTags((Collection<TagRef>) annotationMngr.getAnnotation(rl, Topic.TAG, ae, false));
+       atm.setTags((List<TagRef>) annotationMngr.getAnnotation(rl, Topic.TAG, ae, false));
       }
       catch(AnnotationDBException e)
       {
@@ -649,11 +650,11 @@ public class AgeAdmin implements SecurityChangedListener
 
 
  @SuppressWarnings("unchecked")
- public Collection<TagRef> getEntityTags(Entity param) throws AnnotationDBException
+ public List<TagRef> getEntityTags(Entity param) throws AnnotationDBException
  {
   // TODO check permission
   
-  return (Collection<TagRef>) annotationMngr.getAnnotation(Topic.TAG, param, false);
+  return (List<TagRef>) annotationMngr.getAnnotation(Topic.TAG, param, false);
  }
 
 

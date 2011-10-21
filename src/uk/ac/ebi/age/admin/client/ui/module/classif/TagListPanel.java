@@ -1,7 +1,7 @@
 package uk.ac.ebi.age.admin.client.ui.module.classif;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import uk.ac.ebi.age.ext.authz.TagRef;
 
@@ -24,7 +24,7 @@ public class TagListPanel extends VLayout
  private TagSelectDialog tagSelDialog;
  private TagList list;
  
- public TagListPanel(Collection<TagRef> tags)
+ public TagListPanel(List<TagRef> tags)
  {
   setWidth100();
   setHeight100();
@@ -79,7 +79,7 @@ public class TagListPanel extends VLayout
      tagSelDialog = new TagSelectDialog(new TagSelectedListener(){
 
       @Override
-      public void tagSelected(Collection<TagRef> trs)
+      public void tagSelected(List<TagRef> trs)
       {
        if( trs != null )
        {
@@ -144,9 +144,9 @@ public class TagListPanel extends VLayout
    tagSelDialog.destroy();
  }
 
- public Collection<TagRef> getTags()
+ public List<TagRef> getTags()
  {
-  Collection<TagRef> tags = new ArrayList<TagRef>();
+  List<TagRef> tags = new ArrayList<TagRef>();
   
   for( Record r : list.getRecords() )
    tags.add( (TagRef)r.getAttributeAsObject(TagList.tagRefFieldName) );

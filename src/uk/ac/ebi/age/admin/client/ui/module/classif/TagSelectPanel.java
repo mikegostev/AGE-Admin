@@ -151,7 +151,7 @@ public class TagSelectPanel extends HLayout
   });
  }
 
- public Collection<TagRef> getTags()
+ public List<TagRef> getTags()
  {
   List<TagRef> tags = new ArrayList<TagRef>();
   

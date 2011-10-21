@@ -2,6 +2,7 @@ package uk.ac.ebi.age.admin.client.ui.module.auth;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import uk.ac.ebi.age.admin.client.AgeAdminService;
 import uk.ac.ebi.age.admin.client.ui.module.classif.TagSelectDialog2;
@@ -31,11 +32,11 @@ public class SystemPermissionsPanel extends VLayout implements LinkClickListener
   
   LinkManager.getInstance().addLinkClickListener("graphTags", this);
 
-  AgeAdminService.Util.getInstance().getEntityTags( GraphEntity.getInstance(), new AsyncCallback<Collection<TagRef>>()
+  AgeAdminService.Util.getInstance().getEntityTags( GraphEntity.getInstance(), new AsyncCallback<List<TagRef>>()
     {
      
      @Override
-     public void onSuccess(Collection<TagRef> result)
+     public void onSuccess(List<TagRef> result)
      {
       if( result == null )
        result = Collections.emptyList();
@@ -79,16 +80,16 @@ public class SystemPermissionsPanel extends VLayout implements LinkClickListener
  @Override
  public void linkClicked(String param)
  {
-  AgeAdminService.Util.getInstance().getEntityTags(GraphEntity.getInstance(), new AsyncCallback<Collection<TagRef>>()
+  AgeAdminService.Util.getInstance().getEntityTags(GraphEntity.getInstance(), new AsyncCallback<List<TagRef>>()
   {
 
    @Override
-   public void onSuccess(final Collection<TagRef> result)
+   public void onSuccess(final List<TagRef> result)
    {
     new TagSelectDialog2(result, new TagSelectedListener()
     {
      @Override
-     public void tagSelected(final Collection<TagRef> tr)
+     public void tagSelected(final List<TagRef> tr)
      {
 
       AgeAdminService.Util.getInstance().storeEntityTags(GraphEntity.getInstance(), tr, new AsyncCallback<Void>()

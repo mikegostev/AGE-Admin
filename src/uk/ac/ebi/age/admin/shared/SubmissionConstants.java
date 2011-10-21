@@ -13,6 +13,7 @@ public class SubmissionConstants
  public static final String SUBMISSON_STATUS = "submStatus";
  public static final String SUBMISSON_DESCR = "submDesc";
  public static final String SUBMISSON_DESCR_UPDATE = "submDescUpdate";
+ public static final String SUBMISSON_TAGS = "submTags";
  
  public static final String MODULE_ID = "dmId";
  public static final String MODULE_DESCRIPTION = "dmName";
@@ -20,6 +21,7 @@ public class SubmissionConstants
  public static final String MODULE_STATUS = "modStatus";
  public static final String MODULE_DESCRIPTION_UPDATE = "dmNameUpdate";
  public static final String MODULE_FILE_UPDATE = "dmFileUpdate";
+ public static final String MODULE_TAGS = "dmTags";
 
  public static final String ATTACHMENT_ID = "attachId";
  public static final String ATTACHMENT_NEW_ID = "attachNewId";
@@ -29,6 +31,7 @@ public class SubmissionConstants
  public static final String ATTACHMENT_FILE = "attachFile";
  public static final String ATTACHMENT_FILE_UPDATE = "attachFileUpdate";
  public static final String ATTACHMENT_STATUS = "attachStatus";
+ public static final String ATTACHMENT_TAGS = "attachTags";
 
  public static final String ATTACHMENT_GLOBAL = "attachGlobal";
 

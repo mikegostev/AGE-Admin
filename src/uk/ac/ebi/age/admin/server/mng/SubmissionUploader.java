@@ -4,14 +4,19 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import uk.ac.ebi.age.admin.server.service.UploadRequest;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
 import uk.ac.ebi.age.authz.ACR.Permit;
+import uk.ac.ebi.age.authz.AuthDB;
 import uk.ac.ebi.age.authz.BuiltInUsers;
 import uk.ac.ebi.age.authz.Session;
 import uk.ac.ebi.age.ext.authz.SystemAction;
+import uk.ac.ebi.age.ext.authz.TagRef;
+import uk.ac.ebi.age.ext.log.LogNode;
 import uk.ac.ebi.age.ext.log.LogNode.Level;
 import uk.ac.ebi.age.ext.submission.DataModuleMeta;
 import uk.ac.ebi.age.ext.submission.Factory;
@@ -24,6 +29,8 @@ import uk.ac.ebi.age.log.TooManyErrorsException;
 import uk.ac.ebi.age.mng.submission.AttachmentAux;
 import uk.ac.ebi.age.mng.submission.ModuleAux;
 import uk.ac.ebi.age.mng.submission.SubmissionManager;
+import uk.ac.ebi.age.transaction.ReadLock;
+import uk.ac.ebi.age.util.StringUtil;
 import uk.ac.ebi.mg.time.UniqTime;
 
 import com.pri.util.stream.StreamPump;
@@ -31,10 +38,12 @@ import com.pri.util.stream.StreamPump;
 public class SubmissionUploader implements UploadCommandListener
 {
  private SubmissionManager sbmManager;
+ private AuthDB authDB;
 
- public SubmissionUploader(SubmissionManager sm)
+ public SubmissionUploader(SubmissionManager sm,  AuthDB adb)
  {
   sbmManager=sm;
+  authDB = adb;
  }
 
  @Override
@@ -90,7 +99,47 @@ public class SubmissionUploader implements UploadCommandListener
       val=null;
     }
     
+    
+    String tagsStr = upReq.getParams().get(SubmissionConstants.SUBMISSON_TAGS);
+    
+    if( tagsStr != null )
+    {
+     LogNode prsNode = log.getRootNode().branch("Parsing submission tags");
+     List<TagRef> tags = parseTags( tagsStr, prsNode );
      
+     if( tags == null )
+      return false;
+     
+     
+     ReadLock authLock = authDB.getReadLock();
+     
+     try
+     {
+      boolean error = false;
+      
+      for( TagRef tr : tags )
+      {
+       if( authDB.getTag(authLock, tr.getClassiferName(), tr.getTagName())  == null )
+       {
+        prsNode.log(Level.ERROR, "Invalid tag: "+tr.getClassiferName()+":"+tr.getTagName());
+        error = true;
+       }
+      }
+      
+      if( error )
+       return false;
+     }
+     finally
+     {
+      authDB.releaseLock(authLock);
+     }
+     
+     prsNode.success();
+     
+     sMeta.setTags(tags);
+    }
+    
+    
     if( val == null && blkSts != Status.NEW && blkSts != Status.UPDATEORNEW )
     {
      log.getRootNode().log(Level.ERROR, "Submission ID is not provided");
@@ -193,6 +242,45 @@ public class SubmissionUploader implements UploadCommandListener
        dmMeta.setText(new String(bais.toByteArray(), enc));
       }
 
+      tagsStr = upReq.getParams().get(SubmissionConstants.MODULE_TAGS+partNo);
+      
+      if( tagsStr != null )
+      {
+       LogNode prsNode = log.getRootNode().branch("Parsing module "+partNo+" tags");
+       List<TagRef> tags = parseTags( tagsStr, prsNode );
+       
+       if( tags == null )
+        return false;
+       
+       ReadLock authLock = authDB.getReadLock();
+       
+       try
+       {
+        boolean error = false;
+        
+        for( TagRef tr : tags )
+        {
+         if( authDB.getTag(authLock, tr.getClassiferName(), tr.getTagName())  == null )
+         {
+          prsNode.log(Level.ERROR, "Invalid tag: "+tr.getClassiferName()+":"+tr.getTagName());
+          error = true;
+         }
+        }
+        
+        if( error )
+         return false;
+       }
+       finally
+       {
+        authDB.releaseLock(authLock);
+       }
+       
+       prsNode.success();
+       
+       dmMeta.setTags(tags);
+      }
+
+      
       continue;
      }
      
@@ -272,6 +360,44 @@ public class SubmissionUploader implements UploadCommandListener
 
        atAux.setFile(attFile);
       }
+      
+      
+      tagsStr = upReq.getParams().get(SubmissionConstants.ATTACHMENT_TAGS+partNo);
+      
+      if( tagsStr != null )
+      {
+       LogNode prsNode = log.getRootNode().branch("Parsing attachment "+partNo+" tags");
+       List<TagRef> tags = parseTags( tagsStr, prsNode );
+       
+       if( tags == null )
+        return false;
+       ReadLock authLock = authDB.getReadLock();
+       
+       try
+       {
+        boolean error = false;
+        
+        for( TagRef tr : tags )
+        {
+         if( authDB.getTag(authLock, tr.getClassiferName(), tr.getTagName())  == null )
+         {
+          prsNode.log(Level.ERROR, "Invalid tag: "+tr.getClassiferName()+":"+tr.getTagName());
+          error = true;
+         }
+        }
+        
+        if( error )
+         return false;
+       }
+       finally
+       {
+        authDB.releaseLock(authLock);
+       }
+       
+       prsNode.success();
+       
+       fatt.setTags(tags);
+      }
      }
     }
 
@@ -311,6 +437,43 @@ public class SubmissionUploader implements UploadCommandListener
   }
 
   return true;
+ }
+
+ private List<TagRef> parseTags(String tagsStr, LogNode logn )
+ {
+  tagsStr = tagsStr.trim();
+
+  List<TagRef> tags = new ArrayList<TagRef>();
+  
+  for( String ts : StringUtil.splitString(tagsStr, ",") )
+  {
+   List<String> parts = StringUtil.splitString(ts, ":");
+   
+   if( parts.size() != 2 )
+   {
+    logn.log(Level.ERROR, "Invalid tag string: '"+tagsStr+"'");
+    return null;
+   }
+   
+   TagRef tr = new TagRef();
+   tr.setTagName(parts.get(0).trim());
+   
+   String p2 = parts.get(1);
+   
+   int colPos = p2.indexOf('=');
+   
+   if( colPos != -1 )
+   {
+    tr.setTagName(p2.substring(0,colPos).trim() );
+    tr.setTagValue(p2.substring(colPos+1).trim() );
+   }
+   else
+    tr.setTagName(p2);
+   
+   tags.add(tr);
+  }
+  
+  return tags;
  }
 
 }

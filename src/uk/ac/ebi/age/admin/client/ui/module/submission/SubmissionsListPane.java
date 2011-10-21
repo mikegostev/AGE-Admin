@@ -1,7 +1,7 @@
 package uk.ac.ebi.age.admin.client.ui.module.submission;
 
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import uk.ac.ebi.age.admin.client.AgeAdminService;
 import uk.ac.ebi.age.admin.client.ui.module.classif.TagSelectDialog2;
@@ -167,16 +167,16 @@ public class SubmissionsListPane extends VLayout
       e = new AttachmentEntity(ce, partId);
     }
     
-    AgeAdminService.Util.getInstance().getEntityTags( e, new AsyncCallback<Collection<TagRef>>()
+    AgeAdminService.Util.getInstance().getEntityTags( e, new AsyncCallback<List<TagRef>>()
       {
        
        @Override
-       public void onSuccess(final Collection<TagRef> result)
+       public void onSuccess(final List<TagRef> result)
        {
         new TagSelectDialog2(result, new TagSelectedListener()
         {
          @Override
-         public void tagSelected( final Collection<TagRef> tr)
+         public void tagSelected( final List<TagRef> tr)
          {
           
           AgeAdminService.Util.getInstance().storeEntityTags( e, tr, new AsyncCallback<Void>(){
@@ -270,7 +270,7 @@ public class SubmissionsListPane extends VLayout
    addRecordCollapseHandler(this);
   }
   
-  public void setSubmissionTags( char partType, String clustId, String compId, String dvId, Collection<TagRef> tags )
+  public void setSubmissionTags( char partType, String clustId, String compId, String dvId, List<TagRef> tags )
   {
    for( Record r : getRecords() )
    {

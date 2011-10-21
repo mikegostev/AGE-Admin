@@ -1,6 +1,5 @@
 package uk.ac.ebi.age.admin.client;
 
-import java.util.Collection;
 import java.util.List;
 
 import uk.ac.ebi.age.admin.client.model.ModelImprint;
@@ -63,9 +62,9 @@ public interface AgeAdminService extends RemoteService
 
  SimpleLogNode tranklucateSubmission(String id) throws SubmissionDBException;
 
- Collection<TagRef> getEntityTags(Entity instance) throws UserAuthException, AnnotationDBException;
+ List<TagRef> getEntityTags(Entity instance) throws UserAuthException, AnnotationDBException;
 
- void storeEntityTags(Entity instance, Collection<TagRef> tr) throws UserAuthException, AnnotationDBException;
+ void storeEntityTags(Entity instance, List<TagRef> tr) throws UserAuthException, AnnotationDBException;
 
  
  

@@ -1,6 +1,6 @@
 package uk.ac.ebi.age.admin.client.ui.module.classif;
 
-import java.util.Collection;
+import java.util.List;
 
 import uk.ac.ebi.age.ext.authz.TagRef;
 
@@ -15,7 +15,7 @@ import com.smartgwt.client.widgets.layout.VLayout;
 public class TagSelectDialog2 extends Window
 {
 
- public TagSelectDialog2( Collection<TagRef> tags, final TagSelectedListener lsnr )
+ public TagSelectDialog2( List<TagRef> tags, final TagSelectedListener lsnr )
  {
   setTitle("Select tag");
   setShowMinimizeButton(false);

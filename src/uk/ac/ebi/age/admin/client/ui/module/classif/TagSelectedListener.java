@@ -1,10 +1,10 @@
 package uk.ac.ebi.age.admin.client.ui.module.classif;
 
-import java.util.Collection;
+import java.util.List;
 
 import uk.ac.ebi.age.ext.authz.TagRef;
 
 public interface TagSelectedListener
 {
- void tagSelected( Collection<TagRef> tr );
+ void tagSelected( List<TagRef> tr );
 }

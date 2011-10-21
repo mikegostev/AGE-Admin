@@ -1,6 +1,5 @@
 package uk.ac.ebi.age.admin.server.service;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -116,7 +115,7 @@ public class AgeAdminServiceImpl extends SessionRemoteServiceServlet implements 
 
 
  @Override
- public Collection<TagRef> getEntityTags(Entity instance)  throws UserAuthException, AnnotationDBException
+ public List<TagRef> getEntityTags(Entity instance)  throws UserAuthException, AnnotationDBException
  {
   return adm.getEntityTags(instance);
  }
@@ -124,7 +123,7 @@ public class AgeAdminServiceImpl extends SessionRemoteServiceServlet implements 
 
 
  @Override
- public void storeEntityTags(Entity instance, Collection<TagRef> tr)  throws UserAuthException, AnnotationDBException
+ public void storeEntityTags(Entity instance, List<TagRef> tr)  throws UserAuthException, AnnotationDBException
  {
   adm.storeEntityTags(instance,tr);
  }
