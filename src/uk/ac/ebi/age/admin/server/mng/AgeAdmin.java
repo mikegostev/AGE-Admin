@@ -314,6 +314,12 @@ public class AgeAdmin implements SecurityChangedListener
 
  }
 
+ 
+ public boolean setMaintenanceMode( boolean mode )
+ {
+  return storage.setMaintenanceMode( mode );
+ }
+ 
  public ModelImprint getModelImprint( )
  {
   SemanticModel sm = storage.getSemanticModel();

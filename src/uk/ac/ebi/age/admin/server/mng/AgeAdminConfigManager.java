@@ -17,6 +17,10 @@ public class AgeAdminConfigManager
  public static final String TMP_PATH_PARAM="tmpPath";
  public static final String SERVICES_PATH_PARAM="servicesPath";
  public static final String IDGEN_PATH_PARAM="IDGenPath";
+ public static final String IS_MASTER_PARAM="isMaster";
+ public static final String MAINTENANCE_MODE_TIMEOUT_PARAM="maintenanceModeTimeout";
+ 
+ private static final long defaultMaintenanceModeTimeout = 30000;
  
  @SuppressWarnings("serial")
  private Map<String,String> configMap = new HashMap<String,String>(){{
@@ -125,8 +129,25 @@ public class AgeAdminConfigManager
 
  public boolean isMaster()
  {
-  String mval = configMap.get("isMaster");
+  String mval = configMap.get(IS_MASTER_PARAM);
  
   return mval != null && ( "true".equalsIgnoreCase(mval) || "yes".equalsIgnoreCase(mval) || "1".equalsIgnoreCase(mval) ); 
+ }
+ 
+ public long getMaintenanceModeTimeout()
+ {
+  String mmTO = configMap.get(MAINTENANCE_MODE_TIMEOUT_PARAM);
+  
+  if( mmTO == null )
+   return defaultMaintenanceModeTimeout;
+  
+  try
+  {
+   return Long.parseLong( mmTO );
+  }
+  catch (Exception e)
+  {
+   return defaultMaintenanceModeTimeout;
+  }
  }
 }
