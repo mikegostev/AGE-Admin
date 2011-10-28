@@ -36,7 +36,6 @@ import uk.ac.ebi.age.admin.server.service.ds.DataSourceServiceRouter;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.ModelPath;
 import uk.ac.ebi.age.admin.shared.StoreNode;
-import uk.ac.ebi.age.admin.shared.SubmissionConstants;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
 import uk.ac.ebi.age.annotation.AnnotationManager;
 import uk.ac.ebi.age.annotation.Topic;
@@ -239,9 +238,13 @@ public class AgeAdmin implements SecurityChangedListener
 
   
 //  conf.getUploadManager().addUploadCommandListener("SetModel", new SemanticUploader(storage));
-  conf.getUploadManager().addUploadCommandListener(SubmissionConstants.SUBMISSON_COMMAND, 
+  conf.getUploadManager().addUploadCommandListener(Constants.SUBMISSON_COMMAND, 
     new SubmissionUploader(conf.getSubmissionManager(),conf.getAuthDB()));
 
+  conf.getUploadManager().addUploadCommandListener(Constants.MAINTENANCE_MODE_COMMAND, 
+    new MaintenanceModeManager( this ) );
+
+  
   conf.getFileSourceManager().addFileSource(Constants.attachmentRequestSubject, new AttachmentFileSource(conf.getSubmissionDB()) );
   conf.getFileSourceManager().addFileSource(Constants.documentRequestSubject, new DocumentFileSource(conf.getSubmissionDB()) );
   

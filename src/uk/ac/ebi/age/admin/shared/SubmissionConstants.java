@@ -7,8 +7,6 @@ public class SubmissionConstants
 
  public static final String SUBMISSON_KEY = "Key";
 
- public static final String SUBMISSON_COMMAND = "Submission";
- 
  public static final String SUBMISSON_ID = "submId";
  public static final String SUBMISSON_STATUS = "submStatus";
  public static final String SUBMISSON_DESCR = "submDesc";
