@@ -78,7 +78,7 @@ public class SubmissionUpdatePanelGWT extends VLayout
   panel.setWidth("800px");
   form.setWidget(panel);
 
-  panel.add( new Hidden(Constants.uploadHandlerParameter,SubmissionConstants.SUBMISSON_COMMAND) );
+  panel.add( new Hidden(Constants.uploadHandlerParameter,Constants.SUBMISSON_COMMAND) );
   panel.add( new Hidden(SubmissionConstants.SUBMISSON_KEY,String.valueOf(key) ) );
   panel.add( new Hidden(SubmissionConstants.SUBMISSON_ID, sbmMeta.getId() ) );
   panel.add( new Hidden(SubmissionConstants.SUBMISSON_STATUS, Status.UPDATE.name() ) );

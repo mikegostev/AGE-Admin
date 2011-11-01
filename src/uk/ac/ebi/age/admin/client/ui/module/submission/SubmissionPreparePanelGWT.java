@@ -85,7 +85,7 @@ public class SubmissionPreparePanelGWT extends VLayout
   // panel.setWidth("502px");
   form.setWidget(panel);
 
-  panel.add(new Hidden(Constants.uploadHandlerParameter, SubmissionConstants.SUBMISSON_COMMAND));
+  panel.add(new Hidden(Constants.uploadHandlerParameter, Constants.SUBMISSON_COMMAND));
   panel.add(new Hidden(SubmissionConstants.SUBMISSON_KEY, String.valueOf(key)));
   panel.add(new Hidden(SubmissionConstants.SUBMISSON_STATUS, Status.NEW.name()));
 

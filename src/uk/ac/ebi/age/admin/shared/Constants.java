@@ -51,6 +51,7 @@ public class Constants
 
  public static final int SUBMISSIONS_PER_PAGE = 30;
 
-
+ public static final String SUBMISSON_COMMAND = "Submission";
+ public static final String MAINTENANCE_MODE_COMMAND = "setMaintenanceMode";
 
 }
