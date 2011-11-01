@@ -165,7 +165,7 @@ public class AgeAdmin implements SecurityChangedListener
   {
    try
    {
-    conf.setAnnotationManager( annotationMngr = new H2AnnotationStorage( new File( Configuration.getDefaultConfiguration().getBaseDir(), Configuration.annotationRelPath) ) );
+    conf.setAnnotationManager( annotationMngr = new H2AnnotationStorage( conf.getTxResourceManager(),Configuration.annotationRelPath)  );
 //    conf.setAnnotationManager( annotationMngr = new InMemoryAnnotationStorage(conf.getTxResourceManager(),Configuration.annotationRelPath) );
    }
    catch(uk.ac.ebi.age.annotation.AnnotationDBInitException e)
