@@ -77,12 +77,17 @@ import uk.ac.ebi.age.service.submission.SubmissionDB;
 import uk.ac.ebi.age.service.submission.impl.H2SubmissionDB;
 import uk.ac.ebi.age.storage.AgeStorageAdm;
 import uk.ac.ebi.age.transaction.ReadLock;
+import uk.ac.ebi.mg.assertlog.Log;
+import uk.ac.ebi.mg.assertlog.LogFactory;
 
 import com.pri.util.M2codec;
 
 
 public class AgeAdmin implements SecurityChangedListener
 {
+ private static Log log = LogFactory.getLog(AgeAdmin.class);
+
+ 
  private static AgeAdmin instance;
 
  public static AgeAdmin getDefaultInstance()
@@ -99,6 +104,8 @@ public class AgeAdmin implements SecurityChangedListener
 
  public AgeAdmin(Configuration conf, AgeStorageAdm storage) throws AgeAdminException
  {
+  long startTime=0;
+  
   configuration=conf;
   
   this.storage = storage;
@@ -125,15 +132,30 @@ public class AgeAdmin implements SecurityChangedListener
     tf.delete();
   }
   
+  assert ( startTime = System.currentTimeMillis() ) != 0;
+  
   if(conf.getSessionManager() == null)
    conf.setSessionManager(spool = new SessionManagerImpl( conf.getTmpDir() ));
   else
    spool = conf.getSessionManager();
 
+  assert log.info("SessionManager build time: "+(System.currentTimeMillis()-startTime)+"ms");
+  
+
+  
+  
+  assert ( startTime = System.currentTimeMillis() ) != 0;
 
   if(conf.getUploadManager() == null)
    conf.setUploadManager(new UploadManager());
+
+  assert log.info("UploadManager build time: "+(System.currentTimeMillis()-startTime)+"ms");
   
+  
+  
+  
+  assert ( startTime = System.currentTimeMillis() ) != 0;
+
   if(conf.getSubmissionDB() == null)
   {
    if( conf.getSubmissionManager() != null )
@@ -143,6 +165,9 @@ public class AgeAdmin implements SecurityChangedListener
   }
   else
    submissionDB=conf.getSubmissionDB();
+  
+  assert log.info("SubmissionDB build time: "+(System.currentTimeMillis()-startTime)+"ms");
+
   
   if( conf.getTxResourceManager() == null )
   {
@@ -160,6 +185,9 @@ public class AgeAdmin implements SecurityChangedListener
    }
   }
 
+
+  assert ( startTime = System.currentTimeMillis() ) != 0;
+  
   if(conf.getAnnotationManager() == null)
   {
    try
@@ -176,6 +204,11 @@ public class AgeAdmin implements SecurityChangedListener
   else
    annotationMngr=conf.getAnnotationManager();
 
+  assert log.info("AnnotationManager build time: "+(System.currentTimeMillis()-startTime)+"ms");
+
+  
+  assert ( startTime = System.currentTimeMillis() ) != 0;
+
   if( conf.getAuthDB() == null )
   {
    try
@@ -189,7 +222,10 @@ public class AgeAdmin implements SecurityChangedListener
    }
   }
   
+  assert log.info("AuthDB build time: "+(System.currentTimeMillis()-startTime)+"ms");
+
   conf.getAuthDB().addSecurityChangedListener(this);
+  
   
   
   if( conf.getPermissionManager() == null )
