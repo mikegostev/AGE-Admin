@@ -273,7 +273,6 @@ public class AgeAdmin implements SecurityChangedListener
    conf.setFileSourceManager( new FileSourceManager() );
 
   
-//  conf.getUploadManager().addUploadCommandListener("SetModel", new SemanticUploader(storage));
   conf.getUploadManager().addUploadCommandListener(Constants.SUBMISSON_COMMAND, 
     new SubmissionUploader(conf.getSubmissionManager(),conf.getAuthDB()));
 

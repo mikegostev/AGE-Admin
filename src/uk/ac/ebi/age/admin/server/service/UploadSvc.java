@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,12 +46,28 @@ public class UploadSvc extends ServiceServlet
    return;
   }
   
+  UploadRequest upReq = new UploadRequest();
   
   boolean isMultipart = ServletFileUpload.isMultipartContent(req);
 
   if( ! isMultipart )
   {
-   resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+   
+   for(Enumeration<?> pnames = req.getParameterNames(); pnames.hasMoreElements();)
+   {
+    String pname = (String)pnames.nextElement();
+    
+    if(Constants.uploadHandlerParameter.equals(pname))
+     upReq.setCommand(req.getParameter(pname));
+    else
+     upReq.addParam(pname, req.getParameter(pname));
+   }
+    
+   if( upReq.getCommand() == null )
+    resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+   else
+    Configuration.getDefaultConfiguration().getUploadManager().processUpload(upReq, resp.getWriter());
+
    return;
   }
 
@@ -58,7 +75,6 @@ public class UploadSvc extends ServiceServlet
   // Create a new file upload handler
   ServletFileUpload upload = new ServletFileUpload();
   
-  UploadRequest upReq = new UploadRequest();
   
   try
   {
