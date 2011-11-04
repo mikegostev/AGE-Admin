@@ -25,10 +25,10 @@ public class AgeAdminConfigManager
  @SuppressWarnings("serial")
  private Map<String,String> configMap = new HashMap<String,String>(){{
   put(BASE_PATH_PARAM,      "var/biosd/");
-  put(AGEDB_PATH_PARAM,        "agedb");
+  put(AGEDB_PATH_PARAM,     "agedb");
   put(TMP_PATH_PARAM,       "tmp");
   put(SERVICES_PATH_PARAM,  "services");
-  put(IDGEN_PATH_PARAM,     "SeqIdGen");
+  put(IDGEN_PATH_PARAM,     "services/SeqIdGen");
  }};
  
 // private static AgeAdminConfigManager instance = null;

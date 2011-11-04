@@ -456,7 +456,7 @@ public class SubmissionUploader implements UploadCommandListener
    }
    
    TagRef tr = new TagRef();
-   tr.setTagName(parts.get(0).trim());
+   tr.setClassiferName(parts.get(0).trim());
    
    String p2 = parts.get(1);
    
