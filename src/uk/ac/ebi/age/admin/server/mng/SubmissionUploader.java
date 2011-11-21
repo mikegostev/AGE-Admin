@@ -33,6 +33,8 @@ import uk.ac.ebi.age.transaction.ReadLock;
 import uk.ac.ebi.age.util.StringUtil;
 import uk.ac.ebi.mg.time.UniqTime;
 
+import com.pri.util.StringUtils;
+import com.pri.util.StringUtils.Output;
 import com.pri.util.stream.StreamPump;
 
 public class SubmissionUploader implements UploadCommandListener
@@ -47,7 +49,7 @@ public class SubmissionUploader implements UploadCommandListener
  }
 
  @Override
- public boolean processUpload(UploadRequest upReq, PrintWriter out)
+ public boolean processUpload(UploadRequest upReq, final PrintWriter out)
  {
   BufferLogger log = new BufferLogger( uk.ac.ebi.age.conf.Constants.MAX_ERRORS );
 
@@ -429,10 +431,30 @@ public class SubmissionUploader implements UploadCommandListener
   }
   finally
   {
-   String logBody = Log2JSON.convert(log.getRootNode());
+//   String logBody = Log2JSON.convert(log.getRootNode());
    
    out.print("<html><body>OK-"+upReq.getParams().get(SubmissionConstants.SUBMISSON_KEY)+":["+log.getRootNode().getLevel().name()+"]<pre>\n"+Constants.beginJSONSign+"\n(");
-   out.print(logBody);
+   
+   Log2JSON.convert(log.getRootNode(), new StringUtils.Output()
+   {
+    @Override
+    public Output append(char c)
+    {
+     out.append(c);
+     
+     return this;
+    }
+    
+    @Override
+    public Output append(String str)
+    {
+     out.append(str);
+     
+     return this;
+    }
+   });
+//   out.print(logBody);
+
    out.print(")\n"+Constants.endJSONSign+"\n</pre></body></html>");
   }
 
