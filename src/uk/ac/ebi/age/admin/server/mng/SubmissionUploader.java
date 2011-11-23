@@ -18,6 +18,7 @@ import uk.ac.ebi.age.ext.authz.SystemAction;
 import uk.ac.ebi.age.ext.authz.TagRef;
 import uk.ac.ebi.age.ext.log.LogNode;
 import uk.ac.ebi.age.ext.log.LogNode.Level;
+import uk.ac.ebi.age.ext.log.SimpleLogNode;
 import uk.ac.ebi.age.ext.submission.DataModuleMeta;
 import uk.ac.ebi.age.ext.submission.Factory;
 import uk.ac.ebi.age.ext.submission.FileAttachmentMeta;
@@ -432,6 +433,8 @@ public class SubmissionUploader implements UploadCommandListener
   finally
   {
 //   String logBody = Log2JSON.convert(log.getRootNode());
+   
+   SimpleLogNode.setLevels( log.getRootNode() );
    
    out.print("<html><body>OK-"+upReq.getParams().get(SubmissionConstants.SUBMISSON_KEY)+":["+log.getRootNode().getLevel().name()+"]<pre>\n"+Constants.beginJSONSign+"\n(");
    
