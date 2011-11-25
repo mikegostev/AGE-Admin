@@ -99,9 +99,14 @@ public class AgeAdmin implements SecurityChangedListener
  private AgeStorageAdm storage;
  private SubmissionDB submissionDB;
  private AnnotationManager annotationMngr;
- 
+
  private Configuration configuration;
 
+ private boolean closeResourceManager = false;
+ private boolean closeAnnotationDb = false;
+ private boolean closeAuthDb = false;
+ private boolean closeSubmissionDb = false;
+ 
  public AgeAdmin(Configuration conf, AgeStorageAdm storage) throws AgeAdminException
  {
   long startTime=0;
@@ -161,7 +166,11 @@ public class AgeAdmin implements SecurityChangedListener
    if( conf.getSubmissionManager() != null )
     conf.setSubmissionDB( conf.getSubmissionManager().getSubmissionDB() );
    else
+   {
     conf.setSubmissionDB( submissionDB = new H2SubmissionDB(conf.getSubmissionDbDir()) );
+   
+    closeSubmissionDb  = true;
+   }
   }
   else
    submissionDB=conf.getSubmissionDB();
@@ -183,6 +192,8 @@ public class AgeAdmin implements SecurityChangedListener
     e.printStackTrace();
     throw new AgeAdminException(e);
    }
+   
+   closeResourceManager=true;
   }
 
 
@@ -200,6 +211,8 @@ public class AgeAdmin implements SecurityChangedListener
     e.printStackTrace();
     throw new AgeAdminException(e);
    }
+   
+   closeAnnotationDb=true;
   }
   else
    annotationMngr=conf.getAnnotationManager();
@@ -220,6 +233,8 @@ public class AgeAdmin implements SecurityChangedListener
     e.printStackTrace();
     throw new AgeAdminException(e);
    }
+   
+   closeAuthDb=true;
   }
   
   assert log.info("AuthDB build time: "+(System.currentTimeMillis()-startTime)+"ms");
@@ -294,18 +309,28 @@ public class AgeAdmin implements SecurityChangedListener
   if(spool != null)
    spool.shutdown();
 
-  try
+  if( closeResourceManager )
   {
-   Configuration.getDefaultConfiguration().getTxResourceManager().stop(FileResourceManager.SHUTDOWN_MODE_NORMAL);
+   try
+   {
+    Configuration.getDefaultConfiguration().getTxResourceManager().stop(FileResourceManager.SHUTDOWN_MODE_NORMAL);
+   }
+   catch(ResourceManagerSystemException e)
+   {
+    e.printStackTrace();
+   }
   }
-  catch(ResourceManagerSystemException e)
-  {
-   e.printStackTrace();
-  }
+  
 
-//  if(submissionDB != null)
-//   submissionDB.shutdown();
+  if(closeSubmissionDb)
+   submissionDB.shutdown();
 
+  if( closeAnnotationDb )
+   annotationMngr.shutdown();
+  
+  if( closeAuthDb )
+   configuration.getAuthDB().shutdown();
+  
  }
 
  public Session login(String userName, String password, String clientAddr) throws UserAuthException
