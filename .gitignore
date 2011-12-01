@@ -12,3 +12,4 @@ scrap
 /dist
 /build
 /gwt-unitCache
+/target
