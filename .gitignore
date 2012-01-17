@@ -12,3 +12,6 @@ scrap
 /dist
 /build
 /gwt-unitCache
+/test
+/trash
+/target
