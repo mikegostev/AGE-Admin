@@ -6,12 +6,10 @@
 scrap
 /lib
 .externalToolBuilders
-
-.gwt/build
 /buildlib
 /dist
 /build
-/gwt-unitCache
 /test
 /trash
+/gwt-unitCache
 /target
