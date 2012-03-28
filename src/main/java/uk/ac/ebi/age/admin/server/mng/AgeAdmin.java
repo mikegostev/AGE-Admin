@@ -541,7 +541,7 @@ public class AgeAdmin implements SecurityChangedListener
  {
   ModelImprint modImp = getModel(modelPath);
 
-  SemanticModel sm = Age2ImprintConverter.convertImprintToModel(modImp);
+  SemanticModel sm = Age2ImprintConverter.convertImprintToModel(modImp, storage.getSemanticModel().getModelFactory().createModelInstance());
   
   BufferLogger bLog = new BufferLogger( uk.ac.ebi.age.conf.Constants.MAX_ERRORS );
   

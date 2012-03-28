@@ -18,7 +18,6 @@ import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.QualifierRuleImprint;
 import uk.ac.ebi.age.admin.client.model.RelationRuleImprint;
 import uk.ac.ebi.age.admin.client.model.RestrictionType;
-import uk.ac.ebi.age.mng.SemanticManager;
 import uk.ac.ebi.age.model.AgeAbstractClass;
 import uk.ac.ebi.age.model.AgeAnnotation;
 import uk.ac.ebi.age.model.AgeAnnotationClass;
@@ -57,12 +56,12 @@ public class Age2ImprintConverter
   SemanticModel model;
  }
 
- public static SemanticModel convertImprintToModel( ModelImprint mimp )
+ public static SemanticModel convertImprintToModel( ModelImprint mimp, SemanticModel semanticModel )
  {
   
   final StateI2A state = new StateI2A();
   
-  state.model = SemanticManager.createModelInstance();
+  state.model = semanticModel;
   
   state.model.setIdGen(mimp.getIdGen());
   
