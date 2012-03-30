@@ -255,7 +255,7 @@ public class AgeAdmin implements SecurityChangedListener
   conf.setSyntaxProfile( conf.getAgeTabSyntaxParser().getSyntaxProfile() );
   
   if( conf.getAgeTab2AgeConverter() == null )
-   conf.setAgeTab2AgeConverter( new AgeTab2AgeConverterImpl(conf.getPermissionManager()) );
+   conf.setAgeTab2AgeConverter( new AgeTab2AgeConverterImpl(conf.getPermissionManager(),conf.getSyntaxProfile()) );
   
   if( conf.getSubmissionManager() == null )
    conf.setSubmissionManager( new SubmissionManager(storage, submissionDB, conf.getAgeTabSyntaxParser(), conf.getAgeTab2AgeConverter(), annotationMngr ) );
