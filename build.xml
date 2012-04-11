@@ -101,8 +101,9 @@
 		<sync todir="war">
 			<fileset dir="src/main/webapp"/>
 			<preserveintarget>
-				<include name="WEB-INF/classes/**"/>
-				<include name="WEB-INF/lib/**"/>
+				<include name="admin/"/>
+				<include name="WEB-INF/classes/"/>
+				<include name="WEB-INF/lib/"/>
 			</preserveintarget>
 		</sync>
 
