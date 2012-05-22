@@ -53,5 +53,6 @@ public class Constants
 
  public static final String SUBMISSON_COMMAND = "Submission";
  public static final String MAINTENANCE_MODE_COMMAND = "setMaintenanceMode";
+ public static final String SUBMISSION_TAGS_COMMAND = "submissionTags";
 
 }

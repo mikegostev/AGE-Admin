@@ -294,6 +294,9 @@ public class AgeAdmin implements SecurityChangedListener
   conf.getUploadManager().addUploadCommandListener(Constants.MAINTENANCE_MODE_COMMAND, 
     new MaintenanceModeManager( this ) );
 
+  conf.getUploadManager().addUploadCommandListener(Constants.SUBMISSION_TAGS_COMMAND, 
+    new TagController( conf ) );
+
   
   conf.getFileSourceManager().addFileSource(Constants.attachmentRequestSubject, new AttachmentFileSource(conf.getSubmissionDB()) );
   conf.getFileSourceManager().addFileSource(Constants.documentRequestSubject, new DocumentFileSource(conf.getSubmissionDB()) );

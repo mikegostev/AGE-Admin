@@ -12,7 +12,8 @@ public class SubmissionConstants
  public static final String SUBMISSON_DESCR = "submDesc";
  public static final String SUBMISSON_DESCR_UPDATE = "submDescUpdate";
  public static final String SUBMISSON_TAGS = "submTags";
- 
+ public static final String SUBMISSON_TAGS_RM = "submTagsRemove";
+
  public static final String MODULE_ID = "dmId";
  public static final String MODULE_DESCRIPTION = "dmName";
  public static final String MODULE_FILE = "dmFile";
