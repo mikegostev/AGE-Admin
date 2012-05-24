@@ -13,6 +13,7 @@ import javax.servlet.ServletContext;
 public class AgeAdminConfigManager
 {
  public static final String BASE_PATH_PARAM="basePath";
+ public static final String INDEX_PATH_PARAM="indexPath";
  public static final String AGEDB_PATH_PARAM="dbPath";
  public static final String TMP_PATH_PARAM="tmpPath";
  public static final String SERVICES_PATH_PARAM="servicesPath";
@@ -73,6 +74,12 @@ public class AgeAdminConfigManager
 //  return instance;
 // }
 
+
+ public String getIndexDir()
+ {
+  return getConfigParameter(INDEX_PATH_PARAM);
+ }
+ 
  public String getBasePath()
  {
   return getConfigParameter(BASE_PATH_PARAM);

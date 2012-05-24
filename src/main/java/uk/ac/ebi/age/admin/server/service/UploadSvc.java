@@ -27,106 +27,112 @@ public class UploadSvc extends ServiceServlet
 
  protected void service(HttpServletRequest req, HttpServletResponse resp, Session sess) throws IOException
  {
-  //TODO permission control
-//  if( ! sess.getUserProfile().isUploadAllowed() )
-//  {
-//   resp.sendError(HttpServletResponse.SC_FORBIDDEN);
-//   return;
-//  }
-  
-  if( sess == null )
-  {
-   resp.sendError(HttpServletResponse.SC_FORBIDDEN);
-   return;
-  }
-  
-  if( ! req.getMethod().equals("POST") )
-  {
-   resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-   return;
-  }
-  
-  UploadRequest upReq = new UploadRequest();
-  
-  boolean isMultipart = ServletFileUpload.isMultipartContent(req);
 
-  if( ! isMultipart )
-  {
-   
-   for(Enumeration<?> pnames = req.getParameterNames(); pnames.hasMoreElements();)
-   {
-    String pname = (String)pnames.nextElement();
-    
-    if(Constants.uploadHandlerParameter.equals(pname))
-     upReq.setCommand(req.getParameter(pname));
-    else
-     upReq.addParam(pname, req.getParameter(pname));
-   }
-    
-   if( upReq.getCommand() == null )
-    resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
-   else
-    Configuration.getDefaultConfiguration().getUploadManager().processUpload(upReq, resp.getWriter());
+  String threadName = Thread.currentThread().getName();
 
-   return;
-  }
-
-  
-  // Create a new file upload handler
-  ServletFileUpload upload = new ServletFileUpload();
-  
-  
   try
   {
-   // Parse the request
-   FileItemIterator iter = upload.getItemIterator(req);
+   Thread.currentThread().setName( "AGE upload from "+req.getRemoteAddr() );
    
-   while(iter.hasNext())
+   if(sess == null)
    {
-    FileItemStream item = iter.next();
-    String name = item.getFieldName();
-    InputStream stream = item.openStream();
-    
-    if(item.isFormField())
+    resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+    return;
+   }
+
+   if(!req.getMethod().equals("POST"))
+   {
+    resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+    return;
+   }
+
+   UploadRequest upReq = new UploadRequest();
+
+   boolean isMultipart = ServletFileUpload.isMultipartContent(req);
+
+   if(!isMultipart)
+   {
+
+    for(Enumeration< ? > pnames = req.getParameterNames(); pnames.hasMoreElements();)
     {
-     if(Constants.uploadHandlerParameter.equals(name))
+     String pname = (String) pnames.nextElement();
+
+     if(Constants.uploadHandlerParameter.equals(pname))
+      upReq.setCommand(req.getParameter(pname));
+     else
+      upReq.addParam(pname, req.getParameter(pname));
+    }
+
+    if(upReq.getCommand() == null)
+     resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+    else
+     Configuration.getDefaultConfiguration().getUploadManager().processUpload(upReq, resp.getWriter());
+
+    return;
+   }
+
+   // Create a new file upload handler
+   ServletFileUpload upload = new ServletFileUpload();
+
+   try
+   {
+    // Parse the request
+    FileItemIterator iter = upload.getItemIterator(req);
+
+    while(iter.hasNext())
+    {
+     FileItemStream item = iter.next();
+     String name = item.getFieldName();
+     InputStream stream = item.openStream();
+
+     if(item.isFormField())
      {
-      try
+      if(Constants.uploadHandlerParameter.equals(name))
       {
-       upReq.setCommand(Streams.asString(stream));
-       stream.close();
+       try
+       {
+        upReq.setCommand(Streams.asString(stream));
+        stream.close();
+       }
+       catch(Exception e)
+       {
+       }
       }
-      catch (Exception e)
+      else
       {
+       upReq.addParam(name, Streams.asString(stream));
       }
+
+      //     System.out.println("Form field " + name + " with value " + Streams.asString(stream) + " detected.");
      }
      else
      {
-      upReq.addParam(name, Streams.asString(stream));
+      //     System.out.println("File field " + name + " with file name " + item.getName() + " detected.");
+      InputStream uploadedStream = item.openStream();
+
+      File tmpf = sess.makeTempFile();
+
+      StreamPump.doPump(uploadedStream, new FileOutputStream(tmpf), true);
+
+      upReq.addFile(name, tmpf);
      }
-
-//     System.out.println("Form field " + name + " with value " + Streams.asString(stream) + " detected.");
     }
-    else
-    {
-//     System.out.println("File field " + name + " with file name " + item.getName() + " detected.");
-     InputStream uploadedStream = item.openStream();
-     
-     File tmpf = sess.makeTempFile();
-     
-     StreamPump.doPump(uploadedStream, new FileOutputStream(tmpf), true);
+   
+    Thread.currentThread().setName( "AGE upload ("+upReq.getCommand()+") from "+req.getRemoteAddr() );
 
-     upReq.addFile(name, tmpf);
-    }
+    Configuration.getDefaultConfiguration().getUploadManager().processUpload(upReq, resp.getWriter());
    }
+   catch(Throwable ex)
+   {
+    ex.printStackTrace();
+    resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    return;
+   }
+
   }
-  catch(Exception ex)
+  finally
   {
-   ex.printStackTrace();
-   resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-   return;
+   Thread.currentThread().setName(threadName);
   }
-  
-  Configuration.getDefaultConfiguration().getUploadManager().processUpload(upReq, resp.getWriter());
  }
 }
