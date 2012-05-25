@@ -1,4 +1,4 @@
-.classpath
+gea.classpath
 .project
 .settings
 .gwt
@@ -6,6 +6,7 @@
 scrap
 /lib
 .externalToolBuilders
+.gwt/build
 /buildlib
 /dist
 /build
