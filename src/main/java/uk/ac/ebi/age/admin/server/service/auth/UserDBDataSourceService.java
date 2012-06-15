@@ -77,7 +77,7 @@ public class UserDBDataSourceService implements DataSourceBackendService
    }
   
   }
-  catch(AuthDBException e)
+  catch(Exception e)
   {
    try
    {
