@@ -22,6 +22,8 @@ public class AgeAdminConfigManager
  public static final String MAINTENANCE_MODE_TIMEOUT_PARAM="maintenanceModeTimeout";
  public static final String AUTO_MMODE_TIMEOUT_PARAM="autoMModeTimeout";
  
+ private static final String defaultIndexPath = "index";
+ 
  private static final long defaultMaintenanceModeTimeout = 30000;
  private static final long defaultAutoMModeTimeout = 2000;
  
@@ -79,7 +81,14 @@ public class AgeAdminConfigManager
 
  public String getIndexDir()
  {
-  return getConfigParameter(INDEX_PATH_PARAM);
+  String path = getConfigParameter(INDEX_PATH_PARAM);
+    
+  if( path != null )
+   return path;
+  
+  String basePath = getBasePath();
+  
+  return basePath.endsWith("/")?basePath+defaultIndexPath:basePath+"/"+defaultIndexPath;
  }
  
  public String getBasePath()

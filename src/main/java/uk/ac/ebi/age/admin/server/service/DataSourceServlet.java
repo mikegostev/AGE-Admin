@@ -111,26 +111,53 @@ public class DataSourceServlet extends ServiceServlet
    
    response.setContentType("application/json; charset=utf-8");
   
-   ServletOutputStream out = response.getOutputStream();
+//   ServletOutputStream out = response.getOutputStream();
    
    
-   OutputStreamWriter outw = new OutputStreamWriter(out, Charset.forName("UTF-8"));
+   OutputStreamWriter outw = new OutputStreamWriter(response.getOutputStream(), Charset.forName("UTF-8"));
  
-   if( dsr.getRequestType() != RequestType.FETCH )
-   {
-    if( dsresp.getErrorMessage() != null )
-     out.print("{" +
-       "response:{" +
-       " status: " + RPCResponse.STATUS_LOGIN_SUCCESS+
-       ", data: '"+StringUtils.escapeByBackslash(dsresp.getErrorMessage(), '\'')+"'"+
-       "}}");
-    else
-     out.print("{" +
-        "response:{" +
-        " status: 0}}");
+   if( dsresp.getErrorMessage() != null )
+   { outw.write("{" +
+      "response:{" +
+      " status: " + RPCResponse.STATUS_LOGIN_SUCCESS+
+      ", data: '"+StringUtils.escapeByBackslash(dsresp.getErrorMessage(), '\'')+"'"+
+      "}}");
+   
+    outw.close();
     
     return;
    }
+   
+   if( dsr.getRequestType() == RequestType.DELETE )
+   {
+
+    DSField kFld = dsd.getKeyField();
+    String val = null;
+
+    if(kFld != null)
+    {
+     MapIterator<DSField, String> dataIter = dsresp.getIterator();
+
+     if(dataIter != null && dataIter.next())
+      val = dataIter.get(kFld);
+    }
+
+    outw.write("{" + "response:{" + " status: 0");
+
+    if(val == null)
+     outw.write("}}");
+    else
+    {
+     outw.write(", data: {");
+     outw.write("'" + StringUtils.escapeByBackslash(kFld.getFieldId(), '\'') + "': '" + StringUtils.escapeByBackslash(val, '\'') + "'");
+     outw.write("}}}");
+    }
+
+    outw.close();
+
+    return;
+   }
+
  
    outw.write("{" +
      "response:{" +
@@ -143,36 +170,41 @@ public class DataSourceServlet extends ServiceServlet
    );
    
    MapIterator<DSField, String> dataIter = dsresp.getIterator();
-   
-   boolean first = true;
-   while( dataIter.next() )
+  
+   if( dataIter != null )
    {
-    if( first )
+
+    boolean first = true;
+    while(dataIter.next())
     {
-     outw.write('{');
-     first=false;
-    }
-    else
-     outw.write(",{");
-    
-    boolean fieldFirst = true;
-    
-    for( DSField dsf : dsd.getFields() )
-    {
-     String val = dataIter.get(dsf);
-     
-     if( fieldFirst )
-      fieldFirst=false;
+     if(first)
+     {
+      outw.write('{');
+      first = false;
+     }
      else
-      outw.write(",");
-     
-     val = val==null?"":StringUtils.escapeByBackslash(val,'\'');
-     
-     outw.write("'"+StringUtils.escapeByBackslash(dsf.getFieldId(),'\'')+"': '"+val+"'");
+      outw.write(",{");
+
+     boolean fieldFirst = true;
+
+     for(DSField dsf : dsd.getFields())
+     {
+      String val = dataIter.get(dsf);
+
+      if(fieldFirst)
+       fieldFirst = false;
+      else
+       outw.write(",");
+
+      val = val == null ? "" : StringUtils.escapeByBackslash(val, '\'');
+
+      outw.write("'" + StringUtils.escapeByBackslash(dsf.getFieldId(), '\'') + "': '" + val + "'");
+     }
+
+     outw.write("}");
+
     }
-     
-    outw.write("}");
- 
+
    }
   
    outw.write("] }}"); 

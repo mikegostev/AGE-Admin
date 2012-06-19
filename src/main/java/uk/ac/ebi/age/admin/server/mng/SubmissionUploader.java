@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.ebi.age.admin.server.service.UploadRequest;
+import uk.ac.ebi.age.admin.server.service.ServiceRequest;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
 import uk.ac.ebi.age.authz.ACR.Permit;
@@ -38,7 +38,7 @@ import com.pri.util.StringUtils;
 import com.pri.util.StringUtils.Output;
 import com.pri.util.stream.StreamPump;
 
-public class SubmissionUploader implements UploadCommandListener
+public class SubmissionUploader implements RemoteRequestListener
 {
  private SubmissionManager sbmManager;
  private AuthDB authDB;
@@ -50,7 +50,7 @@ public class SubmissionUploader implements UploadCommandListener
  }
 
  @Override
- public boolean processUpload(UploadRequest upReq, final PrintWriter out)
+ public boolean processRequest(ServiceRequest upReq, final PrintWriter out)
  {
   BufferLogger log = new BufferLogger( uk.ac.ebi.age.conf.Constants.MAX_ERRORS );
 

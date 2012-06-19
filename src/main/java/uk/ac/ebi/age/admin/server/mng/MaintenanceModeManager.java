@@ -2,10 +2,10 @@ package uk.ac.ebi.age.admin.server.mng;
 
 import java.io.PrintWriter;
 
-import uk.ac.ebi.age.admin.server.service.UploadRequest;
+import uk.ac.ebi.age.admin.server.service.ServiceRequest;
 import uk.ac.ebi.age.admin.shared.MaintenanceModeConstants;
 
-public class MaintenanceModeManager implements UploadCommandListener
+public class MaintenanceModeManager implements RemoteRequestListener
 {
  private AgeAdmin admin; 
 
@@ -15,7 +15,7 @@ public class MaintenanceModeManager implements UploadCommandListener
  }
 
  @Override
- public boolean processUpload(UploadRequest upReq, PrintWriter out)
+ public boolean processRequest(ServiceRequest upReq, PrintWriter out)
  {
   String val = upReq.getParams().get(MaintenanceModeConstants.modeParam);
   

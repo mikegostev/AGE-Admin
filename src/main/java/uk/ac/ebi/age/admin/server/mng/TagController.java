@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import uk.ac.ebi.age.admin.server.service.UploadRequest;
+import uk.ac.ebi.age.admin.server.service.ServiceRequest;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
 import uk.ac.ebi.age.annotation.AnnotationManager;
 import uk.ac.ebi.age.annotation.Topic;
@@ -24,7 +24,7 @@ import uk.ac.ebi.age.transaction.Transaction;
 import uk.ac.ebi.age.transaction.TransactionException;
 import uk.ac.ebi.age.util.StringUtil;
 
-public class TagController implements UploadCommandListener
+public class TagController implements RemoteRequestListener
 {
  private Configuration config;
 
@@ -34,7 +34,7 @@ public class TagController implements UploadCommandListener
  }
 
  @Override
- public boolean processUpload(UploadRequest upReq, final PrintWriter out)
+ public boolean processRequest(ServiceRequest upReq, final PrintWriter out)
  {
   Session sess = Configuration.getDefaultConfiguration().getSessionManager().getSession();
 

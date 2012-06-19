@@ -20,7 +20,7 @@ import uk.ac.ebi.age.authz.Session;
 
 import com.pri.util.stream.StreamPump;
 
-public class UploadSvc extends ServiceServlet
+public class RemoteSvc extends ServiceServlet
 {
 
  private static final long serialVersionUID = -4888846889606953616L;
@@ -32,7 +32,7 @@ public class UploadSvc extends ServiceServlet
 
   try
   {
-   Thread.currentThread().setName( "AGE upload from "+req.getRemoteAddr() );
+   Thread.currentThread().setName( "AGE service reuest from "+req.getRemoteAddr() );
    
    if(sess == null)
    {
@@ -46,7 +46,7 @@ public class UploadSvc extends ServiceServlet
     return;
    }
 
-   UploadRequest upReq = new UploadRequest();
+   ServiceRequest upReq = new ServiceRequest();
 
    boolean isMultipart = ServletFileUpload.isMultipartContent(req);
 
@@ -57,16 +57,16 @@ public class UploadSvc extends ServiceServlet
     {
      String pname = (String) pnames.nextElement();
 
-     if(Constants.uploadHandlerParameter.equals(pname))
-      upReq.setCommand(req.getParameter(pname));
+     if(Constants.serviceHandlerParameter.equals(pname))
+      upReq.setHandlerName(req.getParameter(pname));
      else
       upReq.addParam(pname, req.getParameter(pname));
     }
 
-    if(upReq.getCommand() == null)
+    if(upReq.getHandlerName() == null)
      resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
     else
-     Configuration.getDefaultConfiguration().getUploadManager().processUpload(upReq, resp.getWriter());
+     Configuration.getDefaultConfiguration().getRemoteRequestManager().processUpload(upReq, resp.getWriter());
 
     return;
    }
@@ -87,11 +87,11 @@ public class UploadSvc extends ServiceServlet
 
      if(item.isFormField())
      {
-      if(Constants.uploadHandlerParameter.equals(name))
+      if(Constants.serviceHandlerParameter.equals(name))
       {
        try
        {
-        upReq.setCommand(Streams.asString(stream));
+        upReq.setHandlerName(Streams.asString(stream));
         stream.close();
        }
        catch(Exception e)
@@ -118,9 +118,9 @@ public class UploadSvc extends ServiceServlet
      }
     }
    
-    Thread.currentThread().setName( "AGE upload ("+upReq.getCommand()+") from "+req.getRemoteAddr() );
+    Thread.currentThread().setName( "AGE upload ("+upReq.getHandlerName()+") from "+req.getRemoteAddr() );
 
-    Configuration.getDefaultConfiguration().getUploadManager().processUpload(upReq, resp.getWriter());
+    Configuration.getDefaultConfiguration().getRemoteRequestManager().processUpload(upReq, resp.getWriter());
    }
    catch(Throwable ex)
    {

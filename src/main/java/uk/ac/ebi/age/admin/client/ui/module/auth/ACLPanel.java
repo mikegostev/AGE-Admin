@@ -334,7 +334,9 @@ public class ACLPanel extends HLayout
   
   aclPanel.addMember(aclTools);
 
-  
+  ListGridField idField = new ListGridField( ACLDSDef.keyField.getFieldId(), "ID" );
+  idField.setWidth(30);
+
   ListGridField sTypeField = new ListGridField( ACLDSDef.sTypeField.getFieldId(), "U/G" );
   sTypeField.setWidth(30);
   sTypeField.setAlign(Alignment.CENTER);  
@@ -355,7 +357,7 @@ public class ACLPanel extends HLayout
   ListGridField permField = new ListGridField( ACLDSDef.pIdField.getFieldId(), ACLDSDef.pIdField.getFieldTitle() );
   
   
-  acl.setFields(sTypeField,sidField,pTypeField,permField);
+  acl.setFields(idField, sTypeField,sidField,pTypeField,permField);
   
   acl.setWidth100();
   acl.setHeight100();

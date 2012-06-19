@@ -5,18 +5,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class UploadRequest
+public class ServiceRequest
 {
  private String command;
  private Map<String,String> params = new TreeMap<String,String>();
  private Map<String, File> files  = new HashMap<String, File>();
  
- public String getCommand()
+ public String getHandlerName()
  {
   return command;
  }
  
- public void setCommand(String command)
+ public void setHandlerName(String command)
  {
   this.command = command;
  }

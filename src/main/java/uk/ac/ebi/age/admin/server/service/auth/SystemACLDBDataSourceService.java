@@ -1,6 +1,7 @@
 package uk.ac.ebi.age.admin.server.service.auth;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 import uk.ac.ebi.age.admin.server.service.ds.DataSourceBackendService;
@@ -198,7 +199,7 @@ public class SystemACLDBDataSourceService implements DataSourceBackendService
    return resp;
   }
   
-  
+  ACR acr = null;
   
   Transaction trn = db.startTransaction();
 
@@ -207,16 +208,16 @@ public class SystemACLDBDataSourceService implements DataSourceBackendService
    if( r.isGroup )
    {
     if( r.profileId != null )
-     db.addSysProfileForGroupACR( trn, r.subjId, r.profileId );
+     acr = db.addSysProfileForGroupACR( trn, r.subjId, r.profileId );
     else
-     db.addSysActionForGroupACR( trn, r.subjId, r.action, r.allow );
+     acr = db.addSysActionForGroupACR( trn, r.subjId, r.action, r.allow );
    }
    else
    {
     if( r.profileId != null )
-     db.addSysProfileForUserACR( trn, r.subjId, r.profileId );
+     acr = db.addSysProfileForUserACR( trn, r.subjId, r.profileId );
     else
-     db.addSysActionForUserACR( trn, r.subjId, r.action, r.allow );
+     acr = db.addSysActionForUserACR( trn, r.subjId, r.action, r.allow );
    }
   
    try
@@ -243,6 +244,8 @@ public class SystemACLDBDataSourceService implements DataSourceBackendService
 
   }
 
+  resp.setIterator( new ACLMapIterator( Collections.singleton(acr) ) );
+  
   return resp;
  }
 

@@ -37,7 +37,7 @@ public class Configuration
  }
 
  private SessionManager sessionPool;
- private UploadManager uploadManager;
+ private RemoteRequestManager remoteReqManager;
  private SubmissionDB submissionDB;
  private SubmissionManager submissionManager;
  private AnnotationManager annotationStorage;
@@ -73,9 +73,9 @@ public class Configuration
  }
 
 
- public UploadManager getUploadManager()
+ public RemoteRequestManager getRemoteRequestManager()
  {
-  return uploadManager;
+  return remoteReqManager;
  }
 
 
@@ -85,9 +85,9 @@ public class Configuration
  }
 
 
- public void setUploadManager(UploadManager uploadManager)
+ public void setRemoteRequestManager(RemoteRequestManager uploadManager)
  {
-  this.uploadManager = uploadManager;
+  this.remoteReqManager = uploadManager;
  }
 
 

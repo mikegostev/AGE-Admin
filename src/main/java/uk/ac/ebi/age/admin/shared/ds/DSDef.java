@@ -9,19 +9,37 @@ import com.smartgwt.client.data.RestDataSource;
 
 public class DSDef
 {
+ private DSField keyField;
  private List<DSField> fields = new ArrayList<DSField>(10);
 
 
  public void addField( DSField fld )
  {
   fields.add(fld);
+
+  if( fld.isPrimaryKey() )
+   keyField = fld;
  }
  
  public void setFields(List<DSField> fields)
  {
   this.fields = fields;
+  
+  for( DSField dsf : fields )
+  {
+   if( dsf.isPrimaryKey() )
+   {
+    keyField = dsf;
+    break;
+   }
+  }
  }
 
+ public DSField getKeyField()
+ {
+  return keyField;
+ }
+ 
  public List<DSField> getFields()
  {
   return fields;

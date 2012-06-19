@@ -151,8 +151,8 @@ public class AgeAdmin implements SecurityChangedListener
   
   assert ( startTime = System.currentTimeMillis() ) != 0;
 
-  if(conf.getUploadManager() == null)
-   conf.setUploadManager(new UploadManager());
+  if(conf.getRemoteRequestManager() == null)
+   conf.setRemoteRequestManager(new RemoteRequestManager());
 
   assert log.info("UploadManager build time: "+(System.currentTimeMillis()-startTime)+"ms");
   
@@ -268,36 +268,39 @@ public class AgeAdmin implements SecurityChangedListener
 //    conf.setClassifierDB( new SerializedAuthDBImpl(conf.getTxResourceManager(),Configuration.authRelPath) );
 //  }
   
+  DataSourceServiceRouter dsRouter=conf.getDataSourceServiceRouter();
   
-  if( conf.getDataSourceServiceRouter() == null )
-   conf.setDataSourceServiceRouter( new DataSourceServiceRouter() );
+  if( dsRouter == null )
+   conf.setDataSourceServiceRouter( dsRouter = new DataSourceServiceRouter() );
 
-  conf.getDataSourceServiceRouter().addService(Constants.userListServiceName, new UserDBDataSourceService( conf.getAuthDB() ) );
-  conf.getDataSourceServiceRouter().addService(Constants.groupListServiceName, new GroupDBDataSourceService( conf.getAuthDB() ) );
-  conf.getDataSourceServiceRouter().addService(Constants.groupOfUserListServiceName, new GroupOfUserDBDataSourceService( conf.getAuthDB() ) );
-  conf.getDataSourceServiceRouter().addService(Constants.groupPartsListServiceName, new GroupPartsDBDataSourceService( conf.getAuthDB() ) );
-  conf.getDataSourceServiceRouter().addService(Constants.profileListServiceName, new ProfileDBDataSourceService( conf.getAuthDB() ) );
-  conf.getDataSourceServiceRouter().addService(Constants.profilePermissionsListServiceName, new ProfilePermissionsDBDataSourceService( conf.getAuthDB() ) );
+  dsRouter.addService(Constants.userListServiceName, new UserDBDataSourceService( conf.getAuthDB() ) );
+  dsRouter.addService(Constants.groupListServiceName, new GroupDBDataSourceService( conf.getAuthDB() ) );
+  dsRouter.addService(Constants.groupOfUserListServiceName, new GroupOfUserDBDataSourceService( conf.getAuthDB() ) );
+  dsRouter.addService(Constants.groupPartsListServiceName, new GroupPartsDBDataSourceService( conf.getAuthDB() ) );
+  dsRouter.addService(Constants.profileListServiceName, new ProfileDBDataSourceService( conf.getAuthDB() ) );
+  dsRouter.addService(Constants.profilePermissionsListServiceName, new ProfilePermissionsDBDataSourceService( conf.getAuthDB() ) );
  
-  conf.getDataSourceServiceRouter().addService(Constants.classifierListServiceName, new ClassifierDBDataSourceService( conf.getAuthDB() ) );
-  conf.getDataSourceServiceRouter().addService(Constants.tagTreeServiceName, new TagDBDataSourceService( conf.getAuthDB() ) );
-  conf.getDataSourceServiceRouter().addService(Constants.tagACLServiceName, new TagACLDBDataSourceService( conf.getAuthDB() ) );
-  conf.getDataSourceServiceRouter().addService(Constants.sysACLServiceName, new SystemACLDBDataSourceService( conf.getAuthDB() ) );
+  dsRouter.addService(Constants.classifierListServiceName, new ClassifierDBDataSourceService( conf.getAuthDB() ) );
+  dsRouter.addService(Constants.tagTreeServiceName, new TagDBDataSourceService( conf.getAuthDB() ) );
+  dsRouter.addService(Constants.tagACLServiceName, new TagACLDBDataSourceService( conf.getAuthDB() ) );
+  dsRouter.addService(Constants.sysACLServiceName, new SystemACLDBDataSourceService( conf.getAuthDB() ) );
 
   if( conf.getFileSourceManager() == null )
    conf.setFileSourceManager( new FileSourceManager() );
 
   
-  conf.getUploadManager().addUploadCommandListener(Constants.SUBMISSON_COMMAND, 
+  conf.getRemoteRequestManager().addRemoteRequestListener(Constants.SUBMISSON_COMMAND, 
     new SubmissionUploader(conf.getSubmissionManager(),conf.getAuthDB()));
 
-  conf.getUploadManager().addUploadCommandListener(Constants.MAINTENANCE_MODE_COMMAND, 
+  conf.getRemoteRequestManager().addRemoteRequestListener(Constants.MAINTENANCE_MODE_COMMAND, 
     new MaintenanceModeManager( this ) );
 
-  conf.getUploadManager().addUploadCommandListener(Constants.SUBMISSION_TAGS_COMMAND, 
+  conf.getRemoteRequestManager().addRemoteRequestListener(Constants.SUBMISSION_TAGS_COMMAND, 
     new TagController( conf ) );
 
-  
+  conf.getRemoteRequestManager().addRemoteRequestListener(Constants.RPC_COMMAND, 
+    new AdminRPC( this ) );
+ 
   conf.getFileSourceManager().addFileSource(Constants.attachmentRequestSubject, new AttachmentFileSource(conf.getSubmissionDB()) );
   conf.getFileSourceManager().addFileSource(Constants.documentRequestSubject, new DocumentFileSource(conf.getSubmissionDB()) );
   

@@ -5,24 +5,24 @@ import java.io.PrintWriter;
 import java.util.Map;
 import java.util.TreeMap;
 
-import uk.ac.ebi.age.admin.server.service.UploadRequest;
+import uk.ac.ebi.age.admin.server.service.ServiceRequest;
 
-public class UploadManager
+public class RemoteRequestManager
 {
- private Map<String, UploadCommandListener> lsnrs = new TreeMap<String, UploadCommandListener>();
+ private Map<String, RemoteRequestListener> lsnrs = new TreeMap<String, RemoteRequestListener>();
 
- public void processUpload(UploadRequest upReq, PrintWriter printWriter)
+ public void processUpload(ServiceRequest upReq, PrintWriter printWriter)
  {
   try
   {
-   if(upReq.getCommand() == null)
+   if(upReq.getHandlerName() == null)
     return;
 
-   UploadCommandListener lsnr = lsnrs.get(upReq.getCommand());
+   RemoteRequestListener lsnr = lsnrs.get(upReq.getHandlerName());
 
    if(lsnr != null)
    {
-    lsnr.processUpload(upReq, printWriter);
+    lsnr.processRequest(upReq, printWriter);
 
     // if( lsnr.processUpload(upReq,sess,printWriter) && upReq.getFiles() !=
     // null )
@@ -43,7 +43,7 @@ public class UploadManager
   }
  }
 
- public void addUploadCommandListener( String cmd, UploadCommandListener ls )
+ public void addRemoteRequestListener( String cmd, RemoteRequestListener ls )
  {
   lsnrs.put(cmd, ls);
  }

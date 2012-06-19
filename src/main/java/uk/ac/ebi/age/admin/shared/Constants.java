@@ -4,7 +4,7 @@ public class Constants
 {
  public static final String sessionKey="AGESESS";
  
- public static final String uploadHandlerParameter = "Subject";
+ public static final String serviceHandlerParameter = "Subject";
 
  public static final String downloadHandlerParameter = "Subject";
 
@@ -54,5 +54,6 @@ public class Constants
  public static final String SUBMISSON_COMMAND = "Submission";
  public static final String MAINTENANCE_MODE_COMMAND = "setMaintenanceMode";
  public static final String SUBMISSION_TAGS_COMMAND = "submissionTags";
+ public static final String RPC_COMMAND = "rpc";
 
 }

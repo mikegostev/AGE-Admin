@@ -24,7 +24,7 @@ import uk.ac.ebi.age.ext.submission.SubmissionDBException;
 import uk.ac.ebi.age.ext.submission.SubmissionQuery;
 import uk.ac.ebi.age.ext.submission.SubmissionReport;
 
-public class AgeAdminServiceImpl extends SessionRemoteServiceServlet implements AgeAdminService
+public class AgeAdminProxy extends SessionRemoteServiceServlet implements AgeAdminService
 {
  private static final long serialVersionUID = 1L;
 
