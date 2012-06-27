@@ -48,4 +48,6 @@ public interface AgeAdminServiceAsync
 
  void storeEntityTags(Entity instance, List<TagRef> tr, AsyncCallback<Void> asyncCallback);
 
+ void setMaintenanceMode(boolean set, int timeout, AsyncCallback<Boolean> callback);
+
 }

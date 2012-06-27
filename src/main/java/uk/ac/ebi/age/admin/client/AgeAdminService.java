@@ -6,6 +6,7 @@ import uk.ac.ebi.age.admin.client.model.ModelImprint;
 import uk.ac.ebi.age.admin.client.model.ModelStorage;
 import uk.ac.ebi.age.admin.client.model.ModelStorageException;
 import uk.ac.ebi.age.admin.shared.ModelPath;
+import uk.ac.ebi.age.admin.shared.user.exception.NotAuthorizedException;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
 import uk.ac.ebi.age.ext.annotation.AnnotationDBException;
 import uk.ac.ebi.age.ext.authz.TagRef;
@@ -41,35 +42,30 @@ public interface AgeAdminService extends RemoteService
  
  String login(String uname, String pass) throws UserAuthException;
  
- ModelImprint getModelImprint();
+ ModelImprint getModelImprint() throws NotAuthorizedException;
 
- ModelStorage getModelStorage() throws UserAuthException;
+ ModelStorage getModelStorage() throws NotAuthorizedException;
 
- void saveModel(ModelImprint model, ModelPath storePath) throws ModelStorageException, UserAuthException;
+ void saveModel(ModelImprint model, ModelPath storePath) throws NotAuthorizedException, ModelStorageException;
 
- ModelImprint getModel(ModelPath path) throws ModelStorageException, UserAuthException;
+ ModelImprint getModel(ModelPath path) throws NotAuthorizedException, ModelStorageException;
 
- LogNode installModel(ModelPath modelPath) throws UserAuthException, ModelStorageException;
+ LogNode installModel(ModelPath modelPath) throws NotAuthorizedException, ModelStorageException;
 
- SubmissionReport getSubmissions(SubmissionQuery q) throws UserAuthException, SubmissionDBException;
+ SubmissionReport getSubmissions(SubmissionQuery q) throws NotAuthorizedException, SubmissionDBException;
 
- List<HistoryEntry> getSubmissionHistory(String sbmId) throws UserAuthException, SubmissionDBException;
+ List<HistoryEntry> getSubmissionHistory(String sbmId) throws NotAuthorizedException, SubmissionDBException;
 
- SimpleLogNode deleteSubmission(String id) throws UserAuthException, SubmissionDBException;
+ SimpleLogNode deleteSubmission(String id) throws NotAuthorizedException, SubmissionDBException;
 
- SimpleLogNode restoreSubmission(String id) throws UserAuthException, SubmissionDBException;
+ SimpleLogNode restoreSubmission(String id) throws NotAuthorizedException, SubmissionDBException;
 
 
- SimpleLogNode tranklucateSubmission(String id) throws SubmissionDBException;
+ SimpleLogNode tranklucateSubmission(String id) throws NotAuthorizedException,SubmissionDBException;
 
- List<TagRef> getEntityTags(Entity instance) throws UserAuthException, AnnotationDBException;
+ List<TagRef> getEntityTags(Entity instance) throws NotAuthorizedException, AnnotationDBException;
 
- void storeEntityTags(Entity instance, List<TagRef> tr) throws UserAuthException, AnnotationDBException;
+ void storeEntityTags(Entity instance, List<TagRef> tr) throws NotAuthorizedException, AnnotationDBException;
 
- 
- 
- 
-// Collection<TagRef> getSubmissionTags(String param) throws UserAuthException, SubmissionDBException;
-// 
-// void storeSubmissionTags(String param, Collection<TagRef> result) throws SubmissionDBException;
+ boolean setMaintenanceMode( boolean set, int timeout ) throws NotAuthorizedException;
 }

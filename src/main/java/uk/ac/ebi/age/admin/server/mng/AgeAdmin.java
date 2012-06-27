@@ -36,10 +36,12 @@ import uk.ac.ebi.age.admin.server.service.ds.DataSourceServiceRouter;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.ModelPath;
 import uk.ac.ebi.age.admin.shared.StoreNode;
+import uk.ac.ebi.age.admin.shared.user.exception.NotAuthorizedException;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
 import uk.ac.ebi.age.annotation.AnnotationManager;
 import uk.ac.ebi.age.annotation.Topic;
 import uk.ac.ebi.age.annotation.impl.H2AnnotationStorage;
+import uk.ac.ebi.age.authz.ACR.Permit;
 import uk.ac.ebi.age.authz.AuthDB;
 import uk.ac.ebi.age.authz.SecurityChangedListener;
 import uk.ac.ebi.age.authz.Session;
@@ -51,6 +53,7 @@ import uk.ac.ebi.age.authz.impl.PermissionManagerImpl;
 import uk.ac.ebi.age.authz.impl.SerializedAuthDBImpl;
 import uk.ac.ebi.age.authz.impl.SessionManagerImpl;
 import uk.ac.ebi.age.ext.annotation.AnnotationDBException;
+import uk.ac.ebi.age.ext.authz.SystemAction;
 import uk.ac.ebi.age.ext.authz.TagRef;
 import uk.ac.ebi.age.ext.entity.AttachmentEntity;
 import uk.ac.ebi.age.ext.entity.ClusterEntity;
@@ -382,11 +385,29 @@ public class AgeAdmin implements SecurityChangedListener
   
 
  }
-
  
- public boolean setMaintenanceMode( boolean mode )
+ private void checkPermission( SystemAction prm ) throws NotAuthorizedException
  {
+  if( Configuration.getDefaultConfiguration().getPermissionManager().checkSystemPermission(prm) != Permit.ALLOW  )
+   throw new NotAuthorizedException();
+ }
+ 
+ 
+ public boolean setMaintenanceMode( boolean mode ) throws NotAuthorizedException
+ {
+  checkPermission(SystemAction.CREATESUBM);
+  
   return storage.setMaintenanceMode( mode );
+ }
+ 
+ public boolean setMaintenanceMode( boolean mode, int timeout ) throws NotAuthorizedException
+ {
+  checkPermission(SystemAction.CREATESUBM);
+  
+  if( timeout <= 0 )
+   return storage.setMaintenanceMode( mode );
+ 
+  return storage.setMaintenanceMode( mode, timeout*1000 );
  }
  
  public ModelImprint getModelImprint( )
@@ -396,10 +417,6 @@ public class AgeAdmin implements SecurityChangedListener
   return Age2ImprintConverter.convertModelToImprint(sm);
  }
 
-// public Session getSession(String value)
-// {
-//  return spool.getSession(value);
-// }
 
  public ModelStorage getModelStorage()
  {

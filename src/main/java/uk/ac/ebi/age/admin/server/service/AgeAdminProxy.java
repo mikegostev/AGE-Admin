@@ -13,6 +13,7 @@ import uk.ac.ebi.age.admin.client.model.ModelStorageException;
 import uk.ac.ebi.age.admin.server.mng.AgeAdmin;
 import uk.ac.ebi.age.admin.server.mng.Configuration;
 import uk.ac.ebi.age.admin.shared.ModelPath;
+import uk.ac.ebi.age.admin.shared.user.exception.NotAuthorizedException;
 import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
 import uk.ac.ebi.age.ext.annotation.AnnotationDBException;
 import uk.ac.ebi.age.ext.authz.TagRef;
@@ -59,55 +60,55 @@ public class AgeAdminProxy extends SessionRemoteServiceServlet implements AgeAdm
  }
 
  @Override
- public ModelStorage getModelStorage() throws UserAuthException
+ public ModelStorage getModelStorage() throws NotAuthorizedException
  {
   return adm.getModelStorage();
  }
 
  @Override
- public void saveModel(ModelImprint model, ModelPath storePath) throws ModelStorageException, UserAuthException
+ public void saveModel(ModelImprint model, ModelPath storePath) throws ModelStorageException, NotAuthorizedException
  {
   adm.saveModel(model, storePath );
  }
 
  @Override
- public ModelImprint getModel(ModelPath path) throws ModelStorageException, UserAuthException
+ public ModelImprint getModel(ModelPath path) throws ModelStorageException, NotAuthorizedException
  {
   return  adm.getModel( path );
  }
 
  @Override
- public LogNode installModel(ModelPath modelPath) throws UserAuthException, ModelStorageException
+ public LogNode installModel(ModelPath modelPath) throws NotAuthorizedException, ModelStorageException
  {
   return adm.installModel( modelPath );
  }
 
  @Override
- public SubmissionReport getSubmissions(SubmissionQuery q) throws UserAuthException, SubmissionDBException
+ public SubmissionReport getSubmissions(SubmissionQuery q) throws NotAuthorizedException, SubmissionDBException
  {
   return adm.getSubmissions(q);
  }
  
  @Override
- public List<HistoryEntry> getSubmissionHistory( String sbmId ) throws UserAuthException, SubmissionDBException
+ public List<HistoryEntry> getSubmissionHistory( String sbmId ) throws NotAuthorizedException, SubmissionDBException
  {
   return adm.getSubmissionHistory( sbmId );
  }
 
  @Override
- public SimpleLogNode deleteSubmission(String id) throws UserAuthException, SubmissionDBException
+ public SimpleLogNode deleteSubmission(String id) throws NotAuthorizedException, SubmissionDBException
  {
   return adm.deleteSubmission(id);
  }
  
  @Override
- public SimpleLogNode tranklucateSubmission(String id)
+ public SimpleLogNode tranklucateSubmission(String id) throws NotAuthorizedException
  {
   return adm.tranklucateSubmission(id);
  }
  
  @Override
- public SimpleLogNode restoreSubmission(String id) throws UserAuthException, SubmissionDBException
+ public SimpleLogNode restoreSubmission(String id) throws NotAuthorizedException, SubmissionDBException
  {
   return adm.restoreSubmission(id);
  }
@@ -115,7 +116,7 @@ public class AgeAdminProxy extends SessionRemoteServiceServlet implements AgeAdm
 
 
  @Override
- public List<TagRef> getEntityTags(Entity instance)  throws UserAuthException, AnnotationDBException
+ public List<TagRef> getEntityTags(Entity instance)  throws NotAuthorizedException, AnnotationDBException
  {
   return adm.getEntityTags(instance);
  }
@@ -123,9 +124,17 @@ public class AgeAdminProxy extends SessionRemoteServiceServlet implements AgeAdm
 
 
  @Override
- public void storeEntityTags(Entity instance, List<TagRef> tr)  throws UserAuthException, AnnotationDBException
+ public void storeEntityTags(Entity instance, List<TagRef> tr)  throws NotAuthorizedException, AnnotationDBException
  {
   adm.storeEntityTags(instance,tr);
+ }
+
+
+
+ @Override
+ public boolean setMaintenanceMode(boolean set, int timeout) throws NotAuthorizedException
+ {
+  return adm.setMaintenanceMode(set, timeout);
  }
 
 
