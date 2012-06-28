@@ -765,7 +765,7 @@ public class AgeAdmin implements SecurityChangedListener
  @Override
  public void securityChanged()
  {
-//  storage.invalidateIndices();
+  storage.invalidateIndices();
  }
 
 
