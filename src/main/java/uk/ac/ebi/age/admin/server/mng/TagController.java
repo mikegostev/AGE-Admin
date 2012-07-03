@@ -182,6 +182,7 @@ public class TagController implements RemoteRequestListener
 
     cEnt.setEntityID(id);
 
+    @SuppressWarnings("unchecked")
     List<TagRef> tags = (List<TagRef>) annotationManager.getAnnotation(trn, Topic.TAG, cEnt, false);
 
     if(tags == null)
@@ -207,8 +208,15 @@ public class TagController implements RemoteRequestListener
 
      for(TagRef tr : addTags)
      {
-      if(Collections.binarySearch(tags, tr) < 0)
+      int pos = Collections.binarySearch(tags, tr);
+      
+      if(pos < 0)
        addTagsSel.add(tr);
+      else if( tr.getTagValue() != null || tags.get(pos).getTagValue() != null )
+      {
+       tags.set(pos, tr);
+       changed = true;
+      }
      }
 
      if(addTagsSel.size() > 0)
