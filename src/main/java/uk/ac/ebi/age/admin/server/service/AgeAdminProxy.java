@@ -13,8 +13,6 @@ import uk.ac.ebi.age.admin.client.model.ModelStorageException;
 import uk.ac.ebi.age.admin.server.mng.AgeAdmin;
 import uk.ac.ebi.age.admin.server.mng.Configuration;
 import uk.ac.ebi.age.admin.shared.ModelPath;
-import uk.ac.ebi.age.admin.shared.user.exception.NotAuthorizedException;
-import uk.ac.ebi.age.admin.shared.user.exception.UserAuthException;
 import uk.ac.ebi.age.ext.annotation.AnnotationDBException;
 import uk.ac.ebi.age.ext.authz.TagRef;
 import uk.ac.ebi.age.ext.entity.Entity;
@@ -24,6 +22,8 @@ import uk.ac.ebi.age.ext.submission.HistoryEntry;
 import uk.ac.ebi.age.ext.submission.SubmissionDBException;
 import uk.ac.ebi.age.ext.submission.SubmissionQuery;
 import uk.ac.ebi.age.ext.submission.SubmissionReport;
+import uk.ac.ebi.age.ext.user.exception.NotAuthorizedException;
+import uk.ac.ebi.age.ext.user.exception.UserAuthException;
 
 public class AgeAdminProxy extends SessionRemoteServiceServlet implements AgeAdminService
 {
