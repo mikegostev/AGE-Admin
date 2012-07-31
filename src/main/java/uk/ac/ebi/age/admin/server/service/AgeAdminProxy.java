@@ -31,6 +31,7 @@ public class AgeAdminProxy extends SessionRemoteServiceServlet implements AgeAdm
 
  private AgeAdmin adm;
  
+ @Override
  public void init() throws ServletException
  {
   super.init();
@@ -138,5 +139,19 @@ public class AgeAdminProxy extends SessionRemoteServiceServlet implements AgeAdm
  }
 
 
+
+ @Override
+ public boolean setOnlineMode(boolean set) throws NotAuthorizedException
+ {
+  return adm.setOnlineMode(set);
+ }
+
+
+
+ @Override
+ public boolean isOnlineMode()
+ {
+  return adm.isOnlineMode();
+ }
 
 }

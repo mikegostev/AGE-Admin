@@ -4,6 +4,7 @@ import uk.ac.ebi.age.admin.client.ui.PlacingManager;
 import uk.ac.ebi.age.admin.client.ui.module.auth.AuthAdminPanel;
 import uk.ac.ebi.age.admin.client.ui.module.classif.ClassifiersPanel;
 import uk.ac.ebi.age.admin.client.ui.module.modeled.ModelPanel;
+import uk.ac.ebi.age.admin.client.ui.module.other.OtherControlsPanel;
 import uk.ac.ebi.age.admin.client.ui.module.submission.SubmissionPreparePanelGWT;
 import uk.ac.ebi.age.admin.client.ui.module.submission.SubmissionQueryFace;
 
@@ -51,6 +52,12 @@ public class RootTabPanel extends TabSet
   
   addTab(clsfTab);
  
+  Tab othTab = new Tab("Other");
+  othTab.setPane( new OtherControlsPanel() );
+  
+  addTab(othTab);
+
+  
   PlacingManager.setManager( new PlacingManager() {
    
    protected void _placeWidget(Canvas pnl, String title)

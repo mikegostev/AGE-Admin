@@ -50,4 +50,7 @@ public interface AgeAdminServiceAsync
 
  void setMaintenanceMode(boolean set, int timeout, AsyncCallback<Boolean> callback);
 
+ void isOnlineMode(AsyncCallback<Boolean> callback);
+ void setOnlineMode(boolean set, AsyncCallback<Boolean> callback);
+
 }

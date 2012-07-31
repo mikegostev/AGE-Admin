@@ -99,17 +99,20 @@ public class AgeAdmin implements SecurityChangedListener
  }
 
  private SessionManager   spool;
- private AgeStorageAdm storage;
+ private final AgeStorageAdm storage;
  private SubmissionDB submissionDB;
  private AnnotationManager annotationMngr;
 
- private Configuration configuration;
+ private final Configuration configuration;
 
  private boolean closeResourceManager = false;
  private boolean closeAnnotationDb = false;
  private boolean closeAuthDb = false;
  private boolean closeSubmissionDb = false;
  
+ private boolean onlineMode = true;
+
+
  public AgeAdmin(Configuration conf, AgeStorageAdm storage) throws AgeAdminException
  {
   long startTime=0;
@@ -769,6 +772,21 @@ public class AgeAdmin implements SecurityChangedListener
  }
 
 
+ public boolean isOnlineMode()
+ {
+  return onlineMode;
+ }
 
+
+ public boolean setOnlineMode(boolean set) throws NotAuthorizedException
+ {
+  checkPermission(SystemAction.CREATESUBM);
+
+  boolean was = onlineMode;
+  
+  onlineMode = set;
+  
+  return was;
+ }
  
 }

@@ -68,4 +68,7 @@ public interface AgeAdminService extends RemoteService
  void storeEntityTags(Entity instance, List<TagRef> tr) throws NotAuthorizedException, AnnotationDBException;
 
  boolean setMaintenanceMode( boolean set, int timeout ) throws NotAuthorizedException;
+ 
+ boolean setOnlineMode( boolean set ) throws NotAuthorizedException;
+ boolean isOnlineMode();
 }
