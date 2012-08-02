@@ -1,6 +1,8 @@
 package uk.ac.ebi.age.admin.server.service;
 
 import java.io.File;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -59,6 +61,26 @@ public class Init implements ServletContextListener
 
   conf.getPublicModelDir().mkdirs();
   conf.getUserBaseDir().mkdirs();
+  
+  String prm = cfg.getConfigParameter(AgeAdminConfigManager.STARTUP_ONLINE_MODE_PARAM);
+  
+  conf.setOnlineMode( prm == null || ( ! "off".equalsIgnoreCase(prm) && ! "false".equalsIgnoreCase(prm) ));
+  
+  prm = cfg.getConfigParameter(AgeAdminConfigManager.INSTANCE_NAME_PARAM);
+  
+  if( prm == null )
+  {
+   try
+   {
+    prm = InetAddress.getLocalHost().getHostName();
+   }
+   catch(UnknownHostException e)
+   {
+    prm = "INST"+System.currentTimeMillis();
+   }
+  }
+  
+  conf.setInstanceName(prm);
   
   try
   {

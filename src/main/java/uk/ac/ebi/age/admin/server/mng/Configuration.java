@@ -46,6 +46,8 @@ public class Configuration
  private AgeTabSyntaxParser ageTabSyntaxParser;
  private AgeTab2AgeConverter ageTab2AgeConverter;
  private SyntaxProfile syntaxProfile;
+ private boolean onlineMode;
+ private String instanceName;
  
  private File tmpDir;
  private File baseDir;
@@ -267,6 +269,27 @@ public class Configuration
  }
 
 
+ public boolean isOnlineMode()
+ {
+  return onlineMode;
+ }
+
+
+ public String getInstanceName()
+ {
+  return instanceName;
+ }
+
+
+ public void setInstanceName(String instanceName)
+ {
+  this.instanceName = instanceName;
+ }
+
+ public void setOnlineMode(boolean onlineMode)
+ {
+  this.onlineMode = onlineMode;
+ }
 
 }
 

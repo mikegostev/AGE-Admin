@@ -21,6 +21,8 @@ public class AgeAdminConfigManager
  public static final String IS_MASTER_PARAM="isMaster";
  public static final String MAINTENANCE_MODE_TIMEOUT_PARAM="maintenanceModeTimeout";
  public static final String AUTO_MMODE_TIMEOUT_PARAM="autoMModeTimeout";
+ public static final String STARTUP_ONLINE_MODE_PARAM = "onlineMode";
+ public static final String INSTANCE_NAME_PARAM = "instanceName";
  
  private static final String defaultIndexPath = "index";
  
@@ -28,7 +30,7 @@ public class AgeAdminConfigManager
  private static final long defaultAutoMModeTimeout = 2000;
  
  @SuppressWarnings("serial")
- private Map<String,String> configMap = new HashMap<String,String>(){{
+ private final Map<String,String> configMap = new HashMap<String,String>(){{
   put(BASE_PATH_PARAM,      "var/biosd/");
   put(AGEDB_PATH_PARAM,     "agedb");
   put(TMP_PATH_PARAM,       "tmp");

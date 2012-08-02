@@ -5,7 +5,7 @@ import uk.ac.ebi.age.admin.client.AgeAdminService;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Button;
-import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.HTMLFlow;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.SectionStack;
@@ -27,15 +27,20 @@ public class OtherControlsPanel extends SectionStack
  
  static class OfflinePanel extends VLayout
  {
-  private final  Label lbl = new Label("Status: UNDEFINED");
+  private final HTMLFlow lbl = new HTMLFlow("Status: UNDEFINED");
   private final Button btn = new Button("Set");
   
   private boolean online;
   
   public OfflinePanel()
   {
+   setWidth100();
+   setHeight(1);
+   setPadding(7);
    
    btn.setDisabled(true);
+   
+   lbl.setHeight(30);
    
    btn.addClickHandler( new ClickHandler()
    {
@@ -87,13 +92,13 @@ public class OtherControlsPanel extends SectionStack
   {
    if( online )
    {
-    lbl.setTitle("Status: <span style='color: green'>ONLINE</span>");
+    lbl.setContents("Status: <span style='color: green'>ONLINE</span>");
     btn.setTitle("Set OFFLINE");
     btn.setDisabled(false);
    }
    else
    {
-    lbl.setTitle("Status: <span style='color: red'>OFFLINE</span>");
+    lbl.setContents("Status: <span style='color: red'>OFFLINE</span>");
     btn.setTitle("Set ONLINE");
     btn.setDisabled(false);
    }

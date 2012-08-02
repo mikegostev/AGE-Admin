@@ -110,7 +110,7 @@ public class AgeAdmin implements SecurityChangedListener
  private boolean closeAuthDb = false;
  private boolean closeSubmissionDb = false;
  
- private boolean onlineMode = true;
+ private boolean onlineMode = false;
 
 
  public AgeAdmin(Configuration conf, AgeStorageAdm storage) throws AgeAdminException
@@ -312,6 +312,9 @@ public class AgeAdmin implements SecurityChangedListener
   
   if(instance == null)
    instance = this;
+ 
+  onlineMode = conf.isOnlineMode();
+ 
  }
 
 
@@ -787,6 +790,11 @@ public class AgeAdmin implements SecurityChangedListener
   onlineMode = set;
   
   return was;
+ }
+ 
+ public String getInstanceName()
+ {
+  return configuration.getInstanceName();
  }
  
 }
