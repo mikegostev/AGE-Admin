@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="AGEAdmin" default="dist" basedir=".">
+<project name="AGEAdmin" default="dist" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
     <description>AGE administration tools</description>
   <!-- set global properties for this build -->
 
@@ -109,4 +109,60 @@
 
 	</target>
   
+	
+	 <target name="deps" description="download dependences jars" >
+
+	 	<artifact:dependencies filesetId="dependency.fileset">
+
+			<dependency
+				groupId="org.apache.geronimo.specs"
+				artifactId="geronimo-jta_1.0.1B_spec"
+				version="1.1"
+				scope="compile"
+			/>
+			<dependency
+				groupId="commons-transaction"
+				artifactId="commons-transaction"
+				version="1.2"
+				scope="compile"
+			/>
+			<dependency
+				groupId="log4j"
+				artifactId="log4j"
+			    version="[1.2.0,)"
+				scope="compile"
+			/>
+
+			<dependency
+				groupId="org.apache.commons"
+				artifactId="commons-io"
+				version="[1.0.0,)"
+			/>
+			
+	 		<dependency
+				groupId="commons-fileupload"
+				artifactId="commons-fileupload"
+				version="[1.0.0,)"
+			/>
+	 	 	
+			<dependency
+				groupId="com.smartgwt"
+				artifactId="smartgwt"
+				version="[2.4,)"
+			/>
+	 	 	
+	 		<dependency groupId="javax.servlet" artifactId="servlet-api" version="2.5" scope="provided"/>
+
+
+	 	</artifact:dependencies>
+
+
+	 	<copy todir="lib">
+	 	  <fileset refid="dependency.fileset" />
+	 	  <!-- This mapper strips off all leading directory information -->
+	 	  <mapper type="flatten" />
+	 	</copy>
+
+
+	 </target>
  </project>
