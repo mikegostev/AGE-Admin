@@ -112,50 +112,74 @@
 	
 	 <target name="deps" description="download dependences jars" >
 
+ 		<artifact:remoteRepository id="smartgwt" url="http://www.smartclient.com/maven2" />
+	 	
 	 	<artifact:dependencies filesetId="dependency.fileset">
 
 			<dependency
-				groupId="org.apache.geronimo.specs"
-				artifactId="geronimo-jta_1.0.1B_spec"
-				version="1.1"
-				scope="compile"
+				groupId="commons-logging"
+				artifactId="commons-logging"
+				version="[1.1.1,)"
 			/>
-			<dependency
+
+	 		<dependency
+				groupId="commons-codec"
+				artifactId="commons-codec"
+				version="[1.6,)"
+			/>
+	 		
+	 		<dependency
 				groupId="commons-transaction"
 				artifactId="commons-transaction"
 				version="1.2"
-				scope="compile"
 			/>
+	 		
 			<dependency
 				groupId="log4j"
 				artifactId="log4j"
-			    version="[1.2.0,)"
+			    version="[1.2.17,)"
 				scope="compile"
 			/>
 
 			<dependency
-				groupId="org.apache.commons"
+				groupId="commons-io"
 				artifactId="commons-io"
-				version="[1.0.0,)"
+				version="[2.0.0,)"
 			/>
 			
 	 		<dependency
 				groupId="commons-fileupload"
 				artifactId="commons-fileupload"
-				version="[1.0.0,)"
+				version="[1.2.2,)"
 			/>
 	 	 	
-			<dependency
-				groupId="com.smartgwt"
-				artifactId="smartgwt"
-				version="[2.4,)"
-			/>
-	 	 	
-	 		<dependency groupId="javax.servlet" artifactId="servlet-api" version="2.5" scope="provided"/>
 
 
 	 	</artifact:dependencies>
 
+
+	 	<artifact:dependencies filesetId="build.fileset">
+	 		<remoteRepository refid="smartgwt" />
+
+	 		<dependency
+				groupId="com.smartgwt"
+				artifactId="smartgwt"
+				version="[3.0,)"
+			/>
+	 	 	
+	 		<dependency
+	 			groupId="javax.servlet"
+	 			artifactId="servlet-api"
+	 			version="2.5" scope="provided"
+	 		/>
+		</artifact:dependencies>
+
+	 	
+	 	<copy todir="buildlib">
+	 	  <fileset refid="build.fileset" />
+	 	  <!-- This mapper strips off all leading directory information -->
+	 	  <mapper type="flatten" />
+	 	</copy>
 
 	 	<copy todir="lib">
 	 	  <fileset refid="dependency.fileset" />

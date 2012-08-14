@@ -16,8 +16,8 @@ import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.events.CloseClickEvent;
 import com.smartgwt.client.widgets.events.CloseClickHandler;
-import com.smartgwt.client.widgets.events.CloseClientEvent;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.layout.HLayout;
@@ -27,10 +27,10 @@ public class SelectProfileDialog extends Window
 {
  private DataSource ds;
  
- private CloseClickHandler clsHnd = new CloseClickHandler()
+ private final CloseClickHandler clsHnd = new CloseClickHandler()
  {
   @Override
-  public void onCloseClick(CloseClientEvent event)
+  public void onCloseClick(CloseClickEvent event)
   {
    close();
   }

@@ -72,7 +72,7 @@ public class SystemPermissionsPanel extends VLayout implements LinkClickListener
     contents+= "="+tr.getTagValue();
   }
   
-  contents += "&nbsp;&nbsp;<a href='javascript:linkClicked(&quot;graphTags&quot;,null)'>manage tags</a>";
+  contents += "&nbsp;&nbsp;<a href='javascript:linkClicked(&quot;graphTags&quot;,\"\")'>manage tags</a>";
   
   graphTags.setContents(contents);
  }

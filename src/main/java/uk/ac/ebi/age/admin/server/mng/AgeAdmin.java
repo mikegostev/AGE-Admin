@@ -796,5 +796,11 @@ public class AgeAdmin implements SecurityChangedListener
  {
   return configuration.getInstanceName();
  }
+
+
+ public Configuration getConfiguration()
+ {
+  return configuration;
+ }
  
 }

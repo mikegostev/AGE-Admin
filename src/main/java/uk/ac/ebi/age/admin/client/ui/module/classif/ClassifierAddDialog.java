@@ -2,16 +2,16 @@ package uk.ac.ebi.age.admin.client.ui.module.classif;
 
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.widgets.Window;
+import com.smartgwt.client.widgets.events.CloseClickEvent;
 import com.smartgwt.client.widgets.events.CloseClickHandler;
-import com.smartgwt.client.widgets.events.CloseClientEvent;
 
 public class ClassifierAddDialog extends Window
 {
  
- private CloseClickHandler clsHnd = new CloseClickHandler()
+ private final CloseClickHandler clsHnd = new CloseClickHandler()
  {
   @Override
-  public void onCloseClick(CloseClientEvent event)
+  public void onCloseClick(CloseClickEvent event)
   {
    close();
   }

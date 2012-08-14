@@ -1,8 +1,8 @@
-gea.classpath
+.classpath
 .project
 .settings
 .gwt
-.getignore
+.gitignore
 scrap
 /lib
 .externalToolBuilders
