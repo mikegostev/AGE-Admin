@@ -115,6 +115,7 @@
  		<artifact:remoteRepository id="smartgwt" url="http://www.smartclient.com/maven2" />
 	 	
 	 	<artifact:dependencies filesetId="dependency.fileset">
+	 		<remoteRepository refid="smartgwt" />
 
 			<dependency
 				groupId="commons-logging"
@@ -154,18 +155,16 @@
 			/>
 	 	 	
 
-
-	 	</artifact:dependencies>
-
-
-	 	<artifact:dependencies filesetId="build.fileset">
-	 		<remoteRepository refid="smartgwt" />
-
 	 		<dependency
 				groupId="com.smartgwt"
 				artifactId="smartgwt"
 				version="[3.0,)"
 			/>
+	 	</artifact:dependencies>
+
+
+	 	<artifact:dependencies filesetId="build.fileset">
+
 	 	 	
 	 		<dependency
 	 			groupId="javax.servlet"
