@@ -110,7 +110,8 @@ public class SelectGroupDialog extends Window
    @Override
    public void onClick(ClickEvent event)
    {
-    if( list.getSelection().length != 1 )
+    
+    if( list.getSelectedRecords().length != 1 )
      return;
     
     selLstnr.recordSelected( list.getSelectedRecord() );

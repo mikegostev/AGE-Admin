@@ -57,7 +57,7 @@ public class SelectPermissionDialog extends Window
    @Override
    public void onClick(ClickEvent event)
    {
-    if( list.getSelection().length != 1 )
+    if( list.getSelectedRecords().length != 1 )
      return;
     
     selLstnr.permissionSelected( SystemAction.valueOf(list.getSelectedRecord().getAttribute("pname")), true );
@@ -73,7 +73,7 @@ public class SelectPermissionDialog extends Window
    @Override
    public void onClick(ClickEvent event)
    {
-    if( list.getSelection().length != 1 )
+    if( list.getSelectedRecords().length != 1 )
      return;
     
     selLstnr.permissionSelected( SystemAction.valueOf(list.getSelectedRecord().getAttribute("pname")), false );

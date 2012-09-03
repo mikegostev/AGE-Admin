@@ -90,7 +90,7 @@ public class UserListPanel extends VLayout
    @Override
    public void onClick(ClickEvent event)
    {
-    ListGridRecord[] sel = list.getSelection();
+    ListGridRecord[] sel = list.getSelectedRecords();
     
     if( sel == null || sel.length != 1 )
      SC.warn("Please select one user");
