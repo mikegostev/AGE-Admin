@@ -11,6 +11,9 @@ import com.smartgwt.client.widgets.form.fields.ButtonItem;
 import com.smartgwt.client.widgets.form.fields.PasswordItem;
 import com.smartgwt.client.widgets.form.fields.StaticTextItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
+import com.smartgwt.client.widgets.form.fields.events.ClickHandler;
+import com.smartgwt.client.widgets.form.fields.events.KeyPressEvent;
+import com.smartgwt.client.widgets.form.fields.events.KeyPressHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
 
 public class TestEntryPanel extends HLayout
@@ -42,7 +45,7 @@ public class TestEntryPanel extends HLayout
 
   addMember(loginForm);
 
-  lgBt.addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler()
+  final ClickHandler ch = new ClickHandler()
   {
 
    @Override
@@ -67,8 +70,19 @@ public class TestEntryPanel extends HLayout
      }
     });
    }
+  };
+  
+  lgBt.addClickHandler(ch);
+
+  passField.addKeyPressHandler( new KeyPressHandler()
+  {
+   
+   @Override
+   public void onKeyPress(KeyPressEvent event)
+   {
+    if( "Enter".equals(event.getKeyName()) )
+     ch.onClick(null);
+   }
   });
-
-
  }
 }
