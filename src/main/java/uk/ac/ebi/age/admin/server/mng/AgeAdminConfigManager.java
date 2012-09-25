@@ -31,7 +31,7 @@ public class AgeAdminConfigManager
  
  @SuppressWarnings("serial")
  private final Map<String,String> configMap = new HashMap<String,String>(){{
-  put(BASE_PATH_PARAM,      "var/biosd/");
+  put(BASE_PATH_PARAM,      "var/age/");
   put(AGEDB_PATH_PARAM,     "agedb");
   put(TMP_PATH_PARAM,       "tmp");
   put(SERVICES_PATH_PARAM,  "services");
