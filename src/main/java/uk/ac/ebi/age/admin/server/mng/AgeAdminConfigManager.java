@@ -12,17 +12,17 @@ import javax.servlet.ServletContext;
 
 public class AgeAdminConfigManager
 {
- public static final String BASE_PATH_PARAM="basePath";
- public static final String INDEX_PATH_PARAM="indexPath";
- public static final String AGEDB_PATH_PARAM="dbPath";
- public static final String TMP_PATH_PARAM="tmpPath";
- public static final String SERVICES_PATH_PARAM="servicesPath";
- public static final String IDGEN_PATH_PARAM="IDGenPath";
- public static final String IS_MASTER_PARAM="isMaster";
- public static final String MAINTENANCE_MODE_TIMEOUT_PARAM="maintenanceModeTimeout";
- public static final String AUTO_MMODE_TIMEOUT_PARAM="autoMModeTimeout";
- public static final String STARTUP_ONLINE_MODE_PARAM = "onlineMode";
- public static final String INSTANCE_NAME_PARAM = "instanceName";
+ public static final String BASE_PATH_PARAM="age.basePath";
+ public static final String INDEX_PATH_PARAM="age.indexPath";
+ public static final String AGEDB_PATH_PARAM="age.dbPath";
+ public static final String TMP_PATH_PARAM="age.tmpPath";
+ public static final String SERVICES_PATH_PARAM="age.servicesPath";
+ public static final String IDGEN_PATH_PARAM="age.IDGenPath";
+ public static final String IS_MASTER_PARAM="age.isMaster";
+ public static final String MAINTENANCE_MODE_TIMEOUT_PARAM="age.maintenanceModeTimeout";
+ public static final String AUTO_MMODE_TIMEOUT_PARAM="age.autoMModeTimeout";
+ public static final String STARTUP_ONLINE_MODE_PARAM = "age.onlineMode";
+ public static final String INSTANCE_NAME_PARAM = "age.instanceName";
  
  private static final String defaultIndexPath = "index";
  
