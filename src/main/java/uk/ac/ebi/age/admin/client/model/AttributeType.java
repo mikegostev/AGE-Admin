@@ -10,5 +10,6 @@ public enum AttributeType
  URI, 
  TEXT, 
  OBJECT,
- FILE
+ FILE,
+ TERM
 }

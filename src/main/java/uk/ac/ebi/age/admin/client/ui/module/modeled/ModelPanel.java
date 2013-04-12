@@ -30,6 +30,7 @@ public class ModelPanel extends TabSet implements ModelMngr
  private XEditorPanel attribPanel;
  private XEditorPanel relationsPanel;
  private XEditorPanel annotationsPanel;
+ private OntologyPanel ontologyPanel;
  
  public ModelPanel()
  {
@@ -64,6 +65,11 @@ public class ModelPanel extends TabSet implements ModelMngr
   annotTab.setPane( annotationsPanel = new XEditorPanel(AnnotationMetaClassDef.getInstance()));
   
   addTab(annotTab);
+
+  Tab ontolTab = new Tab("Ontologies");
+  ontolTab.setPane( ontologyPanel = new OntologyPanel());
+  
+  addTab(ontolTab);
 
   
   addDrawHandler(new DrawHandler()
@@ -104,6 +110,7 @@ public class ModelPanel extends TabSet implements ModelMngr
   attribPanel.setModel(mod);
   relationsPanel.setModel(mod);
   annotationsPanel.setModel(mod);
+  ontologyPanel.setModel(mod);
  }
  
  @Override
