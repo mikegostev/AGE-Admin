@@ -30,6 +30,7 @@ public class Constants
  public static final String groupListServiceName="groupList";
  public static final String groupOfUserListServiceName = "groupOfUserList";
  public static final String groupPartsListServiceName = "groupPartsList";
+ public static final String ontologyListServiceName="ontologyList";
 
  public static final String profileListServiceName="profileList";
 
@@ -55,5 +56,6 @@ public class Constants
  public static final String MAINTENANCE_MODE_COMMAND = "setMaintenanceMode";
  public static final String SUBMISSION_TAGS_COMMAND = "submissionTags";
  public static final String RPC_COMMAND = "rpc";
+
 
 }
