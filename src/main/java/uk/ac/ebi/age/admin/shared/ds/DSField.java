@@ -14,7 +14,7 @@ public class DSField
  private boolean hidden=false;
  
 
- public static final String fieldIdPrefix = "##";
+ public static final String fieldIdPrefix = "_71_";
  
  public DSField(String string, FieldType t, String ttl, int w)
  {
@@ -77,6 +77,7 @@ public class DSField
   this.type = type;
  }
  
+ @Override
  public boolean equals( Object o )
  {
   if( o instanceof DSField && ((DSField)o).getFieldId().equals(getFieldId()) )
@@ -85,6 +86,7 @@ public class DSField
   return false;
  }
  
+ @Override
  public int hashCode()
  {
   return fieldId.hashCode();

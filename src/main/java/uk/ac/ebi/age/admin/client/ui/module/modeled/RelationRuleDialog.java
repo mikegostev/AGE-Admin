@@ -99,6 +99,7 @@ public abstract class RelationRuleDialog extends Window
  }
 
  public abstract RelationRulePanel getRulePanel();
+ @Override
  public abstract void close();
  
  public ModelImprint getModel()

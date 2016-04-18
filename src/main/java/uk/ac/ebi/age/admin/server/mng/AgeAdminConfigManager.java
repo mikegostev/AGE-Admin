@@ -15,6 +15,7 @@ public class AgeAdminConfigManager
  public static final String BASE_PATH_PARAM="age.basePath";
  public static final String INDEX_PATH_PARAM="age.indexPath";
  public static final String AGEDB_PATH_PARAM="age.dbPath";
+ public static final String SUBMISSIONDB_URI_PARAM="age.submissionDbURI";
  public static final String TMP_PATH_PARAM="age.tmpPath";
  public static final String SERVICES_PATH_PARAM="age.servicesPath";
  public static final String IDGEN_PATH_PARAM="age.IDGenPath";
@@ -107,6 +108,19 @@ public class AgeAdminConfigManager
  public String getTmpPath()
  {
   return getPathParam(TMP_PATH_PARAM);
+ }
+ 
+ public String getSubmissionURI()
+ {
+  String path = getConfigParameter(SUBMISSIONDB_URI_PARAM);
+  
+  if( path == null )
+   return null;
+  
+  if( path.toLowerCase().startsWith("tcp:") )
+   return path;
+  
+  return getPathParam(SUBMISSIONDB_URI_PARAM);
  }
 
  public String getServicesPath()

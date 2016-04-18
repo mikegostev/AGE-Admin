@@ -99,6 +99,7 @@ public abstract class AttributeRuleDialog extends Window
  }
 
  public abstract AttributeRulePanel getRulePanel();
+ @Override
  public abstract void close();
  
  public ModelImprint getModel()

@@ -1,11 +1,11 @@
 package uk.ac.ebi.age.admin.server.mng;
 
-import java.io.File;
 import java.io.PrintWriter;
 import java.util.Map;
 import java.util.TreeMap;
 
 import uk.ac.ebi.age.admin.server.service.ServiceRequest;
+import uk.ac.ebi.age.admin.server.service.ServiceRequest.FileInfo;
 
 public class RemoteRequestManager
 {
@@ -35,10 +35,10 @@ public class RemoteRequestManager
   }
   finally
   {
-   for(File f : upReq.getFiles().values())
+   for(FileInfo f : upReq.getFiles().values())
    {
-    if( f.exists() )
-     f.delete();
+    if( f.getFile().exists() )
+     f.getFile().delete();
    }
   }
  }

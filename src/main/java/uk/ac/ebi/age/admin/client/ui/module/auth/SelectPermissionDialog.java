@@ -103,6 +103,7 @@ public class SelectPermissionDialog extends Window
 
  }
  
+ @Override
  public void close()
  {
   destroy();

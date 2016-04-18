@@ -141,6 +141,7 @@ public class SelectProfileDialog extends Window
 
  }
  
+ @Override
  public void close()
  {
   destroy();

@@ -94,7 +94,7 @@ public class AnnotationPanel extends VLayout
 
   TextAreaItem textAreaItem = new TextAreaItem();  
   textAreaItem.setHeight(70);  
-  textField.setEditorType(textAreaItem);
+  textField.setEditorProperties(textAreaItem);
   
   textField.addEditorExitHandler( new EditorExitHandler()
   {

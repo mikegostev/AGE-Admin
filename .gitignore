@@ -15,3 +15,5 @@ scrap
 /gwt-unitCache
 /target
 /war
+/bin/
+/resout/

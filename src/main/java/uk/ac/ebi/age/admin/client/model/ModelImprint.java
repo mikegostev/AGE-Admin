@@ -29,14 +29,14 @@ public class ModelImprint  implements IsSerializable, Serializable, Annotated
  private AgeAttributeClassImprint rootAttribute;
  private AgeAnnotationClassImprint rootAnnotation;
 
- private final Set<AgeClassImprint> classes = new HashSet<AgeClassImprint>();
+ private Set<AgeClassImprint> classes = new HashSet<AgeClassImprint>();
 
- private final Set<AgeAttributeClassImprint> attributes = new HashSet<AgeAttributeClassImprint>();
+ private Set<AgeAttributeClassImprint> attributes = new HashSet<AgeAttributeClassImprint>();
 
- private final Set<AgeRelationClassImprint> relations = new HashSet<AgeRelationClassImprint>();
- private final Set<AgeAnnotationClassImprint> annotationClasses = new HashSet<AgeAnnotationClassImprint>();
+ private Set<AgeRelationClassImprint> relations = new HashSet<AgeRelationClassImprint>();
+ private Set<AgeAnnotationClassImprint> annotationClasses = new HashSet<AgeAnnotationClassImprint>();
 
- private final Collection<AgeAnnotationImprint> annotations = new ArrayList<AgeAnnotationImprint>();
+ private Collection<AgeAnnotationImprint> annotations = new ArrayList<AgeAnnotationImprint>();
  
  
  private String name;

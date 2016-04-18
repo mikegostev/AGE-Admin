@@ -1,13 +1,12 @@
 package uk.ac.ebi.age.admin.server.mng;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.ebi.age.admin.server.service.ServiceRequest;
+import uk.ac.ebi.age.admin.server.service.ServiceRequest.FileInfo;
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.SubmissionConstants;
 import uk.ac.ebi.age.authz.ACR.Permit;
@@ -32,11 +31,8 @@ import uk.ac.ebi.age.mng.submission.ModuleAux;
 import uk.ac.ebi.age.mng.submission.SubmissionManager;
 import uk.ac.ebi.age.transaction.ReadLock;
 import uk.ac.ebi.age.util.StringUtil;
+import uk.ac.ebi.mg.io.DelayedFileInputStream;
 import uk.ac.ebi.mg.time.UniqTime;
-
-import com.pri.util.StringUtils;
-import com.pri.util.StringUtils.Output;
-import com.pri.util.stream.StreamPump;
 
 public class SubmissionUploader implements RemoteRequestListener
 {
@@ -219,7 +215,7 @@ public class SubmissionUploader implements RemoteRequestListener
 
       if( blkSts == Status.NEW || blkSts == Status.UPDATEORNEW || "on".equals(upReq.getParams().get(SubmissionConstants.MODULE_FILE_UPDATE+partNo)) )
       {
-       File modFile = upReq.getFiles().get(SubmissionConstants.MODULE_FILE+partNo);
+       FileInfo modFile = upReq.getFiles().get(SubmissionConstants.MODULE_FILE+partNo);
        
        if( modFile == null )
        {
@@ -228,21 +224,9 @@ public class SubmissionUploader implements RemoteRequestListener
         return false;
        }
        
-       ByteArrayOutputStream bais = new ByteArrayOutputStream();
 
-       FileInputStream fis = new FileInputStream(modFile);
-       StreamPump.doPump(fis, bais, false);
-       fis.close();
-
-       bais.close();
-
-       byte[] barr = bais.toByteArray();
-       String enc = "UTF-8";
-
-       if(barr.length >= 2 && (barr[0] == -1 && barr[1] == -2) || (barr[0] == -2 && barr[1] == -1))
-        enc = "UTF-16";
-
-       dmMeta.setText(new String(bais.toByteArray(), enc));
+       dmMeta.setFileName(modFile.getFileName());
+       dmMeta.setInputStream( new DelayedFileInputStream(modFile.getFile()));
       }
 
       tagsStr = upReq.getParams().get(SubmissionConstants.MODULE_TAGS+partNo);
@@ -353,7 +337,7 @@ public class SubmissionUploader implements RemoteRequestListener
 
       if( blkSts == Status.NEW || blkSts == Status.UPDATEORNEW || "on".equals( upReq.getParams().get(SubmissionConstants.ATTACHMENT_FILE_UPDATE+partNo) ) )
       {
-       File attFile = upReq.getFiles().get(SubmissionConstants.ATTACHMENT_FILE+partNo);
+       FileInfo attFile = upReq.getFiles().get(SubmissionConstants.ATTACHMENT_FILE+partNo);
        
        if( attFile == null )
        {
@@ -361,7 +345,7 @@ public class SubmissionUploader implements RemoteRequestListener
         return false;
        }
 
-       atAux.setFile(attFile);
+       atAux.setFile(attFile.getFile());
       }
       
       
@@ -436,29 +420,44 @@ public class SubmissionUploader implements RemoteRequestListener
    
    SimpleLogNode.setLevels( log.getRootNode() );
    
-   out.print("<html><body>OK-"+upReq.getParams().get(SubmissionConstants.SUBMISSON_KEY)+":["+log.getRootNode().getLevel().name()+"]<pre>\n"+Constants.beginJSONSign+"\n(");
    
-   Log2JSON.convert(log.getRootNode(), new StringUtils.Output()
+   try
    {
-    @Override
-    public Output append(char c)
+    out.print("<html><body>OK-"+upReq.getParams().get(SubmissionConstants.SUBMISSON_KEY)+":["+log.getRootNode().getLevel().name()+"]<pre>\n"+Constants.beginJSONSign+"\n(");
+
+    Log2JSON.convert(log.getRootNode(), new Appendable()
     {
-     out.append(c);
      
-     return this;
-    }
-    
-    @Override
-    public Output append(String str)
-    {
-     out.append(str);
+     @Override
+     public Appendable append(CharSequence csq, int start, int end) throws IOException
+     {
+      out.append(csq,start,end);
+      return this;
+     }
      
-     return this;
-    }
-   });
+     @Override
+     public Appendable append(char c) throws IOException
+     {
+      out.append(c);
+      return this;
+     }
+     
+     @Override
+     public Appendable append(CharSequence csq) throws IOException
+     {
+      out.append(csq);
+      return this;
+     }
+    });
+
+    out.print(")\n"+Constants.endJSONSign+"\n</pre></body></html>");
+   }
+   catch(IOException e)
+   {
+    e.printStackTrace();
+   }
 //   out.print(logBody);
 
-   out.print(")\n"+Constants.endJSONSign+"\n</pre></body></html>");
   }
 
   return true;

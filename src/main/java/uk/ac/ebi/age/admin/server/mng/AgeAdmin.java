@@ -173,7 +173,7 @@ public class AgeAdmin implements SecurityChangedListener
     conf.setSubmissionDB( conf.getSubmissionManager().getSubmissionDB() );
    else
    {
-    conf.setSubmissionDB( submissionDB = new H2SubmissionDB(conf.getSubmissionDbDir()) );
+    conf.setSubmissionDB( submissionDB = new H2SubmissionDB(conf.getSubmissionDbDir(), conf.getSubmissionConnURI() ) );
    
     closeSubmissionDb  = true;
    }

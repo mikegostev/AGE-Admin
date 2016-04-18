@@ -107,6 +107,7 @@ public class SelectGroupDialog extends Window
   Button okBt = new Button("OK");
   okBt.addClickHandler( new ClickHandler()
   {
+
    @Override
    public void onClick(ClickEvent event)
    {
@@ -142,6 +143,7 @@ public class SelectGroupDialog extends Window
 
  }
  
+ @Override
  public void close()
  {
   destroy();

@@ -93,6 +93,20 @@
     <url-pattern>/instanceId</url-pattern>
   </servlet-mapping>
 
+
+  <servlet>
+    <description></description>
+    <display-name>AgeViewService</display-name>
+    <servlet-name>AgeViewService</servlet-name>
+    <servlet-class>uk.ac.ebi.ageview.server.service.AgeViewServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>AgeViewService</servlet-name>
+    <url-pattern>/ageview/ageQueryGWT</url-pattern>
+  </servlet-mapping>
+
+
   <welcome-file-list>
     <welcome-file>Admin.html</welcome-file>
     <welcome-file>index.html</welcome-file>

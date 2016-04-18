@@ -35,6 +35,7 @@ public class UserChgPassDialog extends Window
   addItem( new UserChgPassForm(rec, ds, clsHnd) );
  }
 
+ @Override
  public void close()
  {
   destroy();

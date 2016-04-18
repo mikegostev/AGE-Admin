@@ -34,6 +34,7 @@ public class UserAddDialog extends Window
   addItem( new UserAddForm(ds,clsHnd) );
  }
 
+ @Override
  public void close()
  {
   destroy();

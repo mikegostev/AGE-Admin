@@ -1,5 +1,7 @@
 package uk.ac.ebi.age.admin.shared.cassif;
 
+import java.util.Collections;
+
 import uk.ac.ebi.age.admin.shared.Constants;
 import uk.ac.ebi.age.admin.shared.ds.DSDef;
 import uk.ac.ebi.age.admin.shared.ds.DSField;
@@ -39,6 +41,7 @@ public class TagsDSDef extends DSDef
   return instance;
  }
  
+ @Override
  public DataSource createDataSource()
  {
   RestDataSource ds = new RestDataSource();
@@ -63,6 +66,7 @@ public class TagsDSDef extends DSDef
   
   ds.setFields(idF,descF,prnF);
   
+  ds.setDefaultParams(Collections.singletonMap("_service", Constants.tagTreeServiceName ));
   
   return ds;
  }

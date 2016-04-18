@@ -48,6 +48,7 @@ public class Configuration
  private SyntaxProfile syntaxProfile;
  private boolean onlineMode;
  private String instanceName;
+ private String submDbPath;
  
  private File tmpDir;
  private File baseDir;
@@ -289,6 +290,18 @@ public class Configuration
  public void setOnlineMode(boolean onlineMode)
  {
   this.onlineMode = onlineMode;
+ }
+
+
+ public void setSubmissionConnURI(String submissionPath)
+ {
+  submDbPath = submissionPath;
+ }
+
+
+ public String getSubmissionConnURI()
+ {
+  return submDbPath;
  }
 
 }

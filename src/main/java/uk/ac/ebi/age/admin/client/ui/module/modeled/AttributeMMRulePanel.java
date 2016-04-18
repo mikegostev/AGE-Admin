@@ -160,7 +160,7 @@ public class AttributeMMRulePanel extends AttributeRulePanel
   qualifiersForm.setGroupTitle("Qualifiers");
   qualifiersForm.setIsGroup(true);
 //  qualifiersForm.setPadding(1);
-//  qualifiersForm.setWidth100();
+  qualifiersForm.setWidth100();
   qualifiersForm.setHeight(200);
 
   CanvasItem qTblItem = new CanvasItem();
@@ -191,7 +191,7 @@ public class AttributeMMRulePanel extends AttributeRulePanel
      @Override
      public void classSelected(AgeAbstractClassImprint cls)
      {
-      qTbl.addData(new QualifiersRecord(cls.getModel().generateId(), false, (AgeAttributeClassImprint)cls));
+      qTbl.addData(new QualifiersRecord(cls.getModel().generateId(), false, cls));
      }
     }).show();
 
@@ -264,6 +264,7 @@ public class AttributeMMRulePanel extends AttributeRulePanel
   
  }
  
+ @Override
  public void setRule(AttributeRuleImprint rule)
  {
   this.rule = rule;
@@ -289,6 +290,7 @@ public class AttributeMMRulePanel extends AttributeRulePanel
   }
  }
 
+ @Override
  public boolean updateRule()
  {
   String cVal = cardVal.getValue().toString();
@@ -360,6 +362,7 @@ public class AttributeMMRulePanel extends AttributeRulePanel
  }
 
  
+ @Override
  public AttributeRuleImprint getRule()
  {
   return rule;

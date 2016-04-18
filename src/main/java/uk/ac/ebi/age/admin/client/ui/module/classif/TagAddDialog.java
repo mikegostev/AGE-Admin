@@ -31,6 +31,7 @@ public class TagAddDialog extends Window
   addItem( new TagAddForm(ds, parent, clsHnd) );
  }
 
+ @Override
  public void close()
  {
   destroy();

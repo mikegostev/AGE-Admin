@@ -88,6 +88,7 @@ public class TagsListDialog extends Window
 
  }
  
+ @Override
  public void close()
  {
   tlPanel.destroy();

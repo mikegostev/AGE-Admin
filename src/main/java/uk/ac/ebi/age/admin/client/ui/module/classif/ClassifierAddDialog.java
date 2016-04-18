@@ -31,6 +31,7 @@ public class ClassifierAddDialog extends Window
   addItem( new ClassifierAddForm(ds,clsHnd) );
  }
 
+ @Override
  public void close()
  {
   destroy();

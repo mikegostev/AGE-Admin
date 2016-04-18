@@ -10,7 +10,6 @@ public class GroupAddDialog extends Window
  
  private final CloseClickHandler clsHnd = new CloseClickHandler()
  {
-
   @Override
   public void onCloseClick(CloseClickEvent event)
   {
@@ -32,6 +31,7 @@ public class GroupAddDialog extends Window
   addItem( new GroupAddForm(ds,clsHnd) );
  }
 
+ @Override
  public void close()
  {
   destroy();

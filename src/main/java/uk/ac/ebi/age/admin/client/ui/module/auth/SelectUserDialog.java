@@ -141,6 +141,7 @@ public class SelectUserDialog extends Window
 
  }
  
+ @Override
  public void close()
  {
   destroy();

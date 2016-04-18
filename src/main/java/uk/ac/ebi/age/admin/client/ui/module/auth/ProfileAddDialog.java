@@ -31,6 +31,7 @@ public class ProfileAddDialog extends Window
   addItem( new ProfileAddForm(ds,clsHnd) );
  }
 
+ @Override
  public void close()
  {
   destroy();

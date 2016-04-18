@@ -25,6 +25,7 @@ public class RemoteSvc extends ServiceServlet
 
  private static final long serialVersionUID = -4888846889606953616L;
 
+ @Override
  protected void service(HttpServletRequest req, HttpServletResponse resp, Session sess) throws IOException
  {
 
@@ -114,7 +115,8 @@ public class RemoteSvc extends ServiceServlet
 
       StreamPump.doPump(uploadedStream, new FileOutputStream(tmpf), true);
 
-      upReq.addFile(name, tmpf);
+      
+      upReq.addFile(name, item.getName(), tmpf);
      }
     }
    

@@ -47,6 +47,7 @@ public interface ModeledIcons extends ConstantsWithLookup
  String attributeTEXT();
  String attributeOBJECT();
  String attributeFILE();
+ String attributeTERM();
 
  String aliasAdd();
  String aliasDelete();
