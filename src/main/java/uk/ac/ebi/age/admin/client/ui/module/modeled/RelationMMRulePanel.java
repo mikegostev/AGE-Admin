@@ -23,7 +23,6 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.ButtonItem;
-import com.smartgwt.client.widgets.form.fields.CanvasItem;
 import com.smartgwt.client.widgets.form.fields.CheckboxItem;
 import com.smartgwt.client.widgets.form.fields.RadioGroupItem;
 import com.smartgwt.client.widgets.form.fields.StaticTextItem;
@@ -185,17 +184,19 @@ public class RelationMMRulePanel extends RelationRulePanel
   addMember(rangeForm);
   
 
-  DynamicForm qualifiersForm = new DynamicForm();
-  qualifiersForm.setGroupTitle("Qualifiers");
-  qualifiersForm.setIsGroup(true);
-//  qualifiersForm.setPadding(1);
-//  qualifiersForm.setWidth100();
-  qualifiersForm.setHeight(200);
+//  DynamicForm qualifiersForm = new DynamicForm();
+//  qualifiersForm.setGroupTitle("Qualifiers");
+//  qualifiersForm.setIsGroup(true);
+////  qualifiersForm.setPadding(1);
+////  qualifiersForm.setWidth100();
+//  qualifiersForm.setHeight(200);
+//
+//  CanvasItem qTblItem = new CanvasItem();
 
-  CanvasItem qTblItem = new CanvasItem();
-  
   VLayout qLay = new VLayout();
-  qLay.setWidth("98%");
+  qLay.setGroupTitle("Qualifiers");
+  qLay.setIsGroup(true);
+  qLay.setWidth100();
   qLay.setHeight100();
   qLay.setPadding(5);
   
@@ -220,7 +221,7 @@ public class RelationMMRulePanel extends RelationRulePanel
      @Override
      public void classSelected(AgeAbstractClassImprint cls)
      {
-      qTbl.addData(new QualifiersRecord(cls.getModel().generateId(), false, (AgeAttributeClassImprint)cls));
+      qTbl.addData(new QualifiersRecord(cls.getModel().generateId(), false, cls));
      }
     }).show();
 
@@ -252,8 +253,6 @@ public class RelationMMRulePanel extends RelationRulePanel
 
   qLay.addMember(qTools);
   
-  qTblItem.setShowTitle(false);
-  
   qTbl.setWidth100();
   qTbl.setShowHeader(true);
 
@@ -279,15 +278,13 @@ public class RelationMMRulePanel extends RelationRulePanel
   });
  
   qLay.addMember(qTbl);
-  qTblItem.setCanvas(qLay);
-  
-  qualifiersForm.setItems(qTblItem);
 
-  addMember(qualifiersForm); 
+  addMember(qLay); 
 
   setRule(rl);
  }
  
+ @Override
  public void setRule(RelationRuleImprint rule)
  {
   this.rule = rule;
@@ -319,6 +316,7 @@ public class RelationMMRulePanel extends RelationRulePanel
 
  }
 
+ @Override
  public boolean updateRule()
  {
   String cVal = cardVal.getValue().toString();
@@ -390,6 +388,7 @@ public class RelationMMRulePanel extends RelationRulePanel
  }
 
  
+ @Override
  public RelationRuleImprint getRule()
  {
   return rule;

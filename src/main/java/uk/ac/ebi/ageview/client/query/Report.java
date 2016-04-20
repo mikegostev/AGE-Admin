@@ -2,20 +2,22 @@ package uk.ac.ebi.ageview.client.query;
 
 import java.util.List;
 
+import uk.ac.ebi.age.ui.shared.imprint.ObjectImprint;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class Report implements IsSerializable
 {
- private List<AttributedImprint> objects;
+ private List<ObjectImprint> objects;
  private int totalRecords;
 
  
- public List<AttributedImprint> getObjects()
+ public List<ObjectImprint> getObjects()
  {
   return objects;
  }
  
- public void setObjects(List<AttributedImprint> objects)
+ public void setObjects(List<ObjectImprint> objects)
  {
   this.objects = objects;
  }

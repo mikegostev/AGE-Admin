@@ -15,6 +15,7 @@ public class AttributeMMRuleDialog extends AttributeRuleDialog
   super(mod);
  }
 
+ @Override
  public AttributeRulePanel getRulePanel()
  {
   return new AttributeMMRulePanel(getModel().createAttributeRuleImprint(RestrictionType.MAY));
@@ -35,9 +36,11 @@ public class AttributeMMRuleDialog extends AttributeRuleDialog
   instance.setRule( rule );
   instance.setListener(selectedAttrubuteRule);
 
+//  instance.layoutChildren("aa");
   instance.show();
  }
 
+ @Override
  public void close()
  {
   instance=null;

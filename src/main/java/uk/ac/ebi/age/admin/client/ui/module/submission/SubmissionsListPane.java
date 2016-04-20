@@ -267,7 +267,7 @@ public class SubmissionsListPane extends VLayout
   
   SubmissionList()
   {
-   addRecordCollapseHandler(this);
+//   addRecordCollapseHandler(this);
   }
   
   public void setSubmissionTags( char partType, String clustId, String compId, String dvId, List<TagRef> tags )
@@ -318,6 +318,7 @@ public class SubmissionsListPane extends VLayout
    }
   }
   
+  @Override
   protected Canvas getExpansionComponent(final ListGridRecord record)
   {
    SubmissionDetailsPanel dtl = new SubmissionDetailsPanel( record );
@@ -327,6 +328,7 @@ public class SubmissionsListPane extends VLayout
    return dtl;
   }
   
+  @Override
   protected String getCellCSSText(ListGridRecord record, int rowNum, int colNum)
   {
    if( SubmissionConstants.RMVD.title().equals(record.getAttributeAsString(SubmissionConstants.STS.name()) ) )

@@ -266,9 +266,16 @@ table.objectView td.attrName, table.relView td.relName
 	padding: 2px;
 	text-align: right;
 	font-weight: bold;
-	background-color: #a1c7c7;
+	background-color: #538c8c;
 	width: 1%;
 	white-space: nowrap;
+}
+
+table.objectView .valueString
+{
+	padding: 2px;
+	text-align: left;
+	background-color: white;
 }
 
 table.relView td.relTarget

@@ -1,14 +1,22 @@
 package uk.ac.ebi.ageview.client.ui.module;
 
+import uk.ac.ebi.age.ui.client.LinkClickListenerJSO;
 import uk.ac.ebi.age.ui.client.LinkManager;
+import uk.ac.ebi.age.ui.client.ObjectProviderService;
+import uk.ac.ebi.age.ui.client.module.ObjectImprintViewPanelHTML;
+import uk.ac.ebi.age.ui.client.module.ObjectImprintViewerWindow;
 import uk.ac.ebi.age.ui.client.module.PagingRuler;
-import uk.ac.ebi.ageview.client.query.AttributedImprint;
+import uk.ac.ebi.age.ui.shared.imprint.AttributeImprint;
+import uk.ac.ebi.age.ui.shared.imprint.ObjectId;
+import uk.ac.ebi.age.ui.shared.imprint.ObjectImprint;
+import uk.ac.ebi.ageview.client.AgeViewGWTService;
 import uk.ac.ebi.ageview.client.query.Report;
-import uk.ac.ebi.ageview.client.shared.AttributeReport;
 import uk.ac.ebi.ageview.client.ui.ResultRenderer;
 
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArrayString;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.Record;
 import com.smartgwt.client.data.fields.DataSourceIntegerField;
 import com.smartgwt.client.data.fields.DataSourceTextField;
 import com.smartgwt.client.types.ExpansionMode;
@@ -79,8 +87,7 @@ public class ResultPane extends VLayout implements ResultRenderer
 //  ListGridField propField = new ListGridField("prop","AdditionalProp");
   
 //  propField.setHidden(true);
-  
-//  idField.setWidth(200);
+
      
   resultGrid.setFields(idField, descField );
   resultGrid.setExpansionMode(ExpansionMode.DETAIL_FIELD);
@@ -92,7 +99,7 @@ public class ResultPane extends VLayout implements ResultRenderer
   
   addMember(pagingRuler);
   addMember(resultGrid);
-//  addMember(statusBar);
+  addMember(statusBar);
   
   resultGrid.addRecordCollapseHandler( new RecordCollapseHandler()
   {
@@ -111,6 +118,69 @@ public class ResultPane extends VLayout implements ResultRenderer
     LinkManager.getInstance().removeLinkClickListener(event.getRecord().getAttribute("id"));
    }
   });
+  
+  LinkManager.getInstance().addLinkClickListener("ShowObject", new LinkClickListenerJSO()
+  {
+
+   @Override
+   public void linkClicked(JsArrayString param)
+   {
+   
+    ObjectId id = new ObjectId(param.get(0), param.get(1), param.get(2));
+    
+//    new ObjectImprintViewerWindow(id, 2, null );
+    
+   }
+
+   @Override
+   public void linkClicked(JavaScriptObject param)
+   {
+    JsArrayString jsa = param.cast();
+    
+    ObjectId id = new ObjectId(jsa.get(0), jsa.get(1), jsa.get(2));
+
+    AgeViewGWTService.Util.getInstance().getObjectImprint(id, new AsyncCallback<ObjectImprint>()
+    {
+     
+     @Override
+     public void onSuccess(ObjectImprint arg0)
+     {
+      new ObjectImprintViewerWindow(arg0, 2, new ObjectProviderService()
+      {
+       
+       @Override
+       public void getObject(ObjectId id, final AsyncCallback<ObjectImprint> cb)
+       {
+        AgeViewGWTService.Util.getInstance().getObjectImprint(id, new AsyncCallback<ObjectImprint>(){
+
+         @Override
+         public void onFailure(Throwable arg0)
+         {
+          cb.onFailure(arg0);
+         }
+
+         @Override
+         public void onSuccess(ObjectImprint arg0)
+         {
+          cb.onSuccess(arg0);
+         }} );
+        
+       }
+      }).show();
+      
+     }
+     
+     @Override
+     public void onFailure(Throwable arg0)
+     {
+      // TODO Auto-generated method stub
+      
+     }
+    });
+    
+//    System.out.println("Object "+jsa.length()+" "+id);
+   }}
+  );
 //  ListGridRecord rec = new ListGridRecord();
 //  
 //  rec.setAttribute("id", "SBM00000X");
@@ -168,41 +238,34 @@ public class ResultPane extends VLayout implements ResultRenderer
 //  else
 //   pagingRuler.setVisible(false);
   
-  for( AttributedImprint sgr : res.getObjects() )
+  for( ObjectImprint sgr : res.getObjects() )
   {
-   ListGridRecord rec = new ListGridRecord();
+   ImprintGridRecord rec = new ImprintGridRecord();
    
-   rec.setAttribute("id", sgr.getId());
-   rec.setAttribute("desc", sgr.getTitle());
+   rec.setAttribute("id", sgr.getId().getObjectId());
 
-   Record det = new ListGridRecord();
+   String title = null;
    
-   for( AttributeReport ar : sgr.getAttributes() )
+   for( AttributeImprint ati : sgr.getAttributes() )
    {
-//    System.out.println("Attr: "+ar.getName()+" "+ar.getValue());
-    det.setAttribute( ar.getName(), ar.getValue() );
-   }
-  
-   if( sgr.getOtherInfo() != null )
-    det.setAttribute("__other", sgr.getOtherInfo());
+    if( ati.getClassImprint().getName().equalsIgnoreCase("Title") )
+    {
+     title = ati.getValue().getStringValue();
+     break;
+    }
+    else if( ati.getClassImprint().getName().equalsIgnoreCase("Description")  )
+     title = ati.getValue().getStringValue();
+    else if( title == null && ati.getClassImprint().getName().equalsIgnoreCase("Name")  )
+     title = ati.getValue().getStringValue();
 
-   if( sgr.getAttachedClasses() != null )
-   {
-    for( String atCls : sgr.getAttachedClasses() )
-     det.setAttribute("__$att$"+atCls, sgr.getAttachedObjects(atCls) );
    }
    
-//   if( sgr.getPublications() != null )
-//    det.setAttribute("__publ", sgr.getPublications() );
-//
-//   if( sgr.getContacts() != null )
-//    det.setAttribute("__contact", sgr.getContacts() );
+   if( title == null )
+    title = sgr.getClassImprint().getName()+""+sgr.getId();
    
+   rec.setAttribute("desc", title);
 
-//   det.setAttribute("__summary", String.valueOf(sgr.getRefCount())+"/"+sgr.getMatchedCount());
-//   det.setAttribute("Selected samples", sgr.getMatchedCount());
-  
-   rec.setAttribute("details", new Record[]{det});
+   rec.setImprint(sgr);
    
    resultGrid.addData(rec);
   }
@@ -262,9 +325,11 @@ public class ResultPane extends VLayout implements ResultRenderer
   @Override
   protected Canvas getExpansionComponent(final ListGridRecord record)
   {
-   Canvas details = new RootObjectDetailsPanel(record.getAttributeAsRecordArray("details")[0], query, searchAtNames, searchAtValues );
-   
-   record.setAttribute("_panel", details);
+//   Canvas details = new RootObjectDetailsPanel(record.getAttributeAsRecordArray("details")[0], query, searchAtNames, searchAtValues );
+//   
+//   record.setAttribute("_panel", details);
+
+   Canvas details = new ObjectImprintViewPanelHTML(((ImprintGridRecord)record).getImprint(), 2, "popup", "ShowObject");
    
    return details;
   }

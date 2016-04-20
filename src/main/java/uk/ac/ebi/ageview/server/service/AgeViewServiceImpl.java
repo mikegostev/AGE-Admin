@@ -49,6 +49,7 @@ import uk.ac.ebi.age.storage.index.Selection;
 import uk.ac.ebi.age.storage.index.TextFieldExtractor;
 import uk.ac.ebi.age.storage.index.TextIndex;
 import uk.ac.ebi.age.storage.index.TextValueExtractor;
+import uk.ac.ebi.age.ui.server.imprint.CascadeStringProcessor;
 import uk.ac.ebi.age.ui.server.imprint.ImprintBuilder;
 import uk.ac.ebi.age.ui.server.imprint.ImprintingHint;
 import uk.ac.ebi.age.ui.server.imprint.StringProcessor;
@@ -250,7 +251,7 @@ public class AgeViewServiceImpl extends AgeViewService implements SecurityChange
   catch(ParseException e)
   {
    Report rep = new Report();
-   rep.setObjects(new ArrayList<AttributedImprint>());
+   rep.setObjects(new ArrayList<ObjectImprint>());
    rep.setTotalObjects(0);
   
    return rep;
@@ -317,7 +318,7 @@ public class AgeViewServiceImpl extends AgeViewService implements SecurityChange
 
    sel = rootObjIndex.select(lucQuery, offset, count, null );
 
-   List<AttributedImprint> res = new ArrayList<AttributedImprint>();
+   List<ObjectImprint> res = new ArrayList<ObjectImprint>();
 
    List<AgeObject> groups = sel.getObjects();
    
@@ -326,7 +327,7 @@ public class AgeViewServiceImpl extends AgeViewService implements SecurityChange
 
    for(int i = 0; i < count; i++)
    {
-    AttributedImprint gr = createRootObject(groups.get(i),  highlighter, searchAttrNm, searchAttrVl);
+    ObjectImprint gr = createRootObjectImprint(groups.get(i),  highlighter, searchAttrNm, searchAttrVl);
 
     res.add(gr);
    }
@@ -421,8 +422,28 @@ public class AgeViewServiceImpl extends AgeViewService implements SecurityChange
   return s;
  }
  
+ private ObjectImprint createRootObjectImprint( AgeObject obj, Highlighter hlighter, boolean hlName, boolean hlValue )
+ {
+  StringProcessor hl = new HighlightStringProcessor(hlighter);
+  
+  List<StringProcessor> prcs = new ArrayList<StringProcessor>();
+  
+  prcs.add(htmlEscProc);
+  prcs.add(hl);
+  
+  CascadeStringProcessor csp = new CascadeStringProcessor(prcs);
+  
+  ImprintBuilder ib = new ImprintBuilder(hlName?csp:null, hlName?csp:null, csp, null);
+  
+  return   ib.convert(obj, objConvHint);
+
+ }
+
+ 
  private AttributedImprint createRootObject( AgeObject obj, Highlighter hlighter, boolean hlName, boolean hlValue )
  {
+  
+  
   AttributedImprint sgRep = new AttributedImprint();
 
   String strN = null;

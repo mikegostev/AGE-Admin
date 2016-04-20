@@ -19,7 +19,6 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.ButtonItem;
-import com.smartgwt.client.widgets.form.fields.CanvasItem;
 import com.smartgwt.client.widgets.form.fields.CheckboxItem;
 import com.smartgwt.client.widgets.form.fields.RadioGroupItem;
 import com.smartgwt.client.widgets.form.fields.StaticTextItem;
@@ -155,20 +154,15 @@ public class AttributeMMRulePanel extends AttributeRulePanel
   addMember(rangeForm);
   
 
-
-  DynamicForm qualifiersForm = new DynamicForm();
-  qualifiersForm.setGroupTitle("Qualifiers");
-  qualifiersForm.setIsGroup(true);
-//  qualifiersForm.setPadding(1);
-  qualifiersForm.setWidth100();
-  qualifiersForm.setHeight(200);
-
-  CanvasItem qTblItem = new CanvasItem();
+  
   
   VLayout qLay = new VLayout();
-  qLay.setWidth("98%");
+  qLay.setGroupTitle("Qualifiers");
+  qLay.setIsGroup(true);
+  qLay.setWidth100();
   qLay.setHeight100();
   qLay.setPadding(5);
+  
   
   ToolStrip qTools = new ToolStrip();
   qTools.setWidth100();
@@ -223,9 +217,7 @@ public class AttributeMMRulePanel extends AttributeRulePanel
 
   qLay.addMember(qTools);
   
-  qTblItem.setShowTitle(false);
-  
-  qTbl.setWidth100();
+  qTbl.setWidth("100%");
   qTbl.setShowHeader(true);
 
   ListGridField idField = new ListGridField("id", "ID", 60);
@@ -254,13 +246,11 @@ public class AttributeMMRulePanel extends AttributeRulePanel
   });
   
   qLay.addMember(qTbl);
-  qTblItem.setCanvas(qLay);
-  
-  qualifiersForm.setItems(qTblItem);
 
-  addMember(qualifiersForm);
- 
+  addMember(qLay);
+
   setRule(rl);
+  
   
  }
  
